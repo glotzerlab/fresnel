@@ -8,6 +8,8 @@
 
 namespace fresnel { namespace cpu {
 
+/*! Construct a new RTCDevice with default options.
+*/
 Device::Device()
     {
     m_device = rtcNewDevice(nullptr);
@@ -18,11 +20,15 @@ Device::Device()
         }
     }
 
+/*! Destroy the underlying RTCDevice
+*/
 Device::~Device()
     {
     rtcDeleteDevice(m_device);
     }
 
+/*! \param m Python module to export in
+ */
 void export_Device(pybind11::module& m)
     {
     pybind11::class_<Device, std::shared_ptr<Device> >(m, "Device")
