@@ -25,7 +25,7 @@ class Scene
         ~Scene();
 
         //! Access the RTCScene
-        RTCScene& getScene()
+        RTCScene& getRTCScene()
             {
             return m_scene;
             }

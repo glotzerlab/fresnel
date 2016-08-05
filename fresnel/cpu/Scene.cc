@@ -9,7 +9,7 @@ namespace fresnel { namespace cpu {
 
 Scene::Scene(std::shared_ptr<Device> device) : m_device(device)
     {
-    RTCScene scene = rtcDeviceNewScene(device->getDevice(), RTC_SCENE_DYNAMIC, RTC_INTERSECT1);
+    RTCScene scene = rtcDeviceNewScene(device->getRTCDevice(), RTC_SCENE_DYNAMIC, RTC_INTERSECT1);
 
     if (scene == nullptr)
         {

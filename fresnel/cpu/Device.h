@@ -24,7 +24,7 @@ class Device
         ~Device();
 
         //! Access the RTCDevice
-        RTCDevice& getDevice()
+        RTCDevice& getRTCDevice()
             {
             return m_device;
             }
