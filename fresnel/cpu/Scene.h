@@ -13,7 +13,7 @@
 
 namespace fresnel { namespace cpu {
 
-// Thin wrapper for RTCScene
+//! Thin wrapper for RTCScene
 /* Handle construction and deletion of the scene, and python lifetime as an exported class.
 */
 class Scene
@@ -28,6 +28,12 @@ class Scene
         RTCScene& getRTCScene()
             {
             return m_scene;
+            }
+
+        //! Access the Device
+        std::shared_ptr<Device> getDevice()
+            {
+            return m_device;
             }
 
     private:

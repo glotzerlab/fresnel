@@ -3,6 +3,8 @@
 
 #include <pybind11/pybind11.h>
 #include "Device.h"
+#include "Scene.h"
+#include "Geometry.h"
 
 using namespace fresnel::cpu;
 
@@ -13,6 +15,8 @@ PYBIND11_PLUGIN(_cpu)
     pybind11::module m("_cpu");
 
     export_Device(m);
+    export_Scene(m);
+    export_Geometry(m);
 
     return m.ptr();
     }
