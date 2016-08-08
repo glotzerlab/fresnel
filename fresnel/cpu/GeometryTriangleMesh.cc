@@ -51,6 +51,8 @@ GeometryTriangleMesh::GeometryTriangleMesh(std::shared_ptr<Scene> scene,
         }
     rtcUnmapBuffer(m_scene->getRTCScene(), m_geom_id, RTC_INDEX_BUFFER);
     m_device->checkError();
+
+    m_valid = true;
     }
 
 GeometryTriangleMesh::~GeometryTriangleMesh()
