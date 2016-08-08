@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <pybind11/stl.h>
 
-#include "Geometry.h"
+#include "GeometryTriangleMesh.h"
 
 namespace fresnel { namespace cpu {
 
@@ -14,11 +14,43 @@ namespace fresnel { namespace cpu {
 
     Creates a triangle mesh geometry with the given vertices and indices.
 */
-GeomtryTriangleMesh::GeometryTriangleMesh(std::shared_ptr<Scene> scene,
-                                          const std::vector<std:tuple<float, float, float> > &vertices,
-                                          const std::vector<std:tuple<unsigned int, unsigned int, unsigned int> > &indices)
+GeometryTriangleMesh::GeometryTriangleMesh(std::shared_ptr<Scene> scene,
+                                          const std::vector<std::tuple<float, float, float> > &vertices,
+                                          const std::vector<std::tuple<unsigned int, unsigned int, unsigned int> > &indices)
     : Geometry(scene)
     {
+    // create the geometry
+    m_geom_id = rtcNewTriangleMesh(m_scene->getRTCScene(),
+                                   RTC_GEOMETRY_DYNAMIC,
+                                   indices.size(),
+                                   vertices.size(),
+                                   1);
+    m_device->checkError();
+
+    struct Vertex   { float x, y, z, a; };
+    struct Triangle { int v0, v1, v2; };
+
+    // copy the vertex and index information into the Embree buffers
+    Vertex* vertices_raw = (Vertex*) rtcMapBuffer(m_scene->getRTCScene(), m_geom_id, RTC_VERTEX_BUFFER);
+    for (unsigned int i = 0; i < vertices.size(); i++)
+        {
+        vertices_raw[i].x = std::get<0>(vertices[i]);
+        vertices_raw[i].y = std::get<1>(vertices[i]);
+        vertices_raw[i].z = std::get<2>(vertices[i]);
+        vertices_raw[i].a = 0;
+        }
+    rtcUnmapBuffer(m_scene->getRTCScene(), m_geom_id, RTC_VERTEX_BUFFER);
+    m_device->checkError();
+
+    Triangle* indices_raw = (Triangle*) rtcMapBuffer(m_scene->getRTCScene(), m_geom_id, RTC_INDEX_BUFFER);
+    for (unsigned int i = 0; i < indices.size(); i++)
+        {
+        indices_raw[i].v0 = std::get<0>(indices[i]);
+        indices_raw[i].v1 = std::get<1>(indices[i]);
+        indices_raw[i].v2 = std::get<2>(indices[i]);
+        }
+    rtcUnmapBuffer(m_scene->getRTCScene(), m_geom_id, RTC_INDEX_BUFFER);
+    m_device->checkError();
     }
 
 GeometryTriangleMesh::~GeometryTriangleMesh()
@@ -29,8 +61,8 @@ GeometryTriangleMesh::~GeometryTriangleMesh()
  */
 void export_GeometryTriangleMesh(pybind11::module& m)
     {
-    pybind11::class_<GeometryTriangleMesh, std::shared_ptr<GeometryTriangleMesh> >(m, "GeometryTriangleMesh", py::base<Geometry>())
-        .def(pybind11::init<std::shared_ptr<Scene> >())
+    pybind11::class_<GeometryTriangleMesh, std::shared_ptr<GeometryTriangleMesh> >(m, "GeometryTriangleMesh", pybind11::base<Geometry>())
+        .def(pybind11::init<std::shared_ptr<Scene>, const std::vector<std::tuple<float, float, float> > &, const std::vector<std::tuple<unsigned int, unsigned int, unsigned int> > & >())
         ;
     }
 

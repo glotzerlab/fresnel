@@ -25,8 +25,8 @@ class GeometryTriangleMesh : public Geometry
     public:
         //! Constructor
         GeometryTriangleMesh(std::shared_ptr<Scene> scene,
-                             const std::vector<std:tuple<float, float, float> > &vertices,
-                             const std::vector<std:tuple<unsigned int, unsigned int, unsigned int> > &indices);
+                             const std::vector<std::tuple<float, float, float> > &vertices,
+                             const std::vector<std::tuple<unsigned int, unsigned int, unsigned int> > &indices);
         //! Destructor
         virtual ~GeometryTriangleMesh();
 

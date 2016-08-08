@@ -5,10 +5,9 @@
 #include "Device.h"
 #include "Scene.h"
 #include "Geometry.h"
+#include "GeometryTriangleMesh.h"
 
 using namespace fresnel::cpu;
-
-PYBIND11_DECLARE_HOLDER_TYPE(T_shared_ptr_bind, std::shared_ptr<T_shared_ptr_bind>);
 
 PYBIND11_PLUGIN(_cpu)
     {
@@ -17,6 +16,7 @@ PYBIND11_PLUGIN(_cpu)
     export_Device(m);
     export_Scene(m);
     export_Geometry(m);
+    export_GeometryTriangleMesh(m);
 
     return m.ptr();
     }

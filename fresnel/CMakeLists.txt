@@ -6,6 +6,7 @@ set(_cpu_sources
      cpu/Device.cc
      cpu/Scene.cc
      cpu/Geometry.cc
+     cpu/GeometryTriangleMesh.cc
    )
 
 # TODO: determine if we need numpy or not with pybind11
