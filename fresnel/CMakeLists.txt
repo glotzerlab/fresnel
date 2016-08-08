@@ -1,3 +1,5 @@
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
 ################ C++ libraries
 if (ENABLE_TRACE_CPU)
 
@@ -7,7 +9,8 @@ set(_cpu_sources
      cpu/Scene.cc
      cpu/Geometry.cc
      cpu/GeometryTriangleMesh.cc
-     cpu/Whitted.cc
+     cpu/Tracer.cc
+     cpu/TracerWhitted.cc
    )
 
 # TODO: determine if we need numpy or not with pybind11

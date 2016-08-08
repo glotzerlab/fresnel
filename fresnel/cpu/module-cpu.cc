@@ -6,7 +6,8 @@
 #include "Scene.h"
 #include "Geometry.h"
 #include "GeometryTriangleMesh.h"
-#include "Whitted.h"
+#include "Tracer.h"
+#include "TracerWhitted.h"
 
 using namespace fresnel::cpu;
 
@@ -18,7 +19,8 @@ PYBIND11_PLUGIN(_cpu)
     export_Scene(m);
     export_Geometry(m);
     export_GeometryTriangleMesh(m);
-    export_Whitted(m);
+    export_Tracer(m);
+    export_TracerWhitted(m);
 
     return m.ptr();
     }
