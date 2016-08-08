@@ -2,6 +2,7 @@
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include "TracerWhitted.h"
+#include <cmath>
 
 namespace fresnel { namespace cpu {
 
@@ -29,32 +30,26 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
             float y = j/float(m_h-1)*2-1;
             float x = i/float(m_w-1)*2-1;
 
-            RTCRay ray;
-            ray.org[0] = x; ray.org[1] = y; ray.org[2] = -1;
-            ray.dir[0] = ray.dir[1] = 0; ray.dir[2] = 1;
-            ray.tnear = 0.0f;
-            ray.tfar = std::numeric_limits<float>::infinity();
-            ray.instID = RTC_INVALID_GEOMETRY_ID;
-            ray.geomID = RTC_INVALID_GEOMETRY_ID;
-            ray.primID = RTC_INVALID_GEOMETRY_ID;
-            ray.mask = 0xFFFFFFFF;
-            ray.time = 0.0f;
+            RTCRay ray(vec3<float>(x,y,-1), vec3<float>(0,0,1));
             rtcIntersect(scene->getRTCScene(), ray);
 
             float c = 0.0;
-            if (ray.geomID != RTC_INVALID_GEOMETRY_ID)
-                c = 1.0;
-
+            float a = 0.0;
+            if (ray.hit())
+                {
+                ray.Ng = ray.Ng / std::sqrt(dot(ray.Ng, ray.Ng));
+                c = dot(ray.Ng, vec3<float>(-1,-1,0));
+                a = 1.0;
+                }
 
             unsigned int pixel = j*m_w + i;
             m_out[pixel].r = c;
             m_out[pixel].g = c;
             m_out[pixel].b = c;
-            m_out[pixel].a = 1.0;
+            m_out[pixel].a = a;
             }
         }
     }
-
 
 /*! \param m Python module to export in
  */
