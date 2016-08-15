@@ -10,20 +10,23 @@
 #include <pybind11/pybind11.h>
 
 #include "Scene.h"
+#include "common/Material.h"
 
 namespace fresnel { namespace cpu {
 
 //! Handle basic geometry methods
 /*! Geometry tracks Embree Geometry objects that belong to a given Scene. Because of Embree's API, the memory management
- * for these is handled in a somewhat strange way. A Geometry object adds itself to the Scene on construction. When
- * destructed, the Geometry is removed from the Scene. This requires that the user hold onto the Geometry shared pointer
- * as long as they want to keep the object live in the scene. There is also an explicit remove function. When a given
- * Geometry object is removed from a Scene, calls to change that geometry will fail.
- *
- * The base class Geometry itself does not define geometry. It just provides common methods and memory management.
- * For derived classes, the bool value m_valid is true when the Geometry is added to the scene. Derived classes
- * should set m_valid to true after they sucessfully call rtcNewWhaetever. m_geom_id stores the geometry id
- * returned by Embree to reference this geometry in the scene.
+    for these is handled in a somewhat strange way. A Geometry object adds itself to the Scene on construction. When
+    destructed, the Geometry is removed from the Scene. This requires that the user hold onto the Geometry shared pointer
+    as long as they want to keep the object live in the scene. There is also an explicit remove function. When a given
+    Geometry object is removed from a Scene, calls to change that geometry will fail.
+
+    The base class Geometry itself does not define geometry. It just provides common methods and memory management.
+    For derived classes, the bool value m_valid is true when the Geometry is added to the scene. Derived classes
+    should set m_valid to true after they successfully call rtcNewWhaetever. m_geom_id stores the geometry id
+    returned by Embree to reference this geometry in the scene.
+
+    Each Geometry has one Material.
 */
 class Geometry
     {
@@ -42,11 +45,24 @@ class Geometry
         //! Remove the Geometry from the Scene
         void remove();
 
+        //! Get the material
+        Material& getMaterial()
+            {
+            return m_material;
+            }
+
+        //! Set the material
+        void setMaterial(const Material& material)
+            {
+            std::cout << "Set material " << m_material.solid << std::endl;
+            m_material = material;
+            }
     protected:
         unsigned int m_geom_id=0;          //!< ID of this geometry in the scene
         bool m_valid=false;                //!< true when the geometry is valid and attached to the Scene
         std::shared_ptr<Scene> m_scene;    //!< The scene the geometry is attached to
         std::shared_ptr<Device> m_device;  //!< The device the Scene is attached to
+        Material m_material;               //!< Material applied to this geometry
     };
 
 //! Export Geometry to python

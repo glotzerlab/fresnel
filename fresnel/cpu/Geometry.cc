@@ -71,6 +71,7 @@ void export_Geometry(pybind11::module& m)
     {
     pybind11::class_<Geometry, std::shared_ptr<Geometry> >(m, "Geometry")
         .def(pybind11::init<std::shared_ptr<Scene> >())
+        .def_property("material", &Geometry::getMaterial, &Geometry::setMaterial, pybind11::return_value_policy::reference_internal)
         ;
     }
 

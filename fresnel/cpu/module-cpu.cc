@@ -8,6 +8,7 @@
 #include "GeometryTriangleMesh.h"
 #include "Tracer.h"
 #include "TracerWhitted.h"
+#include "common/Material.h"
 
 using namespace fresnel::cpu;
 
@@ -21,6 +22,15 @@ PYBIND11_PLUGIN(_cpu)
     export_GeometryTriangleMesh(m);
     export_Tracer(m);
     export_TracerWhitted(m);
+
+    pybind11::class_< colorRGB<float> >(m, "ColorRGBfloat")
+        .def_readwrite("r", &colorRGB<float>::r)
+        .def_readwrite("g", &colorRGB<float>::g)
+        .def_readwrite("b", &colorRGB<float>::b);
+
+    pybind11::class_< Material >(m, "Material")
+        .def_readwrite("solid", &Material::solid)
+        .def_readwrite("color", &Material::color);
 
     return m.ptr();
     }

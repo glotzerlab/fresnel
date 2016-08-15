@@ -5,6 +5,8 @@ R"""
 Geometric primitives.
 """
 
+from . import material
+
 class Geometry:
     R""" Base class for all geometry.
 
@@ -13,6 +15,7 @@ class Geometry:
     Note:
 
         You cannot instantiate a Geometry directly. Use one of the sub classes.
+
     """
     def __init__(self):
         raise RuntimeError("Use a specific geometry class");
@@ -32,6 +35,20 @@ class Geometry:
         """
 
         self._geometry.disable();
+
+    def set_material(self, mat):
+        R""" Set material properties
+
+        Args:
+
+            mat (:py:class:`Material <fresnel.material.Material>`): Material properties.
+        """
+        m = self._geometry.material;
+        m.solid = mat.solid;
+        m.color.r = mat.color[0];
+        m.color.g = mat.color[1];
+        m.color.b = mat.color[2];
+        self._geometry.material = m;
 
 class TriangleMesh(Geometry):
     R""" Triangle mesh geometry.

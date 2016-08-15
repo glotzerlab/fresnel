@@ -55,6 +55,7 @@ ENDMACRO(copy_file)
 set(files __init__.py
           geometry.py
           tracer.py
+          material.py
     )
 
 install(FILES ${files}

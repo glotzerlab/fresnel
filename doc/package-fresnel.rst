@@ -21,4 +21,5 @@ fresnel
    :maxdepth: 3
 
    module-geometry
+   module-material
    module-tracer
