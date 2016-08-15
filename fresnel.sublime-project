@@ -4,7 +4,7 @@
 		{
 			"path": ".",
             // ignore files that are not likely to be modified by hand
-            "folder_exclude_patterns": [".kdev4", ".settings",  "build*"],
+            "folder_exclude_patterns": [".kdev4", ".settings",  "build*", "devdoc"],
             "file_exclude_patterns": [".*project", "*.sublime-workspace", "*.kdev4"]
 		}
 	],

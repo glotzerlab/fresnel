@@ -53,6 +53,8 @@ MACRO(copy_file file)
 ENDMACRO(copy_file)
 
 set(files __init__.py
+          geometry.py
+          tracer.py
     )
 
 install(FILES ${files}

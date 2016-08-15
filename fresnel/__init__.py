@@ -6,12 +6,14 @@ The fresnel ray tracing package.
 """
 
 from . import geometry
+from . import tracer
 
 class Device:
     R""" Hardware device to use for ray tracing.
 
-    :py:class:`Device` defines hardware device to use for ray tracing. :py:class:`Scene` and :py:mod:`trace` instances
-    must be attached to a :py:class:`Device`. You may attach any number of instances to a single :py:class:`Device`.
+    :py:class:`Device` defines hardware device to use for ray tracing. :py:class:`Scene` and
+    :py:mod:`tracer <fresnel.tracer>` instances must be attached to a :py:class:`Device`. You may attach any number of
+    instances to a single :py:class:`Device`.
 
     .. tip::
         Use only a single :py:class:`Device` to reduce memory consumption.

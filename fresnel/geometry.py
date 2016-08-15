@@ -9,6 +9,10 @@ class Geometry:
     R""" Base class for all geometry.
 
     :py:class:`Geometry` provides operations common to all geometry classes.
+
+    Note:
+
+        You cannot instantiate a Geometry directly. Use one of the sub classes.
     """
     def __init__(self):
         raise RuntimeError("Use a specific geometry class");

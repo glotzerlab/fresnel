@@ -15,4 +15,3 @@ fresnel.geometry
     :synopsis: Geometric primitives.
     :members:
 
-.. rubric:: Modules
