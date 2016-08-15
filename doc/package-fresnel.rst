@@ -1,4 +1,4 @@
-galileo
+fresnel
 =======
 
 .. rubric:: Overview
@@ -6,12 +6,13 @@ galileo
 .. autosummary::
     :nosignatures:
 
-    galileo.blah
+    fresnel.Device
+    fresnel.Scene
 
 .. rubric:: Details
 
-.. automodule:: galileo
-    :synopsis: Galileo main package.
+.. automodule:: fresnel
+    :synopsis: Fresnel main package.
     :members:
 
 .. rubric:: Modules
@@ -19,4 +20,4 @@ galileo
 .. toctree::
    :maxdepth: 3
 
-   module-whatever
+   module-geometry

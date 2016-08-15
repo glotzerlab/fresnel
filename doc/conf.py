@@ -26,7 +26,7 @@ extensions = [
 
 intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}
 autodoc_docstring_signature = True;
-autodoc_default_flags = ['inherited-members'];
+# autodoc_default_flags = ['inherited-members'];
 autodoc_mock_imports = ['numpy'];
 
 # Add any paths that contain templates here, relative to this directory.

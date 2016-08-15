@@ -1,14 +1,13 @@
-Galileo
+Fresnel
 ++++++++++
 
-Welcome to the user documentation for Galileo!
+Welcome to the user documentation for Fresnel!
 
 .. toctree::
    :maxdepth: 3
    :caption: Python packages
 
-   package-galileo
-   package-trace
+   package-fresnel
 
 .. toctree::
    :maxdepth: 3
