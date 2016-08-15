@@ -10,6 +10,7 @@
 #include <pybind11/pybind11.h>
 
 #include "common/ColorMath.h"
+#include "common/Camera.h"
 #include "Scene.h"
 
 namespace fresnel { namespace cpu {
@@ -44,6 +45,12 @@ class Tracer
         //! Render a scene
         virtual void render(std::shared_ptr<Scene> scene);
 
+        //! Set the camera
+        virtual void setCamera(const Camera& camera)
+            {
+            m_camera = camera;
+            }
+
         //! Get a python buffer pointing to the pixel output buffer
         virtual pybind11::buffer_info getBuffer();
     protected:
@@ -51,6 +58,8 @@ class Tracer
         unsigned int m_w;                  //!< Width of the output buffer
         unsigned int m_h;                  //!< Height of the output buffer
         std::unique_ptr<colorRGBA<float>[]> m_out;    //!< The output buffer
+
+        Camera m_camera;                   //!< The camera
     };
 
 //! Export Tracer to python

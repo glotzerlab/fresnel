@@ -59,6 +59,16 @@ class Tracer:
         a = numpy.array(self._tracer, copy=False);
         return(numpy.uint8(a*255));
 
+    def set_camera(self, p, d, u, r):
+        R""" Set the camera properties.
+
+        TODO: Document properties. TODO: Make convenience camera class.
+        """
+        vec3f = self.device.module.vec3f;
+        Camera = self.device.module.Camera;
+
+        self._tracer.setCamera(Camera(vec3f(*p), vec3f(*d), vec3f(*u), vec3f(*r)));
+
 class Whitted(Tracer):
     R""" Whitted ray tracer.
 
@@ -80,4 +90,5 @@ class Whitted(Tracer):
     """
 
     def __init__(self, device, w, h):
+        self.device = device;
         self._tracer = device.module.TracerWhitted(device._device, w, h);

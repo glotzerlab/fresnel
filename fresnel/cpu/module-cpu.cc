@@ -32,5 +32,18 @@ PYBIND11_PLUGIN(_cpu)
         .def_readwrite("solid", &Material::solid)
         .def_readwrite("color", &Material::color);
 
+    pybind11::class_< vec3<float> >(m, "vec3f")
+        .def(pybind11::init<float, float, float>())
+        .def_readwrite("x", &vec3<float>::x)
+        .def_readwrite("y", &vec3<float>::y)
+        .def_readwrite("z", &vec3<float>::z);
+
+    pybind11::class_< Camera >(m, "Camera")
+        .def(pybind11::init<vec3<float>, vec3<float>, vec3<float>, vec3<float> >())
+        .def_readwrite("p", &Camera::p)
+        .def_readwrite("d", &Camera::d)
+        .def_readwrite("u", &Camera::u)
+        .def_readwrite("u", &Camera::r);
+
     return m.ptr();
     }

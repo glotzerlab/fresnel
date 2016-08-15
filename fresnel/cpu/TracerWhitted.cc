@@ -21,6 +21,7 @@ TracerWhitted::~TracerWhitted()
 
 void TracerWhitted::render(std::shared_ptr<Scene> scene)
     {
+    Camera cam = m_camera;
     Tracer::render(scene);
     rtcCommit(scene->getRTCScene());
     m_device->checkError();
@@ -29,10 +30,10 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
         {
         for (unsigned int i = 0; i < m_w; i++)
             {
-            float y = j/float(m_h-1)*2-1;
-            float x = i/float(m_w-1)*2-1;
+            float ys = -1.0f*(j/float(m_h-1)-0.5f);
+            float xs = i/float(m_h-1)-0.5f*float(m_w)/float(m_h);
 
-            RTCRay ray(vec3<float>(x,y,-1), vec3<float>(0,0,1));
+            RTCRay ray(cam.origin(xs, ys), cam.direction(xs, ys));
             rtcIntersect(scene->getRTCScene(), ray);
 
             colorRGB<float> c;
