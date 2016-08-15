@@ -35,19 +35,21 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
             RTCRay ray(vec3<float>(x,y,-1), vec3<float>(0,0,1));
             rtcIntersect(scene->getRTCScene(), ray);
 
-            float c = 0.0;
+            colorRGB<float> c;
             float a = 0.0;
             if (ray.hit())
                 {
-                ray.Ng = ray.Ng / std::sqrt(dot(ray.Ng, ray.Ng));
-                c = dot(ray.Ng, vec3<float>(-1,-1,0));
+                /*ray.Ng = ray.Ng / std::sqrt(dot(ray.Ng, ray.Ng));
+                c = dot(ray.Ng, vec3<float>(-1,-1,0));*/
+                const Material& m = scene->getMaterial(ray.geomID);
+                c = m.luminance();
                 a = 1.0;
                 }
 
             unsigned int pixel = j*m_w + i;
-            m_out[pixel].r = c;
-            m_out[pixel].g = c;
-            m_out[pixel].b = c;
+            m_out[pixel].r = c.r;
+            m_out[pixel].g = c.g;
+            m_out[pixel].b = c.b;
             m_out[pixel].a = a;
             }
         }

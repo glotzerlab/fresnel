@@ -26,7 +26,7 @@ namespace fresnel { namespace cpu {
     should set m_valid to true after they successfully call rtcNewWhaetever. m_geom_id stores the geometry id
     returned by Embree to reference this geometry in the scene.
 
-    Each Geometry has one Material.
+    Each Geometry has one Material, but it is managed by Scene.
 */
 class Geometry
     {
@@ -46,23 +46,22 @@ class Geometry
         void remove();
 
         //! Get the material
-        Material& getMaterial()
+        const Material& getMaterial()
             {
-            return m_material;
+            return m_scene->getMaterial(m_geom_id);
             }
 
         //! Set the material
         void setMaterial(const Material& material)
             {
-            std::cout << "Set material " << m_material.solid << std::endl;
-            m_material = material;
+            std::cout << "Set material " << material.solid << std::endl;
+            m_scene->setMaterial(m_geom_id, material);
             }
     protected:
         unsigned int m_geom_id=0;          //!< ID of this geometry in the scene
         bool m_valid=false;                //!< true when the geometry is valid and attached to the Scene
         std::shared_ptr<Scene> m_scene;    //!< The scene the geometry is attached to
         std::shared_ptr<Device> m_device;  //!< The device the Scene is attached to
-        Material m_material;               //!< Material applied to this geometry
     };
 
 //! Export Geometry to python
