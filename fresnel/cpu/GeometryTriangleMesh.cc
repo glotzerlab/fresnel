@@ -19,6 +19,7 @@ GeometryTriangleMesh::GeometryTriangleMesh(std::shared_ptr<Scene> scene,
                                           const std::vector<std::tuple<unsigned int, unsigned int, unsigned int> > &indices)
     : Geometry(scene)
     {
+    std::cout << "Create GeometryTriangleMesh" << std::endl;
     // create the geometry
     m_geom_id = rtcNewTriangleMesh(m_scene->getRTCScene(),
                                    RTC_GEOMETRY_DYNAMIC,
@@ -57,6 +58,7 @@ GeometryTriangleMesh::GeometryTriangleMesh(std::shared_ptr<Scene> scene,
 
 GeometryTriangleMesh::~GeometryTriangleMesh()
     {
+    std::cout << "Destroy GeometryTriangleMesh" << std::endl;
     }
 
 /*! \param m Python module to export in

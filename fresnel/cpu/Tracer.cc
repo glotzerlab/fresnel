@@ -10,11 +10,13 @@ namespace fresnel { namespace cpu {
 Tracer::Tracer(std::shared_ptr<Device> device, unsigned int w, unsigned int h)
     : m_device(device)
     {
+    std::cout << "Create Tracer" << std::endl;
     resize(w,h);
     }
 
 Tracer::~Tracer()
     {
+    std::cout << "Destroy Tracer" << std::endl;
     }
 
 /*! \param w New output buffer width
@@ -44,6 +46,7 @@ void Tracer::render(std::shared_ptr<Scene> scene)
 
 pybind11::buffer_info Tracer::getBuffer()
     {
+    std::cout << "Tracer::getBuffer" << std::endl;
     return pybind11::buffer_info(m_out.get(),                               /* Pointer to buffer */
                                  sizeof(float),                             /* Size of one scalar */
                                  pybind11::format_descriptor<float>::value, /* Python struct-style format descriptor */

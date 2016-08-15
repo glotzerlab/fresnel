@@ -11,10 +11,12 @@ namespace fresnel { namespace cpu {
 TracerWhitted::TracerWhitted(std::shared_ptr<Device> device, unsigned int w, unsigned int h)
     : Tracer(device, w, h)
     {
+    std::cout << "Create TracerWhitted" << std::endl;
     }
 
 TracerWhitted::~TracerWhitted()
     {
+    std::cout << "Destroy TracerWhitted" << std::endl;
     }
 
 void TracerWhitted::render(std::shared_ptr<Scene> scene)

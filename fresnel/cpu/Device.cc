@@ -12,6 +12,7 @@ namespace fresnel { namespace cpu {
 */
 Device::Device()
     {
+    std::cout << "Create Device" << std::endl;
     m_device = rtcNewDevice(nullptr);
 
     if (m_device == nullptr)
@@ -24,6 +25,7 @@ Device::Device()
 */
 Device::~Device()
     {
+    std::cout << "Destroy Device" << std::endl;
     rtcDeleteDevice(m_device);
     }
 
