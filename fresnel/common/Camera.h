@@ -19,29 +19,42 @@
 /*! Camera is a plain old data struct that holds camera properties, and a few methods for computing
     vectors in the image plane given normal screen coords.
 
-    Some quantities in this struct are precomputed. The r vector must be the same length as u, and perpendicular
-    to both u and d.
+    Some quantities in this struct are precomputed, normalized versions of user provided quantities.
 */
 struct Camera
     {
     Camera() {}
-    Camera(vec3<float>& _p,
-           vec3<float>& _d,
-           vec3<float>& _u,
-           vec3<float>& _r)
-        : p(_p), d(_d), u(_u), r(_r)
+    Camera(const vec3<float>& _p,
+           const vec3<float>& _d,
+           const vec3<float>& _u,
+           float h)
+        : p(_p), d(_d), u(_u), h(h)
         {
+        // TODO: import fast:: math library from hoomd and use here
+
+        // normalize inputs
+        d *= 1.0f / sqrtf(dot(d, d));
+        u *= 1.0f / sqrtf(dot(u, u));
+
+        // form r
+        r = cross(d,u);
+        r *= 1.0f / sqrtf(dot(r, r));
+
+        // make set orthonormal
+        u = cross(r,d);
+        u *= 1.0f / sqrtf(dot(u, u));
         }
 
     vec3<float> p;  //!< Center of the image plane
-    vec3<float> d;  //!< Direction the camera faces
-    vec3<float> u;  //!< Up vector
-    vec3<float> r;  //!< Right vector
+    vec3<float> d;  //!< Direction the camera faces (normalized)
+    vec3<float> u;  //!< Up vector (normalized)
+    vec3<float> r;  //!< Right vector (normalized)
+    float h;        //!< Height of the camera image plane
 
     //! Get a ray start position given screen relative coordinates
     vec3<float> origin(float xs, float ys) const
         {
-        return p + ys*u + xs * r;
+        return p + (ys * u + xs * r) * h;
         }
 
     //! Get a ray direction given screen relative coordinates

@@ -10,7 +10,10 @@
 #include "TracerWhitted.h"
 #include "common/Material.h"
 
+#include <sstream>
+
 using namespace fresnel::cpu;
+using namespace std;
 
 PYBIND11_PLUGIN(_cpu)
     {
@@ -36,14 +39,25 @@ PYBIND11_PLUGIN(_cpu)
         .def(pybind11::init<float, float, float>())
         .def_readwrite("x", &vec3<float>::x)
         .def_readwrite("y", &vec3<float>::y)
-        .def_readwrite("z", &vec3<float>::z);
+        .def_readwrite("z", &vec3<float>::z)
+        .def("__repr__",
+            [](const vec3<float> &a)
+                {
+                ostringstream s;
+                s << "<fresnel._cpu.vec3f (" << a.x << ", " << a.y << ", " << a.z << ")>";
+                return s.str();
+                }
+            )
+        ;
 
     pybind11::class_< Camera >(m, "Camera")
-        .def(pybind11::init<vec3<float>, vec3<float>, vec3<float>, vec3<float> >())
+        .def(pybind11::init<const vec3<float>&, const vec3<float>&, const vec3<float>&, float >())
         .def_readwrite("p", &Camera::p)
         .def_readwrite("d", &Camera::d)
         .def_readwrite("u", &Camera::u)
-        .def_readwrite("u", &Camera::r);
+        .def_readwrite("r", &Camera::r)
+        .def_readwrite("h", &Camera::h)
+        ;
 
     return m.ptr();
     }

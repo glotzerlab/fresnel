@@ -56,6 +56,7 @@ set(files __init__.py
           geometry.py
           tracer.py
           material.py
+          camera.py
     )
 
 install(FILES ${files}

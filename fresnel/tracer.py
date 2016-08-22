@@ -59,15 +59,16 @@ class Tracer:
         a = numpy.array(self._tracer, copy=False);
         return(numpy.uint8(a*255));
 
-    def set_camera(self, p, d, u, r):
-        R""" Set the camera properties.
+    def set_camera(self, camera):
+        R""" Set the camera.
 
-        TODO: Document properties. TODO: Make convenience camera class.
+        Args:
+            camera (:py:mod:`fresnel.camera`): Camera to set.
+
+        Set a new camera view. The next time the scene is rendered (:py:meth:`render`), it will be from this
+        new view.
         """
-        vec3f = self.device.module.vec3f;
-        Camera = self.device.module.Camera;
-
-        self._tracer.setCamera(Camera(vec3f(*p), vec3f(*d), vec3f(*u), vec3f(*r)));
+        self._tracer.setCamera(camera._camera);
 
 class Whitted(Tracer):
     R""" Whitted ray tracer.

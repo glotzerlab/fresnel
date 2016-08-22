@@ -7,6 +7,7 @@ The fresnel ray tracing package.
 
 from . import geometry
 from . import tracer
+from . import camera
 
 class Device:
     R""" Hardware device to use for ray tracing.
