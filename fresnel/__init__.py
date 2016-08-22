@@ -23,7 +23,8 @@ class Device:
     def __init__(self):
         try:
             from fresnel import _cpu;
-        except ImportError:
+        except ImportError as e:
+            print("Error importing:", e.msg);
             _cpu = None;
 
         self.module = _cpu;

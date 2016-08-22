@@ -5,11 +5,12 @@ R"""
 Cameras.
 """
 
+from . import _common
+
 class Orthographic:
     R""" Orthographic camera
 
     Args:
-        device (:py:class:`Device <fresnel.Device>`): Device to use for rendering.
         position (tuple): $\vec{p}$, the position of the camera.
         look_at (tuple): $\vec{l}$, the point the camera points at.
         up (tuple): $\vec{u}$, the vector pointing up.
@@ -31,9 +32,10 @@ class Orthographic:
     only objects at negative z would be visible.
 
     """
-    def __init__(self, device, position, look_at, up, height):
-        self.device = device;
+    def __init__(self, position, look_at, up, height):
         u = (look_at[0] - position[0], look_at[1] - position[1], look_at[2] - position[2]);
 
-        vec3f = self.device.module.vec3f;
-        self._camera = self.device.module.Camera(vec3f(*position), vec3f(*u), vec3f(*up), height);
+        self._camera = _common.Camera(_common.vec3f(*position),
+                                      _common.vec3f(*u),
+                                      _common.vec3f(*up),
+                                      height);
