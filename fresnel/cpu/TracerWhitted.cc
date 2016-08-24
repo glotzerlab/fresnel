@@ -3,6 +3,7 @@
 
 #include "TracerWhitted.h"
 #include <cmath>
+#include <stdexcept>
 
 namespace fresnel { namespace cpu {
 
@@ -36,14 +37,17 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
             RTCRay ray(cam.origin(xs, ys), cam.direction(xs, ys));
             rtcIntersect(scene->getRTCScene(), ray);
 
-            colorRGB<float> c;
+            RGB<float> c;
             float a = 0.0;
             if (ray.hit())
                 {
                 /*ray.Ng = ray.Ng / std::sqrt(dot(ray.Ng, ray.Ng));
                 c = dot(ray.Ng, vec3<float>(-1,-1,0));*/
-                const Material& m = scene->getMaterial(ray.geomID);
-                c = m.luminance();
+                const std::shared_ptr<Material>& m = scene->getMaterial(ray.geomID);
+                if (!m)
+                    throw std::runtime_error("Material not set");
+
+                c = m->luminance();
                 a = 1.0;
                 }
 

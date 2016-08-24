@@ -29,7 +29,7 @@ void Tracer::resize(unsigned int w, unsigned int h)
     if (w == 0 || h == 0)
         throw std::runtime_error("Invalid dimensions");
 
-    m_out = std::unique_ptr< colorRGBA<float>[] >(new colorRGBA<float>[w*h]);
+    m_out = std::unique_ptr< RGBA<float>[] >(new RGBA<float>[w*h]);
     m_w = w;
     m_h = h;
     }

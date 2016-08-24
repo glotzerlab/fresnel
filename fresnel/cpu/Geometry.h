@@ -46,15 +46,15 @@ class Geometry
         void remove();
 
         //! Get the material
-        const Material& getMaterial()
+        const std::shared_ptr<Material>& getMaterial()
             {
             return m_scene->getMaterial(m_geom_id);
             }
 
         //! Set the material
-        void setMaterial(const Material& material)
+        void setMaterial(const std::shared_ptr<Material>& material)
             {
-            std::cout << "Set material " << material.solid << std::endl;
+            std::cout << "Set material " << material->solid << std::endl;
             m_scene->setMaterial(m_geom_id, material);
             }
     protected:

@@ -16,22 +16,22 @@
 //! 3 element color vector
 /*! \tparam Real Data type of the components
 
-    colorRGB defines simple 3 element color vector. The components are available publicly as .r .g .b.
+    RGB defines simple 3 element color vector. The components are available publicly as .r .g .b.
 */
 template <class Real>
-struct colorRGB
+struct RGB
     {
-    //! Construct a colorRGB
+    //! Construct a RGB
     /*! \param _r r-component
         \param _g g-component
         \param _b b-component
     */
-    DEVICE colorRGB(const Real& _r, const Real& _g, const Real& _b) : r(_r), g(_g), b(_b)
+    DEVICE RGB(const Real& _r, const Real& _g, const Real& _b) : r(_r), g(_g), b(_b)
         {
         }
 
     //! Default construct a 0 vector
-    DEVICE colorRGB() : r(0), g(0), b(0)
+    DEVICE RGB() : r(0), g(0), b(0)
         {
         }
 
@@ -40,7 +40,7 @@ struct colorRGB
     Real b; //!< b-component of the vector
     };
 
-//! Addition of two colorRGBs
+//! Addition of two RGBs
 /*! \param a First vector
     \param b Second vector
 
@@ -48,14 +48,14 @@ struct colorRGB
     \returns The vector (a.r+b.r, a.g+b.g, a.b+b.b).
 */
 template < class Real >
-DEVICE inline colorRGB<Real> operator+(const colorRGB<Real>& a, const colorRGB<Real>& b)
+DEVICE inline RGB<Real> operator+(const RGB<Real>& a, const RGB<Real>& b)
     {
-    return colorRGB<Real>(a.r + b.r,
+    return RGB<Real>(a.r + b.r,
                            a.g + b.g,
                            a.b + b.b);
     }
 
-//! Subtraction of two colorRGBs
+//! Subtraction of two RGBs
 /*! \param a First vector
     \param b Second vector
 
@@ -63,14 +63,14 @@ DEVICE inline colorRGB<Real> operator+(const colorRGB<Real>& a, const colorRGB<R
     \returns The vector (a.r-b.r, a.g-b.g, a.b-b.b).
 */
 template < class Real >
-DEVICE inline colorRGB<Real> operator-(const colorRGB<Real>& a, const colorRGB<Real>& b)
+DEVICE inline RGB<Real> operator-(const RGB<Real>& a, const RGB<Real>& b)
     {
-    return colorRGB<Real>(a.r - b.r,
+    return RGB<Real>(a.r - b.r,
                            a.g - b.g,
                            a.b - b.b);
     }
 
-//! Multiplication of two colorRGBs
+//! Multiplication of two RGBs
 /*! \param a First vector
     \param b Second vector
 
@@ -78,14 +78,14 @@ DEVICE inline colorRGB<Real> operator-(const colorRGB<Real>& a, const colorRGB<R
     \returns The vector (a.r*b.r, a.g*b.g, a.b*b.b).
 */
 template < class Real >
-DEVICE inline colorRGB<Real> operator*(const colorRGB<Real>& a, const colorRGB<Real>& b)
+DEVICE inline RGB<Real> operator*(const RGB<Real>& a, const RGB<Real>& b)
     {
-    return colorRGB<Real>(a.r * b.r,
+    return RGB<Real>(a.r * b.r,
                            a.g * b.g,
                            a.b * b.b);
     }
 
-//! Division of two colorRGBs
+//! Division of two RGBs
 /*! \param a First vector
     \param b Second vector
 
@@ -93,29 +93,29 @@ DEVICE inline colorRGB<Real> operator*(const colorRGB<Real>& a, const colorRGB<R
     \returns The vector (a.r/b.r, a.g/b.g, a.b/b.b).
 */
 template < class Real >
-DEVICE inline colorRGB<Real> operator/(const colorRGB<Real>& a, const colorRGB<Real>& b)
+DEVICE inline RGB<Real> operator/(const RGB<Real>& a, const RGB<Real>& b)
     {
-    return colorRGB<Real>(a.r / b.r,
+    return RGB<Real>(a.r / b.r,
                            a.g / b.g,
                            a.b / b.b);
     }
 
-//! Negation of a colorRGB
+//! Negation of a RGB
 /*! \param a Vector
 
     Negation is component wise.
     \returns The vector (-a.x, -a.y, -a.z).
 */
 template < class Real >
-DEVICE inline colorRGB<Real> operator-(const colorRGB<Real>& a)
+DEVICE inline RGB<Real> operator-(const RGB<Real>& a)
     {
-    return colorRGB<Real>(-a.r,
+    return RGB<Real>(-a.r,
                            -a.g,
                            -a.b);
     }
 
 
-//! Assignment-addition of two colorRGBs
+//! Assignment-addition of two RGBs
 /*! \param a First vector
     \param b Second vector
 
@@ -123,7 +123,7 @@ DEVICE inline colorRGB<Real> operator-(const colorRGB<Real>& a)
     \returns The vector (a.r += b.r, a.g += b.g, a.b += b.b).
 */
 template < class Real >
-DEVICE inline colorRGB<Real>& operator +=(colorRGB<Real>& a, const colorRGB<Real>& b)
+DEVICE inline RGB<Real>& operator +=(RGB<Real>& a, const RGB<Real>& b)
     {
     a.r += b.r;
     a.g += b.g;
@@ -131,7 +131,7 @@ DEVICE inline colorRGB<Real>& operator +=(colorRGB<Real>& a, const colorRGB<Real
     return a;
     }
 
-//! Assignment-subtraction of two colorRGBs
+//! Assignment-subtraction of two RGBs
 /*! \param a First vector
     \param b Second vector
 
@@ -139,7 +139,7 @@ DEVICE inline colorRGB<Real>& operator +=(colorRGB<Real>& a, const colorRGB<Real
     \returns The vector (a.r -= b.r, a.g -= b.g, a.b -= b.b).
 */
 template < class Real >
-DEVICE inline colorRGB<Real>& operator -=(colorRGB<Real>& a, const colorRGB<Real>& b)
+DEVICE inline RGB<Real>& operator -=(RGB<Real>& a, const RGB<Real>& b)
     {
     a.r -= b.r;
     a.g -= b.g;
@@ -147,7 +147,7 @@ DEVICE inline colorRGB<Real>& operator -=(colorRGB<Real>& a, const colorRGB<Real
     return a;
     }
 
-//! Assignment-multiplication of two colorRGBs
+//! Assignment-multiplication of two RGBs
 /*! \param a First vector
     \param b Second vector
 
@@ -155,7 +155,7 @@ DEVICE inline colorRGB<Real>& operator -=(colorRGB<Real>& a, const colorRGB<Real
     \returns The vector (a.r *= b.r, a.g *= b.g, a.b *= b.b).
 */
 template < class Real >
-DEVICE inline colorRGB<Real>& operator *=(colorRGB<Real>& a, const colorRGB<Real>& b)
+DEVICE inline RGB<Real>& operator *=(RGB<Real>& a, const RGB<Real>& b)
     {
     a.r *= b.r;
     a.g *= b.g;
@@ -163,7 +163,7 @@ DEVICE inline colorRGB<Real>& operator *=(colorRGB<Real>& a, const colorRGB<Real
     return a;
     }
 
-//! Assignment-division of two colorRGBs
+//! Assignment-division of two RGBs
 /*! \param a First vector
     \param b Second vector
 
@@ -171,7 +171,7 @@ DEVICE inline colorRGB<Real>& operator *=(colorRGB<Real>& a, const colorRGB<Real
     \returns The vector (a.r /= b.r, a.g /= b.g, a.b /= b.b).
 */
 template < class Real >
-DEVICE inline colorRGB<Real>& operator /=(colorRGB<Real>& a, const colorRGB<Real>& b)
+DEVICE inline RGB<Real>& operator /=(RGB<Real>& a, const RGB<Real>& b)
     {
     a.r /= b.r;
     a.g /= b.g;
@@ -179,7 +179,7 @@ DEVICE inline colorRGB<Real>& operator /=(colorRGB<Real>& a, const colorRGB<Real
     return a;
     }
 
-//! Multiplication of a colorRGB by a scalar
+//! Multiplication of a RGB by a scalar
 /*! \param a vector
     \param b scalar
 
@@ -187,14 +187,14 @@ DEVICE inline colorRGB<Real>& operator /=(colorRGB<Real>& a, const colorRGB<Real
     \returns The vector (a.r*b, a.g*b, a.b*b).
 */
 template < class Real >
-DEVICE inline colorRGB<Real> operator*(const colorRGB<Real>& a, const Real& b)
+DEVICE inline RGB<Real> operator*(const RGB<Real>& a, const Real& b)
     {
-    return colorRGB<Real>(a.r * b,
+    return RGB<Real>(a.r * b,
                            a.g * b,
                            a.b * b);
     }
 
-//! Multiplication of a colorRGB by a scalar
+//! Multiplication of a RGB by a scalar
 /*! \param a vector
     \param b scalar
 
@@ -202,14 +202,14 @@ DEVICE inline colorRGB<Real> operator*(const colorRGB<Real>& a, const Real& b)
     \returns The vector (a.r*b, a.g*b, a.b*b).
 */
 template < class Real >
-DEVICE inline colorRGB<Real> operator*(const Real& b, const colorRGB<Real>& a)
+DEVICE inline RGB<Real> operator*(const Real& b, const RGB<Real>& a)
     {
-    return colorRGB<Real>(a.r * b,
+    return RGB<Real>(a.r * b,
                            a.g * b,
                            a.b * b);
     }
 
-//! Division of a colorRGB by a scalar
+//! Division of a RGB by a scalar
 /*! \param a vector
     \param b scalar
 
@@ -217,13 +217,13 @@ DEVICE inline colorRGB<Real> operator*(const Real& b, const colorRGB<Real>& a)
     \returns The vector (a.r/b, a.g/b, a.b/b).
 */
 template < class Real >
-DEVICE inline colorRGB<Real> operator/(const colorRGB<Real>& a, const Real& b)
+DEVICE inline RGB<Real> operator/(const RGB<Real>& a, const Real& b)
     {
     Real q = Real(1.0)/b;
     return a * q;
     }
 
-//! Assignment-multiplication of a colorRGB by a scalar
+//! Assignment-multiplication of a RGB by a scalar
 /*! \param a First vector
     \param b scalar
 
@@ -231,7 +231,7 @@ DEVICE inline colorRGB<Real> operator/(const colorRGB<Real>& a, const Real& b)
     \returns The vector (a.r *= b, a.g *= b, a.b *= b).
 */
 template < class Real >
-DEVICE inline colorRGB<Real>& operator *=(colorRGB<Real>& a, const Real& b)
+DEVICE inline RGB<Real>& operator *=(RGB<Real>& a, const Real& b)
     {
     a.r *= b;
     a.g *= b;
@@ -239,7 +239,7 @@ DEVICE inline colorRGB<Real>& operator *=(colorRGB<Real>& a, const Real& b)
     return a;
     }
 
-//! Assignment-division of a colorRGB by a scalar
+//! Assignment-division of a RGB by a scalar
 /*! \param a First vector
     \param b scalar
 
@@ -247,7 +247,7 @@ DEVICE inline colorRGB<Real>& operator *=(colorRGB<Real>& a, const Real& b)
     \returns The vector (a.r /= b, a.g /= b, a.b /= b).
 */
 template < class Real >
-DEVICE inline colorRGB<Real>& operator /=(colorRGB<Real>& a, const Real& b)
+DEVICE inline RGB<Real>& operator /=(RGB<Real>& a, const Real& b)
     {
     a.r /= b;
     a.g /= b;
@@ -255,24 +255,24 @@ DEVICE inline colorRGB<Real>& operator /=(colorRGB<Real>& a, const Real& b)
     return a;
     }
 
-//! Equality test of two colorRGBs
+//! Equality test of two RGBs
 /*! \param a First vector
     \param b Second vector
     \returns true if the two vectors are identically equal, false if they are not
 */
 template < class Real >
-DEVICE inline bool operator ==(const colorRGB<Real>& a, const colorRGB<Real>& b)
+DEVICE inline bool operator ==(const RGB<Real>& a, const RGB<Real>& b)
     {
     return (a.r == b.r) && (a.g == b.g) && (a.b == b.b);
     }
 
-//! Inequality test of two colorRGBs
+//! Inequality test of two RGBs
 /*! \param a First vector
     \param b Second vector
     \returns true if the two vectors are not identically equal, and false if they are
 */
 template < class Real >
-DEVICE inline bool operator !=(const colorRGB<Real>& a, const colorRGB<Real>& b)
+DEVICE inline bool operator !=(const RGB<Real>& a, const RGB<Real>& b)
     {
     return (a.r != b.r) || (a.g != b.g) || (a.b != b.b);
     }
@@ -280,32 +280,32 @@ DEVICE inline bool operator !=(const colorRGB<Real>& a, const colorRGB<Real>& b)
 //! 4 element color vector
 /*! \tparam Real Data type of the components
 
-    colorRGBA defines simple 4 element color vector. The components are available publicly as .r .g .b, and .a.
+    RGBA defines simple 4 element color vector. The components are available publicly as .r .g .b, and .a.
 */
 template <class Real>
-struct colorRGBA
+struct RGBA
     {
-    //! Construct a colorRGBA
+    //! Construct a RGBA
     /*! \param _r r-component
         \param _g g-component
         \param _b b-component
         \param _a a-component
     */
-    DEVICE colorRGBA(const Real& _r, const Real& _g, const Real& _b, const Real& _a) : r(_r), g(_g), b(_b), a(_a)
+    DEVICE RGBA(const Real& _r, const Real& _g, const Real& _b, const Real& _a) : r(_r), g(_g), b(_b), a(_a)
         {
         }
 
-    //! Construct a colorRGBA from a colorRGB
+    //! Construct a RGBA from a RGB
     /*! \param c Color to provide r,g,b components.
         \param _a a-component
     */
-    DEVICE colorRGBA(const colorRGB<Real>& c, const Real& _a) : r(c.r), g(c.g), b(c.b), a(a)
+    DEVICE RGBA(const RGB<Real>& c, const Real& _a) : r(c.r), g(c.g), b(c.b), a(a)
         {
         }
 
 
     //! Default construct a 0 vector
-    DEVICE colorRGBA() : r(0), g(0), b(0), a(1.0)
+    DEVICE RGBA() : r(0), g(0), b(0), a(1.0)
         {
         }
 

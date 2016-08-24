@@ -6,6 +6,7 @@ Ray tracers.
 """
 
 import numpy
+from . import camera
 
 class Tracer:
     R""" Base class for all ray tracers.
@@ -90,6 +91,7 @@ class Whitted(Tracer):
     * Cel shading
     """
 
-    def __init__(self, device, w, h):
+    def __init__(self, device, w, h, camera=camera.Orthographic(position=(0,0, 1), look_at=(0,0,0), up=(0,1,0), height=3)):
         self.device = device;
         self._tracer = device.module.TracerWhitted(device._device, w, h);
+        self.set_camera(camera);

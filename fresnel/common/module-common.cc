@@ -16,14 +16,29 @@ PYBIND11_PLUGIN(_common)
     {
     pybind11::module m("_common");
 
-    pybind11::class_< colorRGB<float> >(m, "ColorRGBf")
-        .def_readwrite("r", &colorRGB<float>::r)
-        .def_readwrite("g", &colorRGB<float>::g)
-        .def_readwrite("b", &colorRGB<float>::b);
+    pybind11::class_< RGB<float> >(m, "RGBf")
+        .def(pybind11::init<float, float, float>())
+        .def_readwrite("r", &RGB<float>::r)
+        .def_readwrite("g", &RGB<float>::g)
+        .def_readwrite("b", &RGB<float>::b);
 
-    pybind11::class_< Material >(m, "Material")
+    pybind11::class_< Material, std::shared_ptr<Material> >(m, "Material")
+        .def(pybind11::init<>())
         .def_readwrite("solid", &Material::solid)
-        .def_readwrite("color", &Material::color);
+        .def_readwrite("color", &Material::color)
+        .def("__repr__",
+            [](const Material &a)
+                {
+                ostringstream s;
+                s << "<fresnel._common.Material:"
+                  << " solid=" << a.solid
+                  << " color=(" << a.color.r << ", " << a.color.g << ", " << a.color.b << ")"
+                  << ">";
+
+                return s.str();
+                }
+            )
+        ;
 
     pybind11::class_< vec3<float> >(m, "vec3f")
         .def(pybind11::init<float, float, float>())

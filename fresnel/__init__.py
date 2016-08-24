@@ -55,3 +55,4 @@ class Scene:
 
         self.device = device;
         self._scene = self.device.module.Scene(self.device._device);
+        self.geometry = []

@@ -36,19 +36,22 @@ class Geometry:
 
         self._geometry.disable();
 
-    def set_material(self, mat):
-        R""" Set material properties
+    def remove(self):
+        R""" Remove the geometry from the scene.
 
-        Args:
-
-            mat (:py:class:`Material <fresnel.material.Material>`): Material properties.
+        After calling remove, the geometry is no longer part of the scene. It cannot be added back into the scene.
+        Use :py:meth:`disable` if you want a reversible operation.
         """
-        m = self._geometry.material;
-        m.solid = mat.solid;
-        m.color.r = mat.color[0];
-        m.color.g = mat.color[1];
-        m.color.b = mat.color[2];
-        self._geometry.material = m;
+        self._geometry.remove();
+        self.scene.geometry.remove(self)
+
+    @property
+    def material(self):
+        return material.Material(borrow=self._geometry.getMaterial());
+
+    @material.setter
+    def material(self, mat):
+        self._geometry.setMaterial(mat._material);
 
 class TriangleMesh(Geometry):
     R""" Triangle mesh geometry.
@@ -60,5 +63,9 @@ class TriangleMesh(Geometry):
         This class is temporary, for prototype testing only. It may be removed
     """
 
-    def __init__(self, scene, verts, indices):
+    def __init__(self, scene, verts, indices, material=material.Material(solid=1.0, color=(1,0,1))):
         self._geometry = scene.device.module.GeometryTriangleMesh(scene._scene, verts, indices);
+        self.material = material;
+
+        self.scene = scene;
+        self.scene.geometry.append(self);

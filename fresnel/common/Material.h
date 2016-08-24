@@ -25,14 +25,14 @@
 struct Material
     {
     float solid = 0;            //!< Set to 1 to pass through solid color
-    colorRGB<float> color;      //!< Color of the material
+    RGB<float> color;      //!< Color of the material
 
-    colorRGB<float> luminance() const
+    RGB<float> luminance() const
         {
         if (solid > 0.5)
             return color;
         else
-            return colorRGB<float>(0,0,0);
+            return RGB<float>(0,0,0);
         }
     };
 
