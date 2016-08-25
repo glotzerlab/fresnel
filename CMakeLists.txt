@@ -9,6 +9,7 @@ include_directories(${PYTHON_INCLUDE_DIR})
 #############################################################################################
 # Options
 option(ENABLE_TRACE_CPU "Enable raytracing on the CPU" ON)
+option(ENABLE_TRACE_GPU "Enable raytracing on the GPU" OFF)
 
 #############################################################################################
 # Find libraries
@@ -19,6 +20,11 @@ if (ENABLE_TRACE_CPU)
 
     find_package(TBB REQUIRED)
     include_directories(${TBB_INCLUDE_DIRS})
+endif()
+
+if (ENABLE_TRACE_GPU)
+    find_package(OptiX REQUIRED)
+    include_directories(${OptiX_INCLUDE})
 endif()
 
 #############################################################################################
