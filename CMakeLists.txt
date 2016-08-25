@@ -24,7 +24,8 @@ endif()
 
 if (ENABLE_TRACE_GPU)
     find_package(OptiX REQUIRED)
-    include_directories(${OptiX_INCLUDE})
+    find_package(CUDA 7.5 REQUIRED)
+    include_directories(${OptiX_INCLUDE} ${CUDA_INCLUDE_DIRS})
 endif()
 
 #############################################################################################

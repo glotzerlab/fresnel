@@ -25,8 +25,10 @@ endmacro()
 #####################################################
 ## C++ libraries
 
+# _common
 add_python_module(_common "common/module-common.cc")
 
+# _cpu
 if (ENABLE_TRACE_CPU)
 
 set(_cpu_sources
@@ -44,6 +46,26 @@ target_link_libraries(_cpu ${Embree_LIBRARIES} ${TBB_LIBRARIES})
 
 endif(ENABLE_TRACE_CPU)
 
+# _gpu
+if (ENABLE_TRACE_GPU)
+
+# Build the PTX files for the OptiX programs
+set(_ptx_sources gpu/tutorial0.cu)
+
+CUDA_WRAP_SRCS(_ptx PTX generated_ptx_files ${_ptx_sources})
+add_custom_target(ptx ALL
+    DEPENDS ${generated_ptx_files} ${_ptx_sources}
+    SOURCES ${_ptx_sources})
+
+# Build the shared object
+set(_gpu_sources
+     gpu/module-gpu.cc
+   )
+
+add_python_module(_gpu "${_gpu_sources}")
+target_link_libraries(_gpu ${optix_LIBRARY})
+endif()
+
 #####################################################
 ### Python only modules
 
@@ -55,7 +77,7 @@ MACRO(copy_file file)
         POST_BUILD
         COMMAND    ${CMAKE_COMMAND}
         ARGS       -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}/${file}
-        COMMENT    "Copy ${PACKAGE_NAME}/${file}"
+        COMMENT    "Copy ${file}"
     )
 ENDMACRO(copy_file)
 
@@ -74,4 +96,4 @@ foreach(file ${files})
     copy_file(${file})
 endforeach()
 
-add_custom_target(copy_trace ALL DEPENDS ${files})
+add_custom_target(copy_python ALL DEPENDS ${files})
