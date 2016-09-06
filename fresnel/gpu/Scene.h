@@ -45,6 +45,20 @@ class Scene
             return m_device;
             }
 
+        //! Add a geometry instance to the scene
+        void addGeometry(optix::GeometryInstance inst)
+            {
+            m_root->addChild(inst);
+            m_accel->markDirty();
+            }
+
+        //! Remove a geometry instance from the scene
+        void removeGeometry(optix::GeometryInstance inst)
+            {
+            m_root->removeChild(inst);
+            m_accel->markDirty();
+            }
+
     private:
         optix::GeometryGroup m_root;        //!< Store the scene root object
         optix::Acceleration m_accel;        //!< Store the acceleration structure

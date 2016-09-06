@@ -62,6 +62,7 @@ set(_gpu_sources
      gpu/module-gpu.cc
      gpu/Device.cc
      gpu/Scene.cc
+     cpu/Geometry.cc
    )
 
 add_python_module(_gpu "${_gpu_sources}")
