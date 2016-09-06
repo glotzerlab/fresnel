@@ -8,17 +8,32 @@ include_directories(${PYTHON_INCLUDE_DIR})
 
 #############################################################################################
 # Options
-option(ENABLE_TRACE_CPU "Enable raytracing on the CPU" ON)
+option(ENABLE_TBB "Use TBB for threaded execution on the CPU" ON)
+option(ENABLE_EMBREE "Use Embree for ray tracing on the CPU" ON)
+option(ENABLE_CUDA "Use CUDA for GPU code execution" OFF)
+option(ENABLE_OPTIX "Use OptiX for ray tracing on the GPU" OFF)
 
 #############################################################################################
 # Find libraries
 
-if (ENABLE_TRACE_CPU)
+if (ENABLE_EMBREE)
     find_package(Embree REQUIRED)
     include_directories(${Embree_INCLUDE_DIR})
+endif()
 
+if (ENABLE_TBB)
     find_package(TBB REQUIRED)
     include_directories(${TBB_INCLUDE_DIRS})
+endif()
+
+if (ENABLE_OPTIX)
+    find_package(OptiX REQUIRED)
+    include_directories(${OptiX_INCLUDE})
+endif()
+
+if (ENABLE_CUDA)
+    find_package(CUDA 7.5 REQUIRED)
+    include_directories(${CUDA_INCLUDE_DIRS})
 endif()
 
 #############################################################################################

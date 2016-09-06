@@ -45,7 +45,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'Galileo'
+project = 'Fresnel'
 copyright = '2016, The Regents of the University of Michigan'
 author = 'The Regents of the University of Michigan'
 
@@ -199,7 +199,7 @@ html_theme = 'sphinx_rtd_theme'
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Galileo-doc'
+htmlhelp_basename = 'Fresnel-doc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -221,7 +221,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'Galileo.tex', 'Galileo Documentation',
+    (master_doc, 'Fresnel.tex', 'Fresnel Documentation',
      'The Regents of the University of Michigan', 'manual'),
 ]
 
@@ -251,7 +251,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'galileo', 'Galileo Documentation',
+    (master_doc, 'fresnel', 'Fresnel Documentation',
      [author], 1)
 ]
 
@@ -265,8 +265,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'Galileo', 'Galileo Documentation',
-     author, 'Galileo', 'One line description of project.',
+    (master_doc, 'Fresnel', 'Fresnel Documentation',
+     author, 'Fresnel', 'One line description of project.',
      'Miscellaneous'),
 ]
 
