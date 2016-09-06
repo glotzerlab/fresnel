@@ -60,6 +60,7 @@ add_custom_target(ptx ALL
 # Build the shared object
 set(_gpu_sources
      gpu/module-gpu.cc
+     gpu/Device.cc
    )
 
 add_python_module(_gpu "${_gpu_sources}")
