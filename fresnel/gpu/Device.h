@@ -4,7 +4,7 @@
 #ifndef DEVICE_H_
 #define DEVICE_H_
 
-#include <optix_host.h>
+#include <optixu/optixpp_namespace.h>
 #include <pybind11/pybind11.h>
 #include <stdexcept>
 
@@ -13,7 +13,7 @@ PYBIND11_DECLARE_HOLDER_TYPE(T_shared_ptr_bind, std::shared_ptr<T_shared_ptr_bin
 
 namespace fresnel { namespace gpu {
 
-//! Thin wrapper for RTContext
+//! Thin wrapper for optix::Context
 /* Handle construction and deletion of the optix context, and python lifetime as an exported class.
 */
 class Device
@@ -25,34 +25,17 @@ class Device
         //! Destructor
         ~Device();
 
-        //! Access the RTCDevice
-        RTcontext& getRTcontext()
+        //! Access the context
+        optix::Context& getContext()
             {
             return m_context;
-            }
-
-        //! Check for error conditions
-        /*! Throws an exception when an Embree error code is set
-        */
-        void checkError(const RTresult& err)
-            {
-            if (err == RT_SUCCESS)
-                {
-                return;
-                }
-            else
-                {
-                const char *err_str;
-                rtContextGetErrorString(m_context, err, &err_str);
-                throw std::runtime_error("Optix: " + std::string(err_str));
-                }
             }
 
         //! Get information about this device
         std::string getStats();
 
     private:
-        RTcontext m_context; //!< Store the context
+        optix::Context m_context; //!< Store the context
     };
 
 //! Export Device to python

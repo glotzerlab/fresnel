@@ -15,10 +15,7 @@ namespace fresnel { namespace gpu {
 Device::Device()
     {
     std::cout << "Create GPU Device" << std::endl;
-    RTresult result;
-
-    result = rtContextCreate(&m_context);
-    checkError(result);
+    m_context = optix::Context::create();
     }
 
 /*! Destroy the underlying RTcontext
@@ -26,32 +23,20 @@ Device::Device()
 Device::~Device()
     {
     std::cout << "Destroy GPU Device" << std::endl;
-    RTresult result;
-
-    result = rtContextDestroy(m_context);
-    checkError(result);
+    m_context->destroy();
     }
 
 /*! \returns Human readable string containing useful device information
 */
 std::string Device::getStats()
     {
-    unsigned int n;
-    RTresult result;
     std::string s("OptiX devices:");
 
-    result = rtContextGetDeviceCount(m_context, &n);
-    checkError(result);
-
-    vector<int> devices(n);
-    result = rtContextGetDevices(m_context, &devices[0]);
+    vector<int> devices = m_context->getEnabledDevices();
 
     for (const int& i : devices)
         {
-        char name[120];
-        result = rtDeviceGetAttribute(i, RT_DEVICE_ATTRIBUTE_NAME, 120, name);
-        checkError(result);
-        s += "\n[" + to_string(i) + "]: " + string(name);
+        s += "\n[" + to_string(i) + "]: " + m_context->getDeviceName(i);
         }
 
     return s;
