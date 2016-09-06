@@ -61,6 +61,7 @@ add_custom_target(ptx ALL
 set(_gpu_sources
      gpu/module-gpu.cc
      gpu/Device.cc
+     gpu/Scene.cc
    )
 
 add_python_module(_gpu "${_gpu_sources}")

@@ -3,7 +3,7 @@
 
 #include <pybind11/pybind11.h>
 #include "Device.h"
-// #include "Scene.h"
+#include "Scene.h"
 // #include "Geometry.h"
 // #include "GeometryTriangleMesh.h"
 // #include "Tracer.h"
@@ -19,7 +19,7 @@ PYBIND11_PLUGIN(_gpu)
     pybind11::module m("_gpu");
 
     export_Device(m);
-    // export_Scene(m);
+    export_Scene(m);
     // export_Geometry(m);
     // export_GeometryTriangleMesh(m);
     // export_Tracer(m);
