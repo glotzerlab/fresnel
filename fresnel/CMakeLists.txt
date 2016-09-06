@@ -29,7 +29,7 @@ endmacro()
 add_python_module(_common "common/module-common.cc")
 
 # _cpu
-if (ENABLE_TRACE_CPU)
+if (ENABLE_EMBREE AND ENABLE_TBB)
 
 set(_cpu_sources
      cpu/module-cpu.cc
@@ -44,10 +44,10 @@ set(_cpu_sources
 add_python_module(_cpu "${_cpu_sources}")
 target_link_libraries(_cpu ${Embree_LIBRARIES} ${TBB_LIBRARIES})
 
-endif(ENABLE_TRACE_CPU)
+endif()
 
 # _gpu
-if (ENABLE_TRACE_GPU)
+if (ENABLE_CUDA AND ENABLE_OPTIX)
 
 # Build the PTX files for the OptiX programs
 set(_ptx_sources gpu/tutorial0.cu)

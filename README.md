@@ -17,10 +17,10 @@ make -j20
 
 * C++11 capable compiler
 * Python >= 2.7
-* For GPU raytracing (default `-DENABLE_TRACE_GPU=OFF`):
+* For GPU raytracing (default off, requires `-DENABLE_CUDA=ON -DENABLE_OPTIX=ON`):
     * OptiX >= 4.0
     * CUDA >= 7.5
-* For CPU raytracing (default `-DENABLE_TRACE_CPU=ON`):
+* For CPU raytracing (default on, requires `-DENABLE_TBB=ON -DENABLE_EMBREE=ON`):
     * Intel TBB >= 4.3.20150611
     * Intel Embree >= 2.10.0
 
