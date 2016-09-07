@@ -43,6 +43,19 @@ struct vec3
         {
         }
 
+    #ifdef NVCC
+    //! Convenience function to generate float3 in device code
+    DEVICE operator float3()
+        {
+        return make_float3(x, y, z);
+        }
+
+    //! Convenience function to get a vec3 from a float3 in device code
+    DEVICE explicit vec3(const float3& a) : x(a.x), y(a.y), z(a.z)
+        {
+        }
+    #endif
+
     Real x; //!< x-component of the vector
     Real y; //!< y-component of the vector
     Real z; //!< z-component of the vector

@@ -24,19 +24,25 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
     {
     Camera cam = m_camera;
     Tracer::render(scene);
+
+    // update Embree data structures
     rtcCommit(scene->getRTCScene());
     m_device->checkError();
 
+    // for each pixel
     for (unsigned int j = 0; j < m_h; j++)
         {
         for (unsigned int i = 0; i < m_w; i++)
             {
+            // determine the viewing plane relative coordinates
             float ys = -1.0f*(j/float(m_h-1)-0.5f);
             float xs = i/float(m_h-1)-0.5f*float(m_w)/float(m_h);
 
+            // trace a ray into the scene
             RTCRay ray(cam.origin(xs, ys), cam.direction(xs, ys));
             rtcIntersect(scene->getRTCScene(), ray);
 
+            // determine the output pixel color
             RGB<float> c;
             float a = 0.0;
             if (ray.hit())
@@ -51,6 +57,7 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
                 a = 1.0;
                 }
 
+            // write the output pixel
             unsigned int pixel = j*m_w + i;
             m_out[pixel].r = c.r;
             m_out[pixel].g = c.g;

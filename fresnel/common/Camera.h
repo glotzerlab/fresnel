@@ -23,11 +23,11 @@
 */
 struct Camera
     {
-    Camera() {}
+    DEVICE Camera() {}
     Camera(const vec3<float>& _p,
-           const vec3<float>& _d,
-           const vec3<float>& _u,
-           float h)
+                  const vec3<float>& _d,
+                  const vec3<float>& _u,
+                  float h)
         : p(_p), d(_d), u(_u), h(h)
         {
         // TODO: import fast:: math library from hoomd and use here
@@ -52,13 +52,13 @@ struct Camera
     float h;        //!< Height of the camera image plane
 
     //! Get a ray start position given screen relative coordinates
-    vec3<float> origin(float xs, float ys) const
+    DEVICE vec3<float> origin(float xs, float ys) const
         {
         return p + (ys * u + xs * r) * h;
         }
 
     //! Get a ray direction given screen relative coordinates
-    vec3<float> direction(float xs, float ys) const
+    DEVICE vec3<float> direction(float xs, float ys) const
         {
         return d;
         }

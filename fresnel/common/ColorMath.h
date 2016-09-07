@@ -35,6 +35,20 @@ struct RGB
         {
         }
 
+    #ifdef NVCC
+    //! Convenience function to generate float3 in device code
+    DEVICE operator float3()
+        {
+        return make_float3(r, g, b);
+        }
+
+    //! Convenience function to get a vec3 from a float3 in device code
+    DEVICE explicit RGB(const float3& a) : r(a.x), g(a.y), b(a.z)
+        {
+        }
+    #endif
+
+
     Real r; //!< r-component of the vector
     Real g; //!< g-component of the vector
     Real b; //!< b-component of the vector

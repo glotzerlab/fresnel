@@ -19,11 +19,13 @@ TracerWhitted::TracerWhitted(std::shared_ptr<Device> device, unsigned int w, uns
     // create the entry point program
     optix::Context context = m_device->getContext();
     const string& ptx_root = m_device->getPTXRoot();
-    m_ray_gen = context->createProgramFromPTXFile(ptx_root + "/whitted.ptx", "whitted_ray_gen");
+    m_ray_gen = context->createProgramFromPTXFile(ptx_root + "/_ptx_generated_whitted.cu.ptx", "whitted_ray_gen");
 
     m_ray_gen_entry = context->getEntryPointCount();
     context->setEntryPointCount(m_ray_gen_entry + 1);
     context->setRayGenerationProgram(m_ray_gen_entry, m_ray_gen);
+
+    m_ray_gen["scene_epsilon"]->setFloat(1.e-3f);
     }
 
 TracerWhitted::~TracerWhitted()

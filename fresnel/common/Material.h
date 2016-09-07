@@ -27,7 +27,7 @@ struct Material
     float solid = 0;            //!< Set to 1 to pass through solid color
     RGB<float> color;      //!< Color of the material
 
-    RGB<float> luminance() const
+    DEVICE RGB<float> luminance() const
         {
         if (solid > 0.5)
             return color;

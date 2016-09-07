@@ -50,7 +50,7 @@ endif()
 if (ENABLE_CUDA AND ENABLE_OPTIX)
 
 # Build the PTX files for the OptiX programs
-set(_ptx_sources gpu/tutorial0.cu)
+set(_ptx_sources gpu/whitted.cu)
 
 CUDA_WRAP_SRCS(_ptx PTX generated_ptx_files ${_ptx_sources})
 add_custom_target(ptx ALL
