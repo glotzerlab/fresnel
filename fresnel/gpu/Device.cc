@@ -10,9 +10,15 @@ using namespace std;
 
 namespace fresnel { namespace gpu {
 
-/*! Construct a new RTcontext with default options.
+/*! Construct a new optix::Context with default options.
+
+    \param ptx_root Directory where the PTX files are stored
+
+    OptiX programs are loaded from PTX files, built from the .cu source files. These PTX files are stored in the
+    python library directory. The Device instance tracks this directory for other classes (i.e. Tracer) to use
+    when loading OptiX programs.
 */
-Device::Device()
+Device::Device(const std::string& ptx_root) : m_ptx_root(ptx_root)
     {
     std::cout << "Create GPU Device" << std::endl;
     m_context = optix::Context::create();
@@ -47,7 +53,7 @@ std::string Device::getStats()
 void export_Device(pybind11::module& m)
     {
     pybind11::class_<Device, std::shared_ptr<Device> >(m, "Device")
-        .def(pybind11::init<>())
+        .def(pybind11::init<const std::string&>())
         .def("getStats", &Device::getStats)
         ;
     }

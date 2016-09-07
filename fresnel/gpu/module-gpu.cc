@@ -7,7 +7,7 @@
 #include "Geometry.h"
 // #include "GeometryTriangleMesh.h"
 #include "Tracer.h"
-// #include "TracerWhitted.h"
+#include "TracerWhitted.h"
 
 #include <sstream>
 
@@ -23,7 +23,7 @@ PYBIND11_PLUGIN(_gpu)
     export_Geometry(m);
     // export_GeometryTriangleMesh(m);
     export_Tracer(m);
-    // export_TracerWhitted(m);
+    export_TracerWhitted(m);
 
     return m.ptr();
     }

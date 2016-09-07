@@ -15,7 +15,13 @@ namespace fresnel { namespace gpu {
 
 //! Base class for the GPU ray tracer
 /*! Provides common methods for ray tracing matching the API of cpu::Tracer. The base class does not render a scene,
-    derived classes must implement rendering methods.
+    derived classes must implement rendering methods and load program objects. The base class does manage the
+    output buffer and store the camera, width, height, and relevant OptiX program.
+
+    Member variables derived classes must fill out to make a valid Tracer:
+
+      - m_ray_gen is the ray generation program, loaded by derived classes
+      - m_ray_gen_entry is the entry point index in the context for m_ray_gen.
 */
 class Tracer
     {
@@ -45,6 +51,9 @@ class Tracer
         std::unique_ptr<RGBA<float>[]> m_out;    //!< The output buffer
 
         Camera m_camera;                   //!< The camera
+
+        optix::Program m_ray_gen;           //!< Ray generation program
+        unsigned int m_ray_gen_entry;       //!< Entry point of the ray generation program
     };
 
 //! Export Tracer to python

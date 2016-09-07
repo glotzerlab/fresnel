@@ -17,6 +17,7 @@ Tracer::Tracer(std::shared_ptr<Device> device, unsigned int w, unsigned int h)
 Tracer::~Tracer()
     {
     std::cout << "Destroy GPU Tracer" << std::endl;
+    m_ray_gen->destroy();
     }
 
 /*! \param w New output buffer width
@@ -35,13 +36,14 @@ void Tracer::resize(unsigned int w, unsigned int h)
     }
 
 /*! \param scene The Scene to render
-
-    Derived classes must implement this method.
 */
 void Tracer::render(std::shared_ptr<Scene> scene)
     {
     if (scene->getDevice() != m_device)
         throw std::runtime_error("Scene and Tracer devices do not match");
+
+    optix::Context context = m_device->getContext();
+    context->launch(m_ray_gen_entry, m_w, m_h);
     }
 
 /*! \param camera The camera to set.

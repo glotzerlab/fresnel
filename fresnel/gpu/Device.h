@@ -20,7 +20,7 @@ class Device
     {
     public:
         //! Constructor
-        Device();
+        Device(const std::string& ptx_root);
 
         //! Destructor
         ~Device();
@@ -34,8 +34,15 @@ class Device
         //! Get information about this device
         std::string getStats();
 
+        //! Get the PTX root directory
+        const std::string& getPTXRoot()
+            {
+            return m_ptx_root;
+            }
+
     private:
         optix::Context m_context; //!< Store the context
+        std::string m_ptx_root;   //!< Directory where PTX files are stored
     };
 
 //! Export Device to python
