@@ -35,6 +35,13 @@ TracerWhitted::~TracerWhitted()
     std::cout << "Destroy GPU TracerWhitted" << std::endl;
     }
 
+//! Initialize the Material for use in tracing
+static void setupMaterial(optix::Material mat, Device *dev)
+    {
+    optix::Program p = dev->getProgram("_ptx_generated_whitted.cu.ptx", "whitted_closest_hit");
+    mat->setClosestHitProgram(0, p);
+    }
+
 /*! \param scene The Scene to render
 */
 void TracerWhitted::render(std::shared_ptr<Scene> scene)

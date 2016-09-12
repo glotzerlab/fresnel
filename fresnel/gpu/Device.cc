@@ -5,6 +5,7 @@
 #include <string>
 
 #include "Device.h"
+#include "TracerWhitted.h"
 
 using namespace std;
 
@@ -22,13 +23,18 @@ Device::Device(const std::string& ptx_root) : m_ptx_root(ptx_root)
     {
     std::cout << "Create GPU Device" << std::endl;
     m_context = optix::Context::create();
+
+    // initialize materials
+    m_whitted_mat = m_context->createMaterial();
+    TracerWhitted::setupMaterial(m_whitted_mat, this);
     }
 
-/*! Destroy the underlying RTcontext
+/*! Destroy the underlying context
 */
 Device::~Device()
     {
     std::cout << "Destroy GPU Device" << std::endl;
+    m_whitted_mat->destroy();
     m_context->destroy();
     }
 

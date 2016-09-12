@@ -103,4 +103,5 @@ RT_PROGRAM void whitted_closest_hit()
     m.color = RGB<float>(material_color);
 
     prd_radiance.result = m.luminance();
+    prd_radiance.hit = 1;
     }

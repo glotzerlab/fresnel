@@ -79,7 +79,8 @@ void Geometry::setupInstance()
     {
     m_instance = m_device->getContext()->createGeometryInstance();
     m_instance->setGeometry(m_geometry);
-    // TODO: set up material
+    m_instance->setMaterialCount(1);
+    m_instance->setMaterial(0, m_device->getContext()->getWhittedMaterial());
 
     m_valid = true;
     enable();

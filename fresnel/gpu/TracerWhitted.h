@@ -24,6 +24,9 @@ class TracerWhitted : public Tracer
         //! Destructor
         virtual ~TracerWhitted();
 
+        //! Initialize the Material for use in tracing
+        static void setupMaterial(optix::Material mat, Device* dev);
+
         //! Render a scene
         void render(std::shared_ptr<Scene> scene);
     };
