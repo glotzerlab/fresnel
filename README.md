@@ -29,6 +29,6 @@ Search paths:
 | Library | Default search path | CMake Custom search path |
 | ------- | ------------------- | ------------------ |
 | OptiX   | `/opt/optix`        | `-DOptiX_INSTALL_DIR=/path/to/optix` |
-| TBB     | *system*            | `-DTBB_LINK=/path/to/tbb/lib` |
-| Embree  | *system*            | `-DEMBREE_LINK=/path/to/embree/lib` |
+| TBB     | *system*            | `TBB_LINK=/path/to/tbb/lib` (env var) |
+| Embree  | *system*            | `EMBREE_LINK=/path/to/embree/lib` (env var) |
 | Python  | $PATH               | `-DPYTHON_EXECUTABLE=/path/to/bin/python` |
