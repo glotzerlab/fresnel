@@ -48,7 +48,8 @@ class Tracer
         std::shared_ptr<Device> m_device;  //!< The device the Scene is attached to
         unsigned int m_w;                  //!< Width of the output buffer
         unsigned int m_h;                  //!< Height of the output buffer
-        std::unique_ptr<RGBA<float>[]> m_out;    //!< The output buffer
+        optix::Buffer m_out_gpu;           //!< The GPU output buffer
+        std::unique_ptr<RGBA<float>[]> m_out_cpu;    //!< The CPU output buffer
 
         Camera m_camera;                   //!< The camera
 

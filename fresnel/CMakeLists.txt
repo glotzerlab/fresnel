@@ -62,9 +62,9 @@ set(_gpu_sources
      gpu/module-gpu.cc
      gpu/Device.cc
      gpu/Scene.cc
-     cpu/Geometry.cc
-     cpu/Tracer.cc
-     cpu/TracerWhitted.cc
+     gpu/Geometry.cc
+     gpu/Tracer.cc
+     gpu/TracerWhitted.cc
    )
 
 add_python_module(_gpu "${_gpu_sources}")

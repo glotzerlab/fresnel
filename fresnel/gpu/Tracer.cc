@@ -11,6 +11,7 @@ Tracer::Tracer(std::shared_ptr<Device> device, unsigned int w, unsigned int h)
     : m_device(device)
     {
     std::cout << "Create GPU Tracer" << std::endl;
+    m_out_gpu = m_device->getContext()->createBuffer(RT_BUFFER_OUTPUT, RT_FORMAT_FLOAT4, w, h);
     resize(w,h);
     }
 
@@ -18,6 +19,8 @@ Tracer::~Tracer()
     {
     std::cout << "Destroy GPU Tracer" << std::endl;
     m_ray_gen->destroy();
+    m_exception_program->destroy();
+    m_out_gpu->destroy();
     }
 
 /*! \param w New output buffer width
@@ -30,7 +33,8 @@ void Tracer::resize(unsigned int w, unsigned int h)
     if (w == 0 || h == 0)
         throw std::runtime_error("Invalid dimensions");
 
-    m_out = std::unique_ptr< RGBA<float>[] >(new RGBA<float>[w*h]);
+    m_out_cpu = std::unique_ptr< RGBA<float>[] >(new RGBA<float>[w*h]);
+    m_out_gpu->setSize(w, h);
     m_w = w;
     m_h = h;
     }
@@ -52,9 +56,15 @@ void Tracer::setCamera(const Camera& camera)
 
 pybind11::buffer_info Tracer::getBuffer()
     {
-    // TODO: Need to implement buffer objects, gamma correction, and copy data from the GPU to the CPU
     std::cout << "Tracer::getBuffer" << std::endl;
-    return pybind11::buffer_info(m_out.get(),                               /* Pointer to buffer */
+
+    // copy result from the GPU (note, this is inefficient as it is done every time getBuffer is called)
+    // maybe we can devise a better solution with #8, or maybe it just needs to be documented
+    void *data = m_out_gpu->map(0, RT_BUFFER_MAP_READ);
+    memcpy(m_out_cpu.get(), data, sizeof(float)*4*m_w*m_h);
+    m_out_gpu->unmap();
+
+    return pybind11::buffer_info(m_out_cpu.get(),                               /* Pointer to buffer */
                                  sizeof(float),                             /* Size of one scalar */
                                  pybind11::format_descriptor<float>::value, /* Python struct-style format descriptor */
                                  3,                                         /* Number of dimensions */

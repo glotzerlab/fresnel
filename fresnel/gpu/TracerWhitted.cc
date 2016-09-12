@@ -18,11 +18,11 @@ TracerWhitted::TracerWhitted(std::shared_ptr<Device> device, unsigned int w, uns
 
     // create the entry point program
     optix::Context context = m_device->getContext();
-    m_ray_gen = context->getProgram("_ptx_generated_whitted.cu.ptx", "whitted_ray_gen");
-    m_ray_gen_entry = context->getEntryPoint("_ptx_generated_whitted.cu.ptx", "whitted_ray_gen");
+    m_ray_gen = m_device->getProgram("_ptx_generated_whitted.cu.ptx", "whitted_ray_gen");
+    m_ray_gen_entry = m_device->getEntryPoint("_ptx_generated_whitted.cu.ptx", "whitted_ray_gen");
 
     // load the exception program
-    m_exception_program = context->getProgram("_ptx_generated_whitted.cu.ptx", "whitted_exception");
+    m_exception_program = m_device->getProgram("_ptx_generated_whitted.cu.ptx", "whitted_exception");
     context->setExceptionProgram(m_ray_gen_entry, m_exception_program);
 
     // ensure there are enough ray types
@@ -51,16 +51,16 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
     optix::Context context = m_device->getContext();
 
     // set common variables before launch
-    context["top_object"]->setObject(scene->getRoot());
+    context["top_object"]->set(scene->getRoot());
     context["scene_epsilon"]->setFloat(1.e-3f);
-    context["bad_color"]->setFloat3(1.0f, 0.0f, 1.0f);
-    // context["output_buffer"]->setBuffer(...);
+    context["bad_color"]->setFloat(1.0f, 0.0f, 1.0f);
+    context["output_buffer"]->set(m_out_gpu);
 
     // set camera variables
-    context["camera_p"]->setFloat3(m_camera.p.x, m_camera.p.y, m_camera.p.z);
-    context["camera_d"]->setFloat3(m_camera.d.x, m_camera.d.y, m_camera.d.z);
-    context["camera_u"]->setFloat3(m_camera.u.x, m_camera.u.y, m_camera.u.z);
-    context["camera_r"]->setFloat3(m_camera.r.x, m_camera.r.y, m_camera.r.z);
+    context["camera_p"]->setFloat(m_camera.p.x, m_camera.p.y, m_camera.p.z);
+    context["camera_d"]->setFloat(m_camera.d.x, m_camera.d.y, m_camera.d.z);
+    context["camera_u"]->setFloat(m_camera.u.x, m_camera.u.y, m_camera.u.z);
+    context["camera_r"]->setFloat(m_camera.r.x, m_camera.r.y, m_camera.r.z);
     context["camera_h"]->setFloat(m_camera.h);
 
     context->launch(m_ray_gen_entry, m_w, m_h);
