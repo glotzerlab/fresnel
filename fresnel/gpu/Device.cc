@@ -21,8 +21,10 @@ namespace fresnel { namespace gpu {
 */
 Device::Device(const std::string& ptx_root) : m_ptx_root(ptx_root)
     {
-    std::cout << "Create GPU Device" << std::endl;
+    std::cout << "Create GPU Device: " << m_ptx_root << std::endl;
     m_context = optix::Context::create();
+
+    m_context->setRayTypeCount(1);
 
     // initialize materials
     m_whitted_mat = m_context->createMaterial();

@@ -24,10 +24,6 @@ TracerWhitted::TracerWhitted(std::shared_ptr<Device> device, unsigned int w, uns
     // load the exception program
     m_exception_program = m_device->getProgram("_ptx_generated_whitted.cu.ptx", "whitted_exception");
     context->setExceptionProgram(m_ray_gen_entry, m_exception_program);
-
-    // ensure there are enough ray types
-    if (context->getRayTypeCount() < 1)
-        context->setRayTypeCount(1);
     }
 
 TracerWhitted::~TracerWhitted()
@@ -36,7 +32,7 @@ TracerWhitted::~TracerWhitted()
     }
 
 //! Initialize the Material for use in tracing
-static void setupMaterial(optix::Material mat, Device *dev)
+void TracerWhitted::setupMaterial(optix::Material mat, Device *dev)
     {
     optix::Program p = dev->getProgram("_ptx_generated_whitted.cu.ptx", "whitted_closest_hit");
     mat->setClosestHitProgram(0, p);

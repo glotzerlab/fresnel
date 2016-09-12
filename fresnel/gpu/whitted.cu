@@ -76,11 +76,18 @@ RT_PROGRAM void whitted_ray_gen()
 
     // determine the output pixel color
     RGB<float> c;
-    float a = 0.0;
+    float a = 0.0f;
     if (prd.hit)
         {
         c = RGB<float>(prd.result);
-        a = 1.0;
+        a = 1.0f;
+        }
+
+    // temporary testing to ensure that this kernel is doing something
+    if (launch_index.x < 10)
+        {
+        c = RGB<float>(1.0f, 0.0f, 0.0f);
+        a = 1.0f;
         }
 
     // write the output pixel

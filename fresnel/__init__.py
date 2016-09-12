@@ -5,6 +5,8 @@ R"""
 The fresnel ray tracing package.
 """
 
+import os
+
 from . import geometry
 from . import tracer
 from . import camera
@@ -27,9 +29,16 @@ class Device:
             print("Error importing:", e.msg);
             _cpu = None;
 
-        self.module = _cpu;
+        try:
+            from fresnel import _gpu;
+        except ImportError as e:
+            print("Error importing:", e.msg);
+            _gpu = None;
 
-        self._device = self.module.Device();
+        self.module = _gpu;
+
+        # self._device = _cpu.Device();
+        self._device = _gpu.Device(os.path.dirname(os.path.realpath(__file__)));
 
 class Scene:
     R""" Content of the scene to ray trace.
