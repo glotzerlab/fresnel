@@ -22,7 +22,7 @@ PYBIND11_PLUGIN(_common)
         .def_readwrite("g", &RGB<float>::g)
         .def_readwrite("b", &RGB<float>::b);
 
-    pybind11::class_< Material, std::shared_ptr<Material> >(m, "Material")
+    pybind11::class_< Material >(m, "Material")
         .def(pybind11::init<>())
         .def_readwrite("solid", &Material::solid)
         .def_readwrite("color", &Material::color)

@@ -49,11 +49,9 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
                 {
                 /*ray.Ng = ray.Ng / std::sqrt(dot(ray.Ng, ray.Ng));
                 c = dot(ray.Ng, vec3<float>(-1,-1,0));*/
-                const std::shared_ptr<Material>& m = scene->getMaterial(ray.geomID);
-                if (!m)
-                    throw std::runtime_error("Material not set");
+                const Material& m = scene->getMaterial(ray.geomID);
 
-                c = m->luminance();
+                c = m.luminance();
                 a = 1.0;
                 }
 

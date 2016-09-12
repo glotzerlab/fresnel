@@ -41,7 +41,7 @@ class Scene
             }
 
         //! Set the material for a given geometry id
-        void setMaterial(unsigned int geom_id, const std::shared_ptr<Material>& material)
+        void setMaterial(unsigned int geom_id, const Material& material)
             {
             if (geom_id >= m_materials.size())
                 m_materials.resize(geom_id+1);
@@ -50,7 +50,7 @@ class Scene
             }
 
         //! Get the material for a given geometry id
-        const std::shared_ptr<Material>& getMaterial(unsigned int geom_id)
+        const Material& getMaterial(unsigned int geom_id)
             {
             if (geom_id >= m_materials.size())
                 m_materials.resize(geom_id+1);
@@ -62,7 +62,7 @@ class Scene
         RTCScene m_scene;                   //!< Store the scene
         std::shared_ptr<Device> m_device;   //!< The device the scene is attached to
 
-        std::vector< std::shared_ptr<Material> > m_materials;  //!< Materials associated with geometry ids
+        std::vector<Material> m_materials;  //!< Materials associated with geometry ids
     };
 
 //! Export Scene to python
