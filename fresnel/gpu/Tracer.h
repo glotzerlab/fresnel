@@ -53,6 +53,7 @@ class Tracer
         Camera m_camera;                   //!< The camera
 
         optix::Program m_ray_gen;           //!< Ray generation program
+        optix::Program m_exception_program; //!< Exception program
         unsigned int m_ray_gen_entry;       //!< Entry point of the ray generation program
     };
 

@@ -18,19 +18,45 @@ TracerWhitted::TracerWhitted(std::shared_ptr<Device> device, unsigned int w, uns
 
     // create the entry point program
     optix::Context context = m_device->getContext();
-    const string& ptx_root = m_device->getPTXRoot();
-    m_ray_gen = context->createProgramFromPTXFile(ptx_root + "/_ptx_generated_whitted.cu.ptx", "whitted_ray_gen");
+    m_ray_gen = context->getProgram("_ptx_generated_whitted.cu.ptx", "whitted_ray_gen");
+    m_ray_gen_entry = context->getEntryPoint("_ptx_generated_whitted.cu.ptx", "whitted_ray_gen");
 
-    m_ray_gen_entry = context->getEntryPointCount();
-    context->setEntryPointCount(m_ray_gen_entry + 1);
-    context->setRayGenerationProgram(m_ray_gen_entry, m_ray_gen);
+    // load the exception program
+    m_exception_program = context->getProgram("_ptx_generated_whitted.cu.ptx", "whitted_exception");
+    context->setExceptionProgram(m_ray_gen_entry, m_exception_program);
 
-    m_ray_gen["scene_epsilon"]->setFloat(1.e-3f);
+    // ensure there are enough ray types
+    if (context->getRayTypeCount() < 1)
+        context->setRayTypeCount(1);
     }
 
 TracerWhitted::~TracerWhitted()
     {
     std::cout << "Destroy GPU TracerWhitted" << std::endl;
+    }
+
+/*! \param scene The Scene to render
+*/
+void TracerWhitted::render(std::shared_ptr<Scene> scene)
+    {
+    Tracer::render(scene);
+
+    optix::Context context = m_device->getContext();
+
+    // set common variables before launch
+    context["top_object"]->setObject(scene->getRoot());
+    context["scene_epsilon"]->setFloat(1.e-3f);
+    context["bad_color"]->setFloat3(1.0f, 0.0f, 1.0f);
+    // context["output_buffer"]->setBuffer(...);
+
+    // set camera variables
+    context["camera_p"]->setFloat3(m_camera.p.x, m_camera.p.y, m_camera.p.z);
+    context["camera_d"]->setFloat3(m_camera.d.x, m_camera.d.y, m_camera.d.z);
+    context["camera_u"]->setFloat3(m_camera.u.x, m_camera.u.y, m_camera.u.z);
+    context["camera_r"]->setFloat3(m_camera.r.x, m_camera.r.y, m_camera.r.z);
+    context["camera_h"]->setFloat(m_camera.h);
+
+    context->launch(m_ray_gen_entry, m_w, m_h);
     }
 
 /*! \param m Python module to export in

@@ -48,6 +48,58 @@ std::string Device::getStats()
     return s;
     }
 
+
+/*! \param filename Name of the file to load the program from
+    \param funcname Name of the function to load
+    \returns An optix::Program loaded from the given function and file name.
+
+    A file `filename` is assumed to exist in the ptx root dir. If this program has already been loaded,
+    a shared pointer to it is returned. If it has not yet been loaded, it will be loaded first.
+*/
+optix::Program Device::getProgram(const std::string& filename, const std::string& funcname)
+    {
+    // return the cached program if it has already been loaded
+    auto search = m_program_cache.find(make_tuple(filename, funcname));
+    if (search != m_program_cache.end())
+        {
+        return search->second;
+        }
+    else
+        {
+        // if it is not found, load the program and return it.
+        optix::Program p = m_context->createProgramFromPTXFile(m_ptx_root + "/" + filename, funcname);
+        m_program_cache[make_tuple(filename, funcname)] = p;
+        return p;
+        }
+    }
+
+/*! \param filename Name of the file to load the program from
+    \param funcname Name of the function to load
+    \returns The entry point index for the program
+
+    If the entry point for this program already exists in the cache, return it. If not, load the program from the
+    cache, create an entry point and set the entry point program first.
+*/
+unsigned int Device::getEntryPoint(const std::string& filename, const std::string& funcname)
+    {
+    // search for the given program in the cache
+    auto search = m_entrypoint_cache.find(make_tuple(filename, funcname));
+    if (search != m_entrypoint_cache.end())
+        {
+        // if found, return the cached entry point index
+        return search->second;
+        }
+    else
+        {
+        // if it is not found, load the program from the cache and set it to the next entry point index
+        optix::Program p = getProgram(filename, funcname);
+        unsigned int entry = m_context->getEntryPointCount();
+        m_context->setEntryPointCount(entry + 1);
+        m_context->setRayGenerationProgram(entry, p);
+        return entry;
+        }
+    }
+
 /*! \param m Python module to export in
  */
 void export_Device(pybind11::module& m)

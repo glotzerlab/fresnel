@@ -41,9 +41,6 @@ void Tracer::render(std::shared_ptr<Scene> scene)
     {
     if (scene->getDevice() != m_device)
         throw std::runtime_error("Scene and Tracer devices do not match");
-
-    optix::Context context = m_device->getContext();
-    context->launch(m_ray_gen_entry, m_w, m_h);
     }
 
 /*! \param camera The camera to set.
@@ -51,7 +48,6 @@ void Tracer::render(std::shared_ptr<Scene> scene)
 void Tracer::setCamera(const Camera& camera)
     {
     m_camera = camera;
-    // TODO: Update OptiX variables
     }
 
 pybind11::buffer_info Tracer::getBuffer()

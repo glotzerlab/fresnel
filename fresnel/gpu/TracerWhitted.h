@@ -23,6 +23,9 @@ class TracerWhitted : public Tracer
         TracerWhitted(std::shared_ptr<Device> device, unsigned int w, unsigned int h);
         //! Destructor
         virtual ~TracerWhitted();
+
+        //! Render a scene
+        void render(std::shared_ptr<Scene> scene);
     };
 
 //! Export TracerWhitted to python
