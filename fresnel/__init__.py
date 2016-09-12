@@ -14,15 +14,24 @@ from . import camera
 class Device:
     R""" Hardware device to use for ray tracing.
 
+    Args:
+
+        mode (str): Specify execution mode: Valid values are `auto`, `gpu`, and `cpu`.
+
     :py:class:`Device` defines hardware device to use for ray tracing. :py:class:`Scene` and
     :py:mod:`tracer <fresnel.tracer>` instances must be attached to a :py:class:`Device`. You may attach any number of
     instances to a single :py:class:`Device`.
+
+    When mode is `auto`, the default, Device will automatically select all available GPU devices in the system or
+    fall back on CPU rendering if there is no GPU available or GPU support was not compiled in. Set mode to
+    `gpu` or `cpu` to force a specific mode.
 
     .. tip::
         Use only a single :py:class:`Device` to reduce memory consumption.
     """
 
-    def __init__(self):
+    def __init__(self, mode='auto'):
+        # attempt to import the cpu and gpu modules
         try:
             from fresnel import _cpu;
         except ImportError as e:
@@ -35,10 +44,43 @@ class Device:
             print("Error importing:", e.msg);
             _gpu = None;
 
-        self.module = _gpu;
+        # determine the number of available GPUs
+        num_gpus = 0;
+        if _gpu is not None:
+            num_gpus = _gpu.get_num_available_devices();
 
-        # self._device = _cpu.Device();
-        self._device = _gpu.Device(os.path.dirname(os.path.realpath(__file__)));
+        # determine the selected mode
+        selected_mode = '';
+
+        if mode == 'auto':
+            if num_gpus > 0:
+                selected_mode = 'gpu'
+            else:
+                selected_mode = 'cpu'
+                if _cpu is None:
+                    raise RuntimeError("No GPUs available AND CPU fallback library is not compiled");
+
+        if mode == 'gpu':
+            if _gpu is None:
+                raise RuntimeError("GPU implementation is not compiled");
+            if num_gpus == 0:
+                raise RuntimeError("No GPUs are available");
+            selected_mode = 'gpu';
+
+        if mode == 'cpu':
+            if _cpu is None:
+                raise RuntimeError("CPU implementation is not compiled");
+            selected_mode = 'cpu';
+
+        # inititialize the device
+        if selected_mode == 'gpu':
+            self.module = _gpu;
+            self._device = _gpu.Device(os.path.dirname(os.path.realpath(__file__)));
+        elif selected_mode == 'cpu':
+            self.module = _cpu;
+            self._device = _cpu.Device();
+        else:
+            raise ValueError("Invalid mode");
 
 class Scene:
     R""" Content of the scene to ray trace.
