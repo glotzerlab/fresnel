@@ -20,6 +20,8 @@ class Material:
     """
 
     def __init__(self, solid=0, color=(0,0,0), borrow=None):
+        self.borrowed = borrow;
+
         if borrow is None:
             self._material = _common.Material();
 
@@ -36,6 +38,8 @@ class Material:
 
     @solid.setter
     def solid(self, value):
+        if self.borrowed:
+            raise AttributeError("Individual material properties of geometries are read only.")
         self._material.solid = float(value);
 
     @property
@@ -46,6 +50,8 @@ class Material:
     def color(self, value):
         if len(value) != 3:
             raise ValueError("colors must have length 3");
+        if self.borrowed:
+            raise AttributeError("Individual material properties of geometries are read only.")
 
         self._material.color = _common.RGBf(value[0], value[1], value[2]);
 
