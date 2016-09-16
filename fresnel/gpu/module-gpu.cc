@@ -14,9 +14,16 @@
 using namespace fresnel::gpu;
 using namespace std;
 
+unsigned int get_num_available_devices()
+    {
+    return optix::Context::getDeviceCount();
+    }
+
 PYBIND11_PLUGIN(_gpu)
     {
     pybind11::module m("_gpu");
+
+    m.def("get_num_available_devices", &get_num_available_devices);
 
     export_Device(m);
     export_Scene(m);
