@@ -47,11 +47,11 @@ class Geometry:
 
     @property
     def material(self):
-        return material.Material(borrow=self._geometry.getMaterial());
+        return material._material_proxy(self);
 
     @material.setter
     def material(self, mat):
-        self._geometry.setMaterial(mat._material);
+        self._geometry.setMaterial(mat._get_cpp_material());
 
 class TriangleMesh(Geometry):
     R""" Triangle mesh geometry.
