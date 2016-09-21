@@ -41,6 +41,15 @@ class GeometryPrism : public Geometry
         std::vector< vec3<float> > m_position;      //!< Position of each polyhedron
         std::vector< quat<float> > m_orientation;   //!< Orientation of each polyhedron
         std::vector< float > m_height;              //!< Height of each prism
+
+        //! Embree bounding function
+        static void bounds(void *ptr, size_t item, RTCBounds& bounds_o);
+
+        //! Embree ray intersection function
+        static void intersect(void *ptr, RTCRay& ray, size_t item);
+
+        //! Embree ray occlusion function
+        static void occlude(void *ptr, RTCRay& ray, size_t item);
     };
 
 //! Export GeometryPrism to python

@@ -58,12 +58,20 @@ GeometryPrism::GeometryPrism(std::shared_ptr<Scene> scene,
         vec2<float> p1(std::get<0>(vertices[j]), std::get<1>(vertices[j]));
         vec2<float> n = -perp(p1 - p0);
 
+        // TODO: validate winding order
+
         m_plane_origin.push_back(vec3<float>(p0.x, p0.y, 0));
         m_plane_normal.push_back(vec3<float>(n.x, n.y, 0));
         }
 
     // register functions for embree
-
+    rtcSetUserData(m_scene->getRTCScene(), m_geom_id, this);
+    m_device->checkError();
+    rtcSetBoundsFunction(m_scene->getRTCScene(), m_geom_id, &GeometryPrism::bounds);
+    m_device->checkError();
+    rtcSetIntersectFunction(m_scene->getRTCScene(), m_geom_id, &GeometryPrism::intersect);
+    m_device->checkError();
+    rtcSetOccludedFunction(m_scene->getRTCScene(), m_geom_id, &GeometryPrism::occlude);
     m_device->checkError();
 
     m_valid = true;
@@ -72,6 +80,36 @@ GeometryPrism::GeometryPrism(std::shared_ptr<Scene> scene,
 GeometryPrism::~GeometryPrism()
     {
     std::cout << "Destroy GeometryPrism" << std::endl;
+    }
+
+/*! Compute the bounding box of a given primitive
+
+    \param ptr Pointer to a GeometryPrism instance
+    \param item Index of the primitive to compute the bounding box of
+    \param bounds_o Output bounding box
+*/
+void GeometryPrism::bounds(void *ptr, size_t item, RTCBounds& bounds_o)
+    {
+    }
+
+/*! Compute the intersection of a ray with the given primitive
+
+    \param ptr Pointer to a GeometryPrism instance
+    \param ray The ray to intersect
+    \param item Index of the primitive to compute the bounding box of
+*/
+void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
+    {
+    }
+
+/*! Test if a ray intersects with the given primitive
+
+    \param ptr Pointer to a GeometryPrism instance
+    \param ray The ray to intersect
+    \param item Index of the primitive to compute the bounding box of
+*/
+void GeometryPrism::occlude(void *ptr, RTCRay& ray, size_t item)
+    {
     }
 
 /*! \param m Python module to export in
