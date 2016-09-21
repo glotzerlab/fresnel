@@ -691,13 +691,13 @@ struct quat
         This is a convenience function for easy initialization of rotmat3s from an axis and an angle.
         The rotmat3 will initialize to the same rotation as the angle around the specified axis.
 
-        TODO: Implement fast and slow math lib in fresnel and uncomment this
+        TODO: Implement fast and slow math lib in fresnel
     */
-    /*DEVICE static quat fromAxisAngle(const vec3<Real>& axis, const Real& theta)
+    DEVICE static quat fromAxisAngle(const vec3<Real>& axis, const Real& theta)
         {
-        quat<Real> q(fast::cos(theta/2.0), (Real)fast::sin(theta/2.0) * axis);
+        quat<Real> q(cos(theta/2.0), (Real)sin(theta/2.0) * axis);
         return q;
-        }*/
+        }
 
     Real s;         //!< scalar component
     vec3<Real> v;   //!< vector component

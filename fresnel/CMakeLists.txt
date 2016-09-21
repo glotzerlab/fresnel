@@ -37,6 +37,7 @@ set(_cpu_sources
      cpu/Scene.cc
      cpu/Geometry.cc
      cpu/GeometryTriangleMesh.cc
+     cpu/GeometryPrism.cc
      cpu/Tracer.cc
      cpu/TracerWhitted.cc
    )
