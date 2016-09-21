@@ -50,16 +50,13 @@ class Geometry
         void remove();
 
         //! Get the material
-        const std::shared_ptr<Material>& getMaterial()
+        const Material& getMaterial()
             {
-            // TODO
+            return m_mat;
             }
 
         //! Set the material
-        void setMaterial(const std::shared_ptr<Material>& material)
-            {
-            // TODO
-            }
+        void setMaterial(const Material& material);
 
     protected:
         optix::GeometryInstance m_instance; //!< The geometry instance object
@@ -69,6 +66,8 @@ class Geometry
 
         std::shared_ptr<Scene> m_scene;     //!< The scene the geometry is attached to
         std::shared_ptr<Device> m_device;   //!< The device the Scene is attached to
+
+        Material m_mat;                     //!< material assigned to this geometry
 
         //! Set up m_instance
         void setupInstance();

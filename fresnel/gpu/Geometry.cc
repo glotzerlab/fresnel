@@ -85,6 +85,19 @@ void Geometry::setupInstance()
     m_valid = true;
     enable();
     }
+
+/*! \param material New material to set
+
+    Sets the material parameters. These are translated to OptiX variables that are part of the geometry intance scope.
+    Also cache a local copy of the material for get methods.
+*/
+void Geometry::setMaterial(const Material& material)
+    {
+    m_mat = material;
+    m_instance["material_solid"]->setFloat(m_mat.solid);
+    m_instance["material_color"]->setFloat(m_mat.color.r, m_mat.color.g, m_mat.color.b);
+    }
+
 /*! \param m Python module to export in
  */
 void export_Geometry(pybind11::module& m)
