@@ -69,3 +69,21 @@ class TriangleMesh(Geometry):
 
         self.scene = scene;
         self.scene.geometry.append(self);
+
+class Prism(Geometry):
+    R""" Prism geometry.
+
+    Define a set of right convex prism primitives. In this implementation, the bottom polygon face is always in the
+    xy plane and each prism may have a different height and rotation angle.
+
+    Warning:
+
+        This class is  a prototype for testing, its API may change drastically.
+    """
+
+    def __init__(self, scene, verts, position, angle, height, material=material.Material(solid=1.0, color=(1,0,1))):
+        self._geometry = scene.device.module.GeometryPrism(scene._scene, verts, position, angle, height);
+        self.material = material;
+
+        self.scene = scene;
+        self.scene.geometry.append(self);
