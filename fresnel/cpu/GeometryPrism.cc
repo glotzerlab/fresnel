@@ -62,6 +62,9 @@ GeometryPrism::GeometryPrism(std::shared_ptr<Scene> scene,
 
         m_plane_origin.push_back(vec3<float>(p0.x, p0.y, 0));
         m_plane_normal.push_back(vec3<float>(n.x, n.y, 0));
+
+        // precompute radius in the xy plane
+        m_radius = std::max(m_radius, sqrtf(dot(p0,p0)));
         }
 
     // register functions for embree
@@ -90,6 +93,15 @@ GeometryPrism::~GeometryPrism()
 */
 void GeometryPrism::bounds(void *ptr, size_t item, RTCBounds& bounds_o)
     {
+    GeometryPrism *geom = (GeometryPrism*)ptr;
+    vec3<float> p = geom->m_position[item];
+    bounds_o.lower_x = p.x - geom->m_radius;
+    bounds_o.lower_y = p.y - geom->m_radius;
+    bounds_o.lower_z = p.z;
+
+    bounds_o.upper_x = p.x + geom->m_radius;
+    bounds_o.upper_y = p.y + geom->m_radius;
+    bounds_o.upper_z = p.z + geom->m_height[item];
     }
 
 /*! Compute the intersection of a ray with the given primitive
@@ -100,6 +112,9 @@ void GeometryPrism::bounds(void *ptr, size_t item, RTCBounds& bounds_o)
 */
 void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
     {
+    GeometryPrism *geom = (GeometryPrism*)ptr;
+    // TODO: implement
+    ray.geomID = geom->m_geom_id;
     }
 
 /*! Test if a ray intersects with the given primitive
@@ -110,6 +125,9 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
 */
 void GeometryPrism::occlude(void *ptr, RTCRay& ray, size_t item)
     {
+    // GeometryPrism *geom = (GeometryPrism*)ptr;
+    // TODO: implement
+    ray.geomID = 0;
     }
 
 /*! \param m Python module to export in

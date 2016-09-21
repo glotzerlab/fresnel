@@ -42,6 +42,8 @@ class GeometryPrism : public Geometry
         std::vector< quat<float> > m_orientation;   //!< Orientation of each polyhedron
         std::vector< float > m_height;              //!< Height of each prism
 
+        float m_radius=0;                           //!< Precomputed radius in the xy plane
+
         //! Embree bounding function
         static void bounds(void *ptr, size_t item, RTCBounds& bounds_o);
 
