@@ -21,6 +21,16 @@ namespace fresnel { namespace cpu {
 
     The initial implementation takes in std::vector's of tuples which will be translated from python
     lists of tuples. This API will be replaced by direct data buffers at some point.
+
+    While this class is very specific in the type of geometry it supports, the implementation is actually very general.
+    The intersection routine is capable of supporting generic 3D polyhedra. This class could be copied and used to
+    implement polyhedra, or one could implement multiple initialization routines and a flag for what type.
+    of geometry is supported. Here are the changes needed.
+
+    - In bounds(), report an AABB around the bounding sphere, ignore per particle height
+    - In intersect(), do not rewrite plane 0 with the height
+    - A new initialization routine to set up the shape planes for a general convex polyhedron, and allow 3D position
+      and quaternion orientation.
 */
 class GeometryPrism : public Geometry
     {
