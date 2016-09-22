@@ -161,6 +161,7 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
                 {
                 t0 = t;
                 t0_n_local = n;
+                t0_p_local = p;
                 }
             }
         else
@@ -170,6 +171,7 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
                 {
                 t1 = t;
                 t1_n_local = n;
+                t1_p_local = p;
                 }
             }
         }
@@ -178,23 +180,104 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
     if(t0 > t1)
         return;
 
-    // otherwise, it hit: fill out the hit structure
+    // otherwise, it hit: fill out the hit structure and track the plane that was hit
+    float t_hit = 0;
+    vec3<float> n_hit, p_hit;
 
     // if the t0 is in (tnear,tfar), we hit the entry plane
     if ((ray.tnear < t0) & (t0 < ray.tfar))
         {
-        ray.tfar = t0;
+        t_hit = ray.tfar = t0;
         ray.geomID = geom->m_geom_id;
         ray.primID = item;
         ray.Ng = rotate(q_world, t0_n_local);
+        n_hit = t0_n_local;
+        p_hit = t0_p_local;
         }
     // if t1 is in (tnear,tfar), we hit the exit plane
     if ((ray.tnear < t1) & (t1 < ray.tfar))
         {
-        ray.tfar = t1;
+        t_hit = ray.tfar = t1;
         ray.geomID = geom->m_geom_id;
         ray.primID = item;
         ray.Ng = rotate(q_world, t1_n_local);
+        n_hit = t1_n_local;
+        p_hit = t1_p_local;
+        }
+
+    // determine distance from the hit point to the nearest edge
+    vec3<float> r_hit = ray_org_local + t_hit * ray_dir_local;
+    if (ray.hit())
+        {
+        for(int i = 0; i < n_planes && t0 < t1; ++i )
+            {
+            vec3<float> n = geom->m_plane_normal[i];
+            vec3<float> p = geom->m_plane_origin[i];
+
+            // correct the top plane positions
+            if (i == 0)
+                p.z = geom->m_height[item];
+
+            // ********
+            // find the line of intersection between the two planes
+            // adapted from: http://geomalgorithms.com/a05-_intersect-1.html
+
+            // direction of the line
+            vec3<float> u = cross(n, n_hit);
+
+            // if the planes are not coplanar
+            if (fabs(dot(u,u)) >= 1e-5)
+                {
+                int maxc; // max coordinate
+                if (fabs(u.x) > fabs(u.y))
+                    {
+                    if (fabs(u.x) > fabs(u.z))
+                        maxc = 1;
+                    else
+                        maxc = 3;
+                    }
+                else
+                    {
+                    if (fabs(u.y) > fabs(u.z))
+                        maxc = 2;
+                    else
+                        maxc = 3;
+                    }
+
+                // a point on the line
+                vec3<float> x0;
+                float d1 = -dot(n,p);
+                float d2 = -dot(n_hit, p_hit);
+
+                // solve the problem in different ways based on which direction is maximum
+                switch (maxc)
+                    {
+                    case 1:                     // intersect with x=0
+                        x0.x = 0;
+                        x0.y = (d2*n.z - d1*n_hit.z) /  u.x;
+                        x0.z = (d1*n_hit.y - d2*n.y) /  u.x;
+                        break;
+                    case 2:                     // intersect with y=0
+                        x0.x = (d1*n_hit.z - d2*n.z) /  u.y;
+                        x0.y = 0;
+                        x0.z = (d2*n.x - d1*n_hit.x) /  u.y;
+                        break;
+                    case 3:                     // intersect with z=0
+                        x0.x = (d2*n.y - d1*n_hit.y) /  u.z;
+                        x0.y = (d1*n_hit.x - d2*n.x) /  u.z;
+                        x0.z = 0;
+                    }
+
+                // ********
+                // find the distance from the hit point to the line
+                // http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
+                vec3<float> v = cross(u, x0 - r_hit);
+                float dsq = dot(v, v) / dot(u,u);
+                float d = sqrtf(dsq);
+                if (d < ray.d)
+                    ray.d = d;
+                }
+            }
         }
     }
 
