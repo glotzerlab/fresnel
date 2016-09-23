@@ -22,6 +22,10 @@ TracerWhitted::~TracerWhitted()
 
 void TracerWhitted::render(std::shared_ptr<Scene> scene)
     {
+    Material edge;
+    edge.solid = 1.0;
+    edge.color = RGB<float>(0,0,0);
+
     Camera cam = m_camera;
     Tracer::render(scene);
 
@@ -43,18 +47,37 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
             rtcIntersect(scene->getRTCScene(), ray);
 
             // determine the output pixel color
-            RGB<float> c;
+            RGB<float> c(0,0,0);
             float a = 0.0;
+
             if (ray.hit())
                 {
-                /*ray.Ng = ray.Ng / std::sqrt(dot(ray.Ng, ray.Ng));
-                c = dot(ray.Ng, vec3<float>(-1,-1,0));*/
-                const Material& m = scene->getMaterial(ray.geomID);
+                vec3<float> n = ray.Ng / std::sqrt(dot(ray.Ng, ray.Ng));
+                vec3<float> l = vec3<float>(1,1,1);
+                l = l / sqrtf(dot(l,l));
+                vec3<float> v = -ray.dir / std::sqrt(dot(ray.dir, ray.dir));
+                Material m;
 
+                // apply the material color or outline color depending on the distance to the edge
                 if (ray.d > 0.15)
-                    c = m.luminance();
+                    m = scene->getMaterial(ray.geomID);
                 else
-                    c = RGB<float>(0,0,0);
+                    m = edge;
+
+                if (m.isSolid())
+                    {
+                    c = m.color;
+                    }
+                else
+                    {
+                    // only apply brdf when the light faces the surface
+                    float ndotl = dot(n,l);
+                    if (ndotl > 0.0f)
+                        {
+                        c = m.brdf(l, v, n) * float(M_PI) * /* light color * */ ndotl;
+                        }
+                    }
+
                 a = 1.0;
                 }
 
