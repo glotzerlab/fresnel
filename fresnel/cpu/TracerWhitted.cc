@@ -20,6 +20,19 @@ TracerWhitted::~TracerWhitted()
     std::cout << "Destroy TracerWhitted" << std::endl;
     }
 
+//! Temporary function for linear to srgb conversion
+/*! This is needed to make the color output look correct. It is temporary because it does not belong in the rendering
+    step, in the final fresnel API, there should be a linear to sRGB conversion done from the float linear RGB internals
+    to byte sRGB output - because other tracers may perform averaging in linear space first.
+*/
+static inline float linear_to_srgb(float x)
+    {
+    if (x < 0.0031308f)
+        return 12.92*x;
+    else
+        return (1 + 0.055) * powf(x, 1.0f / 2.4f) - 0.055;
+    }
+
 void TracerWhitted::render(std::shared_ptr<Scene> scene)
     {
     Material edge;
@@ -32,6 +45,8 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
     // update Embree data structures
     rtcCommit(scene->getRTCScene());
     m_device->checkError();
+
+    std::cout << linear_to_srgb(0.5) << std::endl;
 
     // for each pixel
     for (unsigned int j = 0; j < m_h; j++)
@@ -83,9 +98,9 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
 
             // write the output pixel
             unsigned int pixel = j*m_w + i;
-            m_out[pixel].r = c.r;
-            m_out[pixel].g = c.g;
-            m_out[pixel].b = c.b;
+            m_out[pixel].r = linear_to_srgb(c.r);
+            m_out[pixel].g = linear_to_srgb(c.g);
+            m_out[pixel].b = linear_to_srgb(c.b);
             m_out[pixel].a = a;
             }
         }
