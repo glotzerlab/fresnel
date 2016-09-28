@@ -209,7 +209,9 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
     vec3<float> r_hit = ray_org_local + t_hit * ray_dir_local;
     if (ray.hit())
         {
-        for(int i = 0; i < n_planes && t0 < t1; ++i )
+        // edges come from intersections of planes
+        // loop over all planes and find the intersection with the hit plane
+        for(int i = 0; i < n_planes; ++i )
             {
             vec3<float> n = geom->m_plane_normal[i];
             vec3<float> p = geom->m_plane_origin[i];
