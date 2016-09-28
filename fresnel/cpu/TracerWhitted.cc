@@ -51,7 +51,10 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
                 c = dot(ray.Ng, vec3<float>(-1,-1,0));*/
                 const Material& m = scene->getMaterial(ray.geomID);
 
-                c = m.luminance();
+                if (ray.d > 0.15)
+                    c = m.luminance();
+                else
+                    c = RGB<float>(0,0,0);
                 a = 1.0;
                 }
 

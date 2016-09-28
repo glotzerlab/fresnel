@@ -26,7 +26,8 @@ struct alignas(16) RTCRay
                          float tfar = std::numeric_limits<float>::infinity(),
                          float time = 0.0f,
                          int mask = -1)
-      : org(org), dir(dir), tnear(tnear), tfar(tfar), time(time), mask(mask), geomID(-1), primID(-1), instID(-1)
+      : org(org), dir(dir), tnear(tnear), tfar(tfar), time(time), mask(mask), geomID(-1), primID(-1), instID(-1),
+        d(std::numeric_limits<float>::max())
         {
 
         }
@@ -58,6 +59,7 @@ struct alignas(16) RTCRay
 
   public:
     // ray extensions go here
+    float d;             //!< Distance to the nearest edge
     };
 
 
