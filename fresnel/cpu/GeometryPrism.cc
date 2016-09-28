@@ -268,6 +268,14 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
                         x0.z = 0;
                     }
 
+                // we want the distance in the view plane for consistent line edge widths
+                // project the line x0 + t*u into the plane perpendicular to the view direction passing through r_hit
+                vec3<float> view = -ray_dir_local / sqrtf(dot(ray_dir_local, ray_dir_local));
+                u = u - dot(u, view) * view;
+                vec3<float> w = x0 - r_hit;
+                vec3<float> w_perp = w - dot(w, view) * view;
+                x0 = r_hit + w_perp;
+
                 // ********
                 // find the distance from the hit point to the line
                 // http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html

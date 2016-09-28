@@ -74,7 +74,7 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
                 Material m;
 
                 // apply the material color or outline color depending on the distance to the edge
-                if (ray.d > 0.15)
+                if (ray.d > 0.05)
                     m = scene->getMaterial(ray.geomID);
                 else
                     m = edge;
