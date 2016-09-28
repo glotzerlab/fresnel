@@ -182,6 +182,7 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
 
     // otherwise, it hit: fill out the hit structure and track the plane that was hit
     float t_hit = 0;
+    bool hit = false;
     vec3<float> n_hit, p_hit;
 
     // if the t0 is in (tnear,tfar), we hit the entry plane
@@ -193,6 +194,7 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
         ray.Ng = rotate(q_world, t0_n_local);
         n_hit = t0_n_local;
         p_hit = t0_p_local;
+        hit = true;
         }
     // if t1 is in (tnear,tfar), we hit the exit plane
     if ((ray.tnear < t1) & (t1 < ray.tfar))
@@ -203,11 +205,13 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
         ray.Ng = rotate(q_world, t1_n_local);
         n_hit = t1_n_local;
         p_hit = t1_p_local;
+        hit = true;
         }
 
     // determine distance from the hit point to the nearest edge
+    float min_d = std::numeric_limits<float>::max();
     vec3<float> r_hit = ray_org_local + t_hit * ray_dir_local;
-    if (ray.hit())
+    if (hit)
         {
         // edges come from intersections of planes
         // loop over all planes and find the intersection with the hit plane
@@ -284,10 +288,11 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
                 vec3<float> v = cross(u, x0 - r_hit);
                 float dsq = dot(v, v) / dot(u,u);
                 float d = sqrtf(dsq);
-                if (d < ray.d)
-                    ray.d = d;
+                if (d < min_d)
+                    min_d = d;
                 }
             }
+        ray.d = min_d;
         }
     }
 
