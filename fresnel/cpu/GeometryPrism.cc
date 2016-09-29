@@ -20,7 +20,8 @@ GeometryPrism::GeometryPrism(std::shared_ptr<Scene> scene,
                              const std::vector<std::tuple<float, float> > &vertices,
                              const std::vector<std::tuple<float, float> > &position,
                              const std::vector< float > &orientation,
-                             const std::vector< float > &height)
+                             const std::vector< float > &height,
+                             const std::vector<std::tuple<float, float, float> > &color)
     : Geometry(scene)
     {
     std::cout << "Create GeometryPrism" << std::endl;
@@ -33,14 +34,20 @@ GeometryPrism::GeometryPrism(std::shared_ptr<Scene> scene,
     if (orientation.size() != position.size())
         throw std::invalid_argument("orientation must have the same length as position");
     m_orientation.resize(orientation.size());
+
     if (height.size() != position.size())
         throw std::invalid_argument("height must have the same length as position");
     m_height = height;
+
+    if (color.size() != position.size())
+        throw std::invalid_argument("color must have the same length as position");
+    m_color.resize(color.size());
 
     for (unsigned int i = 0; i < position.size(); i++)
         {
         m_position[i] = vec3<float>(std::get<0>(position[i]), std::get<1>(position[i]), 0);
         m_orientation[i] = quat<float>::fromAxisAngle(vec3<float>(0,0,1), orientation[i]);
+        m_color[i] = RGB<float>(std::get<0>(color[i]), std::get<1>(color[i]), std::get<2>(color[i]));
         }
 
     // set up the planes. The first two planes are the top (z=height) and bottom (z=0).
@@ -194,6 +201,7 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
         ray.Ng = rotate(q_world, t0_n_local);
         n_hit = t0_n_local;
         p_hit = t0_p_local;
+        ray.shading_color = geom->m_color[item];
         hit = true;
         }
     // if t1 is in (tnear,tfar), we hit the exit plane
@@ -205,6 +213,7 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
         ray.Ng = rotate(q_world, t1_n_local);
         n_hit = t1_n_local;
         p_hit = t1_p_local;
+        ray.shading_color = geom->m_color[item];
         hit = true;
         }
 
@@ -388,7 +397,8 @@ void export_GeometryPrism(pybind11::module& m)
              const std::vector<std::tuple<float, float> > &,
              const std::vector<std::tuple<float, float> > &,
              const std::vector< float > &,
-             const std::vector< float > &
+             const std::vector< float > &,
+             const std::vector<std::tuple<float, float, float> > &
              >())
         ;
     }

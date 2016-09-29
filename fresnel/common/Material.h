@@ -25,21 +25,28 @@
 */
 struct Material
     {
-    float solid = 0;            //!< Set to 1 to pass through solid color
-    RGB<float> color;      //!< Color of the material
+    float solid = 0;        //!< Set to 1 to pass through solid color
+    RGB<float> color;       //!< Color of the material
+    float force = 0.0f;     //!< Set to 1 to force material color
 
-    DEVICE RGB<float> brdf(vec3<float> l, vec3<float> v, vec3<float> n) const
+    DEVICE RGB<float> brdf(vec3<float> l, vec3<float> v, vec3<float> n, const RGB<float>& shading_color) const
         {
         // BRDF is 0 when behind the surface
         if (dot(n,v) <= 0)
             return RGB<float>(0,0,0);
-        return color / float(M_PI);
+        return getColor(shading_color) / float(M_PI);
         }
 
     DEVICE bool isSolid() const
         {
         return (solid > 0.5f);
         }
+
+    DEVICE RGB<float> getColor(const RGB<float>& shading_color) const
+        {
+        return lerp(force, shading_color, color);
+        }
+
 
     };
 

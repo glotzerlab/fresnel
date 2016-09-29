@@ -38,6 +38,7 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
     Material edge;
     edge.solid = 1.0;
     edge.color = RGB<float>(0,0,0);
+    edge.force = 0.75;
 
     Camera cam = m_camera;
     Tracer::render(scene);
@@ -68,7 +69,7 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
             if (ray.hit())
                 {
                 vec3<float> n = ray.Ng / std::sqrt(dot(ray.Ng, ray.Ng));
-                vec3<float> l = vec3<float>(1,1,1);
+                vec3<float> l = vec3<float>(0.2,1,0.5);
                 l = l / sqrtf(dot(l,l));
                 vec3<float> v = -ray.dir / std::sqrt(dot(ray.dir, ray.dir));
                 Material m;
@@ -81,7 +82,7 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
 
                 if (m.isSolid())
                     {
-                    c = m.color;
+                    c = m.getColor(ray.shading_color);
                     }
                 else
                     {
@@ -89,7 +90,7 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
                     float ndotl = dot(n,l);
                     if (ndotl > 0.0f)
                         {
-                        c = m.brdf(l, v, n) * float(M_PI) * /* light color * */ ndotl;
+                        c = m.brdf(l, v, n, ray.shading_color) * float(M_PI) * /* light color * */ ndotl;
                         }
                     }
 
