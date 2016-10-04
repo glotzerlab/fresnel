@@ -2,6 +2,7 @@
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include "ColorMath.h"
+#include "VectorMath.h"
 
 #ifndef __MATERIAL_H__
 #define __MATERIAL_H__
@@ -17,7 +18,7 @@
 
 //! Material properties
 /*! Material is a plain old data struct that holds material properties, and a few methods for computing
-    an output luminance based on input vectors.
+    an output brdf based on input vectors.
 
     TODO: Document BRDF functions implemented here and what the parameters mean.
     TODO: Document linear vs SRGB color spaces.
@@ -27,13 +28,19 @@ struct Material
     float solid = 0;            //!< Set to 1 to pass through solid color
     RGB<float> color;      //!< Color of the material
 
-    DEVICE RGB<float> luminance() const
+    DEVICE RGB<float> brdf(vec3<float> l, vec3<float> v, vec3<float> n) const
         {
-        if (solid > 0.5)
-            return color;
-        else
+        // BRDF is 0 when behind the surface
+        if (dot(n,v) <= 0)
             return RGB<float>(0,0,0);
+        return color / float(M_PI);
         }
+
+    DEVICE bool isSolid() const
+        {
+        return (solid > 0.5f);
+        }
+
     };
 
 #undef DEVICE

@@ -182,6 +182,7 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
 
     // otherwise, it hit: fill out the hit structure and track the plane that was hit
     float t_hit = 0;
+    bool hit = false;
     vec3<float> n_hit, p_hit;
 
     // if the t0 is in (tnear,tfar), we hit the entry plane
@@ -193,6 +194,7 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
         ray.Ng = rotate(q_world, t0_n_local);
         n_hit = t0_n_local;
         p_hit = t0_p_local;
+        hit = true;
         }
     // if t1 is in (tnear,tfar), we hit the exit plane
     if ((ray.tnear < t1) & (t1 < ray.tfar))
@@ -203,13 +205,17 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
         ray.Ng = rotate(q_world, t1_n_local);
         n_hit = t1_n_local;
         p_hit = t1_p_local;
+        hit = true;
         }
 
     // determine distance from the hit point to the nearest edge
+    float min_d = std::numeric_limits<float>::max();
     vec3<float> r_hit = ray_org_local + t_hit * ray_dir_local;
-    if (ray.hit())
+    if (hit)
         {
-        for(int i = 0; i < n_planes && t0 < t1; ++i )
+        // edges come from intersections of planes
+        // loop over all planes and find the intersection with the hit plane
+        for(int i = 0; i < n_planes; ++i )
             {
             vec3<float> n = geom->m_plane_normal[i];
             vec3<float> p = geom->m_plane_origin[i];
@@ -268,16 +274,25 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
                         x0.z = 0;
                     }
 
+                // we want the distance in the view plane for consistent line edge widths
+                // project the line x0 + t*u into the plane perpendicular to the view direction passing through r_hit
+                vec3<float> view = -ray_dir_local / sqrtf(dot(ray_dir_local, ray_dir_local));
+                u = u - dot(u, view) * view;
+                vec3<float> w = x0 - r_hit;
+                vec3<float> w_perp = w - dot(w, view) * view;
+                x0 = r_hit + w_perp;
+
                 // ********
                 // find the distance from the hit point to the line
                 // http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
                 vec3<float> v = cross(u, x0 - r_hit);
                 float dsq = dot(v, v) / dot(u,u);
                 float d = sqrtf(dsq);
-                if (d < ray.d)
-                    ray.d = d;
+                if (d < min_d)
+                    min_d = d;
                 }
             }
+        ray.d = min_d;
         }
     }
 

@@ -25,6 +25,13 @@ rtDeclareVariable(optix::Ray, ray, rtCurrentRay, );
 rtBuffer<float4, 2> output_buffer;
 
 ///////////////////////////////////////////////////////////////////////////////////////////
+// variables output from intersection program
+
+rtDeclareVariable(float3, shading_normal, attribute shading_normal, );
+rtDeclareVariable(float, shading_distance, attribute shading_distance, );
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
 
 //! Report exceptions
 /*! Stack overflows result in magenta pixels, other exceptions are printed.
@@ -106,9 +113,43 @@ rtDeclareVariable(float, material_solid, , );
 RT_PROGRAM void whitted_closest_hit()
     {
     Material m;
-    m.solid = material_solid;
-    m.color = RGB<float>(material_color);
 
-    prd_radiance.result = m.luminance();
+    // apply the material color or outline color depending on the distance to the edge
+    if (shading_distance > 0.05)
+        {
+        m.solid = material_solid;
+        m.color = RGB<float>(material_color);
+        }
+    else
+        {
+        m.solid = 1.0;
+        m.color = RGB<float>(0,0,0);
+        }
+
+    vec3<float> Ng(shading_normal);
+    vec3<float> n = Ng * rsqrtf(dot(Ng, Ng));
+    vec3<float> l = vec3<float>(1,1,1);
+    l = l * rsqrtf(dot(l,l));
+    vec3<float> dir = vec3<float>(ray.direction);
+    vec3<float> v = -dir * rsqrtf(dot(dir, dir));
+
+    RGB<float> c;
+
+    if (m.isSolid())
+        {
+        c = m.color;
+        }
+    else
+        {
+        // only apply brdf when the light faces the surface
+        float ndotl = dot(n,l);
+        if (ndotl > 0.0f)
+            {
+            c = m.brdf(l, v, n) * float(M_PI) * /* light color * */ ndotl;
+            }
+        }
+
+
+    prd_radiance.result = c;
     prd_radiance.hit = 1;
     }

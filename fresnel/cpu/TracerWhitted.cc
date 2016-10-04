@@ -20,14 +20,33 @@ TracerWhitted::~TracerWhitted()
     std::cout << "Destroy TracerWhitted" << std::endl;
     }
 
+//! Temporary function for linear to srgb conversion
+/*! This is needed to make the color output look correct. It is temporary because it does not belong in the rendering
+    step, in the final fresnel API, there should be a linear to sRGB conversion done from the float linear RGB internals
+    to byte sRGB output - because other tracers may perform averaging in linear space first.
+*/
+static inline float linear_to_srgb(float x)
+    {
+    if (x < 0.0031308f)
+        return 12.92*x;
+    else
+        return (1 + 0.055) * powf(x, 1.0f / 2.4f) - 0.055;
+    }
+
 void TracerWhitted::render(std::shared_ptr<Scene> scene)
     {
+    Material edge;
+    edge.solid = 1.0;
+    edge.color = RGB<float>(0,0,0);
+
     Camera cam = m_camera;
     Tracer::render(scene);
 
     // update Embree data structures
     rtcCommit(scene->getRTCScene());
     m_device->checkError();
+
+    std::cout << linear_to_srgb(0.5) << std::endl;
 
     // for each pixel
     for (unsigned int j = 0; j < m_h; j++)
@@ -43,26 +62,45 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
             rtcIntersect(scene->getRTCScene(), ray);
 
             // determine the output pixel color
-            RGB<float> c;
+            RGB<float> c(0,0,0);
             float a = 0.0;
+
             if (ray.hit())
                 {
-                /*ray.Ng = ray.Ng / std::sqrt(dot(ray.Ng, ray.Ng));
-                c = dot(ray.Ng, vec3<float>(-1,-1,0));*/
-                const Material& m = scene->getMaterial(ray.geomID);
+                vec3<float> n = ray.Ng / std::sqrt(dot(ray.Ng, ray.Ng));
+                vec3<float> l = vec3<float>(1,1,1);
+                l = l / sqrtf(dot(l,l));
+                vec3<float> v = -ray.dir / std::sqrt(dot(ray.dir, ray.dir));
+                Material m;
 
-                if (ray.d > 0.15)
-                    c = m.luminance();
+                // apply the material color or outline color depending on the distance to the edge
+                if (ray.d > 0.05)
+                    m = scene->getMaterial(ray.geomID);
                 else
-                    c = RGB<float>(0,0,0);
+                    m = edge;
+
+                if (m.isSolid())
+                    {
+                    c = m.color;
+                    }
+                else
+                    {
+                    // only apply brdf when the light faces the surface
+                    float ndotl = dot(n,l);
+                    if (ndotl > 0.0f)
+                        {
+                        c = m.brdf(l, v, n) * float(M_PI) * /* light color * */ ndotl;
+                        }
+                    }
+
                 a = 1.0;
                 }
 
             // write the output pixel
             unsigned int pixel = j*m_w + i;
-            m_out[pixel].r = c.r;
-            m_out[pixel].g = c.g;
-            m_out[pixel].b = c.b;
+            m_out[pixel].r = linear_to_srgb(c.r);
+            m_out[pixel].g = linear_to_srgb(c.g);
+            m_out[pixel].b = linear_to_srgb(c.b);
             m_out[pixel].a = a;
             }
         }
