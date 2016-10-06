@@ -64,6 +64,7 @@ set(_gpu_sources
      gpu/Device.cc
      gpu/Scene.cc
      gpu/Geometry.cc
+     gpu/GeometrySphere.cc
      gpu/Tracer.cc
      gpu/TracerWhitted.cc
    )
