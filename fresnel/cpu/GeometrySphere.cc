@@ -116,6 +116,13 @@ void GeometrySphere::intersect(void *ptr, RTCRay& ray, size_t item)
             ray.primID = (unsigned int) item;
             ray.Ng = ray.org+t1*ray.dir-geom->m_position[item];
         }
+
+        // The distance of the hit position from the edge of the sphere,
+        // projected into the plane which has the ray as it's normal
+        const float d = geom->m_radius[item] - sqrt(Dsq);
+        if (d < ray.d)
+            ray.d = d;
+
    }
 
 /* Occlusion function, taken mostly from the embree user_geometry tutorial
@@ -142,6 +149,7 @@ void GeometrySphere::occlude(void *ptr, RTCRay& ray, size_t item)
         if ((ray.tnear < t1) & (t1 < ray.tfar)) {
             ray.geomID = 0;
         }
+
    }
 
 /*! \param m Python module to export in
