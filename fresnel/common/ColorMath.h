@@ -329,6 +329,18 @@ struct RGBA
     Real a; //!< a-component of the vector
     };
 
+//! Linear interpolate between two values
+/*! \param x interpolation fraction
+    \param a left side of the interpolation (x=0)
+    \param b right side of the interpolation (x=1)
+
+    \returns (1-x)*a + x*b
+*/
+template <class T>
+DEVICE inline T lerp(float x, const T& a, const T& b)
+    {
+    return (1-x) * a + x * b;
+    }
 
 #undef DEVICE
 

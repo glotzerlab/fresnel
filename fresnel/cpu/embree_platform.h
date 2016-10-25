@@ -2,6 +2,7 @@
 #define PLATFORM_H_
 
 #include "common/VectorMath.h"
+#include "common/ColorMath.h"
 #include <limits>
 
 #undef __noinline
@@ -59,7 +60,8 @@ struct alignas(16) RTCRay
 
   public:
     // ray extensions go here
-    float d;             //!< Distance to the nearest edge
+    float d;                    //!< Distance to the nearest edge
+    RGB<float> shading_color;   //!< shading color determined by which primitive the ray hits (or where on the primitive)
     };
 
 

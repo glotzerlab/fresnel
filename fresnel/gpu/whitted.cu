@@ -29,6 +29,7 @@ rtBuffer<float4, 2> output_buffer;
 
 rtDeclareVariable(float3, shading_normal, attribute shading_normal, );
 rtDeclareVariable(float, shading_distance, attribute shading_distance, );
+rtDeclareVariable(float3, shading_color, attribute shading_color, );
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -137,7 +138,7 @@ RT_PROGRAM void whitted_closest_hit()
 
     if (m.isSolid())
         {
-        c = m.color;
+        c = m.getColor(RGB<float>(shading_color));
         }
     else
         {
@@ -145,10 +146,9 @@ RT_PROGRAM void whitted_closest_hit()
         float ndotl = dot(n,l);
         if (ndotl > 0.0f)
             {
-            c = m.brdf(l, v, n) * float(M_PI) * /* light color * */ ndotl;
+            c = m.brdf(l, v, n, RGB<float>(shading_color)) * float(M_PI) * /* light color * */ ndotl;
             }
         }
-
 
     prd_radiance.result = c;
     prd_radiance.hit = 1;

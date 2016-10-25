@@ -40,7 +40,8 @@ class GeometryPrism : public Geometry
                       const std::vector<std::tuple<float, float> > &vertices,
                       const std::vector<std::tuple<float, float> > &position,
                       const std::vector<float> &orientation,
-                      const std::vector<float> &height);
+                      const std::vector<float> &height,
+                      const std::vector<std::tuple<float, float, float> > &color);
         //! Destructor
         virtual ~GeometryPrism();
 
@@ -51,6 +52,8 @@ class GeometryPrism : public Geometry
         std::vector< vec3<float> > m_position;      //!< Position of each polyhedron
         std::vector< quat<float> > m_orientation;   //!< Orientation of each polyhedron
         std::vector< float > m_height;              //!< Height of each prism
+
+        std::vector< RGB<float> > m_color;          //!< Per particle color
 
         float m_radius=0;                           //!< Precomputed radius in the xy plane
 
