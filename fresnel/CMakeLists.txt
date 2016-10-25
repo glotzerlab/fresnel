@@ -41,6 +41,7 @@ set(_cpu_sources
      cpu/GeometrySphere.cc
      cpu/Tracer.cc
      cpu/TracerWhitted.cc
+     cpu/Array.cc
    )
 
 add_python_module(_cpu "${_cpu_sources}")

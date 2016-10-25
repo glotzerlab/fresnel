@@ -29,6 +29,7 @@ PYBIND11_PLUGIN(_cpu)
     export_GeometrySphere(m);
     export_Tracer(m);
     export_TracerWhitted(m);
+    export_Array(m);
 
     return m.ptr();
     }

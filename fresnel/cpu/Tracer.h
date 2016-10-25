@@ -12,6 +12,7 @@
 #include "common/ColorMath.h"
 #include "common/Camera.h"
 #include "Scene.h"
+#include "Array.h"
 
 namespace fresnel { namespace cpu {
 
@@ -51,13 +52,15 @@ class Tracer
             m_camera = camera;
             }
 
-        //! Get a python buffer pointing to the pixel output buffer
-        virtual pybind11::buffer_info getBuffer();
+        //! Get the output pixel buffer
+        virtual std::shared_ptr< Array< RGBA<float> > > getOutputBuffer()
+            {
+            return m_out;
+            }
+
     protected:
-        std::shared_ptr<Device> m_device;  //!< The device the Scene is attached to
-        unsigned int m_w;                  //!< Width of the output buffer
-        unsigned int m_h;                  //!< Height of the output buffer
-        std::unique_ptr<RGBA<float>[]> m_out;    //!< The output buffer
+        std::shared_ptr<Device> m_device;                     //!< The device the Scene is attached to
+        std::shared_ptr< Array< RGBA<float> > > m_out;        //!< The output buffer
 
         Camera m_camera;                   //!< The camera
     };

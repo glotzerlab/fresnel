@@ -57,7 +57,7 @@ class Tracer:
         """
 
         self._tracer.render(scene._scene);
-        a = numpy.array(self._tracer, copy=False);
+        a = numpy.array(self._tracer.getOutputBuffer(), copy=False);
         return(numpy.uint8(a*255));
 
     def set_camera(self, camera):
