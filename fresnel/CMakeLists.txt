@@ -52,7 +52,9 @@ endif()
 if (ENABLE_CUDA AND ENABLE_OPTIX)
 
 # Build the PTX files for the OptiX programs
-set(_ptx_sources gpu/whitted.cu)
+set(_ptx_sources 
+	gpu/whitted.cu
+	gpu/GeometrySphere.cu)
 
 CUDA_WRAP_SRCS(_ptx PTX generated_ptx_files ${_ptx_sources})
 add_custom_target(ptx ALL
@@ -65,6 +67,7 @@ set(_gpu_sources
      gpu/Device.cc
      gpu/Scene.cc
      gpu/Geometry.cc
+     gpu/GeometrySphere.cc
      gpu/Tracer.cc
      gpu/TracerWhitted.cc
    )
