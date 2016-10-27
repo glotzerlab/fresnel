@@ -92,24 +92,25 @@ class Prism(Geometry):
 class Sphere(Geometry):
     R""" Sphere geometry.
 
-    Define a set of sphere primitives with positions and radii
+    Define a set of sphere primitives with positions, radii, and individual colors.
 
     Args:
         scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
-        position: Nx3 numpy array or data type convertible by numpy to a Nx3 array. Specifies the positions of the spheres.
-          *optional*
-        radius: N length numpy array or data type convertible by numpy to a N length array. Specifies the radii of the spheres.
-          *optional*
-        N (int): Number of spheres in the geometry. If left as ``None``, determine ``N`` from ``position``.
+        position: Nx3 numpy array or data type convertible by numpy to a Nx3 array. Specifies the positions of the
+          spheres. *optional*
+        radius: N length numpy array or data type convertible by numpy to a N length array. Specifies the radii of the
+          spheres. *optional*
+        color: Nx3 length numpy array or data type convertible by numpy to a Nx3 length array. Specifies the (r,g,b)
+          color of each particle. *optional*
+        N (int): Number of spheres in the geometry. If ``None``, determine ``N`` from ``position``.
 
     Attributes:
         position (:py:class:`fresnel.util.array`): Read or modify the positions of the spheres.
         radius (:py:class:`fresnel.util.array`): Read or modify the radii of the spheres.
-
-    TODO: how to invalidate/rebuild acceleration structure after changing the data?
+        color (:py:class:`fresnel.util.array`): Read or modify the color of the spheres.
     """
 
-    def __init__(self, scene, position=None, radius=None, N=None, material=material.Material(solid=1.0, color=(1,0,1))):
+    def __init__(self, scene, position=None, radius=None, color=None, N=None, material=material.Material(solid=1.0, color=(1,0,1))):
         if N is None:
             N = len(position);
 
@@ -122,6 +123,9 @@ class Sphere(Geometry):
         if radius is not None:
             self.radius[:] = radius;
 
+        if color is not None:
+            self.color[:] = color;
+
         self.scene = scene;
         self.scene.geometry.append(self);
 
@@ -132,3 +136,7 @@ class Sphere(Geometry):
     @property
     def radius(self):
         return util.array(self._geometry.getRadiusBuffer(), geom=self)
+
+    @property
+    def color(self):
+        return util.array(self._geometry.getColorBuffer(), geom=self)

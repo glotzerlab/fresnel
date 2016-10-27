@@ -7,10 +7,16 @@ namespace fresnel { namespace cpu {
 
 void export_Array(pybind11::module& m)
     {
-    pybind11::class_<Array< RGBA<float> >, std::shared_ptr<Array< RGBA<float> >> >(m, "ArrayRGBf")
+    pybind11::class_<Array< RGBA<float> >, std::shared_ptr<Array< RGBA<float> >> >(m, "ArrayRGBAf")
         .def_buffer([](Array< RGBA<float> > &t) -> pybind11::buffer_info { return t.getBuffer(); })
         .def("map", &Array< RGBA<float> >::map_py)
         .def("unmap", &Array< RGBA<float> >::unmap)
+        ;
+
+    pybind11::class_<Array< RGB<float> >, std::shared_ptr<Array< RGB<float> >> >(m, "ArrayRGBf")
+        .def_buffer([](Array< RGB<float> > &t) -> pybind11::buffer_info { return t.getBuffer(); })
+        .def("map", &Array< RGB<float> >::map_py)
+        .def("unmap", &Array< RGB<float> >::unmap)
         ;
 
     pybind11::class_<Array< vec3<float> >, std::shared_ptr<Array< vec3<float> >> >(m, "ArrayVec3f")

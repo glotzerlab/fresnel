@@ -75,6 +75,19 @@ namespace detail
         {
         return pybind11::format_descriptor<T>::value;
         }
+
+
+    template <class T>
+    unsigned int array_width(const RGB<T>& a)
+        {
+        return 3;
+        }
+
+    template <class T>
+    std::string array_dtype(const RGB<T>& a)
+        {
+        return pybind11::format_descriptor<T>::value;
+        }
     }
 
 //! Array data

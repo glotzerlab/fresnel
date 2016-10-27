@@ -24,9 +24,7 @@ GeometrySphere::GeometrySphere(std::shared_ptr<Scene> scene, unsigned int N)
     // initialize the buffers
     m_position = std::shared_ptr< Array< vec3<float> > >(new Array< vec3<float> >(N));
     m_radius = std::shared_ptr< Array< float > >(new Array< float >(N));
-
-    m_position->map()[0] = vec3<float>(1,2,3);
-    m_radius->map()[1] = 2.5f;
+    m_color = std::shared_ptr< Array< RGB<float> > >(new Array< RGB<float> >(N));
 
     // register functions for embree
     rtcSetUserData(m_scene->getRTCScene(), m_geom_id, this);
@@ -79,6 +77,7 @@ void GeometrySphere::intersect(void *ptr, RTCRay& ray, size_t item)
    {
     GeometrySphere *geom = (GeometrySphere*)ptr;
     const vec3<float> position = geom->m_position->map()[item];
+    const RGB<float> color = geom->m_color->map()[item];
     const vec3<float> v = ray.org-position;
     const float radius = geom->m_radius->map()[item];
     const float rsq = (radius)*(radius);
@@ -101,6 +100,7 @@ void GeometrySphere::intersect(void *ptr, RTCRay& ray, size_t item)
         ray.geomID = geom->m_geom_id;
         ray.primID = (unsigned int) item;
         ray.Ng = ray.org+t0*ray.dir-position;
+        ray.shading_color = color;
         }
     if ((ray.tnear < t1) & (t1 < ray.tfar))
         {
@@ -110,6 +110,7 @@ void GeometrySphere::intersect(void *ptr, RTCRay& ray, size_t item)
         ray.geomID = geom->m_geom_id;
         ray.primID = (unsigned int) item;
         ray.Ng = ray.org+t1*ray.dir-position;
+        ray.shading_color = color;
         }
 
     // The distance of the hit position from the edge of the sphere,
@@ -120,6 +121,7 @@ void GeometrySphere::intersect(void *ptr, RTCRay& ray, size_t item)
 
     geom->m_radius->unmap();
     geom->m_position->unmap();
+    geom->m_color->unmap();
     }
 
 /* Occlusion function, taken mostly from the embree user_geometry tutorial
@@ -163,6 +165,7 @@ void export_GeometrySphere(pybind11::module& m)
         .def(pybind11::init<std::shared_ptr<Scene>, unsigned int>())
         .def("getPositionBuffer", &GeometrySphere::getPositionBuffer)
         .def("getRadiusBuffer", &GeometrySphere::getRadiusBuffer)
+        .def("getColorBuffer", &GeometrySphere::getColorBuffer)
         .def("update", &GeometrySphere::update)
         ;
     }

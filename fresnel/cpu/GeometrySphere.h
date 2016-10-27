@@ -43,6 +43,12 @@ class GeometrySphere : public Geometry
             return m_radius;
             }
 
+        //! Get the color buffer
+        std::shared_ptr< Array< RGB<float> > > getColorBuffer()
+            {
+            return m_color;
+            }
+
         //! Notify the geometry that changes have been made to the buffers
         void update()
             {
@@ -53,6 +59,7 @@ class GeometrySphere : public Geometry
 
         std::shared_ptr< Array< vec3<float> > > m_position;  //!< Position for each sphere
         std::shared_ptr< Array< float> > m_radius;           //!< Per-particle radii
+        std::shared_ptr< Array< RGB<float> > > m_color;      //!< Per-particle color
 
         //! Embree bounding function
         static void bounds(void *ptr, size_t item, RTCBounds& bounds_o);
