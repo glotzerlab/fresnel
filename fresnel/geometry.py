@@ -62,17 +62,21 @@ class Prism(Geometry):
 
     Args:
         scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
-        vertices: Mx2 numpy array or data type convertible by numpy to a Nx2 array of floats. Specify the vertices of
-          the polygon in a counter clockwise winding direction.
-        position: Nx2 numpy array or data type convertible by numpy to a Nx2 array of floats. Specifies the positions
-          of the prisms. *optional*
-        height: N length numpy array or data type convertible by numpy to a N length array of floats. Specifies the
-          height of each prism in the z direction. *optional*
-        angle: N length numpy array or data type convertible by numpy to a N length array of floats. Specifies the
-          rotation angle of each prism (in radians). *optional*
-        color: Nx3 length numpy array or data type convertible by numpy to a Nx3 length array of floats. Specifies the (r,g,b)
-          color of each particle. *optional*
+        vertices: The vertices of the polygon in a counter clockwise winding direction.
+          **Type:** anything convertible by numpy to a Nx2 array of floats.
+        position: Positions of the prisms, *optional*.
+          **Type:** anything convertible by numpy to a Nx3 array of floats.
+        height: Height of each prism in the z direction, *optional*.
+          **Type:** anything convertible by numpy to a N length array of floats.
+        angle: Rotation angle of each prism (in radians), *optional*.
+          **Type:** anything convertible by numpy to a N length array of floats.
+        color: (r,g,b) color of each particle, *optional*.
+          **Type:** anything convertible by numpy to a Nx3 array of floats.
         N (int): Number of spheres in the geometry. If ``None``, determine ``N`` from ``position``.
+
+    Note:
+        The constructor arguments ``position``, ``height``, ``angle``, and ``color`` are optional, and just short-hand
+        for assigning the attribute after construction.
 
     .. hint::
         Avoid costly memory allocations and type conversions by specifying geometry attributes in the appropriate
@@ -132,13 +136,17 @@ class Sphere(Geometry):
 
     Args:
         scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
-        position: Nx3 numpy array or data type convertible by numpy to a Nx3 array of floats. Specifies the positions of the
-          spheres. *optional*
-        radius: N length numpy array or data type convertible by numpy to a N length array of floats. Specifies the radii of the
-          spheres. *optional*
-        color: Nx3 length numpy array or data type convertible by numpy to a Nx3 length array of floats. Specifies the (r,g,b)
-          color of each particle. *optional*
+        position: Positions of the spheres, *optional*.
+          **Type:** anything convertible by numpy to a Nx3 array of floats.
+        radius: Radius of each sphere, *optional*.
+          **Type:** anything convertible by numpy to a N length array of floats.
+        color: (r,g,b) color of each particle, *optional*.
+          **Type:** anything convertible by numpy to a Nx3 array of floats.
         N (int): Number of spheres in the geometry. If ``None``, determine ``N`` from ``position``.
+
+    Note:
+        The constructor arguments ``position``, ``radius``, and ``color`` are optional, and just short-hand
+        for assigning the attribute after construction.
 
     .. hint::
         Avoid costly memory allocations and type conversions by specifying geometry attributes in the appropriate
