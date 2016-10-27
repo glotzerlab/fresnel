@@ -90,7 +90,7 @@ class Scene:
         device (:py:class:`Device`): Device to create this Scene on.
 
     :py:class:`Scene` defines the contents of the scene to be ray traced, including any number of
-    :py:mod:`geometry <fresnel.geometry>` and :py:mod:`light <fresnel.light>` objects.
+    :py:mod:`geometry <fresnel.geometry>` objects (TODO: lights).
 
     Every :py:class:`Scene` attaches to a :py:class:`Device`. For convenience, :py:class:`Scene` creates a default
     :py:class:`Device` when **device** is *None*. If you want a non-default device, you must create it explicitly.
