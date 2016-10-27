@@ -9,6 +9,9 @@
 
 #include <pybind11/pybind11.h>
 
+// setup pybind11 to use std::shared_ptr
+PYBIND11_DECLARE_HOLDER_TYPE(T_shared_ptr_bind, std::shared_ptr<T_shared_ptr_bind>);
+
 namespace fresnel { namespace cpu {
 
 namespace detail
@@ -26,6 +29,18 @@ namespace detail
         }
 
     template <class T>
+    unsigned int array_width(const vec2<T>& a)
+        {
+        return 2;
+        }
+
+    template <class T>
+    std::string array_dtype(const vec2<T>& a)
+        {
+        return pybind11::format_descriptor<T>::value;
+        }
+
+    template <class T>
     unsigned int array_width(const vec3<T>& a)
         {
         return 3;
@@ -33,6 +48,18 @@ namespace detail
 
     template <class T>
     std::string array_dtype(const vec3<T>& a)
+        {
+        return pybind11::format_descriptor<T>::value;
+        }
+
+    template <class T>
+    unsigned int array_width(const quat<T>& a)
+        {
+        return 4;
+        }
+
+    template <class T>
+    std::string array_dtype(const quat<T>& a)
         {
         return pybind11::format_descriptor<T>::value;
         }
@@ -90,19 +117,9 @@ template<class T> class Array
             m_ndim = 2;
             }
 
-        //! Swap with another array
-        void swap(Array& b)
-            {
-            std::swap(m_w, b.m_h);
-            std::swap(m_h, b.m_h);
-            std::swap(m_ndim, b.m_ndim);
-            m_data.swap(b.m_data);
-            }
-
         //! Get a python buffer pointing to the data
         pybind11::buffer_info getBuffer()
             {
-            std::cout << "Array getBuffer()" << std::endl;
             std::vector<size_t> shape;
             std::vector<size_t> strides;
 
@@ -171,6 +188,13 @@ template<class T> class Array
         T* map()
             {
             return &m_data[0];
+            }
+
+        //! Map from python
+        void map_py()
+            {
+            // it is important that the python mapping method does not return a pointer
+            // if you return a bare pointer with pybind11, pybind11 will try to free it!
             }
 
         //! Unbind the array

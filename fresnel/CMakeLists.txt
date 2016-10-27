@@ -94,6 +94,7 @@ set(files __init__.py
           tracer.py
           material.py
           camera.py
+          util.py
     )
 
 install(FILES ${files}

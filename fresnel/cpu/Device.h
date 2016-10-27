@@ -10,8 +10,7 @@
 #include <pybind11/pybind11.h>
 #include <stdexcept>
 
-// setup pybind11 to use std::shared_ptr
-PYBIND11_DECLARE_HOLDER_TYPE(T_shared_ptr_bind, std::shared_ptr<T_shared_ptr_bind>);
+#include "Array.h"      // not used by device, but for the pybind11 shared pointer holder type definition
 
 namespace fresnel { namespace cpu {
 

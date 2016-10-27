@@ -6,6 +6,7 @@ Geometric primitives.
 """
 
 from . import material
+from . import util
 
 class Geometry:
     R""" Base class for all geometry.
@@ -93,14 +94,41 @@ class Sphere(Geometry):
 
     Define a set of sphere primitives with positions and radii
 
-    Warning:
+    Args:
+        scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
+        position: Nx3 numpy array or data type convertible by numpy to a Nx3 array. Specifies the positions of the spheres.
+          *optional*
+        radius: N length numpy array or data type convertible by numpy to a N length array. Specifies the radii of the spheres.
+          *optional*
+        N (int): Number of spheres in the geometry. If left as ``None``, determine ``N`` from ``position``.
 
-        This class is  a prototype for testing, its API may change drastically.
+    Attributes:
+        position (:py:class:`fresnel.util.array`): Read or modify the positions of the spheres.
+        radius (:py:class:`fresnel.util.array`): Read or modify the radii of the spheres.
+
+    TODO: how to invalidate/rebuild acceleration structure after changing the data?
     """
 
-    def __init__(self, scene, position, radii, material=material.Material(solid=1.0, color=(1,0,1))):
-        self._geometry = scene.device.module.GeometrySphere(scene._scene, position, radii);
+    def __init__(self, scene, position=None, radius=None, N=None, material=material.Material(solid=1.0, color=(1,0,1))):
+        if N is None:
+            N = len(position);
+
+        self._geometry = scene.device.module.GeometrySphere(scene._scene, N);
         self.material = material;
+
+        if position is not None:
+            self.position[:] = position;
+
+        if radius is not None:
+            self.radius[:] = radius;
 
         self.scene = scene;
         self.scene.geometry.append(self);
+
+    @property
+    def position(self):
+        return util.array(self._geometry.getPositionBuffer(), geom=self)
+
+    @property
+    def radius(self):
+        return util.array(self._geometry.getRadiusBuffer(), geom=self)

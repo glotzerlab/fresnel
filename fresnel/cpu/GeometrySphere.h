@@ -11,32 +11,48 @@
 #include <pybind11/pybind11.h>
 
 #include "Geometry.h"
+#include "Array.h"
 
 namespace fresnel { namespace cpu {
 
 //! Sphere geometry
 /*! Define a sphere geometry.
 
-    The initial implementation takes in std::vector's of tuples which will be translated from python
-    lists of tuples. This API will be replaced by direct data buffers at some point.
+    After construction, data fields are all 0. Users are expected to fill out data fields before using the geometry.
+    At the python level, there are convenience methods to specify data fields at the time of construction.
 
+    GeometrySphere represents N spheres, each with a position and radius.
 */
 class GeometrySphere : public Geometry
     {
     public:
         //! Constructor
-        GeometrySphere(std::shared_ptr<Scene> scene,
-                      const std::vector<std::tuple<float, float, float> > &position,
-                      const std::vector< float > &radius
-                      );
+        GeometrySphere(std::shared_ptr<Scene> scene, unsigned int N);
         //! Destructor
         virtual ~GeometrySphere();
 
+        //! Get the position buffer
+        std::shared_ptr< Array< vec3<float> > > getPositionBuffer()
+            {
+            return m_position;
+            }
+
+        //! Get the radius buffer
+        std::shared_ptr< Array< float > > getRadiusBuffer()
+            {
+            return m_radius;
+            }
+
+        //! Notify the geometry that changes have been made to the buffers
+        void update()
+            {
+            rtcUpdate(m_scene->getRTCScene(), m_geom_id);
+            }
+
     protected:
 
-        std::vector< vec3<float> > m_position;      //!< Position of each polyhedron
-
-        std::vector< float> m_radius;               //!< The per-particle radii
+        std::shared_ptr< Array< vec3<float> > > m_position;  //!< Position for each sphere
+        std::shared_ptr< Array< float> > m_radius;           //!< Per-particle radii
 
         //! Embree bounding function
         static void bounds(void *ptr, size_t item, RTCBounds& bounds_o);
