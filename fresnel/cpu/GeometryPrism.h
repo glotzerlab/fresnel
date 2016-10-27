@@ -8,6 +8,7 @@
 #include <embree2/rtcore.h>
 #include <embree2/rtcore_ray.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
 
 #include "Geometry.h"
 
@@ -37,23 +38,43 @@ class GeometryPrism : public Geometry
     public:
         //! Constructor
         GeometryPrism(std::shared_ptr<Scene> scene,
-                      const std::vector<std::tuple<float, float> > &vertices,
-                      const std::vector<std::tuple<float, float> > &position,
-                      const std::vector<float> &orientation,
-                      const std::vector<float> &height,
-                      const std::vector<std::tuple<float, float, float> > &color);
+                      pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast> vertices,
+                      unsigned int N);
         //! Destructor
         virtual ~GeometryPrism();
+
+        //! Get the position buffer
+        std::shared_ptr< Array< vec2<float> > > getPositionBuffer()
+            {
+            return m_position;
+            }
+
+        //! Get the height buffer
+        std::shared_ptr< Array< float > > getHeightBuffer()
+            {
+            return m_height;
+            }
+
+        //! Get the angle buffer
+        std::shared_ptr< Array< float > > getAngleBuffer()
+            {
+            return m_angle;
+            }
+
+        //! Get the color buffer
+        std::shared_ptr< Array< RGB<float> > > getColorBuffer()
+            {
+            return m_color;
+            }
 
     protected:
         std::vector< vec3<float> > m_plane_origin;  //!< Origins of all the planes in the convex polyhedron
         std::vector< vec3<float> > m_plane_normal;  //!< Normals of all the planes in the convex polyhedron
 
-        std::vector< vec3<float> > m_position;      //!< Position of each polyhedron
-        std::vector< quat<float> > m_orientation;   //!< Orientation of each polyhedron
-        std::vector< float > m_height;              //!< Height of each prism
-
-        std::vector< RGB<float> > m_color;          //!< Per particle color
+        std::shared_ptr< Array< vec2<float> > > m_position;   //!< Position of each polyhedron
+        std::shared_ptr< Array< float > > m_angle;            //!< Orientation of each polyhedron
+        std::shared_ptr< Array< float > > m_height;           //!< Height of each prism
+        std::shared_ptr< Array< RGB<float> > > m_color;       //!< Per-particle color
 
         float m_radius=0;                           //!< Precomputed radius in the xy plane
 

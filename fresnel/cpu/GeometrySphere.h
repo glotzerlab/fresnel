@@ -49,12 +49,6 @@ class GeometrySphere : public Geometry
             return m_color;
             }
 
-        //! Notify the geometry that changes have been made to the buffers
-        void update()
-            {
-            rtcUpdate(m_scene->getRTCScene(), m_geom_id);
-            }
-
     protected:
 
         std::shared_ptr< Array< vec3<float> > > m_position;  //!< Position for each sphere

@@ -36,7 +36,6 @@ set(_cpu_sources
      cpu/Device.cc
      cpu/Scene.cc
      cpu/Geometry.cc
-     cpu/GeometryTriangleMesh.cc
      cpu/GeometryPrism.cc
      cpu/GeometrySphere.cc
      cpu/Tracer.cc

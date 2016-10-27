@@ -4,6 +4,8 @@
 #ifndef __VECTOR_MATH_H__
 #define __VECTOR_MATH_H__
 
+#include <math.h>
+
 // need to declare these class methods with __device__ qualifiers when building in nvcc
 // DEVICE is __host__ __device__ when included in nvcc and blank when included into the host compiler
 #undef DEVICE

@@ -56,6 +56,12 @@ class Geometry
             {
             m_scene->setMaterial(m_geom_id, material);
             }
+
+        //! Notify the geometry that changes have been made to the buffers
+        void update()
+            {
+            rtcUpdate(m_scene->getRTCScene(), m_geom_id);
+            }
     protected:
         unsigned int m_geom_id=0;          //!< ID of this geometry in the scene
         bool m_valid=false;                //!< true when the geometry is valid and attached to the Scene

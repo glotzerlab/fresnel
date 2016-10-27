@@ -2,7 +2,6 @@
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include <stdexcept>
-#include <pybind11/stl.h>
 
 #include "GeometryPrism.h"
 
@@ -17,38 +16,20 @@ namespace fresnel { namespace cpu {
     Initialize the prism.
 */
 GeometryPrism::GeometryPrism(std::shared_ptr<Scene> scene,
-                             const std::vector<std::tuple<float, float> > &vertices,
-                             const std::vector<std::tuple<float, float> > &position,
-                             const std::vector< float > &orientation,
-                             const std::vector< float > &height,
-                             const std::vector<std::tuple<float, float, float> > &color)
+                             pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast> vertices,
+                             unsigned int N)
     : Geometry(scene)
     {
     std::cout << "Create GeometryPrism" << std::endl;
     // create the geometry
-    m_geom_id = rtcNewUserGeometry(m_scene->getRTCScene(), position.size());
+    m_geom_id = rtcNewUserGeometry(m_scene->getRTCScene(), N);
     m_device->checkError();
 
-    // copy data into the local buffers
-    m_position.resize(position.size());
-    if (orientation.size() != position.size())
-        throw std::invalid_argument("orientation must have the same length as position");
-    m_orientation.resize(orientation.size());
-
-    if (height.size() != position.size())
-        throw std::invalid_argument("height must have the same length as position");
-    m_height = height;
-
-    if (color.size() != position.size())
-        throw std::invalid_argument("color must have the same length as position");
-    m_color.resize(color.size());
-
-    for (unsigned int i = 0; i < position.size(); i++)
-        {
-        m_position[i] = vec3<float>(std::get<0>(position[i]), std::get<1>(position[i]), 0);
-        m_orientation[i] = quat<float>::fromAxisAngle(vec3<float>(0,0,1), orientation[i]);
-        m_color[i] = RGB<float>(std::get<0>(color[i]), std::get<1>(color[i]), std::get<2>(color[i]));
-        }
+    // allocate buffer data
+    m_position = std::shared_ptr< Array< vec2<float> > >(new Array< vec2<float> >(N));
+    m_angle = std::shared_ptr< Array< float > >(new Array< float >(N));
+    m_height = std::shared_ptr< Array< float > >(new Array< float >(N));
+    m_color = std::shared_ptr< Array< RGB<float> > >(new Array< RGB<float> >(N));
 
     // set up the planes. The first two planes are the top (z=height) and bottom (z=0).
     // initialize both to 0 here, and other code will set the height appropriately
@@ -58,12 +39,22 @@ GeometryPrism::GeometryPrism(std::shared_ptr<Scene> scene,
     m_plane_normal.push_back(vec3<float>(0,0,-1));
 
     // now create planes for each of the polygon edges
-    for (unsigned int i = 0; i < vertices.size(); i++)
+    pybind11::buffer_info info = vertices.request();
+
+    if (info.ndim != 2)
+        throw std::runtime_error("vertices must be a 2-dimensional array");
+
+    if (info.shape[1] != 2)
+        throw std::runtime_error("vertices must be a Nvert by 2 array");
+
+    float *verts_f = (float *)info.ptr;
+
+    for (unsigned int i = 0; i < info.shape[0]; i++)
         {
         // construct the normal and origin of each plane
-        vec2<float> p0(std::get<0>(vertices[i]), std::get<1>(vertices[i]));
-        int j = (i + 1) % vertices.size();
-        vec2<float> p1(std::get<0>(vertices[j]), std::get<1>(vertices[j]));
+        vec2<float> p0(verts_f[i*2], verts_f[i*2+1]);
+        int j = (i + 1) % info.shape[0];
+        vec2<float> p1(verts_f[j*2], verts_f[j*2+1]);
         vec2<float> n = -perp(p1 - p0);
         n = n / sqrtf(dot(n,n));
 
@@ -71,8 +62,8 @@ GeometryPrism::GeometryPrism(std::shared_ptr<Scene> scene,
         m_plane_normal.push_back(vec3<float>(n.x, n.y, 0));
 
         // validate winding order
-        int k = (j + 1) % vertices.size();
-        vec2<float> p2(std::get<0>(vertices[k]), std::get<1>(vertices[k]));
+        int k = (j + 1) % info.shape[0];
+        vec2<float> p2(verts_f[k*2], verts_f[k*2+1]);
 
         if (perpdot(p1 - p0, p2 - p1) <= 0)
             throw std::invalid_argument("vertices must be counterclockwise and convex");
@@ -108,14 +99,17 @@ GeometryPrism::~GeometryPrism()
 void GeometryPrism::bounds(void *ptr, size_t item, RTCBounds& bounds_o)
     {
     GeometryPrism *geom = (GeometryPrism*)ptr;
-    vec3<float> p = geom->m_position[item];
+    vec2<float> p2 = geom->m_position->get(item);
+    float height = geom->m_height->get(item);
+    vec3<float> p(p2.x, p2.y, 0.0f);
+
     bounds_o.lower_x = p.x - geom->m_radius;
     bounds_o.lower_y = p.y - geom->m_radius;
     bounds_o.lower_z = p.z;
 
     bounds_o.upper_x = p.x + geom->m_radius;
     bounds_o.upper_y = p.y + geom->m_radius;
-    bounds_o.upper_z = p.z + geom->m_height[item];
+    bounds_o.upper_z = p.z + height;
     }
 
 /*! Compute the intersection of a ray with the given primitive
@@ -133,8 +127,11 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
     float t0 = -std::numeric_limits<float>::max();
     float t1 = std::numeric_limits<float>::max();
 
-    vec3<float> pos_world = geom->m_position[item];
-    quat<float> q_world = geom->m_orientation[item];
+    const vec2<float> p2 = geom->m_position->get(item);
+    const vec3<float> pos_world(p2.x, p2.y, 0.0f);
+    const float angle = geom->m_angle->get(item);
+    const float height = geom->m_height->get(item);
+    const quat<float> q_world = quat<float>::fromAxisAngle(vec3<float>(0,0,1), angle);
 
     // transform the ray into the primitive coordinate system
     vec3<float> ray_dir_local = rotate(conj(q_world), ray.dir);
@@ -149,7 +146,7 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
 
         // correct the top plane positions
         if (i == 0)
-            p.z = geom->m_height[item];
+            p.z = height;
 
         float d = -dot(n, p);
         float denom = dot(n, ray_dir_local);
@@ -201,7 +198,7 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
         ray.Ng = rotate(q_world, t0_n_local);
         n_hit = t0_n_local;
         p_hit = t0_p_local;
-        ray.shading_color = geom->m_color[item];
+        ray.shading_color = geom->m_color->get(item);
         hit = true;
         }
     // if t1 is in (tnear,tfar), we hit the exit plane
@@ -213,7 +210,7 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
         ray.Ng = rotate(q_world, t1_n_local);
         n_hit = t1_n_local;
         p_hit = t1_p_local;
-        ray.shading_color = geom->m_color[item];
+        ray.shading_color = geom->m_color->get(item);
         hit = true;
         }
 
@@ -231,7 +228,7 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
 
             // correct the top plane positions
             if (i == 0)
-                p.z = geom->m_height[item];
+                p.z = geom->m_height->get(item);
 
             // ********
             // find the line of intersection between the two planes
@@ -322,8 +319,11 @@ void GeometryPrism::occlude(void *ptr, RTCRay& ray, size_t item)
     float t0 = -std::numeric_limits<float>::max();
     float t1 = std::numeric_limits<float>::max();
 
-    vec3<float> pos_world = geom->m_position[item];
-    quat<float> q_world = geom->m_orientation[item];
+    const vec2<float> p2 = geom->m_position->get(item);
+    const vec3<float> pos_world(p2.x, p2.y, 0.0f);
+    const float angle = geom->m_angle->get(item);
+    const float height = geom->m_height->get(item);
+    const quat<float> q_world = quat<float>::fromAxisAngle(vec3<float>(0,0,1), angle);
 
     // transform the ray into the primitive coordinate system
     vec3<float> ray_dir_local = rotate(conj(q_world), ray.dir);
@@ -338,7 +338,7 @@ void GeometryPrism::occlude(void *ptr, RTCRay& ray, size_t item)
 
         // correct the top plane positions
         if (i == 0)
-            p.z = geom->m_height[item];
+            p.z = height;
 
         float d = -dot(n, p);
         float denom = dot(n, ray_dir_local);
@@ -394,12 +394,12 @@ void export_GeometryPrism(pybind11::module& m)
     {
     pybind11::class_<GeometryPrism, std::shared_ptr<GeometryPrism> >(m, "GeometryPrism", pybind11::base<Geometry>())
         .def(pybind11::init<std::shared_ptr<Scene>,
-             const std::vector<std::tuple<float, float> > &,
-             const std::vector<std::tuple<float, float> > &,
-             const std::vector< float > &,
-             const std::vector< float > &,
-             const std::vector<std::tuple<float, float, float> > &
-             >())
+             pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast>,
+             unsigned int>())
+        .def("getPositionBuffer", &GeometryPrism::getPositionBuffer)
+        .def("getHeightBuffer", &GeometryPrism::getHeightBuffer)
+        .def("getAngleBuffer", &GeometryPrism::getAngleBuffer)
+        .def("getColorBuffer", &GeometryPrism::getColorBuffer)
         ;
     }
 

@@ -54,40 +54,76 @@ class Geometry:
     def material(self, mat):
         self._geometry.setMaterial(mat._get_cpp_material());
 
-class TriangleMesh(Geometry):
-    R""" Triangle mesh geometry.
-
-    Define a geometry consisting of a set of triangles.
-
-    Warning:
-
-        This class is temporary, for prototype testing only. It may be removed
-    """
-
-    def __init__(self, scene, verts, indices, material=material.Material(solid=1.0, color=(1,0,1))):
-        self._geometry = scene.device.module.GeometryTriangleMesh(scene._scene, verts, indices);
-        self.material = material;
-
-        self.scene = scene;
-        self.scene.geometry.append(self);
-
 class Prism(Geometry):
     R""" Prism geometry.
 
-    Define a set of right convex prism primitives. In this implementation, the bottom polygon face is always in the
-    xy plane and each prism may have a different height and rotation angle.
+    Define a set of right convex prism primitives. The bottom polygon face is always in the xy plane. Each prism may
+    have a different height and rotation angle.
 
-    Warning:
+    Args:
+        scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
+        vertices: Mx2 numpy array or data type convertible by numpy to a Nx2 array of floats. Specify the vertices of
+          the polygon in a counter clockwise winding direction.
+        position: Nx2 numpy array or data type convertible by numpy to a Nx2 array of floats. Specifies the positions
+          of the prisms. *optional*
+        height: N length numpy array or data type convertible by numpy to a N length array of floats. Specifies the
+          height of each prism in the z direction. *optional*
+        angle: N length numpy array or data type convertible by numpy to a N length array of floats. Specifies the
+          rotation angle of each prism (in radians). *optional*
+        color: Nx3 length numpy array or data type convertible by numpy to a Nx3 length array of floats. Specifies the (r,g,b)
+          color of each particle. *optional*
+        N (int): Number of spheres in the geometry. If ``None``, determine ``N`` from ``position``.
 
-        This class is  a prototype for testing, its API may change drastically.
+    .. hint::
+        Avoid costly memory allocations and type conversions by specifying geometry attributes in the appropriate
+        numpy array type.
+
+    Attributes:
+        position (:py:class:`fresnel.util.array`): Read or modify the positions of the prisms.
+        height (:py:class:`fresnel.util.array`): Read or modify the heights of the prisms.
+        angle (:py:class:`fresnel.util.array`): Read or modify the angles of the prisms.
+        color (:py:class:`fresnel.util.array`): Read or modify the color of the prisms.
+
     """
 
-    def __init__(self, scene, verts, position, angle, height, color, material=material.Material(solid=1.0, color=(1,0,1))):
-        self._geometry = scene.device.module.GeometryPrism(scene._scene, verts, position, angle, height, color);
+    def __init__(self, scene, vertices, position=None, angle=None, height=None, color=None, N=None, material=material.Material(solid=1.0, color=(1,0,1))):
+        if N is None:
+            N = len(position);
+
+        self._geometry = scene.device.module.GeometryPrism(scene._scene, vertices, N);
         self.material = material;
+
+        if position is not None:
+            self.position[:] = position;
+
+        if height is not None:
+            self.height[:] = height;
+
+        if angle is not None:
+            self.angle[:] = angle;
+
+        if color is not None:
+            self.color[:] = color;
 
         self.scene = scene;
         self.scene.geometry.append(self);
+
+    @property
+    def position(self):
+        return util.array(self._geometry.getPositionBuffer(), geom=self)
+
+    @property
+    def height(self):
+        return util.array(self._geometry.getHeightBuffer(), geom=self)
+
+    @property
+    def angle(self):
+        return util.array(self._geometry.getAngleBuffer(), geom=self)
+
+    @property
+    def color(self):
+        return util.array(self._geometry.getColorBuffer(), geom=self)
+
 
 class Sphere(Geometry):
     R""" Sphere geometry.
@@ -96,13 +132,17 @@ class Sphere(Geometry):
 
     Args:
         scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
-        position: Nx3 numpy array or data type convertible by numpy to a Nx3 array. Specifies the positions of the
+        position: Nx3 numpy array or data type convertible by numpy to a Nx3 array of floats. Specifies the positions of the
           spheres. *optional*
-        radius: N length numpy array or data type convertible by numpy to a N length array. Specifies the radii of the
+        radius: N length numpy array or data type convertible by numpy to a N length array of floats. Specifies the radii of the
           spheres. *optional*
-        color: Nx3 length numpy array or data type convertible by numpy to a Nx3 length array. Specifies the (r,g,b)
+        color: Nx3 length numpy array or data type convertible by numpy to a Nx3 length array of floats. Specifies the (r,g,b)
           color of each particle. *optional*
         N (int): Number of spheres in the geometry. If ``None``, determine ``N`` from ``position``.
+
+    .. hint::
+        Avoid costly memory allocations and type conversions by specifying geometry attributes in the appropriate
+        numpy array type.
 
     Attributes:
         position (:py:class:`fresnel.util.array`): Read or modify the positions of the spheres.

@@ -197,6 +197,12 @@ template<class T> class Array
             return m_ndim;
             }
 
+        //! Data accessor
+        const T& get(size_t i) const
+            {
+            return m_data[i];
+            }
+
         //! Bind the array
         T* map()
             {

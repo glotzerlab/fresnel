@@ -76,6 +76,7 @@ void export_Geometry(pybind11::module& m)
         .def("disable", &Geometry::disable)
         .def("enable", &Geometry::enable)
         .def("remove", &Geometry::remove)
+        .def("update", &Geometry::update)
         ;
     }
 

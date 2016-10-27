@@ -53,8 +53,8 @@ GeometrySphere::~GeometrySphere()
 void GeometrySphere::bounds(void *ptr, size_t item, RTCBounds& bounds_o)
     {
     GeometrySphere *geom = (GeometrySphere*)ptr;
-    vec3<float> p = geom->m_position->map()[item];
-    float radius = geom->m_radius->map()[item];
+    vec3<float> p = geom->m_position->get(item);
+    float radius = geom->m_radius->get(item);
     bounds_o.lower_x = p.x - radius;
     bounds_o.lower_y = p.y - radius;
     bounds_o.lower_z = p.z - radius;
@@ -62,9 +62,6 @@ void GeometrySphere::bounds(void *ptr, size_t item, RTCBounds& bounds_o)
     bounds_o.upper_x = p.x + radius;
     bounds_o.upper_y = p.y + radius;
     bounds_o.upper_z = p.z + radius;
-
-    geom->m_position->unmap();
-    geom->m_radius->unmap();
     }
 
 /*! Compute the intersection of a ray with the given primitive
@@ -76,10 +73,9 @@ void GeometrySphere::bounds(void *ptr, size_t item, RTCBounds& bounds_o)
 void GeometrySphere::intersect(void *ptr, RTCRay& ray, size_t item)
    {
     GeometrySphere *geom = (GeometrySphere*)ptr;
-    const vec3<float> position = geom->m_position->map()[item];
-    const RGB<float> color = geom->m_color->map()[item];
+    const vec3<float> position = geom->m_position->get(item);
     const vec3<float> v = ray.org-position;
-    const float radius = geom->m_radius->map()[item];
+    const float radius = geom->m_radius->get(item);
     const float rsq = (radius)*(radius);
     const vec3<float> w = cross(ray.dir,v);
     // Closest point-line distance, taken from
@@ -100,7 +96,7 @@ void GeometrySphere::intersect(void *ptr, RTCRay& ray, size_t item)
         ray.geomID = geom->m_geom_id;
         ray.primID = (unsigned int) item;
         ray.Ng = ray.org+t0*ray.dir-position;
-        ray.shading_color = color;
+        ray.shading_color = geom->m_color->get(item);
         }
     if ((ray.tnear < t1) & (t1 < ray.tfar))
         {
@@ -110,7 +106,7 @@ void GeometrySphere::intersect(void *ptr, RTCRay& ray, size_t item)
         ray.geomID = geom->m_geom_id;
         ray.primID = (unsigned int) item;
         ray.Ng = ray.org+t1*ray.dir-position;
-        ray.shading_color = color;
+        ray.shading_color = geom->m_color->get(item);
         }
 
     // The distance of the hit position from the edge of the sphere,
@@ -118,10 +114,6 @@ void GeometrySphere::intersect(void *ptr, RTCRay& ray, size_t item)
     const float d = radius - sqrt(Dsq);
     if (d < ray.d)
         ray.d = d;
-
-    geom->m_radius->unmap();
-    geom->m_position->unmap();
-    geom->m_color->unmap();
     }
 
 /* Occlusion function, taken mostly from the embree user_geometry tutorial
@@ -129,9 +121,9 @@ void GeometrySphere::intersect(void *ptr, RTCRay& ray, size_t item)
 void GeometrySphere::occlude(void *ptr, RTCRay& ray, size_t item)
    {
     GeometrySphere *geom = (GeometrySphere*)ptr;
-    const vec3<float> position = geom->m_position->map()[item];
+    const vec3<float> position = geom->m_position->get(item);
     const vec3<float> v = ray.org-position;
-    const float radius = geom->m_radius->map()[item];
+    const float radius = geom->m_radius->get(item);
     const float rsq = (radius)*(radius);
     const vec3<float> w = cross(ray.dir,v);
     // Closest point-line distance, taken from
@@ -152,9 +144,6 @@ void GeometrySphere::occlude(void *ptr, RTCRay& ray, size_t item)
         {
         ray.geomID = 0;
         }
-
-    geom->m_radius->unmap();
-    geom->m_position->unmap();
     }
 
 /*! \param m Python module to export in
@@ -166,7 +155,6 @@ void export_GeometrySphere(pybind11::module& m)
         .def("getPositionBuffer", &GeometrySphere::getPositionBuffer)
         .def("getRadiusBuffer", &GeometrySphere::getRadiusBuffer)
         .def("getColorBuffer", &GeometrySphere::getColorBuffer)
-        .def("update", &GeometrySphere::update)
         ;
     }
 
