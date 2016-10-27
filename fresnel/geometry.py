@@ -81,8 +81,25 @@ class Prism(Geometry):
         This class is  a prototype for testing, its API may change drastically.
     """
 
-    def __init__(self, scene, verts, position, angle, height, material=material.Material(solid=1.0, color=(1,0,1))):
-        self._geometry = scene.device.module.GeometryPrism(scene._scene, verts, position, angle, height);
+    def __init__(self, scene, verts, position, angle, height, color, material=material.Material(solid=1.0, color=(1,0,1))):
+        self._geometry = scene.device.module.GeometryPrism(scene._scene, verts, position, angle, height, color);
+        self.material = material;
+
+        self.scene = scene;
+        self.scene.geometry.append(self);
+
+class Sphere(Geometry):
+    R""" Sphere geometry.
+
+    Define a set of sphere primitives with positions and radii
+
+    Warning:
+
+        This class is  a prototype for testing, its API may change drastically.
+    """
+
+    def __init__(self, scene, position, radii, material=material.Material(solid=1.0, color=(1,0,1))):
+        self._geometry = scene.device.module.GeometrySphere(scene._scene, position, radii);
         self.material = material;
 
         self.scene = scene;

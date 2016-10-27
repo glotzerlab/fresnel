@@ -18,11 +18,12 @@ class Material:
     TODO: Document SRGB and linear color spaces.
     """
 
-    def __init__(self, solid=0, color=(0,0,0)):
+    def __init__(self, solid=0, color=(0,0,0), force=0):
         self._material = _common.Material();
 
         self.solid = solid;
         self.color = color;
+        self.force = force;
 
     @property
     def solid(self):
@@ -31,6 +32,14 @@ class Material:
     @solid.setter
     def solid(self, value):
         self._material.solid = float(value);
+
+    @property
+    def force(self):
+        return self._material.force;
+
+    @force.setter
+    def force(self, value):
+        self._material.force = float(value);
 
     @property
     def color(self):
@@ -60,6 +69,17 @@ class _material_proxy:
     def solid(self, value):
         m = self._geometry.getMaterial();
         m.solid = float(value);
+        self._geometry.setMaterial(m);
+
+    @property
+    def force(self):
+        m = self._geometry.getMaterial();
+        return m.force;
+
+    @force.setter
+    def force(self, value):
+        m = self._geometry.getMaterial();
+        m.force = float(value);
         self._geometry.setMaterial(m);
 
     @property

@@ -25,6 +25,7 @@ PYBIND11_PLUGIN(_common)
     pybind11::class_< Material >(m, "Material")
         .def(pybind11::init<>())
         .def_readwrite("solid", &Material::solid)
+        .def_readwrite("force", &Material::force)
         .def_readwrite("color", &Material::color)
         .def("__repr__",
             [](const Material &a)
