@@ -10,14 +10,9 @@
 namespace fresnel { namespace gpu {
 
 	/*! \param scene Scene to attach the Geometry to
-	  \param position position of each sphere
-	  \param radius radius of each sphere
-	  Initialize the sphere.
-	  */
-
-	GeometrySphere::GeometrySphere(std::shared_ptr<Scene> scene,
-			const std::vector<std::tuple<float, float, float> > &position,
-			const std::vector< float > &radius)
+	    \param N number of spheres in the geometry
+	*/
+	GeometrySphere::GeometrySphere(std::shared_ptr<Scene> scene, unsigned int N)
 		: Geometry(scene)
 		{
 		std::cout << "Create GeometrySphere" << std::endl;
@@ -26,22 +21,10 @@ namespace fresnel { namespace gpu {
 		optix::Program intersection_program;
 		optix::Program bounding_box_program;
 
-		// copy data into the local buffers
-		if (radius.size() != position.size())
-			throw std::invalid_argument("radius must have the same length as position");
-		m_position.resize(position.size());
-		m_radius.resize(position.size());
-
-		for (unsigned int i = 0; i < position.size(); i++)
-			{
-			m_position[i] = vec3<float>(std::get<0>(position[i]), std::get<1>(position[i]), std::get<2>(position[i]));
-			m_radius[i] = float (radius[i]);
-			}
-
 		auto device = scene->getDevice();
 		auto context = device->getContext();
 		m_geometry = context->createGeometry();
-		m_geometry->setPrimitiveCount(m_position.size());
+		m_geometry->setPrimitiveCount(N);
 
 		const char * path_to_ptx = "_ptx_generated_GeometrySphere.cu.ptx";
 		bounding_box_program = device->getProgram(path_to_ptx, "bounds");
@@ -50,14 +33,18 @@ namespace fresnel { namespace gpu {
 		intersection_program = device->getProgram(path_to_ptx, "intersect");
 		m_geometry->setIntersectionProgram(intersection_program);
 
-		optix::Buffer optix_positions = context->createBuffer(RT_BUFFER_INPUT_OUTPUT, RT_FORMAT_FLOAT4, m_position.size());
-		m_geometry["spheres"]->setBuffer(optix_positions);
-		optix::float4 *position_buffer = (optix::float4 *) optix_positions->map();
-		for(unsigned int i = 0; i < m_position.size(); i++)
-			{
-			position_buffer[i] = optix::make_float4(m_position[i].x, m_position[i].y, m_position[i].z, m_radius[i]); 
-			}
-		optix_positions->unmap();
+		optix::Buffer optix_positions = context->createBuffer(RT_BUFFER_INPUT_OUTPUT, RT_FORMAT_FLOAT3, N);
+        optix::Buffer optix_radius = context->createBuffer(RT_BUFFER_INPUT_OUTPUT, RT_FORMAT_FLOAT, N);
+        optix::Buffer optix_color = context->createBuffer(RT_BUFFER_INPUT_OUTPUT, RT_FORMAT_FLOAT3, N);
+
+		m_geometry["sphere_position"]->setBuffer(optix_positions);
+        m_geometry["sphere_radius"]->setBuffer(optix_radius);
+        m_geometry["sphere_color"]->setBuffer(optix_color);
+
+        // intialize python access to buffers
+        m_position = std::shared_ptr< Array< vec3<float> > >(new Array< vec3<float> >(1, optix_positions));
+        m_radius = std::shared_ptr< Array< float > >(new Array< float >(1, optix_radius));
+        m_color = std::shared_ptr< Array< RGB<float> > >(new Array< RGB<float> >(1, optix_color));
 		setupInstance();
 		}
 
@@ -69,10 +56,10 @@ namespace fresnel { namespace gpu {
 	void export_GeometrySphere(pybind11::module& m)
 		{
 		pybind11::class_<GeometrySphere, std::shared_ptr<GeometrySphere>>(m, "GeometrySphere", pybind11::base<Geometry>())
-			.def(pybind11::init<std::shared_ptr<Scene>,
-				 const std::vector<std::tuple<float, float, float>> &,
-				 const std::vector<float> &
-				 >())
+            .def(pybind11::init<std::shared_ptr<Scene>, unsigned int>())
+            .def("getPositionBuffer", &GeometrySphere::getPositionBuffer)
+            .def("getRadiusBuffer", &GeometrySphere::getRadiusBuffer)
+            .def("getColorBuffer", &GeometrySphere::getColorBuffer)
 			;
 		}
 

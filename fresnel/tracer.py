@@ -57,8 +57,12 @@ class Tracer:
         """
 
         self._tracer.render(scene._scene);
-        a = numpy.array(self._tracer.getOutputBuffer(), copy=False);
-        return(numpy.uint8(a*255));
+        buf = self._tracer.getOutputBuffer()
+        buf.map();
+        a = numpy.array(buf, copy=False);
+        result = numpy.uint8(a*255);
+        buf.unmap();
+        return result;
 
     def set_camera(self, camera):
         R""" Set the camera.

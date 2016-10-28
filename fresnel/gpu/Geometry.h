@@ -58,6 +58,12 @@ class Geometry
         //! Set the material
         void setMaterial(const Material& material);
 
+        //! Notify the geometry that changes have been made to the buffers
+        void update()
+            {
+            // notify the scene that its acceleration structure needs to be rebuilt
+            m_scene->update();
+            }
     protected:
         optix::GeometryInstance m_instance; //!< The geometry instance object
         optix::Geometry m_geometry;         //!< The geometry object

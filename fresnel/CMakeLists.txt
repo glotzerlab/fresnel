@@ -52,7 +52,7 @@ endif()
 if (ENABLE_CUDA AND ENABLE_OPTIX)
 
 # Build the PTX files for the OptiX programs
-set(_ptx_sources 
+set(_ptx_sources
 	gpu/whitted.cu
 	gpu/GeometrySphere.cu)
 
@@ -70,6 +70,7 @@ set(_gpu_sources
      gpu/GeometrySphere.cc
      gpu/Tracer.cc
      gpu/TracerWhitted.cc
+     gpu/Array.cc
    )
 
 add_python_module(_gpu "${_gpu_sources}")
