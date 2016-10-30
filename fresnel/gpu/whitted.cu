@@ -91,13 +91,6 @@ RT_PROGRAM void whitted_ray_gen()
         a = 1.0f;
         }
 
-    // temporary testing to ensure that this kernel is doing something
-    if (launch_index.x < 10)
-        {
-        c = RGB<float>(1.0f, 0.0f, 0.0f);
-        a = 1.0f;
-        }
-
     // write the output pixel
     output_buffer[launch_index] = make_float4(c.r, c.g, c.b, a);
     }

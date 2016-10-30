@@ -5,7 +5,7 @@
 #include "Device.h"
 #include "Scene.h"
 #include "Geometry.h"
-// #include "GeometryTriangleMesh.h"
+#include "GeometrySphere.h"
 #include "Tracer.h"
 #include "TracerWhitted.h"
 
@@ -28,7 +28,7 @@ PYBIND11_PLUGIN(_gpu)
     export_Device(m);
     export_Scene(m);
     export_Geometry(m);
-    // export_GeometryTriangleMesh(m);
+    export_GeometrySphere(m);
     export_Tracer(m);
     export_TracerWhitted(m);
 

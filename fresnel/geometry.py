@@ -104,3 +104,20 @@ class Sphere(Geometry):
 
         self.scene = scene;
         self.scene.geometry.append(self);
+
+class Sphere(Geometry):
+    R""" Sphere geometry.
+
+    Define a set of sphere primitives with positions and radii
+
+    Warning:
+
+        This class is  a prototype for testing, its API may change drastically.
+    """
+
+    def __init__(self, scene, position, radii, material=material.Material(solid=1.0, color=(1,0,1))):
+        self._geometry = scene.device.module.GeometrySphere(scene._scene, position, radii);
+        self.material = material;
+
+        self.scene = scene;
+        self.scene.geometry.append(self);
