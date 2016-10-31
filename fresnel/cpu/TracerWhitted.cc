@@ -38,7 +38,7 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
     Material edge;
     edge.solid = 1.0;
     edge.color = RGB<float>(0,0,0);
-    edge.force = 0.75;
+    edge.geometry_color_mix = 0.75;
 
     Camera cam = m_camera;
     Tracer::render(scene);

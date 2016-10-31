@@ -13,17 +13,19 @@ class Material:
     Args:
 
         solid (float): Set to 1 to pass through a solid color, regardless of the light and view angle.
-        color (tuple): 3-tuple, list or other iterable that specifies the RGB color of the material.
+        color (tuple): The RGB color of the material as a 3-tuple, list or other iterable.
+        geometry_color_mix (float): Set to 1 to use the color provided in the Geometry, 0 to use the color
+          specified in the material, or in the range (0,1) to mix the two colors.
 
-    TODO: Document SRGB and linear color spaces.
+    TODO: Document SRGB and linear color spaces, and attributes
     """
 
-    def __init__(self, solid=0, color=(0,0,0), force=0):
+    def __init__(self, solid=0, color=(0,0,0), geometry_color_mix=0):
         self._material = _common.Material();
 
         self.solid = solid;
         self.color = color;
-        self.force = force;
+        self.geometry_color_mix = geometry_color_mix;
 
     @property
     def solid(self):
@@ -34,12 +36,12 @@ class Material:
         self._material.solid = float(value);
 
     @property
-    def force(self):
-        return self._material.force;
+    def geometry_color_mix(self):
+        return self._material.geometry_color_mix;
 
-    @force.setter
-    def force(self, value):
-        self._material.force = float(value);
+    @geometry_color_mix.setter
+    def geometry_color_mix(self, value):
+        self._material.geometry_color_mix = float(value);
 
     @property
     def color(self):
@@ -72,14 +74,14 @@ class _material_proxy:
         self._geometry.setMaterial(m);
 
     @property
-    def force(self):
+    def geometry_color_mix(self):
         m = self._geometry.getMaterial();
-        return m.force;
+        return m.geometry_color_mix;
 
-    @force.setter
-    def force(self, value):
+    @geometry_color_mix.setter
+    def geometry_color_mix(self, value):
         m = self._geometry.getMaterial();
-        m.force = float(value);
+        m.geometry_color_mix = float(value);
         self._geometry.setMaterial(m);
 
     @property

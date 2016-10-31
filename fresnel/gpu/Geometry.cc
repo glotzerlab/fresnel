@@ -96,6 +96,7 @@ void Geometry::setMaterial(const Material& material)
     m_mat = material;
     m_instance["material_solid"]->setFloat(m_mat.solid);
     m_instance["material_color"]->setFloat(m_mat.color.r, m_mat.color.g, m_mat.color.b);
+    m_instance["material_geometry_color_mix"]->setFloat(m_mat.geometry_color_mix);
     }
 
 /*! \param m Python module to export in
