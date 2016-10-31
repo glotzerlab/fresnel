@@ -47,16 +47,18 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
     rtcCommit(scene->getRTCScene());
     m_device->checkError();
 
-    std::cout << linear_to_srgb(0.5) << std::endl;
+    RGBA<float>* output = m_out->map();
 
     // for each pixel
-    for (unsigned int j = 0; j < m_h; j++)
+    const unsigned int height = m_out->getH();
+    const unsigned int width = m_out->getW();
+    for (unsigned int j = 0; j < height; j++)
         {
-        for (unsigned int i = 0; i < m_w; i++)
+        for (unsigned int i = 0; i < width; i++)
             {
             // determine the viewing plane relative coordinates
-            float ys = -1.0f*(j/float(m_h-1)-0.5f);
-            float xs = i/float(m_h-1)-0.5f*float(m_w)/float(m_h);
+            float ys = -1.0f*(j/float(height-1)-0.5f);
+            float xs = i/float(height-1)-0.5f*float(width)/float(height);
 
             // trace a ray into the scene
             RTCRay ray(cam.origin(xs, ys), cam.direction(xs, ys));
@@ -98,13 +100,15 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
                 }
 
             // write the output pixel
-            unsigned int pixel = j*m_w + i;
-            m_out[pixel].r = linear_to_srgb(c.r);
-            m_out[pixel].g = linear_to_srgb(c.g);
-            m_out[pixel].b = linear_to_srgb(c.b);
-            m_out[pixel].a = a;
+            unsigned int pixel = j*width + i;
+            output[pixel].r = linear_to_srgb(c.r);
+            output[pixel].g = linear_to_srgb(c.g);
+            output[pixel].b = linear_to_srgb(c.b);
+            output[pixel].a = a;
             }
         }
+
+    m_out->unmap();
     }
 
 /*! \param m Python module to export in
@@ -113,7 +117,6 @@ void export_TracerWhitted(pybind11::module& m)
     {
     pybind11::class_<TracerWhitted, std::shared_ptr<TracerWhitted> >(m, "TracerWhitted", pybind11::base<Tracer>())
         .def(pybind11::init<std::shared_ptr<Device>, unsigned int, unsigned int>())
-        .def_buffer([](TracerWhitted &t) -> pybind11::buffer_info { return t.getBuffer(); })  // repeated because def_buffer does not inherit
         ;
     }
 

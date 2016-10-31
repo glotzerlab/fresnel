@@ -36,6 +36,12 @@ Device::Device(const std::string& ptx_root) : m_ptx_root(ptx_root)
 Device::~Device()
     {
     std::cout << "Destroy GPU Device" << std::endl;
+
+    // destroy programs
+    for (auto elem : m_program_cache)
+        {
+        elem.second->destroy();
+        }
     m_whitted_mat->destroy();
     m_context->destroy();
     }

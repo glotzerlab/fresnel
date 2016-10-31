@@ -7,7 +7,8 @@ fresnel.geometry
     :nosignatures:
 
     fresnel.geometry.Geometry
-    fresnel.geometry.TriangleMesh
+    fresnel.geometry.Prism
+    fresnel.geometry.Sphere
 
 .. rubric:: Details
 

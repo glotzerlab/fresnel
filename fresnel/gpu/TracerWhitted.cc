@@ -68,7 +68,6 @@ void export_TracerWhitted(pybind11::module& m)
     {
     pybind11::class_<TracerWhitted, std::shared_ptr<TracerWhitted> >(m, "TracerWhitted", pybind11::base<Tracer>())
         .def(pybind11::init<std::shared_ptr<Device>, unsigned int, unsigned int>())
-        .def_buffer([](TracerWhitted &t) -> pybind11::buffer_info { return t.getBuffer(); })  // repeated because def_buffer does not inherit
         ;
     }
 

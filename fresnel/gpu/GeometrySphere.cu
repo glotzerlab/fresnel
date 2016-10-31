@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (c) 2016, NVIDIA CORPORATION. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,18 +30,23 @@
 
 using namespace optix;
 
-rtBuffer<float4> spheres;
+rtBuffer<float3> sphere_position;
+rtBuffer<float> sphere_radius;
+rtBuffer<float3> sphere_color;
 
-rtDeclareVariable(float3, geometric_normal, attribute geometric_normal, ); 
-rtDeclareVariable(float3, shading_normal, attribute shading_normal, ); 
-rtDeclareVariable(float, shading_distance, attribute shading_distance, ); 
+rtDeclareVariable(float3, geometric_normal, attribute geometric_normal, );
+rtDeclareVariable(float3, shading_normal, attribute shading_normal, );
+rtDeclareVariable(float, shading_distance, attribute shading_distance, );
+rtDeclareVariable(float3, shading_color, attribute shading_color, );
 rtDeclareVariable(optix::Ray, ray, rtCurrentRay, );
 
 template<bool use_robust_method>
 static __device__
 void intersect_sphere(int primIdx)
 {
-  float4 sphere = spheres[primIdx];
+    float3 pos_in = sphere_position[primIdx];
+    float radius_in = sphere_radius[primIdx];
+  float4 sphere = make_float4(pos_in.x, pos_in.y, pos_in.z, radius_in);
   float3 center = make_float3(sphere);
   float3 O = ray.origin - center;
   float3 D = ray.direction;
@@ -78,15 +83,17 @@ void intersect_sphere(int primIdx)
     bool check_second = true;
     if( rtPotentialIntersection( root1 + root11 ) ) {
       shading_normal = geometric_normal = (O + (root1 + root11)*D)/radius;
-	  float x = dot(D, D);
-	  shading_distance = radius - sqrt(((x * dot(O, O)) - b*b)/x);
+      float x = dot(D, D);
+      shading_distance = radius - sqrt(((x * dot(O, O)) - b*b)/x);
+      shading_color = sphere_color[primIdx];
       if(rtReportIntersection(0))
         check_second = false;
-    } 
+    }
     if(check_second) {
       float root2 = (-b + sdisc) + (do_refine ? root1 : 0);
       if( rtPotentialIntersection( root2 ) ) {
         shading_normal = geometric_normal = (O + root2*D)/radius;
+        shading_color = sphere_color[primIdx];
         rtReportIntersection(0);
       }
     }
@@ -108,12 +115,15 @@ RT_PROGRAM void robust_intersect(int primIdx)
 
 RT_PROGRAM void bounds (int primIdx, float result[6])
 {
-  float4 sphere = spheres[primIdx];
+    float3 pos = sphere_position[primIdx];
+    float radius = sphere_radius[primIdx];
+    float4 sphere = make_float4(pos.x, pos.y, pos.z, radius);
+
   const float3 cen = make_float3( sphere );
   const float3 rad = make_float3( sphere.w );
 
   optix::Aabb* aabb = (optix::Aabb*)result;
-  
+
   if( rad.x > 0.0f  && !isinf(rad.x) ) {
     aabb->m_min = cen - rad;
     aabb->m_max = cen + rad;

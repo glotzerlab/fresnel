@@ -20,6 +20,8 @@ fresnel
 .. toctree::
    :maxdepth: 3
 
+   module-camera
    module-geometry
    module-material
    module-tracer
+   module-util

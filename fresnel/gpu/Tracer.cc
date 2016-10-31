@@ -18,8 +18,6 @@ Tracer::Tracer(std::shared_ptr<Device> device, unsigned int w, unsigned int h)
 Tracer::~Tracer()
     {
     std::cout << "Destroy GPU Tracer" << std::endl;
-    m_ray_gen->destroy();
-    m_exception_program->destroy();
     m_out_gpu->destroy();
     }
 
@@ -33,10 +31,10 @@ void Tracer::resize(unsigned int w, unsigned int h)
     if (w == 0 || h == 0)
         throw std::runtime_error("Invalid dimensions");
 
-    m_out_cpu = std::unique_ptr< RGBA<float>[] >(new RGBA<float>[w*h]);
     m_out_gpu->setSize(w, h);
     m_w = w;
     m_h = h;
+    m_out_py = std::make_shared< Array< RGBA<float> > >(2, m_out_gpu);
     }
 
 /*! \param scene The Scene to render
@@ -54,27 +52,6 @@ void Tracer::setCamera(const Camera& camera)
     m_camera = camera;
     }
 
-pybind11::buffer_info Tracer::getBuffer()
-    {
-    std::cout << "Tracer::getBuffer" << std::endl;
-
-    // copy result from the GPU (note, this is inefficient as it is done every time getBuffer is called)
-    // maybe we can devise a better solution with #8, or maybe it just needs to be documented
-    void *data = m_out_gpu->map(0, RT_BUFFER_MAP_READ);
-    memcpy(m_out_cpu.get(), data, sizeof(float)*4*m_w*m_h);
-    m_out_gpu->unmap();
-
-    return pybind11::buffer_info(m_out_cpu.get(),                               /* Pointer to buffer */
-                                 sizeof(float),                             /* Size of one scalar */
-                                 pybind11::format_descriptor<float>::value, /* Python struct-style format descriptor */
-                                 3,                                         /* Number of dimensions */
-                                 { m_h, m_w, 4 },                           /* Buffer dimensions */
-                                 { sizeof(float)*m_w*4,                     /* Strides (in bytes) for each index */
-                                   sizeof(float)*4,
-                                   sizeof(float)
-                                 });
-    }
-
 /*! \param m Python module to export in
  */
 void export_Tracer(pybind11::module& m)
@@ -84,7 +61,7 @@ void export_Tracer(pybind11::module& m)
         .def("render", &Tracer::render)
         .def("resize", &Tracer::resize)
         .def("setCamera", &Tracer::setCamera)
-        .def_buffer([](Tracer &t) -> pybind11::buffer_info { return t.getBuffer(); })
+        .def("getOutputBuffer", &Tracer::getOutputBuffer)
         ;
     }
 

@@ -36,11 +36,11 @@ set(_cpu_sources
      cpu/Device.cc
      cpu/Scene.cc
      cpu/Geometry.cc
-     cpu/GeometryTriangleMesh.cc
      cpu/GeometryPrism.cc
      cpu/GeometrySphere.cc
      cpu/Tracer.cc
      cpu/TracerWhitted.cc
+     cpu/Array.cc
    )
 
 add_python_module(_cpu "${_cpu_sources}")
@@ -52,7 +52,7 @@ endif()
 if (ENABLE_CUDA AND ENABLE_OPTIX)
 
 # Build the PTX files for the OptiX programs
-set(_ptx_sources 
+set(_ptx_sources
 	gpu/whitted.cu
 	gpu/GeometrySphere.cu)
 
@@ -70,6 +70,7 @@ set(_gpu_sources
      gpu/GeometrySphere.cc
      gpu/Tracer.cc
      gpu/TracerWhitted.cc
+     gpu/Array.cc
    )
 
 add_python_module(_gpu "${_gpu_sources}")
@@ -96,6 +97,7 @@ set(files __init__.py
           tracer.py
           material.py
           camera.py
+          util.py
     )
 
 install(FILES ${files}

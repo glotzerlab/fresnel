@@ -59,6 +59,14 @@ class Scene
             m_accel->markDirty();
             }
 
+        //! Update acceleration structures
+        /*! Call when any geometry in this scene is modified
+        */
+        void update()
+            {
+            m_accel->markDirty();
+            }
+
     private:
         optix::GeometryGroup m_root;        //!< Store the scene root object
         optix::Acceleration m_accel;        //!< Store the acceleration structure

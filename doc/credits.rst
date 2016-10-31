@@ -6,9 +6,11 @@ Fresnel Developers
 
 Joshua A. Anderson, University of Michigan - **Lead developer**
 
-Source code
------------
+Vyas Ramasubramani, University of Michigan
+    * Sphere geometry (GPU)
 
+Bryan Vansaders, University of Michigan
+    * Sphere geometry (CPU)
 
 Libraries
 ---------

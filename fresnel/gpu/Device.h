@@ -9,8 +9,7 @@
 #include <stdexcept>
 #include <map>
 
-// setup pybind11 to use std::shared_ptr
-PYBIND11_DECLARE_HOLDER_TYPE(T_shared_ptr_bind, std::shared_ptr<T_shared_ptr_bind>);
+#include "Array.h" // not used here, but need to get the first defn of the shared pointer holder type for pybind11
 
 namespace fresnel { namespace gpu {
 
