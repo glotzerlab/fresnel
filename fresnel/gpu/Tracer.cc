@@ -18,7 +18,6 @@ Tracer::Tracer(std::shared_ptr<Device> device, unsigned int w, unsigned int h)
 Tracer::~Tracer()
     {
     std::cout << "Destroy GPU Tracer" << std::endl;
-    m_out_gpu->destroy();
     }
 
 /*! \param w New output buffer width

@@ -356,15 +356,18 @@ struct vec2
         {
         }
 
-    //! Implicit cast from vec2<double> to the current Real
-    DEVICE vec2(const vec2<double>& a) : x(a.x), y(a.y)
+    #ifdef NVCC
+    //! Convenience function to generate float2 in device code
+    DEVICE operator float2()
         {
+        return make_float2(x, y);
         }
 
-    //! Implicit cast from vec2<float> to the current Real
-    DEVICE vec2(const vec2<float>& a) : x(a.x), y(a.y)
+    //! Convenience function to get a vec2 from a float2 in device code
+    DEVICE explicit vec2(const float2& a) : x(a.x), y(a.y)
         {
         }
+    #endif
 
     //! Swap with another vector
     DEVICE void swap(vec2<Real>& v)
