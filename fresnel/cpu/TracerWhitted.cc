@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Regents of the University of Michigan
+// Copyright (c) 2016-2017 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include "TracerWhitted.h"
@@ -65,7 +65,7 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
             rtcIntersect(scene->getRTCScene(), ray);
 
             // determine the output pixel color
-            RGB<float> c(0,0,0);
+            RGB<float> c(1,1,1);
             float a = 0.0;
 
             if (ray.hit())
