@@ -94,6 +94,10 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
                         {
                         c = m.brdf(l, v, n, ray.shading_color) * float(M_PI) * /* light color * */ ndotl;
                         }
+                    else
+                        {
+                        c = RGB<float>(0,0,0);
+                        }
                     }
 
                 a = 1.0;

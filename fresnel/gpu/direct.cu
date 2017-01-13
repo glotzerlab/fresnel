@@ -130,7 +130,7 @@ RT_PROGRAM void direct_closest_hit()
     vec3<float> dir = vec3<float>(ray.direction);
     vec3<float> v = -dir * rsqrtf(dot(dir, dir));
 
-    RGB<float> c;
+    RGB<float> c(1,1,1);
 
     if (m.isSolid())
         {
@@ -143,6 +143,10 @@ RT_PROGRAM void direct_closest_hit()
         if (ndotl > 0.0f)
             {
             c = m.brdf(l, v, n, RGB<float>(shading_color)) * float(M_PI) * /* light color * */ ndotl;
+            }
+        else
+            {
+            c = RGB<float>(0,0,0);
             }
         }
 
