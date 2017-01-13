@@ -58,11 +58,48 @@ class Scene
             return m_materials[geom_id];
             }
 
+        //! Set the outline material for a given geometry id
+        void setOutlineMaterial(unsigned int geom_id, const Material& material)
+            {
+            if (geom_id >= m_outline_materials.size())
+                m_outline_materials.resize(geom_id+1);
+
+            m_outline_materials[geom_id] = material;
+            }
+
+        //! Get the outline material for a given geometry id
+        const Material& getOutlineMaterial(unsigned int geom_id)
+            {
+            if (geom_id >= m_outline_materials.size())
+                m_outline_materials.resize(geom_id+1);
+
+            return m_outline_materials[geom_id];
+            }
+
+        //! Set the outline width for a given geometry id
+        void setOutlineWidth(unsigned int geom_id, float width)
+            {
+            if (geom_id >= m_outline_widths.size())
+                m_outline_widths.resize(geom_id+1);
+
+            m_outline_widths[geom_id] = width;
+            }
+
+        //! Get the outline material for a given geometry id
+        float getOutlineWidth(unsigned int geom_id)
+            {
+            if (geom_id >= m_outline_widths.size())
+                m_outline_widths.resize(geom_id+1);
+
+            return m_outline_widths[geom_id];
+            }
     private:
         RTCScene m_scene;                   //!< Store the scene
         std::shared_ptr<Device> m_device;   //!< The device the scene is attached to
 
-        std::vector<Material> m_materials;  //!< Materials associated with geometry ids
+        std::vector<Material> m_materials;          //!< Materials associated with geometry ids
+        std::vector<Material> m_outline_materials;  //!< Materials associated with geometry ids
+        std::vector<float> m_outline_widths;        //!< Materials associated with geometry ids
     };
 
 //! Export Scene to python

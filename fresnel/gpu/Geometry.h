@@ -55,8 +55,26 @@ class Geometry
             return m_mat;
             }
 
+        //! Get the material
+        const Material& getOutlineMaterial()
+            {
+            return m_outline_mat;
+            }
+
+        //! Get the outline width
+        float getOutlineWidth()
+            {
+            return m_outline_width;
+            }
+
         //! Set the material
         void setMaterial(const Material& material);
+
+        //! Set the outline material
+        void setOutlineMaterial(const Material& material);
+
+        //! Set the outline width
+        void setOutlineWidth(float width);
 
         //! Notify the geometry that changes have been made to the buffers
         void update()
@@ -74,6 +92,8 @@ class Geometry
         std::shared_ptr<Device> m_device;   //!< The device the Scene is attached to
 
         Material m_mat;                     //!< material assigned to this geometry
+        Material m_outline_mat;             //!< outline material assigned to this geometry
+        float m_outline_width;              //!< outline width
 
         //! Set up m_instance
         void setupInstance();

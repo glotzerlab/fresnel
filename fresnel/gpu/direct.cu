@@ -101,6 +101,10 @@ RT_PROGRAM void direct_ray_gen()
 rtDeclareVariable(float3, material_color, , );
 rtDeclareVariable(float, material_solid, , );
 rtDeclareVariable(float, material_geometry_color_mix, , );
+rtDeclareVariable(float3, outline_material_color, , );
+rtDeclareVariable(float, outline_material_solid, , );
+rtDeclareVariable(float, outline_material_geometry_color_mix, , );
+rtDeclareVariable(float, outline_width, , );
 
 //! Determine result color
 /*! Implement Whitted ray material

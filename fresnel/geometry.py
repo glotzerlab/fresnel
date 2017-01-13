@@ -54,6 +54,22 @@ class Geometry:
     def material(self, mat):
         self._geometry.setMaterial(mat._get_cpp_material());
 
+    @property
+    def outline_material(self):
+        return material._outline_material_proxy(self);
+
+    @outline_material.setter
+    def outline_material(self, mat):
+        self._geometry.setOutlineMaterial(mat._get_cpp_material());
+
+    @property
+    def outline_width(self):
+        return self._geometry.getOutlineWidth();
+
+    @outline_width.setter
+    def outline_width(self, width):
+        self._geometry.setOutlineWidth(width);
+
 class Prism(Geometry):
     R""" Prism geometry.
 
