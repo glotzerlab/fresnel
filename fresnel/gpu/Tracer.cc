@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Regents of the University of Michigan
+// Copyright (c) 2016-2017 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include "Tracer.h"
@@ -18,7 +18,6 @@ Tracer::Tracer(std::shared_ptr<Device> device, unsigned int w, unsigned int h)
 Tracer::~Tracer()
     {
     std::cout << "Destroy GPU Tracer" << std::endl;
-    m_out_gpu->destroy();
     }
 
 /*! \param w New output buffer width

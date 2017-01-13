@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Regents of the University of Michigan
+// Copyright (c) 2016-2017 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include <optix.h>
@@ -100,6 +100,7 @@ RT_PROGRAM void whitted_ray_gen()
 
 rtDeclareVariable(float3, material_color, , );
 rtDeclareVariable(float, material_solid, , );
+rtDeclareVariable(float, material_geometry_color_mix, , );
 
 //! Determine result color
 /*! Implement Whitted ray material
@@ -113,11 +114,13 @@ RT_PROGRAM void whitted_closest_hit()
         {
         m.solid = material_solid;
         m.color = RGB<float>(material_color);
+        m.geometry_color_mix = material_geometry_color_mix;
         }
     else
         {
         m.solid = 1.0;
         m.color = RGB<float>(0,0,0);
+        m.geometry_color_mix = 0;
         }
 
     vec3<float> Ng(shading_normal);

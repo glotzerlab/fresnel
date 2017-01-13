@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Regents of the University of Michigan
+// Copyright (c) 2016-2017 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #ifndef ARRAY_H_
@@ -96,6 +96,10 @@ namespace detail
 
     See fresnel::cpu::Array for API documentation. This class re-implements that one using optix buffers
     as the internal storage.
+
+    The main difference with gpu::Array is that it manages access into an optix::Buffer, which is passed in the
+    constructor. For convenience and proper reference counting, the Array takes ownership of the buffer and will
+    destroy it when the ref count on the Array goes to 0 (annoyingly, optix ref counted objects do not self-destroy).
 */
 template<class T> class Array
     {
@@ -127,6 +131,11 @@ template<class T> class Array
                 {
                 throw std::runtime_error("Invalid dimensions in Array");
                 }
+            }
+
+        ~Array()
+            {
+            m_buffer->destroy();
             }
 
         //! Get a python buffer pointing to the data
