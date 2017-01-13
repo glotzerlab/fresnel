@@ -1,7 +1,7 @@
 // Copyright (c) 2016-2017 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
-#include "TracerWhitted.h"
+#include "TracerDirect.h"
 #include <cmath>
 #include <stdexcept>
 
@@ -9,15 +9,15 @@ namespace fresnel { namespace cpu {
 
 /*! \param device Device to attach the raytracer to
 */
-TracerWhitted::TracerWhitted(std::shared_ptr<Device> device, unsigned int w, unsigned int h)
+TracerDirect::TracerDirect(std::shared_ptr<Device> device, unsigned int w, unsigned int h)
     : Tracer(device, w, h)
     {
-    std::cout << "Create TracerWhitted" << std::endl;
+    std::cout << "Create TracerDirect" << std::endl;
     }
 
-TracerWhitted::~TracerWhitted()
+TracerDirect::~TracerDirect()
     {
-    std::cout << "Destroy TracerWhitted" << std::endl;
+    std::cout << "Destroy TracerDirect" << std::endl;
     }
 
 //! Temporary function for linear to srgb conversion
@@ -33,7 +33,7 @@ static inline float linear_to_srgb(float x)
         return (1 + 0.055) * powf(x, 1.0f / 2.4f) - 0.055;
     }
 
-void TracerWhitted::render(std::shared_ptr<Scene> scene)
+void TracerDirect::render(std::shared_ptr<Scene> scene)
     {
     Material edge;
     edge.solid = 1.0;
@@ -113,9 +113,9 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
 
 /*! \param m Python module to export in
  */
-void export_TracerWhitted(pybind11::module& m)
+void export_TracerDirect(pybind11::module& m)
     {
-    pybind11::class_<TracerWhitted, std::shared_ptr<TracerWhitted> >(m, "TracerWhitted", pybind11::base<Tracer>())
+    pybind11::class_<TracerDirect, std::shared_ptr<TracerDirect> >(m, "TracerDirect", pybind11::base<Tracer>())
         .def(pybind11::init<std::shared_ptr<Device>, unsigned int, unsigned int>())
         ;
     }

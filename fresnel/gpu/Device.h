@@ -64,15 +64,15 @@ class Device
         //! Get the entry point id of a given program
         unsigned int getEntryPoint(const std::string& filename, const std::string& funcname);
 
-        //! Get the Whitted tracer material
-        optix::Material getWhittedMaterial()
+        //! Get the Direct tracer material
+        optix::Material getDirectMaterial()
             {
-            return m_whitted_mat;
+            return m_direct_mat;
             }
     private:
         optix::Context m_context;       //!< Store the context
         std::string m_ptx_root;         //!< Directory where PTX files are stored
-        optix::Material m_whitted_mat;  //!< Material for Whitted ray tracer
+        optix::Material m_direct_mat;  //!< Material for Direct ray tracer
 
         std::map< std::tuple<std::string, std::string>, optix::Program> m_program_cache;    //!< The program cache
         std::map< std::tuple<std::string, std::string>, unsigned int> m_entrypoint_cache;   //!< The entry point cache

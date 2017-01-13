@@ -8,7 +8,7 @@
 #include "GeometryPrism.h"
 #include "GeometrySphere.h"
 #include "Tracer.h"
-#include "TracerWhitted.h"
+#include "TracerDirect.h"
 
 #include <sstream>
 
@@ -32,7 +32,7 @@ PYBIND11_PLUGIN(_gpu)
     export_GeometryPrism(m);
     export_GeometrySphere(m);
     export_Tracer(m);
-    export_TracerWhitted(m);
+    export_TracerDirect(m);
     export_Array(m);
 
     return m.ptr();

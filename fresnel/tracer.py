@@ -75,8 +75,8 @@ class Tracer:
         """
         self._tracer.setCamera(camera._camera);
 
-class Whitted(Tracer):
-    R""" Whitted ray tracer.
+class Direct(Tracer):
+    R""" Direct ray tracer.
 
     Args:
 
@@ -84,11 +84,11 @@ class Whitted(Tracer):
         w (int): Output buffer width.
         h (int): Output buffer height.
 
-    The Whitted ray tracer is the most basic type of ray tracer. It traces a single ray per pixel. The color of the
+    The Direct ray tracer a basic ray tracer. It traces a single ray per pixel. The color of the
     pixel depends on the geometry the ray hits, its material, and the lights in the :py:class:`Scene <fresnel.Scene>`.
-    Because of its simplicity, the Whitted tracer is extremely fast.
+    Because of its simplicity, the Direct tracer is extremely fast.
 
-    :py:class:`Whitted` supports:
+    :py:class:`Direct` supports:
 
     * Directional lights
     * Materials
@@ -97,5 +97,5 @@ class Whitted(Tracer):
 
     def __init__(self, device, w, h, camera=camera.Orthographic(position=(0,0, 1), look_at=(0,0,0), up=(0,1,0), height=3)):
         self.device = device;
-        self._tracer = device.module.TracerWhitted(device._device, w, h);
+        self._tracer = device.module.TracerDirect(device._device, w, h);
         self.set_camera(camera);

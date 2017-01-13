@@ -5,7 +5,7 @@
 #include <string>
 
 #include "Device.h"
-#include "TracerWhitted.h"
+#include "TracerDirect.h"
 
 using namespace std;
 
@@ -27,8 +27,8 @@ Device::Device(const std::string& ptx_root) : m_ptx_root(ptx_root)
     m_context->setRayTypeCount(1);
 
     // initialize materials
-    m_whitted_mat = m_context->createMaterial();
-    TracerWhitted::setupMaterial(m_whitted_mat, this);
+    m_direct_mat = m_context->createMaterial();
+    TracerDirect::setupMaterial(m_direct_mat, this);
     }
 
 /*! Destroy the underlying context
@@ -42,7 +42,7 @@ Device::~Device()
         {
         elem.second->destroy();
         }
-    m_whitted_mat->destroy();
+    m_direct_mat->destroy();
     m_context->destroy();
     }
 

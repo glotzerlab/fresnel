@@ -39,7 +39,7 @@ set(_cpu_sources
      cpu/GeometryPrism.cc
      cpu/GeometrySphere.cc
      cpu/Tracer.cc
-     cpu/TracerWhitted.cc
+     cpu/TracerDirect.cc
      cpu/Array.cc
    )
 
@@ -53,7 +53,7 @@ if (ENABLE_CUDA AND ENABLE_OPTIX)
 
 # Build the PTX files for the OptiX programs
 set(_ptx_sources
-	gpu/whitted.cu
+	gpu/direct.cu
 	gpu/GeometrySphere.cu
     gpu/GeometryPrism.cu)
 
@@ -71,7 +71,7 @@ set(_gpu_sources
      gpu/GeometryPrism.cc
      gpu/GeometrySphere.cc
      gpu/Tracer.cc
-     gpu/TracerWhitted.cc
+     gpu/TracerDirect.cc
      gpu/Array.cc
    )
 

@@ -13,23 +13,23 @@
 
 namespace fresnel { namespace cpu {
 
-//! Basic Whitted raytracer
+//! Basic Direct raytracer
 /*!
 */
-class TracerWhitted : public Tracer
+class TracerDirect : public Tracer
     {
     public:
         //! Constructor
-        TracerWhitted(std::shared_ptr<Device> device, unsigned int w, unsigned int h);
+        TracerDirect(std::shared_ptr<Device> device, unsigned int w, unsigned int h);
         //! Destructor
-        virtual ~TracerWhitted();
+        virtual ~TracerDirect();
 
         //! Render a scene
         virtual void render(std::shared_ptr<Scene> scene);
     };
 
-//! Export TracerWhitted to python
-void export_TracerWhitted(pybind11::module& m);
+//! Export TracerDirect to python
+void export_TracerDirect(pybind11::module& m);
 
 } } // end namespace fresnel::cpu
 

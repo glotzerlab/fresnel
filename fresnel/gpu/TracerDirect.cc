@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "TracerWhitted.h"
+#include "TracerDirect.h"
 
 using namespace std;
 
@@ -11,36 +11,36 @@ namespace fresnel { namespace gpu {
 
 /*! \param device Device to attach the raytracer to
 */
-TracerWhitted::TracerWhitted(std::shared_ptr<Device> device, unsigned int w, unsigned int h)
+TracerDirect::TracerDirect(std::shared_ptr<Device> device, unsigned int w, unsigned int h)
     : Tracer(device, w, h)
     {
-    std::cout << "Create GPU TracerWhitted" << std::endl;
+    std::cout << "Create GPU TracerDirect" << std::endl;
 
     // create the entry point program
     optix::Context context = m_device->getContext();
-    m_ray_gen = m_device->getProgram("_ptx_generated_whitted.cu.ptx", "whitted_ray_gen");
-    m_ray_gen_entry = m_device->getEntryPoint("_ptx_generated_whitted.cu.ptx", "whitted_ray_gen");
+    m_ray_gen = m_device->getProgram("_ptx_generated_direct.cu.ptx", "direct_ray_gen");
+    m_ray_gen_entry = m_device->getEntryPoint("_ptx_generated_direct.cu.ptx", "direct_ray_gen");
 
     // load the exception program
-    m_exception_program = m_device->getProgram("_ptx_generated_whitted.cu.ptx", "whitted_exception");
+    m_exception_program = m_device->getProgram("_ptx_generated_direct.cu.ptx", "direct_exception");
     context->setExceptionProgram(m_ray_gen_entry, m_exception_program);
     }
 
-TracerWhitted::~TracerWhitted()
+TracerDirect::~TracerDirect()
     {
-    std::cout << "Destroy GPU TracerWhitted" << std::endl;
+    std::cout << "Destroy GPU TracerDirect" << std::endl;
     }
 
 //! Initialize the Material for use in tracing
-void TracerWhitted::setupMaterial(optix::Material mat, Device *dev)
+void TracerDirect::setupMaterial(optix::Material mat, Device *dev)
     {
-    optix::Program p = dev->getProgram("_ptx_generated_whitted.cu.ptx", "whitted_closest_hit");
+    optix::Program p = dev->getProgram("_ptx_generated_direct.cu.ptx", "direct_closest_hit");
     mat->setClosestHitProgram(0, p);
     }
 
 /*! \param scene The Scene to render
 */
-void TracerWhitted::render(std::shared_ptr<Scene> scene)
+void TracerDirect::render(std::shared_ptr<Scene> scene)
     {
     Tracer::render(scene);
 
@@ -64,9 +64,9 @@ void TracerWhitted::render(std::shared_ptr<Scene> scene)
 
 /*! \param m Python module to export in
  */
-void export_TracerWhitted(pybind11::module& m)
+void export_TracerDirect(pybind11::module& m)
     {
-    pybind11::class_<TracerWhitted, std::shared_ptr<TracerWhitted> >(m, "TracerWhitted", pybind11::base<Tracer>())
+    pybind11::class_<TracerDirect, std::shared_ptr<TracerDirect> >(m, "TracerDirect", pybind11::base<Tracer>())
         .def(pybind11::init<std::shared_ptr<Device>, unsigned int, unsigned int>())
         ;
     }

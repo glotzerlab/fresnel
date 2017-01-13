@@ -37,7 +37,7 @@ rtDeclareVariable(float3, shading_color, attribute shading_color, );
 //! Report exceptions
 /*! Stack overflows result in magenta pixels, other exceptions are printed.
 */
-RT_PROGRAM void whitted_exception()
+RT_PROGRAM void direct_exception()
     {
     const unsigned int code = rtGetExceptionCode();
 
@@ -59,7 +59,7 @@ rtDeclareVariable(float, camera_h, , );
 //! Trace rays for Whitted
 /*! Implement Whitted ray generation
 */
-RT_PROGRAM void whitted_ray_gen()
+RT_PROGRAM void direct_ray_gen()
     {
     // load camera
     Camera cam;
@@ -105,7 +105,7 @@ rtDeclareVariable(float, material_geometry_color_mix, , );
 //! Determine result color
 /*! Implement Whitted ray material
 */
-RT_PROGRAM void whitted_closest_hit()
+RT_PROGRAM void direct_closest_hit()
     {
     Material m;
 

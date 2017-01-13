@@ -11,18 +11,18 @@
 
 namespace fresnel { namespace gpu {
 
-//! Basic Whitted ray tracer using OptiX
-/*! GPU code for the tracer is in whitted.cu
+//! Basic Direct ray tracer using OptiX
+/*! GPU code for the tracer is in direct.cu
 
-    TracerWhitted loads the whitted ray generation program and adds it to the Device.
+    TracerDirect loads the direct ray generation program and adds it to the Device.
 */
-class TracerWhitted : public Tracer
+class TracerDirect : public Tracer
     {
     public:
         //! Constructor
-        TracerWhitted(std::shared_ptr<Device> device, unsigned int w, unsigned int h);
+        TracerDirect(std::shared_ptr<Device> device, unsigned int w, unsigned int h);
         //! Destructor
-        virtual ~TracerWhitted();
+        virtual ~TracerDirect();
 
         //! Initialize the Material for use in tracing
         static void setupMaterial(optix::Material mat, Device* dev);
@@ -31,8 +31,8 @@ class TracerWhitted : public Tracer
         void render(std::shared_ptr<Scene> scene);
     };
 
-//! Export TracerWhitted to python
-void export_TracerWhitted(pybind11::module& m);
+//! Export TracerDirect to python
+void export_TracerDirect(pybind11::module& m);
 
 } } // end namespace fresnel::gpu
 
