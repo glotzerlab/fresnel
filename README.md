@@ -7,20 +7,21 @@ Developers may find C++ level API documentation useful when modifying the code. 
 
 Compile and build with cmake.
 
-```mkdir build
+```
+mkdir build
 cd build
 cmake /path/to/fresnel
-make -j20
+make -j4
 ```
 
 ## Prerequisites
 
 * C++11 capable compiler
 * Python >= 2.7
-* For GPU raytracing (default off, requires `-DENABLE_CUDA=ON -DENABLE_OPTIX=ON`):
+* For GPU raytracing (default off, requires `ENABLE_CUDA=ON` and `ENABLE_OPTIX=ON`):
     * OptiX >= 4.0
     * CUDA >= 7.5
-* For CPU raytracing (default on, requires `-DENABLE_TBB=ON -DENABLE_EMBREE=ON`):
+* For CPU raytracing (default on, requires `ENABLE_TBB=ON` and `ENABLE_EMBREE=ON`):
     * Intel TBB >= 4.3.20150611
     * Intel Embree >= 2.10.0
 
@@ -32,3 +33,7 @@ Search paths:
 | TBB     | *system*            | `TBB_LINK=/path/to/tbb/lib` (env var) |
 | Embree  | *system*            | `EMBREE_LINK=/path/to/embree/lib` (env var) |
 | Python  | $PATH               | `-DPYTHON_EXECUTABLE=/path/to/bin/python` |
+
+On the first run of cmake, libraries that are found will automatically set the corresponding `ENABLE_library` **ON**.
+Libraries are that not found will set ``ENABLE_library`` **OFF**. You can force off the use of a given library
+on the cmake command line: e.g. `cmake -DENABLE_EMBREE=off`, or by changing these options in `ccmake`.
