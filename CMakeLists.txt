@@ -37,6 +37,10 @@ if (ENABLE_CUDA)
     include_directories(${CUDA_INCLUDE_DIRS})
 endif()
 
+if (NOT (ENABLE_CUDA AND ENABLE_OPTIX) AND NOT (ENABLE_EMBREE AND ENABLE_TBB))
+    message(SEND_ERROR "No libraries will be built. Enable at least one of (embree and TBB) or (CUDA and OptiX).")
+endif()
+
 #############################################################################################
 # Setup install location
 
