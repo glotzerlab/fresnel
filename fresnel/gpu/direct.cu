@@ -114,7 +114,7 @@ RT_PROGRAM void direct_closest_hit()
     Material m;
 
     // apply the material color or outline color depending on the distance to the edge
-    if (shading_distance > 0.05)
+    if (shading_distance > outline_width)
         {
         m.solid = material_solid;
         m.color = RGB<float>(material_color);
@@ -122,9 +122,9 @@ RT_PROGRAM void direct_closest_hit()
         }
     else
         {
-        m.solid = 1.0;
-        m.color = RGB<float>(0,0,0);
-        m.geometry_color_mix = 0;
+        m.solid = outline_material_solid;
+        m.color = RGB<float>(outline_material_color);
+        m.geometry_color_mix = outline_material_geometry_color_mix;
         }
 
     vec3<float> Ng(shading_normal);

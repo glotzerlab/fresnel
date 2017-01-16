@@ -106,12 +106,24 @@ class Prism(Geometry):
 
     """
 
-    def __init__(self, scene, vertices, position=None, angle=None, height=None, color=None, N=None, material=material.Material(solid=1.0, color=(1,0,1))):
+    def __init__(self,
+                 scene,
+                 vertices,
+                 position=None,
+                 angle=None,
+                 height=None,
+                 color=None,
+                 N=None,
+                 material=material.Material(solid=1.0, color=(1,0,1)),
+                 outline_material=material.Material(solid=1.0, color=(0,0,0)),
+                 outline_width=0.0):
         if N is None:
             N = len(position);
 
         self._geometry = scene.device.module.GeometryPrism(scene._scene, vertices, N);
         self.material = material;
+        self.outline_material = outline_material;
+        self.outline_width = outline_width;
 
         if position is not None:
             self.position[:] = position;
@@ -174,12 +186,22 @@ class Sphere(Geometry):
         color (:py:class:`fresnel.util.array`): Read or modify the color of the spheres.
     """
 
-    def __init__(self, scene, position=None, radius=None, color=None, N=None, material=material.Material(solid=1.0, color=(1,0,1))):
+    def __init__(self,
+                 scene,
+                 position=None,
+                 radius=None,
+                 color=None,
+                 N=None,
+                 material=material.Material(solid=1.0, color=(1,0,1)),
+                 outline_material=material.Material(solid=1.0, color=(0,0,0)),
+                 outline_width=0.0):
         if N is None:
             N = len(position);
 
         self._geometry = scene.device.module.GeometrySphere(scene._scene, N);
         self.material = material;
+        self.outline_material = outline_material;
+        self.outline_width = outline_width;
 
         if position is not None:
             self.position[:] = position;

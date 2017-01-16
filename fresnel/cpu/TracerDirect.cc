@@ -35,11 +35,6 @@ static inline float linear_to_srgb(float x)
 
 void TracerDirect::render(std::shared_ptr<Scene> scene)
     {
-    Material edge;
-    edge.solid = 1.0;
-    edge.color = RGB<float>(0,0,0);
-    edge.geometry_color_mix = 0.75;
-
     Camera cam = m_camera;
     Tracer::render(scene);
 
@@ -77,10 +72,10 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
                 Material m;
 
                 // apply the material color or outline color depending on the distance to the edge
-                if (ray.d > 0.05)
+                if (ray.d > scene->getOutlineWidth(ray.geomID))
                     m = scene->getMaterial(ray.geomID);
                 else
-                    m = edge;
+                    m = scene->getOutlineMaterial(ray.geomID);
 
                 if (m.isSolid())
                     {
