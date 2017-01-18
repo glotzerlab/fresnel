@@ -7,33 +7,38 @@ include(PythonSetup)
 include_directories(${PYTHON_INCLUDE_DIR})
 
 #############################################################################################
-# Options
-option(ENABLE_TBB "Use TBB for threaded execution on the CPU" ON)
-option(ENABLE_EMBREE "Use Embree for ray tracing on the CPU" ON)
-option(ENABLE_CUDA "Use CUDA for GPU code execution" OFF)
-option(ENABLE_OPTIX "Use OptiX for ray tracing on the GPU" OFF)
-
-#############################################################################################
 # Find libraries
 
+find_package(Embree)
+option(ENABLE_EMBREE "Use Embree for ray tracing on the CPU" ${Embree_FOUND})
+
 if (ENABLE_EMBREE)
-    find_package(Embree REQUIRED)
     include_directories(${Embree_INCLUDE_DIR})
 endif()
 
+find_package(TBB)
+option(ENABLE_TBB "Use TBB for threaded execution on the CPU" ${TBB_FOUND})
+
 if (ENABLE_TBB)
-    find_package(TBB REQUIRED)
     include_directories(${TBB_INCLUDE_DIRS})
 endif()
 
+find_package(OptiX)
+option(ENABLE_OPTIX "Use OptiX for ray tracing on the GPU" ${OptiX_FOUND})
+
 if (ENABLE_OPTIX)
-    find_package(OptiX REQUIRED)
     include_directories(${OptiX_INCLUDE})
 endif()
 
+find_package(CUDA 7.5)
+option(ENABLE_CUDA "Use CUDA for GPU code execution" ${CUDA_FOUND})
+
 if (ENABLE_CUDA)
-    find_package(CUDA 7.5 REQUIRED)
     include_directories(${CUDA_INCLUDE_DIRS})
+endif()
+
+if (NOT (ENABLE_CUDA AND ENABLE_OPTIX) AND NOT (ENABLE_EMBREE AND ENABLE_TBB))
+    message(SEND_ERROR "No libraries will be built. Enable at least one of (embree and TBB) or (CUDA and OptiX).")
 endif()
 
 #############################################################################################
