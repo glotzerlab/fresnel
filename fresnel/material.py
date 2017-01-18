@@ -100,3 +100,48 @@ class _material_proxy:
 
     def _get_cpp_material(self):
         return self._geometry.getMaterial();
+
+class _outline_material_proxy:
+    """ Proxy outline :py:class`Material` attached to a :py:class`fresnel.geometry.Geometry`
+    """
+    def __init__(self, geometry):
+        self._geometry = geometry._geometry;
+
+    @property
+    def solid(self):
+        m = self._geometry.getOutlineMaterial();
+        return m.solid;
+
+    @solid.setter
+    def solid(self, value):
+        m = self._geometry.getOutlineMaterial();
+        m.solid = float(value);
+        self._geometry.setOutlineMaterial(m);
+
+    @property
+    def geometry_color_mix(self):
+        m = self._geometry.getOutlineMaterial();
+        return m.geometry_color_mix;
+
+    @geometry_color_mix.setter
+    def geometry_color_mix(self, value):
+        m = self._geometry.getOutlineMaterial();
+        m.geometry_color_mix = float(value);
+        self._geometry.setOutlineMaterial(m);
+
+    @property
+    def color(self):
+        m = self._geometry.getOutlineMaterial();
+        return (m.color.r, m.color.g, m.color.b);
+
+    @color.setter
+    def color(self, value):
+        if len(value) != 3:
+            raise ValueError("colors must have length 3");
+
+        m = self._geometry.getOutlineMaterial();
+        m.color = _common.RGBf(value[0], value[1], value[2]);
+        self._geometry.setOutlineMaterial(m);
+
+    def _get_cpp_material(self):
+        return self._geometry.getOutlineMaterial();

@@ -99,6 +99,30 @@ void Geometry::setMaterial(const Material& material)
     m_instance["material_geometry_color_mix"]->setFloat(m_mat.geometry_color_mix);
     }
 
+/*! \param material New outline material to set
+
+    Sets the outline material parameters. These are translated to OptiX variables that are part of the geometry instance
+    scope. Also cache a local copy of the material for get methods.
+*/
+void Geometry::setOutlineMaterial(const Material& material)
+    {
+    m_outline_mat = material;
+    m_instance["outline_material_solid"]->setFloat(m_outline_mat.solid);
+    m_instance["outline_material_color"]->setFloat(m_outline_mat.color.r, m_outline_mat.color.g, m_outline_mat.color.b);
+    m_instance["outline_material_geometry_color_mix"]->setFloat(m_outline_mat.geometry_color_mix);
+    }
+
+/*! \param material New outline material to set
+
+    Sets the outline material parameters. These are translated to OptiX variables that are part of the geometry instance
+    scope. Also cache a local copy of the material for get methods.
+*/
+void Geometry::setOutlineWidth(float width)
+    {
+    m_outline_width = width;
+    m_instance["outline_width"]->setFloat(width);
+    }
+
 /*! \param m Python module to export in
  */
 void export_Geometry(pybind11::module& m)
@@ -107,6 +131,10 @@ void export_Geometry(pybind11::module& m)
         .def(pybind11::init<std::shared_ptr<Scene> >())
         .def("getMaterial", &Geometry::getMaterial)
         .def("setMaterial", &Geometry::setMaterial)
+        .def("getOutlineMaterial", &Geometry::getOutlineMaterial)
+        .def("setOutlineMaterial", &Geometry::setOutlineMaterial)
+        .def("getOutlineWidth", &Geometry::getOutlineWidth)
+        .def("setOutlineWidth", &Geometry::setOutlineWidth)
         .def("disable", &Geometry::disable)
         .def("enable", &Geometry::enable)
         .def("remove", &Geometry::remove)

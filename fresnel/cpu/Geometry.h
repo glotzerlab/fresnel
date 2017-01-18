@@ -51,10 +51,34 @@ class Geometry
             return m_scene->getMaterial(m_geom_id);
             }
 
+        //! Get the outline material
+        const Material& getOutlineMaterial()
+            {
+            return m_scene->getOutlineMaterial(m_geom_id);
+            }
+
+        //! Get the outline width
+        float getOutlineWidth()
+            {
+            return m_scene->getOutlineWidth(m_geom_id);
+            }
+
         //! Set the material
         void setMaterial(const Material& material)
             {
             m_scene->setMaterial(m_geom_id, material);
+            }
+
+        //! Set the outline material
+        void setOutlineMaterial(const Material& material)
+            {
+            m_scene->setOutlineMaterial(m_geom_id, material);
+            }
+
+        //! Set the outline width
+        void setOutlineWidth(float width)
+            {
+            m_scene->setOutlineWidth(m_geom_id, width);
             }
 
         //! Notify the geometry that changes have been made to the buffers
