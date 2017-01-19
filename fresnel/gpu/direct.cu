@@ -55,6 +55,9 @@ rtDeclareVariable(float3, camera_d, , );
 rtDeclareVariable(float3, camera_u, , );
 rtDeclareVariable(float3, camera_r, , );
 rtDeclareVariable(float, camera_h, , );
+rtDeclareVariable(float3, background_color, , );
+rtDeclareVariable(float, background_alpha, , );
+rtDeclareVariable(float3, light_direction, , );
 
 //! Trace rays for Whitted
 /*! Implement Whitted ray generation
@@ -83,8 +86,8 @@ RT_PROGRAM void direct_ray_gen()
     rtTrace(top_object, ray, prd);
 
     // determine the output pixel color
-    RGB<float> c;
-    float a = 0.0f;
+    RGB<float> c(background_color.x, background_color.y, background_color.z);
+    float a = background_alpha;
     if (prd.hit)
         {
         c = RGB<float>(prd.result);
@@ -129,8 +132,7 @@ RT_PROGRAM void direct_closest_hit()
 
     vec3<float> Ng(shading_normal);
     vec3<float> n = Ng * rsqrtf(dot(Ng, Ng));
-    vec3<float> l = vec3<float>(1,1,1);
-    l = l * rsqrtf(dot(l,l));
+    vec3<float> l(light_direction);
     vec3<float> dir = vec3<float>(ray.direction);
     vec3<float> v = -dir * rsqrtf(dot(dir, dir));
 

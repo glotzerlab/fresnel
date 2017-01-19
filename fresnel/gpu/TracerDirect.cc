@@ -42,6 +42,12 @@ void TracerDirect::setupMaterial(optix::Material mat, Device *dev)
 */
 void TracerDirect::render(std::shared_ptr<Scene> scene)
     {
+    const RGB<float> background_color = scene->getBackgroundColor();
+    const float background_alpha = scene->getBackgroundAlpha();
+    const vec3<float> light_direction = scene->getLightDirection();
+
+    const Camera camera = scene->getCamera();
+
     Tracer::render(scene);
 
     optix::Context context = m_device->getContext();
@@ -53,11 +59,16 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
     context["output_buffer"]->set(m_out_gpu);
 
     // set camera variables
-    context["camera_p"]->setFloat(m_camera.p.x, m_camera.p.y, m_camera.p.z);
-    context["camera_d"]->setFloat(m_camera.d.x, m_camera.d.y, m_camera.d.z);
-    context["camera_u"]->setFloat(m_camera.u.x, m_camera.u.y, m_camera.u.z);
-    context["camera_r"]->setFloat(m_camera.r.x, m_camera.r.y, m_camera.r.z);
-    context["camera_h"]->setFloat(m_camera.h);
+    context["camera_p"]->setFloat(camera.p.x, camera.p.y, camera.p.z);
+    context["camera_d"]->setFloat(camera.d.x, camera.d.y, camera.d.z);
+    context["camera_u"]->setFloat(camera.u.x, camera.u.y, camera.u.z);
+    context["camera_r"]->setFloat(camera.r.x, camera.r.y, camera.r.z);
+    context["camera_h"]->setFloat(camera.h);
+
+    // set background variables
+    context["background_color"]->setFloat(background_color.r, background_color.g, background_color.b);
+    context["background_alpha"]->setFloat(background_alpha);
+    context["light_direction"]->setFloat(light_direction.x, light_direction.y, light_direction.z);
 
     context->launch(m_ray_gen_entry, m_w, m_h);
     }
