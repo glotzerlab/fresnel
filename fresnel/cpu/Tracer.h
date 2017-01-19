@@ -46,12 +46,6 @@ class Tracer
         //! Render a scene
         virtual void render(std::shared_ptr<Scene> scene);
 
-        //! Set the camera
-        virtual void setCamera(const Camera& camera)
-            {
-            m_camera = camera;
-            }
-
         //! Get the output pixel buffer
         virtual std::shared_ptr< Array< RGBA<float> > > getOutputBuffer()
             {
@@ -61,8 +55,6 @@ class Tracer
     protected:
         std::shared_ptr<Device> m_device;                     //!< The device the Scene is attached to
         std::shared_ptr< Array< RGBA<float> > > m_out;        //!< The output buffer
-
-        Camera m_camera;                   //!< The camera
     };
 
 //! Export Tracer to python

@@ -10,11 +10,15 @@ namespace fresnel { namespace cpu {
 /*! \param device Device to attach the Scene to
  *  Creates a new RTCScene and attaches it to the given device.
 */
-Scene::Scene(std::shared_ptr<Device> device) : m_device(device)
+Scene::Scene(std::shared_ptr<Device> device) : m_device(device), m_background_color(RGB<float>(0,0,0)), m_background_alpha(0.0)
     {
     std::cout << "Create Scene" << std::endl;
     m_scene = rtcDeviceNewScene(device->getRTCDevice(), RTC_SCENE_DYNAMIC, RTC_INTERSECT1);
     m_device->checkError();
+
+    vec3<float> l = vec3<float>(0.2,1,0.5);
+    l = l / sqrtf(dot(l,l));
+    m_light_direction = l;
     }
 
 /*! Destroys the underlying RTCScene
@@ -32,6 +36,14 @@ void export_Scene(pybind11::module& m)
     {
     pybind11::class_<Scene, std::shared_ptr<Scene> >(m, "Scene")
         .def(pybind11::init<std::shared_ptr<Device> >())
+        .def("setCamera", &Scene::setCamera)
+        .def("getCamera", &Scene::getCamera)
+        .def("getBackgroundColor", &Scene::getBackgroundColor)
+        .def("setBackgroundColor", &Scene::setBackgroundColor)
+        .def("getBackgroundAlpha", &Scene::getBackgroundAlpha)
+        .def("setBackgroundAlpha", &Scene::setBackgroundAlpha)
+        .def("getLightDirection", &Scene::getLightDirection)
+        .def("setLightDirection", &Scene::setLightDirection)
         ;
     }
 

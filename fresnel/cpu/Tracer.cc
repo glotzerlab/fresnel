@@ -50,7 +50,6 @@ void export_Tracer(pybind11::module& m)
         .def(pybind11::init<std::shared_ptr<Device>, unsigned int, unsigned int >())
         .def("render", &Tracer::render)
         .def("resize", &Tracer::resize)
-        .def("setCamera", &Tracer::setCamera)
         .def("getOutputBuffer", &Tracer::getOutputBuffer)
         ;
     }

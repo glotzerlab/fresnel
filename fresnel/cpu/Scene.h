@@ -11,6 +11,7 @@
 
 #include "Device.h"
 #include "common/Material.h"
+#include "common/Camera.h"
 
 namespace fresnel { namespace cpu {
 
@@ -93,6 +94,56 @@ class Scene
 
             return m_outline_widths[geom_id];
             }
+
+        //! Set the camera
+        void setCamera(const Camera& camera)
+            {
+            m_camera = camera;
+            }
+
+        //! Get the camera
+        const Camera& getCamera() const
+            {
+            return m_camera;
+            }
+
+        //! Set the background color
+        void setBackgroundColor(const RGB<float>& c)
+            {
+            m_background_color = c;
+            }
+
+        //! Get the background color
+        RGB<float> getBackgroundColor() const
+            {
+            return m_background_color;
+            }
+
+        //! Set the background alpha
+        void setBackgroundAlpha(float a)
+            {
+            m_background_alpha = a;
+            }
+
+        //! Get the background alpha
+        float getBackgroundAlpha() const
+            {
+            return m_background_alpha;
+            }
+
+        //! Set the light direction
+        void setLightDirection(const vec3<float>& v)
+            {
+            vec3<float> l = v;
+            l = l / sqrtf(dot(l,l));
+            m_light_direction = l;
+            }
+
+        //! Get the light direction
+        vec3<float> getLightDirection() const
+            {
+            return m_light_direction;
+            }
     private:
         RTCScene m_scene;                   //!< Store the scene
         std::shared_ptr<Device> m_device;   //!< The device the scene is attached to
@@ -100,6 +151,11 @@ class Scene
         std::vector<Material> m_materials;          //!< Materials associated with geometry ids
         std::vector<Material> m_outline_materials;  //!< Materials associated with geometry ids
         std::vector<float> m_outline_widths;        //!< Materials associated with geometry ids
+
+        RGB<float> m_background_color;              //!< The background color
+        float m_background_alpha;                   //!< Background alpha
+        vec3<float> m_light_direction;              //!< The light direction
+        Camera m_camera;                            //!< The camera
     };
 
 //! Export Scene to python
