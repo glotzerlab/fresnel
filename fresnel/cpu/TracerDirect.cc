@@ -20,19 +20,6 @@ TracerDirect::~TracerDirect()
     std::cout << "Destroy TracerDirect" << std::endl;
     }
 
-//! Temporary function for linear to srgb conversion
-/*! This is needed to make the color output look correct. It is temporary because it does not belong in the rendering
-    step, in the final fresnel API, there should be a linear to sRGB conversion done from the float linear RGB internals
-    to byte sRGB output - because other tracers may perform averaging in linear space first.
-*/
-static inline float linear_to_srgb(float x)
-    {
-    if (x < 0.0031308f)
-        return 12.92*x;
-    else
-        return (1 + 0.055) * powf(x, 1.0f / 2.4f) - 0.055;
-    }
-
 void TracerDirect::render(std::shared_ptr<Scene> scene)
     {
     const RGB<float> background_color = scene->getBackgroundColor();
@@ -46,11 +33,12 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
     rtcCommit(scene->getRTCScene());
     m_device->checkError();
 
-    RGBA<float>* output = m_out->map();
+    RGBA<float>* linear_output = m_linear_out->map();
+    RGBA<unsigned char>* srgb_output = m_srgb_out->map();
 
     // for each pixel
-    const unsigned int height = m_out->getH();
-    const unsigned int width = m_out->getW();
+    const unsigned int height = m_linear_out->getH();
+    const unsigned int width = m_linear_out->getW();
     for (unsigned int j = 0; j < height; j++)
         {
         for (unsigned int i = 0; i < width; i++)
@@ -103,14 +91,14 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
 
             // write the output pixel
             unsigned int pixel = j*width + i;
-            output[pixel].r = linear_to_srgb(c.r);
-            output[pixel].g = linear_to_srgb(c.g);
-            output[pixel].b = linear_to_srgb(c.b);
-            output[pixel].a = a;
+            RGBA<float> output_pixel(c.r, c.g, c.b, a);
+            linear_output[pixel] = output_pixel;
+            srgb_output[pixel] = sRGB(output_pixel);
             }
         }
 
-    m_out->unmap();
+    m_linear_out->unmap();
+    m_srgb_out->unmap();
     }
 
 /*! \param m Python module to export in

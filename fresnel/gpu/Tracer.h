@@ -38,18 +38,28 @@ class Tracer
         //! Render a scene
         virtual void render(std::shared_ptr<Scene> scene);
 
-        //! Get the output pixel buffer
-        virtual std::shared_ptr< Array< RGBA<float> > > getOutputBuffer()
+        //! Get the linear output pixel buffer
+        virtual std::shared_ptr< Array< RGBA<float> > > getLinearOutputBuffer()
             {
-            return m_out_py;
+            return m_linear_out_py;
             }
+
+        //! Get the linear output pixel buffer
+        virtual std::shared_ptr< Array< RGBA<unsigned char> > > getSRGBOutputBuffer()
+            {
+            return m_srgb_out_py;
+            }
+
 
     protected:
         std::shared_ptr<Device> m_device;  //!< The device the Scene is attached to
         unsigned int m_w;                  //!< Width of the output buffer
         unsigned int m_h;                  //!< Height of the output buffer
-        optix::Buffer m_out_gpu;           //!< The GPU output buffer
-        std::shared_ptr< Array< RGBA<float> > > m_out_py;        //!< The output buffer for python
+        optix::Buffer m_linear_out_gpu;    //!< The GPU linear output buffer
+        optix::Buffer m_srgb_out_gpu;      //!< The GPU linear output buffer
+
+        std::shared_ptr< Array< RGBA<float> > > m_linear_out_py;       //!< The linear output buffer for python
+        std::shared_ptr< Array< RGBA<unsigned char> > > m_srgb_out_py; //!< The sRGB output buffer for python
 
         optix::Program m_ray_gen;           //!< Ray generation program
         optix::Program m_exception_program; //!< Exception program

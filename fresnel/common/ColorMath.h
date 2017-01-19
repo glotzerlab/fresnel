@@ -13,6 +13,8 @@
 #define DEVICE
 #endif
 
+#include <math.h>
+
 //! 3 element color vector
 /*! \tparam Real Data type of the components
 
@@ -340,6 +342,38 @@ template <class T>
 DEVICE inline T lerp(float x, const T& a, const T& b)
     {
     return (1-x) * a + x * b;
+    }
+
+//! Convert from linear color to sRGB
+/*! \param c linear color to convert
+
+    \returns The color in sRGB space
+*/
+DEVICE inline RGBA<unsigned char> sRGB(const RGBA<float>& c)
+    {
+    RGBA<float> t;
+
+    if (c.r < 0.0031308f)
+        t.r = 12.92f*c.r;
+    else
+        t.r = (1.0f + 0.055f) * powf(c.r, 1.0f / 2.4f) - 0.055f;
+
+    if (c.g < 0.0031308f)
+        t.g = 12.92f*c.g;
+    else
+        t.g = (1.0f + 0.055f) * powf(c.g, 1.0f / 2.4f) - 0.055f;
+
+    if (c.b < 0.0031308f)
+        t.b = 12.92f*t.b;
+    else
+        t.b = (1.0f + 0.055f) * powf(c.b, 1.0f / 2.4f) - 0.055f;
+
+    t.a = c.a;
+
+    return RGBA<unsigned char>((unsigned char)(t.r * 255.0f),
+                               (unsigned char)(t.g * 255.0f),
+                               (unsigned char)(t.b * 255.0f),
+                               (unsigned char)(t.a * 255.0f));
     }
 
 #undef DEVICE
