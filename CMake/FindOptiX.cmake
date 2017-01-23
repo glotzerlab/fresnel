@@ -165,7 +165,9 @@ if(APPLE)
   OptiX_check_same_path(optix_prime optixu)
 
   set( optix_rpath ${_optix_rpath} ${_optixu_rpath} ${_optix_prime_rpath} )
-  list(REMOVE_DUPLICATES optix_rpath)
+  if (optix_rpath)
+    list(REMOVE_DUPLICATES optix_rpath)
+  endif()
 endif()
 
 include(FindPackageHandleStandardArgs)
