@@ -38,9 +38,6 @@ class Tracer
         //! Render a scene
         virtual void render(std::shared_ptr<Scene> scene);
 
-        //! Set the camera
-        virtual void setCamera(const Camera& camera);
-
         //! Get the output pixel buffer
         virtual std::shared_ptr< Array< RGBA<float> > > getOutputBuffer()
             {
@@ -53,8 +50,6 @@ class Tracer
         unsigned int m_h;                  //!< Height of the output buffer
         optix::Buffer m_out_gpu;           //!< The GPU output buffer
         std::shared_ptr< Array< RGBA<float> > > m_out_py;        //!< The output buffer for python
-
-        Camera m_camera;                   //!< The camera
 
         optix::Program m_ray_gen;           //!< Ray generation program
         optix::Program m_exception_program; //!< Exception program

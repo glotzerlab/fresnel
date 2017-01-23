@@ -44,13 +44,6 @@ void Tracer::render(std::shared_ptr<Scene> scene)
         throw std::runtime_error("Scene and Tracer devices do not match");
     }
 
-/*! \param camera The camera to set.
-*/
-void Tracer::setCamera(const Camera& camera)
-    {
-    m_camera = camera;
-    }
-
 /*! \param m Python module to export in
  */
 void export_Tracer(pybind11::module& m)
@@ -59,7 +52,6 @@ void export_Tracer(pybind11::module& m)
         .def(pybind11::init<std::shared_ptr<Device>, unsigned int, unsigned int >())
         .def("render", &Tracer::render)
         .def("resize", &Tracer::resize)
-        .def("setCamera", &Tracer::setCamera)
         .def("getOutputBuffer", &Tracer::getOutputBuffer)
         ;
     }

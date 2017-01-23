@@ -64,17 +64,6 @@ class Tracer:
         buf.unmap();
         return result;
 
-    def set_camera(self, camera):
-        R""" Set the camera.
-
-        Args:
-            camera (:py:mod:`fresnel.camera`): Camera to set.
-
-        Set a new camera view. The next time the scene is rendered (:py:meth:`render`), it will be from this
-        new view.
-        """
-        self._tracer.setCamera(camera._camera);
-
 class Direct(Tracer):
     R""" Direct ray tracer.
 
@@ -95,7 +84,6 @@ class Direct(Tracer):
     * Cel shading
     """
 
-    def __init__(self, device, w, h, camera=camera.Orthographic(position=(0,0, 1), look_at=(0,0,0), up=(0,1,0), height=3)):
+    def __init__(self, device, w, h):
         self.device = device;
         self._tracer = device.module.TracerDirect(device._device, w, h);
-        self.set_camera(camera);

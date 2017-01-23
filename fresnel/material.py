@@ -51,7 +51,7 @@ class Material:
     def color(self, value):
         if len(value) != 3:
             raise ValueError("colors must have length 3");
-        self._material.color = _common.RGBf(value[0], value[1], value[2]);
+        self._material.color = _common.RGBf(*value);
 
     def _get_cpp_material(self):
         return self._material;
@@ -95,7 +95,7 @@ class _material_proxy:
             raise ValueError("colors must have length 3");
 
         m = self._geometry.getMaterial();
-        m.color = _common.RGBf(value[0], value[1], value[2]);
+        m.color = _common.RGBf(*value);
         self._geometry.setMaterial(m);
 
     def _get_cpp_material(self):
@@ -140,7 +140,7 @@ class _outline_material_proxy:
             raise ValueError("colors must have length 3");
 
         m = self._geometry.getOutlineMaterial();
-        m.color = _common.RGBf(value[0], value[1], value[2]);
+        m.color = _common.RGBf(*value);
         self._geometry.setOutlineMaterial(m);
 
     def _get_cpp_material(self):

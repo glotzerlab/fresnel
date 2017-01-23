@@ -35,7 +35,11 @@ static inline float linear_to_srgb(float x)
 
 void TracerDirect::render(std::shared_ptr<Scene> scene)
     {
-    Camera cam = m_camera;
+    const RGB<float> background_color = scene->getBackgroundColor();
+    const float background_alpha = scene->getBackgroundAlpha();
+    const vec3<float> light_direction = scene->getLightDirection();
+
+    const Camera cam = scene->getCamera();
     Tracer::render(scene);
 
     // update Embree data structures
@@ -60,14 +64,13 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
             rtcIntersect(scene->getRTCScene(), ray);
 
             // determine the output pixel color
-            RGB<float> c(1,1,1);
-            float a = 0.0;
+            RGB<float> c = background_color;
+            float a = background_alpha;
 
             if (ray.hit())
                 {
                 vec3<float> n = ray.Ng / std::sqrt(dot(ray.Ng, ray.Ng));
-                vec3<float> l = vec3<float>(0.2,1,0.5);
-                l = l / sqrtf(dot(l,l));
+                vec3<float> l = light_direction;
                 vec3<float> v = -ray.dir / std::sqrt(dot(ray.dir, ray.dir));
                 Material m;
 
