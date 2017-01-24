@@ -13,11 +13,12 @@ class Material:
     Args:
 
         solid (float): Set to 1 to pass through a solid color, regardless of the light and view angle.
-        color (tuple): The RGB color of the material as a 3-tuple, list or other iterable.
+        color (tuple): The linear RGB color of the material as a 3-tuple, list or other iterable.
         primitive_color_mix (float): Set to 1 to use the color provided in the Geometry, 0 to use the color
           specified in the material, or in the range (0,1) to mix the two colors.
 
-    TODO: Document SRGB and linear color spaces, and attributes
+    Colors are in the linearized sRGB color space. Use :py:func:`fresnel.color.linear` to convert standard sRGB colors
+    into this space.
     """
 
     def __init__(self, solid=0, color=(0,0,0), primitive_color_mix=0):

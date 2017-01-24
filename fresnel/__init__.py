@@ -10,6 +10,7 @@ import os
 from . import geometry
 from . import tracer
 from . import camera
+from . import color
 
 class Device:
     R""" Hardware device to use for ray tracing.
@@ -105,7 +106,9 @@ class Scene:
 
         device (:py:class:`Device`): Device this Scene is attached to.
         camera (:py:class:`camera.Orthographic`): Camera view parameters.
-        background_color (tuple[float]): Background color (r,g,b) as a tuple or other 3-length python object.
+        background_color (tuple[float]): Background color (r,g,b) as a tuple or other 3-length python object, in the
+                                         linearized color space. Use :py:func:`fresnel.color.linear` to convert standard
+                                         sRGB colors
         background_alpha (float): Background alpha (opacity).
         light_direction (tuple[float]): Vector pointing toward the light source.
     """

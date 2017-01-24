@@ -21,6 +21,7 @@ fresnel
    :maxdepth: 3
 
    module-camera
+   module-color
    module-geometry
    module-material
    module-tracer

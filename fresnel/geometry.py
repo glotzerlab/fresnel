@@ -99,6 +99,9 @@ class Prism(Geometry):
         The constructor arguments ``position``, ``height``, ``angle``, and ``color`` are optional, and just short-hand
         for assigning the attribute after construction.
 
+    Colors are in the linearized sRGB color space. Use :py:func:`fresnel.color.linear` to convert standard sRGB colors
+    into this space.
+
     .. hint::
         Avoid costly memory allocations and type conversions by specifying primitive properties in the appropriate
         numpy array type.
@@ -180,6 +183,9 @@ class Sphere(Geometry):
     Note:
         The constructor arguments ``position``, ``radius``, and ``color`` are optional, and just short-hand
         for assigning the properties after construction.
+
+    Colors are in the linearized sRGB color space. Use :py:func:`fresnel.color.linear` to convert standard sRGB colors
+    into this space.
 
     .. hint::
         Avoid costly memory allocations and type conversions by specifying primitive properties in the appropriate

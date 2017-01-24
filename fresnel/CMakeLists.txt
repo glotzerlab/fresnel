@@ -100,6 +100,7 @@ set(files __init__.py
           material.py
           camera.py
           util.py
+          color.py
     )
 
 install(FILES ${files}
