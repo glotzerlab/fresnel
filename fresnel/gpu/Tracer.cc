@@ -11,8 +11,6 @@ Tracer::Tracer(std::shared_ptr<Device> device, unsigned int w, unsigned int h)
     : m_device(device)
     {
     std::cout << "Create GPU Tracer" << std::endl;
-    m_linear_out_gpu = m_device->getContext()->createBuffer(RT_BUFFER_OUTPUT, RT_FORMAT_FLOAT4, w, h);
-    m_srgb_out_gpu = m_device->getContext()->createBuffer(RT_BUFFER_OUTPUT, RT_FORMAT_UNSIGNED_BYTE4, w, h);
     resize(w,h);
     }
 
@@ -31,10 +29,22 @@ void Tracer::resize(unsigned int w, unsigned int h)
     if (w == 0 || h == 0)
         throw std::runtime_error("Invalid dimensions");
 
+    m_linear_out_gpu = m_device->getContext()->createBuffer(RT_BUFFER_OUTPUT, RT_FORMAT_FLOAT4, w, h);
+    m_srgb_out_gpu = m_device->getContext()->createBuffer(RT_BUFFER_OUTPUT, RT_FORMAT_UNSIGNED_BYTE4, w, h);
+
     m_linear_out_gpu->setSize(w, h);
     m_srgb_out_gpu->setSize(w, h);
     m_w = w;
     m_h = h;
+
+    void *tmp = m_linear_out_gpu->map();
+    memset(tmp, 0, m_w*m_h * 16);
+    m_linear_out_gpu->unmap();
+
+    tmp = m_srgb_out_gpu->map();
+    memset(tmp, 0, m_w*m_h * 4);
+    m_srgb_out_gpu->unmap();
+
     m_linear_out_py = std::make_shared< Array< RGBA<float> > >(2, m_linear_out_gpu);
     m_srgb_out_py = std::make_shared< Array< RGBA<unsigned char> > >(2, m_srgb_out_gpu);
     }
