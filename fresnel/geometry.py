@@ -13,6 +13,11 @@ class Geometry:
 
     :py:class:`Geometry` provides operations common to all geometry classes.
 
+    Attributes:
+        material (:py:class:`fresnel.material.Material`): Read, set, or modify the geometry's material.
+        outline_material (:py:class:`fresnel.material.Material`): Read, set, or modify the geometry's outline material.
+        outline_width (:any:`float`): The geometry's outline width, in distance units in the scene's coordinate system.
+
     Note:
 
         You cannot instantiate a Geometry directly. Use one of the sub classes.
@@ -95,7 +100,7 @@ class Prism(Geometry):
         for assigning the attribute after construction.
 
     .. hint::
-        Avoid costly memory allocations and type conversions by specifying geometry attributes in the appropriate
+        Avoid costly memory allocations and type conversions by specifying primitive properties in the appropriate
         numpy array type.
 
     Attributes:
@@ -174,10 +179,10 @@ class Sphere(Geometry):
 
     Note:
         The constructor arguments ``position``, ``radius``, and ``color`` are optional, and just short-hand
-        for assigning the attribute after construction.
+        for assigning the properties after construction.
 
     .. hint::
-        Avoid costly memory allocations and type conversions by specifying geometry attributes in the appropriate
+        Avoid costly memory allocations and type conversions by specifying primitive properties in the appropriate
         numpy array type.
 
     Attributes:

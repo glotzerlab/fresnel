@@ -27,6 +27,9 @@ class Material:
         self.color = color;
         self.geometry_color_mix = geometry_color_mix;
 
+    def __repr__(self):
+        return "Material(solid={0}, color={1}, geometry_color_mix={2})".format(self.solid, self.color, self.geometry_color_mix);
+
     @property
     def solid(self):
         return self._material.solid;

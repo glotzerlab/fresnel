@@ -6,7 +6,9 @@ class Material:
 
 class RGBf:
     def __init__(self, *args, **kwargs):
-        pass
+        self.r = args[0];
+        self.g = args[1];
+        self.b = args[2];
 
 class Camera:
     def __init__(self, *args, **kwargs):

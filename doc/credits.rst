@@ -8,9 +8,11 @@ Joshua A. Anderson, University of Michigan - **Lead developer**
 
 Vyas Ramasubramani, University of Michigan
     * Sphere geometry (GPU)
+    * Review and discussions on API and design.
 
 Bryan Vansaders, University of Michigan
     * Sphere geometry (CPU)
+    * Review and discussions on API and design.
 
 Libraries
 ---------
