@@ -109,10 +109,10 @@ RT_PROGRAM void direct_ray_gen()
 
 rtDeclareVariable(float3, material_color, , );
 rtDeclareVariable(float, material_solid, , );
-rtDeclareVariable(float, material_geometry_color_mix, , );
+rtDeclareVariable(float, material_primitive_color_mix, , );
 rtDeclareVariable(float3, outline_material_color, , );
 rtDeclareVariable(float, outline_material_solid, , );
-rtDeclareVariable(float, outline_material_geometry_color_mix, , );
+rtDeclareVariable(float, outline_material_primitive_color_mix, , );
 rtDeclareVariable(float, outline_width, , );
 
 //! Determine result color
@@ -127,13 +127,13 @@ RT_PROGRAM void direct_closest_hit()
         {
         m.solid = material_solid;
         m.color = RGB<float>(material_color);
-        m.geometry_color_mix = material_geometry_color_mix;
+        m.primitive_color_mix = material_primitive_color_mix;
         }
     else
         {
         m.solid = outline_material_solid;
         m.color = RGB<float>(outline_material_color);
-        m.geometry_color_mix = outline_material_geometry_color_mix;
+        m.primitive_color_mix = outline_material_primitive_color_mix;
         }
 
     vec3<float> Ng(shading_normal);
