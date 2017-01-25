@@ -372,10 +372,10 @@ DEVICE inline RGBA<unsigned char> sRGB(const RGBA<float>& c)
 
     t.a = c.a;
 
-    return RGBA<unsigned char>((unsigned char)(t.r * 256.0f),
-                               (unsigned char)(t.g * 256.0f),
-                               (unsigned char)(t.b * 256.0f),
-                               (unsigned char)(t.a * 256.0f));
+    return RGBA<unsigned char>((unsigned char)(t.r * 255.0f + 0.5f),
+                               (unsigned char)(t.g * 255.0f + 0.5f),
+                               (unsigned char)(t.b * 255.0f + 0.5f),
+                               (unsigned char)(t.a * 255.0f + 0.5f));
     }
 
 }
