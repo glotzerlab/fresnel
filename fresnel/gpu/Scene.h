@@ -19,6 +19,15 @@ namespace fresnel { namespace gpu {
 
     The Scene also manages an acceleration structure for all of the primitives. Whenever a child object is modified,
     added, or removed, they must mark the acceleration structure dirty.
+
+    A given Scene also has an associated camera, background color, and background alpha. The camera is used by the
+    Tracer to generate rays into the Scene. The background color and alpha are the resulting color output by the
+    Tracer when a ray fails to hit geometry in the Scene.
+
+    Scene will eventually support multiple lights. As a temporary API, Scene stores a single light direction.
+
+    In OptiX, the root object of the scene does not accept parameters. Camera parameters, background colors, etc...
+    need to be set by the Tracer at the context level prior to launching the ray generation program.
 */
 class Scene
     {
