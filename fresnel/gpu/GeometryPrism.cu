@@ -7,6 +7,7 @@
 #include <float.h>
 
 using namespace optix;
+using namespace fresnel;
 
 // prism geometry buffers and variables
 rtBuffer<float3> prism_plane_origin;

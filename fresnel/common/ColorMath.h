@@ -15,6 +15,8 @@
 
 #include <math.h>
 
+namespace fresnel {
+
 //! 3 element color vector
 /*! \tparam Real Data type of the components
 
@@ -375,6 +377,8 @@ DEVICE inline RGBA<unsigned char> sRGB(const RGBA<float>& c)
                                (unsigned char)(t.b * 256.0f),
                                (unsigned char)(t.a * 256.0f));
     }
+
+}
 
 #undef DEVICE
 

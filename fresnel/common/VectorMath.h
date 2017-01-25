@@ -15,6 +15,8 @@
 #define DEVICE
 #endif
 
+namespace fresnel {
+
 /////////////////////////////// vec3 ///////////////////////////////////
 
 //! 3 element vector
@@ -1166,6 +1168,8 @@ DEVICE inline Vec project(const Vec& a, const Vec& b)
     {
     return dot(a,b)/dot(b,b) * b;
     }
+
+}
 
 #undef DEVICE
 

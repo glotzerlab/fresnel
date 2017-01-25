@@ -12,8 +12,13 @@
 #define __RTCRay__
 
 //! Custom ray structure.
-/*! Per the Embree documentation, this ray structure has the same data layout as thye one in Embree's header,
+/*! Per the Embree documentation, this ray structure has the same data layout as the one in Embree's header,
     with extra custom bits at the end.
+
+    The fresnel extensions are:
+
+    - *d*: The distance to the nearest edge, provided by intersection routines
+    - *shading_color*: The color of the primitive (or primitive subunit), provided by intersection routines
 */
 struct alignas(16) RTCRay
     {
@@ -21,8 +26,8 @@ struct alignas(16) RTCRay
     __forceinline RTCRay() {}
 
     //! Constructs a ray from origin, direction, and ray segment.
-    __forceinline RTCRay(const vec3<float>& org,
-                         const vec3<float>& dir,
+    __forceinline RTCRay(const fresnel::vec3<float>& org,
+                         const fresnel::vec3<float>& dir,
                          float tnear = 0.0f,
                          float tfar = std::numeric_limits<float>::infinity(),
                          float time = 0.0f,
@@ -40,17 +45,17 @@ struct alignas(16) RTCRay
         }
 
   public:
-    vec3<float> org;     //!< Ray origin
-    float _padding0;     //!< Padding to match embree RTCRay
-    vec3<float> dir;     //!< Ray direction
-    float _padding1;     //!< Padding to match embree RTCRay
-    float tnear;         //!< Start of ray segment
-    float tfar;          //!< End of ray segment
-    float time;          //!< Time of this ray for motion blur.
-    int mask;            //!< used to mask out objects during traversal
+    fresnel::vec3<float> org;     //!< Ray origin
+    float _padding0;              //!< Padding to match embree RTCRay
+    fresnel::vec3<float> dir;     //!< Ray direction
+    float _padding1;              //!< Padding to match embree RTCRay
+    float tnear;                  //!< Start of ray segment
+    float tfar;                   //!< End of ray segment
+    float time;                   //!< Time of this ray for motion blur.
+    int mask;                     //!< used to mask out objects during traversal
 
   public:
-    vec3<float> Ng;      //!< Not normalized geometry normal
+    fresnel::vec3<float> Ng;      //!< Not normalized geometry normal
     float _padding2;     //!< Padding to match embree RTCRay
     float u;             //!< Barycentric u coordinate of hit
     float v;             //!< Barycentric v coordinate of hit
@@ -60,8 +65,8 @@ struct alignas(16) RTCRay
 
   public:
     // ray extensions go here
-    float d;                    //!< Distance to the nearest edge
-    RGB<float> shading_color;   //!< shading color determined by which primitive the ray hits (or where on the primitive)
+    float d;                             //!< Distance to the nearest edge
+    fresnel::RGB<float> shading_color;   //!< shading color determined by which primitive the ray hits (or where on the primitive)
     };
 
 

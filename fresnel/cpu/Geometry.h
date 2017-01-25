@@ -26,7 +26,9 @@ namespace fresnel { namespace cpu {
     should set m_valid to true after they successfully call rtcNewWhaetever. m_geom_id stores the geometry id
     returned by Embree to reference this geometry in the scene.
 
-    Each Geometry has one Material, but it is managed by Scene.
+    Each Geometry has a Material and an outline Material and an outline width, but these are managed by Scene. Scene
+    has to manage these data structures because of the callback structure of embree ray tracing. In the main tracing
+    kernel, only the scene and geometry id are available.
 */
 class Geometry
     {

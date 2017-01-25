@@ -9,8 +9,8 @@
 
 #include <sstream>
 
-// TODO: Put common code into fresnel::common workspace?
 using namespace std;
+using namespace fresnel;
 
 PYBIND11_PLUGIN(_common)
     {
