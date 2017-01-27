@@ -13,19 +13,23 @@ class Material:
     Args:
 
         solid (float): Set to 1 to pass through a solid color, regardless of the light and view angle.
-        color (tuple): The RGB color of the material as a 3-tuple, list or other iterable.
-        geometry_color_mix (float): Set to 1 to use the color provided in the Geometry, 0 to use the color
+        color (tuple): The linear RGB color of the material as a 3-tuple, list or other iterable.
+        primitive_color_mix (float): Set to 1 to use the color provided in the Geometry, 0 to use the color
           specified in the material, or in the range (0,1) to mix the two colors.
 
-    TODO: Document SRGB and linear color spaces, and attributes
+    Colors are in the linearized sRGB color space. Use :py:func:`fresnel.color.linear` to convert standard sRGB colors
+    into this space.
     """
 
-    def __init__(self, solid=0, color=(0,0,0), geometry_color_mix=0):
+    def __init__(self, solid=0, color=(0,0,0), primitive_color_mix=0):
         self._material = _common.Material();
 
         self.solid = solid;
         self.color = color;
-        self.geometry_color_mix = geometry_color_mix;
+        self.primitive_color_mix = primitive_color_mix;
+
+    def __repr__(self):
+        return "Material(solid={0}, color={1}, primitive_color_mix={2})".format(self.solid, self.color, self.primitive_color_mix);
 
     @property
     def solid(self):
@@ -36,12 +40,12 @@ class Material:
         self._material.solid = float(value);
 
     @property
-    def geometry_color_mix(self):
-        return self._material.geometry_color_mix;
+    def primitive_color_mix(self):
+        return self._material.primitive_color_mix;
 
-    @geometry_color_mix.setter
-    def geometry_color_mix(self, value):
-        self._material.geometry_color_mix = float(value);
+    @primitive_color_mix.setter
+    def primitive_color_mix(self, value):
+        self._material.primitive_color_mix = float(value);
 
     @property
     def color(self):
@@ -74,14 +78,14 @@ class _material_proxy:
         self._geometry.setMaterial(m);
 
     @property
-    def geometry_color_mix(self):
+    def primitive_color_mix(self):
         m = self._geometry.getMaterial();
-        return m.geometry_color_mix;
+        return m.primitive_color_mix;
 
-    @geometry_color_mix.setter
-    def geometry_color_mix(self, value):
+    @primitive_color_mix.setter
+    def primitive_color_mix(self, value):
         m = self._geometry.getMaterial();
-        m.geometry_color_mix = float(value);
+        m.primitive_color_mix = float(value);
         self._geometry.setMaterial(m);
 
     @property
@@ -119,14 +123,14 @@ class _outline_material_proxy:
         self._geometry.setOutlineMaterial(m);
 
     @property
-    def geometry_color_mix(self):
+    def primitive_color_mix(self):
         m = self._geometry.getOutlineMaterial();
-        return m.geometry_color_mix;
+        return m.primitive_color_mix;
 
-    @geometry_color_mix.setter
-    def geometry_color_mix(self, value):
+    @primitive_color_mix.setter
+    def primitive_color_mix(self, value):
         m = self._geometry.getOutlineMaterial();
-        m.geometry_color_mix = float(value);
+        m.primitive_color_mix = float(value);
         self._geometry.setOutlineMaterial(m);
 
     @property

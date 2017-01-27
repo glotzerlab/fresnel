@@ -20,6 +20,12 @@ namespace fresnel { namespace cpu {
 
     Store the per geometry id materials in Scene. Embree guarantees that geometry ids will be small, increasing,
     and possibly reused when geometry is deleted. Therefore, we can efficiently store materials in a std::vector.
+
+    A given Scene also has an associated camera, background color, and background alpha. The camera is used by the
+    Tracer to generate rays into the Scene. The background color and alpha are the resulting color output by the
+    Tracer when a ray fails to hit geometry in the Scene.
+
+    Scene will eventually support multiple lights. As a temporary API, Scene stores a single light direction.
 */
 class Scene
     {

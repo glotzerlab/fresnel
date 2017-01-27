@@ -15,6 +15,8 @@
 #define DEVICE
 #endif
 
+namespace fresnel {
+
 //! Camera properties
 /*! Camera is a plain old data struct that holds camera properties, and a few methods for computing
     vectors in the image plane given normal screen coords.
@@ -63,6 +65,8 @@ struct Camera
         return d;
         }
     };
+
+}
 
 #undef DEVICE
 

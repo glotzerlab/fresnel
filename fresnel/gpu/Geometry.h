@@ -30,7 +30,7 @@ namespace fresnel { namespace gpu {
     the optix::Geometry member variable m_geometry. Second, the derived class should call setupInstance(), which will
     create the optix::GeometryInstance m_instance and associate it with m_geometry and the proper optix materials.
 
-    Each Geometry has one Material.
+    Each Geometry has one Material and one outline Material.
 */
 class Geometry
     {

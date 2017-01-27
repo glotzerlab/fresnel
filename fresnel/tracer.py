@@ -23,7 +23,7 @@ class Tracer:
 
     Attributes:
 
-        output (:py:class:`util.image_array`): Reference to the current output buffer (modified by :py:meth:`render`)
+        output (:py:class:`fresnel.util.image_array`): Reference to the current output buffer (modified by :py:meth:`render`)
     """
     def __init__(self):
         raise RuntimeError("Use a specific tracer class");
@@ -50,7 +50,7 @@ class Tracer:
             scene (:py:class:`Scene <fresnel.Scene>`): The scene to render.
 
         Returns:
-            A numpy array pointing to the output buffer.
+            A reference to the current output buffer as a :py:class:`fresnel.util.image_array`.
 
         Render the given scene and write the resulting pixels into the output buffer.
 
@@ -71,8 +71,8 @@ class Direct(Tracer):
     Args:
 
         device (:py:class:`Device <fresnel.Device>`): Device to use for rendering.
-        w (int): Output buffer width.
-        h (int): Output buffer height.
+        w (int): Output image width.
+        h (int): Output image height.
 
     The Direct ray tracer a basic ray tracer. It traces a single ray per pixel. The color of the
     pixel depends on the geometry the ray hits, its material, and the lights in the :py:class:`Scene <fresnel.Scene>`.
@@ -82,7 +82,6 @@ class Direct(Tracer):
 
     * Directional lights
     * Materials
-    * Cel shading
     """
 
     def __init__(self, device, w, h):

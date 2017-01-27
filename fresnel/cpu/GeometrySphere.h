@@ -21,7 +21,7 @@ namespace fresnel { namespace cpu {
     After construction, data fields are all 0. Users are expected to fill out data fields before using the geometry.
     At the python level, there are convenience methods to specify data fields at the time of construction.
 
-    GeometrySphere represents N spheres, each with a position and radius.
+    GeometrySphere represents N spheres, each with a position, radius, and color.
 */
 class GeometrySphere : public Geometry
     {

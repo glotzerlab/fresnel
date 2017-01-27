@@ -23,7 +23,17 @@ class array:
 
     You can access a :py:class:`fresnel.util.array` as if it were a numpy array (with limited operations).
 
-    TODO: more documentation
+    Write to an array with ``array[slice] = v`` where *v* is a numpy array or anything that numpy can convert to an
+    array. When *v* is a contiguous numpy array of the appropriate data type, the data is copied directly from *v*
+    into the internal buffer.
+
+    Read from an array with ``v = array[slice]``. This returns a **copy** of the data as a numpy array because the
+    array references internal data structures in fresnel that may exist on the GPU.
+
+    Attributes:
+
+        shape (tuple): Dimensions of the array.
+        dtype: Numpy data type
     """
 
     def __init__(self, buf, geom):

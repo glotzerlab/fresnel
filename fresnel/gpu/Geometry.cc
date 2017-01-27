@@ -96,7 +96,7 @@ void Geometry::setMaterial(const Material& material)
     m_mat = material;
     m_instance["material_solid"]->setFloat(m_mat.solid);
     m_instance["material_color"]->setFloat(m_mat.color.r, m_mat.color.g, m_mat.color.b);
-    m_instance["material_geometry_color_mix"]->setFloat(m_mat.geometry_color_mix);
+    m_instance["material_primitive_color_mix"]->setFloat(m_mat.primitive_color_mix);
     }
 
 /*! \param material New outline material to set
@@ -109,7 +109,7 @@ void Geometry::setOutlineMaterial(const Material& material)
     m_outline_mat = material;
     m_instance["outline_material_solid"]->setFloat(m_outline_mat.solid);
     m_instance["outline_material_color"]->setFloat(m_outline_mat.color.r, m_outline_mat.color.g, m_outline_mat.color.b);
-    m_instance["outline_material_geometry_color_mix"]->setFloat(m_outline_mat.geometry_color_mix);
+    m_instance["outline_material_primitive_color_mix"]->setFloat(m_outline_mat.primitive_color_mix);
     }
 
 /*! \param material New outline material to set

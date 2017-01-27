@@ -16,18 +16,21 @@
 #define DEVICE
 #endif
 
+namespace fresnel {
+
 //! Material properties
 /*! Material is a plain old data struct that holds material properties, and a few methods for computing
     an output brdf based on input vectors.
 
-    TODO: Document BRDF functions implemented here and what the parameters mean.
-    TODO: Document linear vs SRGB color spaces.
+    Material currently implements a trivial diffuse BRDF.
+
+    Material stores all colors in a linearized sRGB color space.
 */
 struct Material
     {
     float solid = 0;                     //!< Set to 1 to pass through solid color
     RGB<float> color;                    //!< Color of the material
-    float geometry_color_mix = 0.0f;     //!< Set to 0 to force material color, 1 to use geometry color
+    float primitive_color_mix = 0.0f;     //!< Set to 0 to force material color, 1 to use geometry color
 
     DEVICE RGB<float> brdf(vec3<float> l, vec3<float> v, vec3<float> n, const RGB<float>& shading_color) const
         {
@@ -44,11 +47,13 @@ struct Material
 
     DEVICE RGB<float> getColor(const RGB<float>& shading_color) const
         {
-        return lerp(geometry_color_mix, color, shading_color);
+        return lerp(primitive_color_mix, color, shading_color);
         }
 
 
     };
+
+}
 
 #undef DEVICE
 

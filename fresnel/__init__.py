@@ -10,6 +10,7 @@ import os
 from . import geometry
 from . import tracer
 from . import camera
+from . import color
 
 class Device:
     R""" Hardware device to use for ray tracing.
@@ -20,9 +21,9 @@ class Device:
 
     :py:class:`Device` defines hardware device to use for ray tracing. :py:class:`Scene` and
     :py:mod:`tracer <fresnel.tracer>` instances must be attached to a :py:class:`Device`. You may attach any number of
-    instances to a single :py:class:`Device`.
+    scenes and tracers to a single :py:class:`Device`.
 
-    When mode is `auto`, the default, Device will automatically select all available GPU devices in the system or
+    When mode is `auto`, the default, :py:class:`Device` will automatically select all available GPU devices in the system or
     fall back on CPU rendering if there is no GPU available or GPU support was not compiled in. Set mode to
     `gpu` or `cpu` to force a specific mode.
 
@@ -90,17 +91,26 @@ class Scene:
         device (:py:class:`Device`): Device to create this Scene on.
 
     :py:class:`Scene` defines the contents of the scene to be ray traced, including any number of
-    :py:mod:`geometry <fresnel.geometry>` objects.
+    :py:mod:`geometry <fresnel.geometry>` objects, the :py:mod:`camera <fresnel.camera>`,
+    :py:attr:`background color <background_color>`, :py:attr:`background alpha <background_alpha>`,
+    and the :py:attr:`light direction <light_direction>`.
 
     Every :py:class:`Scene` attaches to a :py:class:`Device`. For convenience, :py:class:`Scene` creates a default
     :py:class:`Device` when **device** is *None*. If you want a non-default device, you must create it explicitly.
 
+    Warning:
+
+        The API for :py:attr:`light_direction` is temporary.
+
     Attributes:
 
         device (:py:class:`Device`): Device this Scene is attached to.
-        camera (:py:class:`camera.Camera`): Camera view parameters.
-        background_color (tuple[float]): Background color (r,g,b) as a tuple or other 3-length python object.
+        camera (:py:class:`camera.Orthographic`): Camera view parameters.
+        background_color (tuple[float]): Background color (r,g,b) as a tuple or other 3-length python object, in the
+                                         linearized color space. Use :py:func:`fresnel.color.linear` to convert standard
+                                         sRGB colors
         background_alpha (float): Background alpha (opacity).
+        light_direction (tuple[float]): Vector pointing toward the light source.
     """
 
     def __init__(self, device=None, camera=camera.Orthographic(position=(0,0, 1), look_at=(0,0,0), up=(0,1,0), height=3)):
@@ -111,6 +121,8 @@ class Scene:
         self._scene = self.device.module.Scene(self.device._device);
         self.geometry = [];
         self.camera = camera;
+        self._tracer = None;
+
 
     @property
     def camera(self):
@@ -146,3 +158,16 @@ class Scene:
     @light_direction.setter
     def light_direction(self, value):
         self._scene.setLightDirection(_common.vec3f(*value));
+
+def render(scene, w=600, h=370):
+    R""" Render a scene.
+
+    Args:
+
+        scene (:py:class:`Scene`): Scene to render.
+        w (int): Output image width.
+        h (int): Output image height.
+    """
+
+    t = tracer.Direct(scene.device, w=w, h=h);
+    return t.render(scene);

@@ -56,8 +56,8 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
     context["top_object"]->set(scene->getRoot());
     context["scene_epsilon"]->setFloat(1.e-3f);
     context["bad_color"]->setFloat(1.0f, 0.0f, 1.0f);
-    context["linear_output_buffer"]->set(m_linear_out_gpu);
     context["srgb_output_buffer"]->set(m_srgb_out_gpu);
+    context["linear_output_buffer"]->set(m_linear_out_gpu);
 
     // set camera variables
     context["camera_p"]->setFloat(camera.p.x, camera.p.y, camera.p.z);

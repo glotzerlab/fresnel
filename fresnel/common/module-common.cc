@@ -9,8 +9,8 @@
 
 #include <sstream>
 
-// TODO: Put common code into fresnel::common workspace?
 using namespace std;
+using namespace fresnel;
 
 PYBIND11_PLUGIN(_common)
     {
@@ -25,7 +25,7 @@ PYBIND11_PLUGIN(_common)
     pybind11::class_< Material >(m, "Material")
         .def(pybind11::init<>())
         .def_readwrite("solid", &Material::solid)
-        .def_readwrite("geometry_color_mix", &Material::geometry_color_mix)
+        .def_readwrite("primitive_color_mix", &Material::primitive_color_mix)
         .def_readwrite("color", &Material::color)
         .def("__repr__",
             [](const Material &a)
@@ -34,7 +34,7 @@ PYBIND11_PLUGIN(_common)
                 s << "<fresnel._common.Material:"
                   << " solid=" << a.solid
                   << " color=(" << a.color.r << ", " << a.color.g << ", " << a.color.b << ")"
-                  << " geometry_color_mix=" << a.geometry_color_mix
+                  << " primitive_color_mix=" << a.primitive_color_mix
                   << ">";
 
                 return s.str();

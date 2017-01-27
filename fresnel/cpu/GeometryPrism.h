@@ -20,8 +20,7 @@ namespace fresnel { namespace cpu {
     Specifically, this class is currently limited to right convex prisms oriented such that the polygon face is
     parallel to the xy plane.
 
-    The initial implementation takes in std::vector's of tuples which will be translated from python
-    lists of tuples. This API will be replaced by direct data buffers at some point.
+    Verticies are passed in from python as a numpy array.
 
     While this class is very specific in the type of geometry it supports, the implementation is actually very general.
     The intersection routine is capable of supporting generic 3D polyhedra. This class could be copied and used to
