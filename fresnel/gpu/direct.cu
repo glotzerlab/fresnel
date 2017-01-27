@@ -22,7 +22,8 @@ rtDeclareVariable(float3, bad_color, , );
 rtDeclareVariable(PRDradiance, prd_radiance, rtPayload, );
 rtDeclareVariable(optix::Ray, ray, rtCurrentRay, );
 
-rtBuffer<float4, 2> output_buffer;
+rtBuffer<float4, 2> linear_output_buffer;
+rtBuffer<uchar4, 2> srgb_output_buffer;
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // variables output from intersection program
@@ -42,7 +43,10 @@ RT_PROGRAM void direct_exception()
     const unsigned int code = rtGetExceptionCode();
 
     if(code == RT_EXCEPTION_STACK_OVERFLOW)
-        output_buffer[launch_index] = make_float4(bad_color.x, bad_color.y, bad_color.z, 1.0f);
+        {
+        linear_output_buffer[launch_index] = make_float4(bad_color.x, bad_color.y, bad_color.z, 1.0f);
+        srgb_output_buffer[launch_index] = make_uchar4(255.0f*bad_color.x, 255.0f*bad_color.y, 255.0f*bad_color.z, 255);
+        }
     else
         rtPrintExceptionDetails();
     }
@@ -73,7 +77,7 @@ RT_PROGRAM void direct_ray_gen()
     cam.h = camera_h;
 
     // determine the viewing plane relative coordinates
-    optix::size_t2 screen = output_buffer.size();
+    optix::size_t2 screen = linear_output_buffer.size();
     float ys = -1.0f*(launch_index.y/float(screen.y-1)-0.5f);
     float xs = launch_index.x/float(screen.y-1)-0.5f*float(screen.x)/float(screen.y);
 
@@ -95,7 +99,9 @@ RT_PROGRAM void direct_ray_gen()
         }
 
     // write the output pixel
-    output_buffer[launch_index] = make_float4(c.r, c.g, c.b, a);
+    linear_output_buffer[launch_index] = make_float4(c.r, c.g, c.b, a);
+    RGBA<unsigned char> srgb_output_pixel = sRGB(RGBA<float>(c.r, c.g, c.b, a));
+    srgb_output_buffer[launch_index] = make_uchar4(srgb_output_pixel.r, srgb_output_pixel.g, srgb_output_pixel.b, srgb_output_pixel.a);
     }
 
 ///////////////////////////////////////////////////////////////////////////////////////////

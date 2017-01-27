@@ -25,7 +25,12 @@ make -j4
     * Intel TBB >= 4.3.20150611
     * Intel Embree >= 2.10.0
 
-Search paths:
+## Optional dependencies
+
+* pillow
+    * To display rendered output in Jupyter notebooks automatically
+
+## Search paths
 
 | Library | Default search path | CMake Custom search path |
 | ------- | ------------------- | ------------------ |

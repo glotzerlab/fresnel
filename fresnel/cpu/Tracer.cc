@@ -29,7 +29,8 @@ void Tracer::resize(unsigned int w, unsigned int h)
     if (w == 0 || h == 0)
         throw std::runtime_error("Invalid dimensions");
 
-    m_out = std::shared_ptr< Array< RGBA<float> > >(new Array< RGBA<float> >(w, h));
+    m_linear_out = std::shared_ptr< Array< RGBA<float> > >(new Array< RGBA<float> >(w, h));
+    m_srgb_out = std::shared_ptr< Array< RGBA<unsigned char> > >(new Array< RGBA<unsigned char> >(w, h));
     }
 
 /*! \param scene The Scene to render
@@ -50,7 +51,8 @@ void export_Tracer(pybind11::module& m)
         .def(pybind11::init<std::shared_ptr<Device>, unsigned int, unsigned int >())
         .def("render", &Tracer::render)
         .def("resize", &Tracer::resize)
-        .def("getOutputBuffer", &Tracer::getOutputBuffer)
+        .def("getSRGBOutputBuffer", &Tracer::getSRGBOutputBuffer)
+        .def("getLinearOutputBuffer", &Tracer::getLinearOutputBuffer)
         ;
     }
 

@@ -18,16 +18,11 @@ namespace fresnel { namespace cpu {
 
 //! Base class for the raytracer
 /*! The base class Tracer specifies common methods used for all tracers. This includes output buffer management,
-    defining the rendering API, camera specification, etc...
+    and defining the rendering API.
 
-    The output buffer is stored in floating point rgba format in a unique pointer. For python access,
-    Tracer specifies a buffer protocol so that numpy.array(tracer, copy=False) (or any other means of buffer
-    access) can get at the data nocopy. However, a call to resize will invalidate the buffer.
-
-    TODO: Consider a separate RGBA 4-byte per pixel output buffer to improve frame rates, separate from the
-          render buffer
-    TODO: Consider allocating the output buffer with a maximum size in mind so that resize will never invalidate
-          numpy array handles and all handles will be valid indefinitely.
+    The output buffer is stored in two formats. *m_linear_out* store the ray traced output in a linear RGB color space.
+    This buffer is suitable for tone mapping and averaging with other render output. *m_srgb_out* stores the output
+    in the sRGB color space and in a 4 bytes per pixel format suitable for direct use in image display.
 
     The rendering methods themselves do nothing. Derived classes must implement them.
 */
@@ -46,15 +41,22 @@ class Tracer
         //! Render a scene
         virtual void render(std::shared_ptr<Scene> scene);
 
-        //! Get the output pixel buffer
-        virtual std::shared_ptr< Array< RGBA<float> > > getOutputBuffer()
+        //! Get the SRGB output pixel buffer
+        virtual std::shared_ptr< Array< RGBA<unsigned char> > > getSRGBOutputBuffer()
             {
-            return m_out;
+            return m_srgb_out;
+            }
+
+        //! Get the SRGB output pixel buffer
+        virtual std::shared_ptr< Array< RGBA<float> > > getLinearOutputBuffer()
+            {
+            return m_linear_out;
             }
 
     protected:
-        std::shared_ptr<Device> m_device;                     //!< The device the Scene is attached to
-        std::shared_ptr< Array< RGBA<float> > > m_out;        //!< The output buffer
+        std::shared_ptr<Device> m_device;                           //!< The device the Scene is attached to
+        std::shared_ptr< Array< RGBA<float> > > m_linear_out;       //!< The output buffer (linear space)
+        std::shared_ptr< Array< RGBA<unsigned char> > > m_srgb_out; //!< The output buffer (srgb space)
     };
 
 //! Export Tracer to python

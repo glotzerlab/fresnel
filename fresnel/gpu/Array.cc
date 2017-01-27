@@ -13,10 +13,22 @@ void export_Array(pybind11::module& m)
         .def("unmap", &Array< RGBA<float> >::unmap)
         ;
 
+    pybind11::class_<Array< RGBA<unsigned char> >, std::shared_ptr<Array< RGBA<unsigned char> >> >(m, "ArrayRGBAc")
+        .def_buffer([](Array< RGBA<unsigned char> > &t) -> pybind11::buffer_info { return t.getBuffer(); })
+        .def("map", &Array< RGBA<unsigned char> >::map_py)
+        .def("unmap", &Array< RGBA<unsigned char> >::unmap)
+        ;
+
     pybind11::class_<Array< RGB<float> >, std::shared_ptr<Array< RGB<float> >> >(m, "ArrayRGBf")
         .def_buffer([](Array< RGB<float> > &t) -> pybind11::buffer_info { return t.getBuffer(); })
         .def("map", &Array< RGB<float> >::map_py)
         .def("unmap", &Array< RGB<float> >::unmap)
+        ;
+
+    pybind11::class_<Array< RGB<unsigned char> >, std::shared_ptr<Array< RGB<unsigned char> >> >(m, "ArrayRGBc")
+        .def_buffer([](Array< RGB<unsigned char> > &t) -> pybind11::buffer_info { return t.getBuffer(); })
+        .def("map", &Array< RGB<unsigned char> >::map_py)
+        .def("unmap", &Array< RGB<unsigned char> >::unmap)
         ;
 
     pybind11::class_<Array< vec3<float> >, std::shared_ptr<Array< vec3<float> >> >(m, "ArrayVec3f")

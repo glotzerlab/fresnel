@@ -7,6 +7,7 @@ Ray tracers.
 
 import numpy
 from . import camera
+from . import util
 
 class Tracer:
     R""" Base class for all ray tracers.
@@ -16,12 +17,13 @@ class Tracer:
     Each :py:class:`Tracer` instance stores a pixel output buffer. When you :py:meth:`render` a
     :py:class:`Scene <fresnel.Scene>`, the current data stored in the buffer is overwritten with the new image.
 
-    TODO: Return output buffer as its own buffer object directly. Users can use it with jupyter, pillow, numpy,
-    etc... as desired. Don't force a specific format on the user.
-
     Note:
 
         You cannot instantiate a Tracer directly. Use one of the sub classes.
+
+    Attributes:
+
+        output (:py:class:`util.image_array`): Reference to the current output buffer (modified by :py:meth:`render`)
     """
     def __init__(self):
         raise RuntimeError("Use a specific tracer class");
@@ -57,12 +59,11 @@ class Tracer:
         """
 
         self._tracer.render(scene._scene);
-        buf = self._tracer.getOutputBuffer()
-        buf.map();
-        a = numpy.array(buf, copy=False);
-        result = numpy.uint8(a*255);
-        buf.unmap();
-        return result;
+        return self.output;
+
+    @property
+    def output(self):
+        return util.image_array(self._tracer.getSRGBOutputBuffer(), geom=None)
 
 class Direct(Tracer):
     R""" Direct ray tracer.

@@ -6,6 +6,12 @@ Utility classes and methods.
 """
 
 import numpy
+import io
+
+try:
+    import PIL.Image as PIL_Image;
+except ImportError:
+    PIL_Image = None;
 
 class array:
     R""" Map internal fresnel buffers as numpy arrays.
@@ -55,3 +61,26 @@ class array:
         a = numpy.array(self.buf, copy=False);
         self.buf.unmap();
         return a.dtype;
+
+class image_array(array):
+    R""" Map internal fresnel image buffers as numpy arrays.
+
+    Inherits from :py:class:`array` and provides all of its functionality, plus some additional convenience methods
+    specific to working with images. Images are represented as WxHx4 numpy arrays of unsigned chars in RGBA format.
+
+    Specifically, when a :py:class:`image_array` is the result of an image in a Jupyter notebook cell, Jupyter will
+    display the image.
+    """
+
+    def _repr_png_(self):
+        if PIL_Image is None:
+            raise RuntimeError("No PIL.Image module to format png");
+
+        self.buf.map();
+
+        f = io.BytesIO();
+        a = numpy.array(self.buf, copy=False);
+        PIL_Image.fromarray(a, mode='RGBA').save(f, 'png');
+        self.buf.unmap();
+
+        return f.getvalue();
