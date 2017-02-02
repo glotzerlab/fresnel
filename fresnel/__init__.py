@@ -3,6 +3,10 @@
 
 R"""
 The fresnel ray tracing package.
+
+Attributes:
+    __version__ (str): Fresnel version
+
 """
 
 import os
@@ -11,6 +15,8 @@ from . import geometry
 from . import tracer
 from . import camera
 from . import color
+
+__version__ = "0.0.0"
 
 class Device:
     R""" Hardware device to use for ray tracing.
