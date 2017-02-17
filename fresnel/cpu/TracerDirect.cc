@@ -26,6 +26,8 @@ TracerDirect::~TracerDirect()
 
 void TracerDirect::render(std::shared_ptr<Scene> scene)
     {
+    std::shared_ptr<tbb::task_arena> arena = scene->getDevice()->getTBBArena();
+
     const RGB<float> background_color = scene->getBackgroundColor();
     const float background_alpha = scene->getBackgroundAlpha();
     const vec3<float> light_direction = scene->getLightDirection();
@@ -34,7 +36,7 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
     Tracer::render(scene);
 
     // update Embree data structures
-    rtcCommit(scene->getRTCScene());
+    arena->execute([&]{ rtcCommit(scene->getRTCScene()); });
     m_device->checkError();
 
     RGBA<float>* linear_output = m_linear_out->map();
@@ -49,6 +51,7 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
     const unsigned int numTilesX = (width +TILE_SIZE_X-1)/TILE_SIZE_X;
     const unsigned int numTilesY = (height+TILE_SIZE_Y-1)/TILE_SIZE_Y;
 
+    arena->execute([&]{
     parallel_for( blocked_range<size_t>(0,numTilesX*numTilesY), [=](const blocked_range<size_t>& r)
         {
         for(size_t tile = r.begin(); tile != r.end(); ++tile)
@@ -116,6 +119,7 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
                 }
             }
         });
+    });
 
     m_linear_out->unmap();
     m_srgb_out->unmap();

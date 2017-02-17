@@ -24,6 +24,8 @@ class Device:
     Args:
 
         mode (str): Specify execution mode: Valid values are `auto`, `gpu`, and `cpu`.
+        limit (int): Specify a limit to the number of threads this device will use (cpu).
+                     *None* sets no limit.
 
     :py:class:`Device` defines hardware device to use for ray tracing. :py:class:`Scene` and
     :py:mod:`tracer <fresnel.tracer>` instances must be attached to a :py:class:`Device`. You may attach any number of
@@ -37,7 +39,7 @@ class Device:
         Use only a single :py:class:`Device` to reduce memory consumption.
     """
 
-    def __init__(self, mode='auto'):
+    def __init__(self, mode='auto', limit=None,):
         # attempt to import the cpu and gpu modules
         try:
             from fresnel import _cpu;
@@ -85,7 +87,13 @@ class Device:
             self._device = _gpu.Device(os.path.dirname(os.path.realpath(__file__)));
         elif selected_mode == 'cpu':
             self.module = _cpu;
-            self._device = _cpu.Device();
+
+            if limit is None:
+                thread_limit = -1
+            else:
+                thread_limit = int(limit)
+
+            self._device = _cpu.Device(thread_limit);
         else:
             raise ValueError("Invalid mode");
 

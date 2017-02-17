@@ -9,6 +9,7 @@
 #include <embree2/rtcore_ray.h>
 #include <pybind11/pybind11.h>
 #include <stdexcept>
+#include "tbb/task_arena.h"
 
 #include "Array.h"      // not used by device, but for the pybind11 shared pointer holder type definition
 
@@ -21,7 +22,7 @@ class Device
     {
     public:
         //! Constructor
-        Device();
+        Device(int limit);
 
         //! Destructor
         ~Device();
@@ -30,6 +31,12 @@ class Device
         RTCDevice& getRTCDevice()
             {
             return m_device;
+            }
+
+        //! Get the TBB task arena
+        std::shared_ptr<tbb::task_arena> getTBBArena()
+            {
+            return m_arena;
             }
 
         //! Check for error conditions
@@ -68,7 +75,8 @@ class Device
             }
 
     private:
-        RTCDevice m_device; //!< Store the device
+        RTCDevice m_device;                         //!< Store the embree device
+        std::shared_ptr<tbb::task_arena> m_arena;   //!< TBB task arena
     };
 
 //! Export Device to python
