@@ -21,7 +21,6 @@ namespace fresnel { namespace gpu {
 */
 Device::Device(const std::string& ptx_root) : m_ptx_root(ptx_root)
     {
-    std::cout << "Create GPU Device: " << m_ptx_root << std::endl;
     m_context = optix::Context::create();
 
     m_context->setRayTypeCount(1);
@@ -35,8 +34,6 @@ Device::Device(const std::string& ptx_root) : m_ptx_root(ptx_root)
 */
 Device::~Device()
     {
-    std::cout << "Destroy GPU Device" << std::endl;
-
     // destroy programs
     for (auto elem : m_program_cache)
         {

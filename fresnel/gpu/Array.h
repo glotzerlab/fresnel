@@ -215,7 +215,6 @@ template<class T> class Array
             // it is important that the python mapping method does not return a pointer
             // if you return a bare pointer with pybind11, pybind11 will try to free it!
             m_tmp = m_buffer->map();
-            std::cout << "Mapping GPU buffer" << std::endl;
             }
 
         //! Unbind the array

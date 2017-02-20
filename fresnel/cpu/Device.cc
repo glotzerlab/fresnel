@@ -13,7 +13,6 @@ namespace fresnel { namespace cpu {
 */
 Device::Device(int limit)
     {
-    std::cout << "Create Device" << std::endl;
     m_device = rtcNewDevice(nullptr);
 
     if (limit == -1)
@@ -31,7 +30,6 @@ Device::Device(int limit)
 */
 Device::~Device()
     {
-    std::cout << "Destroy Device" << std::endl;
     rtcDeleteDevice(m_device);
     }
 

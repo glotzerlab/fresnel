@@ -12,7 +12,6 @@ namespace fresnel { namespace cpu {
 */
 Scene::Scene(std::shared_ptr<Device> device) : m_device(device), m_background_color(RGB<float>(0,0,0)), m_background_alpha(0.0)
     {
-    std::cout << "Create Scene" << std::endl;
     m_scene = rtcDeviceNewScene(device->getRTCDevice(), RTC_SCENE_DYNAMIC, RTC_INTERSECT1);
     m_device->checkError();
 
@@ -25,7 +24,6 @@ Scene::Scene(std::shared_ptr<Device> device) : m_device(device), m_background_co
  */
 Scene::~Scene()
     {
-    std::cout << "Destroy Scene" << std::endl;
     rtcDeleteScene(m_scene);
     m_device->checkError();
     }

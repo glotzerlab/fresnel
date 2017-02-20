@@ -16,7 +16,6 @@ namespace fresnel { namespace cpu {
 GeometrySphere::GeometrySphere(std::shared_ptr<Scene> scene, unsigned int N)
     : Geometry(scene)
     {
-    std::cout << "Create GeometrySphere" << std::endl;
     // create the geometry
     m_geom_id = rtcNewUserGeometry(m_scene->getRTCScene(), N);
     m_device->checkError();
@@ -41,7 +40,6 @@ GeometrySphere::GeometrySphere(std::shared_ptr<Scene> scene, unsigned int N)
 
 GeometrySphere::~GeometrySphere()
     {
-    std::cout << "Destroy GeometrySphere" << std::endl;
     }
 
 /*! Compute the bounding box of a given primitive

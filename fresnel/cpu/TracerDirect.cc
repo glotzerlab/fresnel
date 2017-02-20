@@ -16,12 +16,10 @@ namespace fresnel { namespace cpu {
 TracerDirect::TracerDirect(std::shared_ptr<Device> device, unsigned int w, unsigned int h)
     : Tracer(device, w, h)
     {
-    std::cout << "Create TracerDirect" << std::endl;
     }
 
 TracerDirect::~TracerDirect()
     {
-    std::cout << "Destroy TracerDirect" << std::endl;
     }
 
 void TracerDirect::render(std::shared_ptr<Scene> scene)
