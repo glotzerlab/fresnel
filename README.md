@@ -61,6 +61,7 @@ open build/html/index.html
 
 * pillow
     * To display rendered output in Jupyter notebooks automatically
+    * Required to execute unit tests
 * sphinx
     * To build the user documentation
 * doxygen
