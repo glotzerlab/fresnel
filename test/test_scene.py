@@ -22,7 +22,7 @@ def test_background_color(device):
     numpy.testing.assert_array_equal(buf[:,:,0:3], numpy.ones(shape=(100,100,3), dtype=buf.dtype)*(32,191,96))
 
 def test_camera(scene_hex_sphere, generate=False):
-    scene_hex_sphere.camera = fresnel.camera.Orthographic(position=(0, 0, 10), look_at=(0,0,0), up=(0,1,0), height=6)
+    scene_hex_sphere.camera = fresnel.camera.Orthographic(position=(1, 0, 10), look_at=(1,0,0), up=(0,1,0), height=6)
 
     # uncomment when camera access methods are implemented
     #assert scene.camera.position == (0,0,10)
@@ -38,8 +38,6 @@ def test_camera(scene_hex_sphere, generate=False):
         conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_scene.test_camera.png')
 
 def test_light_dir(scene_hex_sphere, generate=False):
-    scene_hex_sphere.camera = fresnel.camera.Orthographic(position=(0, 0, 10), look_at=(0,0,0), up=(0,1,0), height=6)
-
     scene_hex_sphere.light_direction = (-1, 0, 0)
     assert scene_hex_sphere.light_direction == (-1, 0, 0)
 
@@ -99,7 +97,12 @@ def test_multiple_geometries(device, generate=False):
 if __name__ == '__main__':
     struct = namedtuple("struct", "param")
     device = conftest.device(struct(('cpu', None)))
+
     scene_hex_sphere = conftest.scene_hex_sphere(device)
     test_camera(scene_hex_sphere, generate=True)
+
+    scene_hex_sphere = conftest.scene_hex_sphere(device)
     test_light_dir(scene_hex_sphere, generate=True)
+
+    scene_hex_sphere = conftest.scene_hex_sphere(device)
     test_multiple_geometries(scene_hex_sphere, generate=True)
