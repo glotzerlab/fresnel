@@ -58,7 +58,7 @@ set(_ptx_sources
     gpu/GeometryPrism.cu)
 
 CUDA_WRAP_SRCS(_ptx PTX generated_ptx_files ${_ptx_sources})
-add_custom_target(ptx ALL
+add_custom_target(_ptx ALL
     DEPENDS ${generated_ptx_files} ${_ptx_sources}
     SOURCES ${_ptx_sources})
 
