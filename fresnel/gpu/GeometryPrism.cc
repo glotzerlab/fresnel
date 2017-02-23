@@ -20,8 +20,6 @@ GeometryPrism::GeometryPrism(std::shared_ptr<Scene> scene,
                              unsigned int N)
     : Geometry(scene)
     {
-    std::cout << "Create GeometryPrism" << std::endl;
-
     // create the geometry
     // intersection and bounding programs are not stored for later destruction, as Device will destroy its program cache
     optix::Program intersection_program;
@@ -129,8 +127,6 @@ GeometryPrism::GeometryPrism(std::shared_ptr<Scene> scene,
 
 GeometryPrism::~GeometryPrism()
     {
-    std::cout << "Destroy GeometryPrism" << std::endl;
-
     m_plane_origin->destroy();
     m_plane_normal->destroy();
     }

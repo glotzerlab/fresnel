@@ -15,7 +15,6 @@ namespace fresnel { namespace gpu {
 	GeometrySphere::GeometrySphere(std::shared_ptr<Scene> scene, unsigned int N)
 		: Geometry(scene)
 		{
-		std::cout << "Create GeometrySphere" << std::endl;
 
 		// Declared initial variabls
 		optix::Program intersection_program;
@@ -50,7 +49,6 @@ namespace fresnel { namespace gpu {
 
 	GeometrySphere::~GeometrySphere()
 		{
-		std::cout << "Destroy GeometrySphere" << std::endl;
 		}
 
 	void export_GeometrySphere(pybind11::module& m)

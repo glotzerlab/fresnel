@@ -14,8 +14,6 @@ namespace fresnel { namespace gpu {
 TracerDirect::TracerDirect(std::shared_ptr<Device> device, unsigned int w, unsigned int h)
     : Tracer(device, w, h)
     {
-    std::cout << "Create GPU TracerDirect" << std::endl;
-
     // create the entry point program
     optix::Context context = m_device->getContext();
     m_ray_gen = m_device->getProgram("_ptx_generated_direct.cu.ptx", "direct_ray_gen");
@@ -28,7 +26,6 @@ TracerDirect::TracerDirect(std::shared_ptr<Device> device, unsigned int w, unsig
 
 TracerDirect::~TracerDirect()
     {
-    std::cout << "Destroy GPU TracerDirect" << std::endl;
     }
 
 //! Initialize the Material for use in tracing

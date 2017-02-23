@@ -5,6 +5,10 @@
 #include <cmath>
 #include <stdexcept>
 
+#include "tbb/tbb.h"
+
+using namespace tbb;
+
 namespace fresnel { namespace cpu {
 
 /*! \param device Device to attach the raytracer to
@@ -12,16 +16,16 @@ namespace fresnel { namespace cpu {
 TracerDirect::TracerDirect(std::shared_ptr<Device> device, unsigned int w, unsigned int h)
     : Tracer(device, w, h)
     {
-    std::cout << "Create TracerDirect" << std::endl;
     }
 
 TracerDirect::~TracerDirect()
     {
-    std::cout << "Destroy TracerDirect" << std::endl;
     }
 
 void TracerDirect::render(std::shared_ptr<Scene> scene)
     {
+    std::shared_ptr<tbb::task_arena> arena = scene->getDevice()->getTBBArena();
+
     const RGB<float> background_color = scene->getBackgroundColor();
     const float background_alpha = scene->getBackgroundAlpha();
     const vec3<float> light_direction = scene->getLightDirection();
@@ -30,7 +34,7 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
     Tracer::render(scene);
 
     // update Embree data structures
-    rtcCommit(scene->getRTCScene());
+    arena->execute([&]{ rtcCommit(scene->getRTCScene()); });
     m_device->checkError();
 
     RGBA<float>* linear_output = m_linear_out->map();
@@ -39,63 +43,81 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
     // for each pixel
     const unsigned int height = m_linear_out->getH();
     const unsigned int width = m_linear_out->getW();
-    for (unsigned int j = 0; j < height; j++)
+
+    const unsigned int TILE_SIZE_X = 4;
+    const unsigned int TILE_SIZE_Y = 4;
+    const unsigned int numTilesX = (width +TILE_SIZE_X-1)/TILE_SIZE_X;
+    const unsigned int numTilesY = (height+TILE_SIZE_Y-1)/TILE_SIZE_Y;
+
+    arena->execute([&]{
+    parallel_for( blocked_range<size_t>(0,numTilesX*numTilesY), [=](const blocked_range<size_t>& r)
         {
-        for (unsigned int i = 0; i < width; i++)
+        for(size_t tile = r.begin(); tile != r.end(); ++tile)
             {
-            // determine the viewing plane relative coordinates
-            float ys = -1.0f*(j/float(height-1)-0.5f);
-            float xs = i/float(height-1)-0.5f*float(width)/float(height);
+            const unsigned int tileY = tile / numTilesX;
+            const unsigned int tileX = tile - tileY * numTilesX;
+            const unsigned int x0 = tileX * TILE_SIZE_X;
+            const unsigned int x1 = std::min(x0+TILE_SIZE_X,width);
+            const unsigned int y0 = tileY * TILE_SIZE_Y;
+            const unsigned int y1 = std::min(y0+TILE_SIZE_Y,height);
 
-            // trace a ray into the scene
-            RTCRay ray(cam.origin(xs, ys), cam.direction(xs, ys));
-            rtcIntersect(scene->getRTCScene(), ray);
-
-            // determine the output pixel color
-            RGB<float> c = background_color;
-            float a = background_alpha;
-
-            if (ray.hit())
+            for (unsigned int j=y0; j<y1; j++) for (unsigned int i=x0; i<x1; i++)
                 {
-                vec3<float> n = ray.Ng / std::sqrt(dot(ray.Ng, ray.Ng));
-                vec3<float> l = light_direction;
-                vec3<float> v = -ray.dir / std::sqrt(dot(ray.dir, ray.dir));
-                Material m;
+                // determine the viewing plane relative coordinates
+                float ys = -1.0f*(j/float(height-1)-0.5f);
+                float xs = i/float(height-1)-0.5f*float(width)/float(height);
 
-                // apply the material color or outline color depending on the distance to the edge
-                if (ray.d > scene->getOutlineWidth(ray.geomID))
-                    m = scene->getMaterial(ray.geomID);
-                else
-                    m = scene->getOutlineMaterial(ray.geomID);
+                // trace a ray into the scene
+                RTCRay ray(cam.origin(xs, ys), cam.direction(xs, ys));
+                rtcIntersect(scene->getRTCScene(), ray);
 
-                if (m.isSolid())
+                // determine the output pixel color
+                RGB<float> c = background_color;
+                float a = background_alpha;
+
+                if (ray.hit())
                     {
-                    c = m.getColor(ray.shading_color);
-                    }
-                else
-                    {
-                    // only apply brdf when the light faces the surface
-                    float ndotl = dot(n,l);
-                    if (ndotl > 0.0f)
+                    vec3<float> n = ray.Ng / std::sqrt(dot(ray.Ng, ray.Ng));
+                    vec3<float> l = light_direction;
+                    vec3<float> v = -ray.dir / std::sqrt(dot(ray.dir, ray.dir));
+                    Material m;
+
+                    // apply the material color or outline color depending on the distance to the edge
+                    if (ray.d > scene->getOutlineWidth(ray.geomID))
+                        m = scene->getMaterial(ray.geomID);
+                    else
+                        m = scene->getOutlineMaterial(ray.geomID);
+
+                    if (m.isSolid())
                         {
-                        c = m.brdf(l, v, n, ray.shading_color) * float(M_PI) * /* light color * */ ndotl;
+                        c = m.getColor(ray.shading_color);
                         }
                     else
                         {
-                        c = RGB<float>(0,0,0);
+                        // only apply brdf when the light faces the surface
+                        float ndotl = dot(n,l);
+                        if (ndotl > 0.0f)
+                            {
+                            c = m.brdf(l, v, n, ray.shading_color) * float(M_PI) * /* light color * */ ndotl;
+                            }
+                        else
+                            {
+                            c = RGB<float>(0,0,0);
+                            }
                         }
+
+                    a = 1.0;
                     }
 
-                a = 1.0;
+                // write the output pixel
+                unsigned int pixel = j*width + i;
+                RGBA<float> output_pixel(c.r, c.g, c.b, a);
+                linear_output[pixel] = output_pixel;
+                srgb_output[pixel] = sRGB(output_pixel);
                 }
-
-            // write the output pixel
-            unsigned int pixel = j*width + i;
-            RGBA<float> output_pixel(c.r, c.g, c.b, a);
-            linear_output[pixel] = output_pixel;
-            srgb_output[pixel] = sRGB(output_pixel);
             }
-        }
+        });
+    });
 
     m_linear_out->unmap();
     m_srgb_out->unmap();

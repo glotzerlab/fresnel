@@ -10,13 +10,11 @@ namespace fresnel { namespace cpu {
 Tracer::Tracer(std::shared_ptr<Device> device, unsigned int w, unsigned int h)
     : m_device(device)
     {
-    std::cout << "Create Tracer" << std::endl;
     resize(w,h);
     }
 
 Tracer::~Tracer()
     {
-    std::cout << "Destroy Tracer" << std::endl;
     }
 
 /*! \param w New output buffer width

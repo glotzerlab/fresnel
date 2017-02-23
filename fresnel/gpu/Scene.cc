@@ -12,7 +12,6 @@ namespace fresnel { namespace gpu {
 */
 Scene::Scene(std::shared_ptr<Device> device) : m_device(device), m_background_color(RGB<float>(0,0,0)), m_background_alpha(0.0)
     {
-    std::cout << "Create GPU Scene" << std::endl;
     m_root = m_device->getContext()->createGeometryGroup();
     m_accel = m_device->getContext()->createAcceleration("Trbvh");
     m_root->setAcceleration(m_accel);
@@ -26,7 +25,6 @@ Scene::Scene(std::shared_ptr<Device> device) : m_device(device), m_background_co
  */
 Scene::~Scene()
     {
-    std::cout << "Destroy GPU Scene" << std::endl;
     m_accel->destroy();
     m_root->destroy();
     }

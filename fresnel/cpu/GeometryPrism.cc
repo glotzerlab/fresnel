@@ -20,7 +20,6 @@ GeometryPrism::GeometryPrism(std::shared_ptr<Scene> scene,
                              unsigned int N)
     : Geometry(scene)
     {
-    std::cout << "Create GeometryPrism" << std::endl;
     // create the geometry
     m_geom_id = rtcNewUserGeometry(m_scene->getRTCScene(), N);
     m_device->checkError();
@@ -87,7 +86,6 @@ GeometryPrism::GeometryPrism(std::shared_ptr<Scene> scene,
 
 GeometryPrism::~GeometryPrism()
     {
-    std::cout << "Destroy GeometryPrism" << std::endl;
     }
 
 /*! Compute the bounding box of a given primitive

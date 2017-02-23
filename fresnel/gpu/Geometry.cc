@@ -13,12 +13,10 @@ namespace fresnel { namespace gpu {
 */
 Geometry::Geometry(std::shared_ptr<Scene> scene) : m_scene(scene), m_device(scene->getDevice())
     {
-    std::cout << "Create GPU Geometry" << std::endl;
     }
 
 Geometry::~Geometry()
     {
-    std::cout << "Destroy GPU Geometry" << std::endl;
     remove();
     }
 
