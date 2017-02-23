@@ -1,3 +1,5 @@
+from __future__ import division
+
 import pytest
 import fresnel
 import math
@@ -61,8 +63,21 @@ def assert_image_approx_equal(a, ref_file):
     im_arr = numpy.fromstring(im.tobytes(), dtype=numpy.uint8)
     im_arr = im_arr.reshape((im.size[1], im.size[0], 4))
 
-    diff = numpy.array((a - im_arr).flatten(), dtype=numpy.float32)
-    msd = numpy.mean(diff**2)
+    # intelligently compare images
+    # first, ensure that they share a large fraction of non-background pixels (this assumes that all image compare
+    # tests use a background alpha = 0)
+    a_selection = a[:,:,3] > 0;
+    ref_selection = a[:,:,3] > 0;
+    assert numpy.sum(a_selection) > 3/4 * numpy.sum(ref_selection)
+
+    # Now, compute the sum of the image difference squared, but only over those pixels that are
+    # non-background in both images. This prevents a full 255 difference from showing up in
+    # a pixel that is present in one image but not the other due to a round off error
+    selection = a_selection * ref_selection
+    a_float = numpy.array(a, dtype=numpy.float32)
+    im_float = numpy.array(im_arr, dtype=numpy.float32)
+    diff = numpy.array((a_float - im_float))
+    msd = numpy.mean(diff[selection]**2)
 
     assert msd < 1.0
 
