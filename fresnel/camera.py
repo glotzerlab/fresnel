@@ -7,7 +7,7 @@ Cameras.
 
 from . import _common
 
-class Orthographic:
+class Orthographic(object):
     R""" Orthographic camera
 
     Args:

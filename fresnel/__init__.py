@@ -18,7 +18,7 @@ from . import color
 
 __version__ = "0.1.0"
 
-class Device:
+class Device(object):
     R""" Hardware device to use for ray tracing.
 
     Args:
@@ -97,7 +97,7 @@ class Device:
         else:
             raise ValueError("Invalid mode");
 
-class Scene:
+class Scene(object):
     R""" Content of the scene to ray trace.
 
     Args:

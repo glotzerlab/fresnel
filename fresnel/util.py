@@ -13,7 +13,7 @@ try:
 except ImportError:
     PIL_Image = None;
 
-class array:
+class array(object):
     R""" Map internal fresnel buffers as numpy arrays.
 
     :py:class:`fresnel.util.array` provides a python interface to access internal data of memory buffers stored and
