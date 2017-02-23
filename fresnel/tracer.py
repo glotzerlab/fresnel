@@ -9,7 +9,7 @@ import numpy
 from . import camera
 from . import util
 
-class Tracer:
+class Tracer(object):
     R""" Base class for all ray tracers.
 
     :py:class:`Tracer` provides operations common to all ray tracer classes.

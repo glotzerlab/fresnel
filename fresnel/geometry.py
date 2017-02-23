@@ -8,7 +8,7 @@ Geometric primitives.
 from . import material
 from . import util
 
-class Geometry:
+class Geometry(object):
     R""" Base class for all geometry.
 
     :py:class:`Geometry` provides operations common to all geometry classes.

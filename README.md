@@ -25,6 +25,15 @@ cmake /path/to/fresnel
 make -j4
 ```
 
+## Running tests
+
+```
+export PYTHONPATH=/path/to/build
+cd /path/to/fresnel
+cd test
+pytest
+```
+
 ## User documentation
 
 [fresnel-examples](https://bitbucket.org/glotzer/fresnel-examples/overview) provides a tutorial introduction to fresnel
@@ -56,6 +65,9 @@ open build/html/index.html
 * For CPU raytracing (requires `ENABLE_TBB=ON` and `ENABLE_EMBREE=ON`):
     * Intel TBB >= 4.3.20150611
     * Intel Embree >= 2.10.0
+* To execute tests:
+    * pytest
+    * pillow
 
 ## Optional dependencies
 

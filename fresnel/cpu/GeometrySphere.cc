@@ -86,6 +86,7 @@ void GeometrySphere::intersect(void *ptr, RTCRay& ray, size_t item)
     const float t0 = Rp-Ri;
     const float t1 = Rp+Ri;
 
+    bool hit = false;
     if ((ray.tnear < t0) & (t0 < ray.tfar))
         {
         ray.u = 0.0f;
@@ -95,6 +96,7 @@ void GeometrySphere::intersect(void *ptr, RTCRay& ray, size_t item)
         ray.primID = (unsigned int) item;
         ray.Ng = ray.org+t0*ray.dir-position;
         ray.shading_color = geom->m_color->get(item);
+        hit = true;
         }
     if ((ray.tnear < t1) & (t1 < ray.tfar))
         {
@@ -105,13 +107,17 @@ void GeometrySphere::intersect(void *ptr, RTCRay& ray, size_t item)
         ray.primID = (unsigned int) item;
         ray.Ng = ray.org+t1*ray.dir-position;
         ray.shading_color = geom->m_color->get(item);
+        hit = true;
         }
 
-    // The distance of the hit position from the edge of the sphere,
-    // projected into the plane which has the ray as it's normal
-    const float d = radius - sqrt(Dsq);
-    if (d < ray.d)
-        ray.d = d;
+    if (hit)
+        {
+        // The distance of the hit position from the edge of the sphere,
+        // projected into the plane which has the ray as it's normal
+        const float d = radius - sqrt(Dsq);
+        if (d < ray.d)
+            ray.d = d;
+        }
     }
 
 /* Occlusion function, taken mostly from the embree user_geometry tutorial

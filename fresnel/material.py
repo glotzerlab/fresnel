@@ -7,7 +7,7 @@ Materials describe the way light interacts with surfaces.
 
 from fresnel import _common
 
-class Material:
+class Material(object):
     R"""Define material properties.
 
     Args:
@@ -60,7 +60,7 @@ class Material:
     def _get_cpp_material(self):
         return self._material;
 
-class _material_proxy:
+class _material_proxy(object):
     """ Proxy :py:class`Material` attached to a :py:class`fresnel.geometry.Geometry`
     """
     def __init__(self, geometry):
@@ -105,7 +105,7 @@ class _material_proxy:
     def _get_cpp_material(self):
         return self._geometry.getMaterial();
 
-class _outline_material_proxy:
+class _outline_material_proxy(object):
     """ Proxy outline :py:class`Material` attached to a :py:class`fresnel.geometry.Geometry`
     """
     def __init__(self, geometry):
