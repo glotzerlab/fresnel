@@ -62,6 +62,10 @@ add_custom_target(_ptx ALL
     DEPENDS ${generated_ptx_files} ${_ptx_sources}
     SOURCES ${_ptx_sources})
 
+install(FILES ${generated_ptx_files}
+        DESTINATION ${PYTHON_MODULE_BASE_DIR}
+       )
+
 # Build the shared object
 set(_gpu_sources
      gpu/module-gpu.cc
