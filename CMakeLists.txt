@@ -20,7 +20,7 @@ find_package(TBB)
 option(ENABLE_TBB "Use TBB for threaded execution on the CPU" ${TBB_FOUND})
 
 if (ENABLE_TBB)
-    include_directories(${TBB_INCLUDE_DIRS})
+    include_directories(${TBB_INCLUDE_DIR})
 endif()
 
 find_package(OptiX)
