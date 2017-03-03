@@ -16,7 +16,7 @@ from . import tracer
 from . import camera
 from . import color
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 class Device(object):
     R""" Hardware device to use for ray tracing.
