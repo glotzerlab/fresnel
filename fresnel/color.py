@@ -8,39 +8,50 @@ Color utilities.
 import numpy
 
 def linear(color):
-    R""" Convert a sRGB color from the gamma corrected color space into the linear space.
+    R""" Convert a sRGB color (or array of such colors) from the gamma corrected color space into the linear space.
 
-    RGB colors, such as color pickers in most applications, are usually provided in the sRGB color space with gamma
-    correction. fresnel needs to perform calculations in a linear color space. This method converts a color into
-    that linear space.
+    Standard tools for working with RGB colors provide gamma corrected values. fresnel needs to perform calculations
+    in a linear color space. This method converts a sRGB into that linear space. Use :py:func:`linear` when specifying
+    material or particle colors with sRGB inputs.
+
+    :py:func:`linear` accepts RGBA input (such as from matplotlib's to_rgba colormap method), but ignores the alpha
+    channel and outputs an Nx3 array.
 
     Args:
 
-        color (tuple): 3-length list, or other object convertible to a numpy array.
+        color (tuple): 3-length (or Nx3, or Nx4) list, or other object convertible to a numpy array (in the range 0-1).
 
     Returns:
 
-        A length 3 numpy array with the linearized color.
+        A numpy array with the linearized color.
     """
 
     c = numpy.ascontiguousarray(color);
-    if len(c) != 3:
-        raise TypeError("color must be a length 3 array");
+    if c.shape == (3,):
+        out = numpy.zeros(3, dtype=numpy.float32)
+        if c[0] < 0.04045:
+            out[0] = c[0] / 12.92;
+        else:
+            out[0] = ((c[0] + 0.055) / (1.055))**2.4;
 
-    out = numpy.zeros(3, dtype=numpy.float32)
-    if c[0] < 0.04045:
-        out[0] = c[0] / 12.92;
-    else:
-        out[0] = ((c[0] + 0.055) / (1.055))**2.4;
+        if c[1] < 0.04045:
+            out[1] = c[1] / 12.92;
+        else:
+            out[1] = ((c[1] + 0.055) / (1.055))**2.4;
 
-    if c[1] < 0.04045:
-        out[1] = c[1] / 12.92;
-    else:
-        out[1] = ((c[1] + 0.055) / (1.055))**2.4;
+        if c[2] < 0.04045:
+            out[2] = c[2] / 12.92;
+        else:
+            out[2] = ((c[2] + 0.055) / (1.055))**2.4;
 
-    if c[2] < 0.04045:
-        out[2] = c[2] / 12.92;
+    elif c.ndim == 2 and (c.shape[1] == 3 or c.shape[1] == 4):
+        out = numpy.zeros(shape=(c.shape[0], 3), dtype=numpy.float32)
+        for i in range(3):
+            s = c[:,i] < 0.04045;
+            out[s,i] = c[s,i] / 12.92;
+            not_s = numpy.logical_not(s);
+            out[not_s, i] = ((c[not_s,i] + 0.055) / (1.055))**2.4;
     else:
-        out[2] = ((c[2] + 0.055) / (1.055))**2.4;
+        raise TypeError("color must be a length 3, Nx3, or Nx4 array");
 
     return out;
