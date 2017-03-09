@@ -115,8 +115,7 @@ void GeometrySphere::intersect(void *ptr, RTCRay& ray, size_t item)
         // The distance of the hit position from the edge of the sphere,
         // projected into the plane which has the ray as it's normal
         const float d = radius - sqrt(Dsq);
-        if (d < ray.d)
-            ray.d = d;
+        ray.d = d;
         }
     }
 
