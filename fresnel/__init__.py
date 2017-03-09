@@ -44,13 +44,17 @@ class Device(object):
         try:
             from fresnel import _cpu;
         except ImportError as e:
-            print("Error importing:", e.msg);
+            # supporess "cannot import name" messages
+            if e.msg[:18] != "cannot import name":
+                print("Error importing:", e.msg);
             _cpu = None;
 
         try:
             from fresnel import _gpu;
         except ImportError as e:
-            print("Error importing:", e.msg);
+            # supporess "cannot import name" messages
+            if e.msg[:18] != "cannot import name":
+                print("Error importing:", e.msg);
             _gpu = None;
 
         # determine the number of available GPUs
