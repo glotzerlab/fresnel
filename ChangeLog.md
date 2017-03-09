@@ -2,6 +2,13 @@
 
 [TOC]
 
+## v0.3.0
+
+Released 2017/03/09
+
+* Suppress "cannot import name" messages
+* Support Nx3 and Nx4 inputs to ``color.linear``
+
 ## v0.2.0
 
 * Parallel rendering on the CPU
