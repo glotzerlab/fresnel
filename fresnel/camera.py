@@ -7,34 +7,106 @@ Cameras.
 
 from . import _common
 
-class Orthographic(object):
+class Camera(object):
+    R""" Camera
+
+    Defines the view into the :py:class:`Scene <fresnel.Scene>`.
+
+    Use one of the creation functions to create a :py:class:`Camera <fresnel.camera.Camera>`:
+
+        * :py:func:`orthographic`
+
+    The camera is a property of the :py:class:`Scene <fresnel.Scene>`. You may read and modify any of these camera attributes.
+
+    Attributes:
+        position (tuple): the position of the camera (the center of projection).
+        look_at (tuple): the point the camera looks at (the center of the focal plane).
+        up (tuple): a vector pointing up.
+        height: the height of the image plane.
+
+    :py:class:`Camera <fresnel.camera.Camera>` space is a coordinate system centered on the camera's position.
+    Positive *x* points to the right in the image, positive *y* points up, and positive *z* points out of the screen.
+    :py:class:`Camera <fresnel.camera.Camera>` space shares units with :py:class:`Scene <fresnel.Scene>` space.
+
+    TODO: Move description of spaces to an overview page and create figures.
+    """
+    def __init__(self, _camera=None):
+        if _camera is None:
+            self._camera = _common.UserCamera();
+        else:
+            self._camera = _camera;
+
+    @property
+    def position(self):
+        return (self._camera.position.x, self._camera.position.y, self._camera.position.z);
+
+    @position.setter
+    def position(self, value):
+        if len(value) != 3:
+            raise ValueError("position must have length 3");
+        self._camera.position = _common.vec3f(*value);
+
+    @property
+    def look_at(self):
+        return (self._camera.look_at.x, self._camera.look_at.y, self._camera.look_at.z);
+
+    @look_at.setter
+    def look_at(self, value):
+        if len(value) != 3:
+            raise ValueError("look_at must have length 3");
+        self._camera.look_at = _common.vec3f(*value);
+
+    @property
+    def up(self):
+        return (self._camera.up.x, self._camera.up.y, self._camera.up.z);
+
+    @up.setter
+    def up(self, value):
+        if len(value) != 3:
+            raise ValueError("up must have length 3");
+        self._camera.up = _common.vec3f(*value);
+
+    @property
+    def height(self):
+        return self._camera.h;
+
+    @height.setter
+    def height(self, value):
+        self._camera.h = float(value);
+
+    def __repr__(self):
+        return "fresnel.camera.orthographic(position={0}, look_at={1}, up={2}, height={3})".format(self.position, self.look_at, self.up, self.height)
+
+def orthographic(position, look_at, up, height):
     R""" Orthographic camera
 
     Args:
-        position (tuple): :math:`\vec{p}`, the position of the camera.
-        look_at (tuple): :math:`\vec{l}`, the point the camera points at.
-        up (tuple): :math:`\vec{u}`, the vector pointing up.
-        height: `h`, the height of the screen in world distance units.
+        position (tuple): the position of the camera.
+        look_at (tuple): the point the camera looks at (the center of the focal plane).
+        up (tuple): a vector pointing up.
+        height: the height of the image plane.
 
-    :py:class:`Orthographic` defines the parameters of an orthographic camera.
+    An orthographic camera traces parallel rays from the image plane into the scene. Lines that are parallel in
+    the :py:class:`Scene <fresnel.Scene>` will remain parallel in the rendered image.
 
-    An orthographic camera is defined by a center position :math:`\vec{p}`, directions :math:`\vec{d}`, :math:`\vec{u}`, and :math:`\vec{r}`,
-    and a height `h`. For convenience, this API accepts a look at position :math:`\vec{l}`. Then, :math:`\vec{d}` is the normal
-    vector that points from :math:`\vec{p}` to :math:`\vec{l}`.
+    *position* is the center of the image plane in :py:class:`Scene <fresnel.Scene>` space. *look_at* is the point
+    in :py:class:`Scene <fresnel.Scene>` space that will be in the center of the image.  Together, these vectors define
+    the image plane which is perpendicular to the line from *position* to *look_at*. Objects in front of the plane will
+    appear in the rendered image, objects behind the plane will not.
 
-    The vectors :math:`\vec{d}`, :math:`\vec{u}`, and :math:`\vec{r}` form a right handed orthonormal coordinate system. The vector
-    :math:`\vec{u}` points "up" on the screen and :math:`\vec{r}` points to the right. For convenience, you may provide vectors of
-    any length in the approximate desired direction. On construction, :py:class:`Orthographic` will normalize vectors
-    and form an orthonormal set. The up vector need not be perpendicular to :math:`\vec{d}`, but it must not be parallel.
+    *up* is a vector in :py:class:`Scene <fresnel.Scene>` space that defines which direction points up (+y direction in the image).
+    *up* does not need to be perpendicular to the line from *position* to *look_at*, but it must not be parallel to that
+    line. *height* sets the height of the image in :py:class:`Scene <fresnel.Scene>` units. The image width is determined by the
+    aspect ratio of the image. The area *width* by *height* about the *look_at* point will be included in the rendered
+    image.
 
-    In a standard coordinate system, imagine the screen with the x direction pointing right (:math:`\vec{r}`), the
-    y direction pointing up (:math:`\vec{u}`), and z pointing *out* of the screen (:math:`-\vec{d}`). With such a camera at 0,0,0,
-    only objects at negative z would be visible.
-
+    TODO: show a figure
     """
-    def __init__(self, position, look_at, up, height):
-        self._camera = _common.UserCamera();
-        self._camera.position = _common.vec3f(*position);
-        self._camera.look_at = _common.vec3f(*look_at);
-        self._camera.up = _common.vec3f(*up);
-        self._camera.h = height;
+
+    cam = Camera();
+    cam.position = position;
+    cam.look_at = look_at;
+    cam.up = up;
+    cam.height = height;
+
+    return cam

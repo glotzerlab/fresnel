@@ -123,7 +123,7 @@ class Scene(object):
     Attributes:
 
         device (:py:class:`Device`): Device this Scene is attached to.
-        camera (:py:class:`camera.Orthographic`): Camera view parameters.
+        camera (:py:class:`camera.Camera`): Camera view parameters.
         background_color (tuple[float]): Background color (r,g,b) as a tuple or other 3-length python object, in the
                                          linearized color space. Use :py:func:`fresnel.color.linear` to convert standard
                                          sRGB colors
@@ -131,7 +131,7 @@ class Scene(object):
         light_direction (tuple[float]): Vector pointing toward the light source.
     """
 
-    def __init__(self, device=None, camera=camera.Orthographic(position=(0,0, 1), look_at=(0,0,0), up=(0,1,0), height=3)):
+    def __init__(self, device=None, camera=camera.orthographic(position=(0,0, 1), look_at=(0,0,0), up=(0,1,0), height=3)):
         if device is None:
             device = Device();
 
@@ -144,8 +144,7 @@ class Scene(object):
 
     @property
     def camera(self):
-        # TODO: implement me
-        raise NotImplemented;
+        return camera.Camera(self._scene.getCamera());
 
     @camera.setter
     def camera(self, value):
