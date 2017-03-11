@@ -33,9 +33,8 @@ class Orthographic(object):
 
     """
     def __init__(self, position, look_at, up, height):
-        u = (look_at[0] - position[0], look_at[1] - position[1], look_at[2] - position[2]);
-
-        self._camera = _common.Camera(_common.vec3f(*position),
-                                      _common.vec3f(*u),
-                                      _common.vec3f(*up),
-                                      height);
+        self._camera = _common.UserCamera();
+        self._camera.position = _common.vec3f(*position);
+        self._camera.look_at = _common.vec3f(*look_at);
+        self._camera.up = _common.vec3f(*up);
+        self._camera.h = height;

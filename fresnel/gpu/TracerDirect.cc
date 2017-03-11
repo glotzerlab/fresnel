@@ -43,7 +43,7 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
     const float background_alpha = scene->getBackgroundAlpha();
     const vec3<float> light_direction = scene->getLightDirection();
 
-    const Camera camera = scene->getCamera();
+    const Camera camera(scene->getCamera());
 
     Tracer::render(scene);
 

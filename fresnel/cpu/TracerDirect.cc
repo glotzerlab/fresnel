@@ -30,7 +30,7 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
     const float background_alpha = scene->getBackgroundAlpha();
     const vec3<float> light_direction = scene->getLightDirection();
 
-    const Camera cam = scene->getCamera();
+    const Camera cam(scene->getCamera());
     Tracer::render(scene);
 
     // update Embree data structures

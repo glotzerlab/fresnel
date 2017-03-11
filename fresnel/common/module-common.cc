@@ -57,13 +57,12 @@ PYBIND11_PLUGIN(_common)
             )
         ;
 
-    pybind11::class_< Camera >(m, "Camera")
-        .def(pybind11::init<const vec3<float>&, const vec3<float>&, const vec3<float>&, float >())
-        .def_readwrite("p", &Camera::p)
-        .def_readwrite("d", &Camera::d)
-        .def_readwrite("u", &Camera::u)
-        .def_readwrite("r", &Camera::r)
-        .def_readwrite("h", &Camera::h)
+    pybind11::class_< UserCamera >(m, "UserCamera")
+        .def(pybind11::init<>())
+        .def_readwrite("position", &UserCamera::position)
+        .def_readwrite("look_at", &UserCamera::look_at)
+        .def_readwrite("up", &UserCamera::up)
+        .def_readwrite("h", &UserCamera::h)
         ;
 
     return m.ptr();

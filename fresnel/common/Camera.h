@@ -17,22 +17,43 @@
 
 namespace fresnel {
 
-//! Camera properties
-/*! Camera is a plain old data struct that holds camera properties, and a few methods for computing
-    vectors in the image plane given normal screen coords.
+//! User Camera properties
+/*! Store user provided camera properties. These properties are convenient parameters for users to think about
+    and set. The actual device camera properties are derived from these and stored in Camera.
 
-    Some quantities in this struct are precomputed, normalized versions of user provided quantities.
+    The user provides the position of the center of projection, the point that camera looks at (which also defines
+    the center of the focal plane), an up vector, and the height of the image plane.
+
+    Later, perspective cameras will add a mode field, the focal length, and DOF cameras will add the aperture.
+
+    All of these parameters are directly modifiable as this is a plain old data structure.
+*/
+struct UserCamera
+    {
+    vec3<float> position;
+    vec3<float> look_at;
+    vec3<float> up;
+    float h;
+    };
+
+//! Device Camera properties
+/*! Camera is a plain old data struct that holds camera properties, and a few methods for computing
+    vectors in the image plane given normal screen coordinates. Normal screen coordinates range from
+    -0.5 to 0.5 in the y direction and from -0.5*aspect to 0.5*aspect in the x direction, where aspect is the aspect
+    ratio.
+
+    A camera is defined by a position and coordinate system. The position  is the center of projection of
+    the camera. The direction (normalized) is the direction that the camera points, right (normalized)
+    points to the right and up (normalized) points up. The scalar *h* is the height of the image plane.
+    The look_at position defines the point that the camera looks at and the center of the focal plane.
 */
 struct Camera
     {
     DEVICE Camera() {}
-    Camera(const vec3<float>& _p,
-                  const vec3<float>& _d,
-                  const vec3<float>& _u,
-                  float h)
-        : p(_p), d(_d), u(_u), h(h)
+    explicit Camera(const UserCamera& user)
+        : p(user.position), u(user.up), h(user.h)
         {
-        // TODO: import fast:: math library from hoomd and use here
+        d = user.look_at - user.position;
 
         // normalize inputs
         d *= 1.0f / sqrtf(dot(d, d));
@@ -47,13 +68,14 @@ struct Camera
         u *= 1.0f / sqrtf(dot(u, u));
         }
 
-    vec3<float> p;  //!< Center of the image plane
+    vec3<float> p;  //!< Center of projection
     vec3<float> d;  //!< Direction the camera faces (normalized)
-    vec3<float> u;  //!< Up vector (normalized)
-    vec3<float> r;  //!< Right vector (normalized)
+    vec3<float> u;  //!< Up vector (orthonormal)
     float h;        //!< Height of the camera image plane
 
-    //! Get a ray start position given screen relative coordinates
+    vec3<float> r;  //!< Right vector (normalized)
+
+    //! Get a ray start position given screen normal coordinates
     DEVICE vec3<float> origin(float xs, float ys) const
         {
         return p + (ys * u + xs * r) * h;
