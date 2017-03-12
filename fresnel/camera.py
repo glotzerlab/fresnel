@@ -5,6 +5,9 @@ R"""
 Cameras.
 """
 
+import numpy
+import math
+
 from . import _common
 
 class Camera(object):
@@ -110,3 +113,74 @@ def orthographic(position, look_at, up, height):
     cam.height = height;
 
     return cam
+
+def fit(scene, view='auto', margin=0.05):
+    R""" Fit a camera to a :py:class:`Scene <fresnel.Scene>`
+
+    Create a camera that fits the entire hight of the scene in the image plane.
+
+    Args:
+        scene (:py:class:`Scene <fresnel.Scene>`): The scene to fit the camera to.
+        view (str): Select view
+        margin (float): Fraction of extra space to leave on the top and bottom of the scene.
+
+    *view* may be 'auto', 'isometric', or 'front'.
+
+    The isometric view is an orthographic projection from a particular angle so that the x,y, and z directions
+    are equal lengths. The front view is an orthographic projection where +x points to the right, +y points up
+    and +z points out of the screen in the image plane. 'auto' automatically selects 'isometric' for 3D scenes
+    and 'front' for 2D scenes.
+    """
+
+    vectors = {'front': dict(v=numpy.array([0,0,1]), up = numpy.array([0,1,0]), right = numpy.array([1,0,0])),
+               'isometric': dict(v = numpy.array([1, 1, 1])/math.sqrt(3),
+                                 up = numpy.array([-1, 1, -1])/math.sqrt(3),
+                                 right = numpy.array([1, 0, -1])/math.sqrt(2))
+              }
+
+    # find the center of the scene
+    extents = scene.get_extents();
+
+    # choose an appropriate view automatically
+    if view == 'auto':
+        xw = extents[1,0] - extents[0,0];
+        yw = extents[1,1] - extents[0,1];
+        zw = extents[1,2] - extents[0,2];
+        print(xw, yw, zw)
+        if zw < 0.25 * max(xw, yw):
+            view = 'front';
+        else:
+            view = 'isometric';
+
+    v = vectors[view]['v'];
+    up = vectors[view]['up'];
+    right = vectors[view]['right'];
+
+    # make a list of points of the cube surrounding the scene
+    points = numpy.array([[extents[0,0], extents[0,1], extents[0,2]],
+                          [extents[0,0], extents[0,1], extents[1,2]],
+                          [extents[0,0], extents[1,1], extents[0,2]],
+                          [extents[0,0], extents[1,1], extents[1,2]],
+                          [extents[1,0], extents[0,1], extents[0,2]],
+                          [extents[1,0], extents[0,1], extents[1,2]],
+                          [extents[1,0], extents[1,1], extents[0,2]],
+                          [extents[1,0], extents[1,1], extents[1,2]]]);
+
+    # find the center of the box
+    center = (extents[0,:] + extents[1,:])  / 2;
+    points = points - center;
+
+    # determine the extent of the scene box in the up direction
+    up_projection = numpy.dot(points, up);
+    height = (1+margin)*numpy.max(numpy.abs(up_projection))*2;
+
+    # determine the extent of the scene box in the view direction
+    view_projection = numpy.dot(points, v);
+    view_distance = numpy.max(view_projection) * 1.10;
+
+    # build the camera
+    return orthographic(position = center+view_distance*v,
+                        look_at = center,
+                        up = up,
+                        height = height);
+

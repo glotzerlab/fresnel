@@ -10,6 +10,7 @@ Attributes:
 """
 
 import os
+import numpy
 
 from . import geometry
 from . import tracer
@@ -141,6 +142,23 @@ class Scene(object):
         self.camera = camera;
         self._tracer = None;
 
+    def get_extents(self):
+        R""" Get the extents of the scene
+
+        Returns:
+            [[minimum x, minimum y, minimum z],
+             [maximum x, maximum y, maximum z]]
+        """
+        if len(self.geometry) == 0:
+            return numpy.array([[0,0,0],[0,0,0]], dtype=numpy.float32);
+
+        scene_extents = self.geometry[0].get_extents();
+        for geom in self.geometry[1:]:
+            extents = geom.get_extents();
+            scene_extents[0,:] = numpy.min([scene_extents[0,:], extents[0,:]], axis=0)
+            scene_extents[1,:] = numpy.max([scene_extents[1,:], extents[1,:]], axis=0)
+
+        return scene_extents;
 
     @property
     def camera(self):
