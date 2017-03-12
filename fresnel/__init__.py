@@ -124,7 +124,7 @@ class Scene(object):
     Attributes:
 
         device (:py:class:`Device`): Device this Scene is attached to.
-        camera (:py:class:`camera.Camera`): Camera view parameters.
+        camera (:py:class:`camera.Camera`): Camera view parameters, or 'auto' to automatically choose a camera.
         background_color (tuple[float]): Background color (r,g,b) as a tuple or other 3-length python object, in the
                                          linearized color space. Use :py:func:`fresnel.color.linear` to convert standard
                                          sRGB colors
@@ -132,7 +132,7 @@ class Scene(object):
         light_direction (tuple[float]): Vector pointing toward the light source.
     """
 
-    def __init__(self, device=None, camera=camera.orthographic(position=(0,0, 1), look_at=(0,0,0), up=(0,1,0), height=3)):
+    def __init__(self, device=None, camera='auto'):
         if device is None:
             device = Device();
 
@@ -162,11 +162,18 @@ class Scene(object):
 
     @property
     def camera(self):
-        return camera.Camera(self._scene.getCamera());
+        if self.auto_camera:
+            return 'auto';
+        else:
+            return camera.Camera(self._scene.getCamera());
 
     @camera.setter
     def camera(self, value):
-        self._scene.setCamera(value._camera);
+        if value == 'auto':
+            self.auto_camera = True;
+        else:
+            self._scene.setCamera(value._camera);
+            self.auto_camera = False;
 
     @property
     def background_color(self):
@@ -193,6 +200,11 @@ class Scene(object):
     @light_direction.setter
     def light_direction(self, value):
         self._scene.setLightDirection(_common.vec3f(*value));
+
+    def _prepare(self):
+        if self.auto_camera:
+            cam = camera.fit(self);
+            self._scene.setCamera(cam._camera);
 
 def render(scene, w=600, h=370):
     R""" Render a scene.
