@@ -134,7 +134,7 @@ def fit(scene, view='auto', margin=0.05):
 
     vectors = {'front': dict(v=numpy.array([0,0,1]), up = numpy.array([0,1,0]), right = numpy.array([1,0,0])),
                'isometric': dict(v = numpy.array([1, 1, 1])/math.sqrt(3),
-                                 up = numpy.array([-1, 1, -1])/math.sqrt(3),
+                                 up = numpy.array([-1, 2, -1])/math.sqrt(6),
                                  right = numpy.array([1, 0, -1])/math.sqrt(2))
               }
 
@@ -146,8 +146,8 @@ def fit(scene, view='auto', margin=0.05):
         xw = extents[1,0] - extents[0,0];
         yw = extents[1,1] - extents[0,1];
         zw = extents[1,2] - extents[0,2];
-        print(xw, yw, zw)
-        if zw < 0.25 * max(xw, yw):
+
+        if zw < 0.51 * max(xw, yw):
             view = 'front';
         else:
             view = 'isometric';
