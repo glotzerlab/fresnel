@@ -22,7 +22,7 @@ def test_background_color(device):
     numpy.testing.assert_array_equal(buf[:,:,0:3], numpy.ones(shape=(100,100,3), dtype=buf.dtype)*(32,191,96))
 
 def test_camera(scene_hex_sphere, generate=False):
-    scene_hex_sphere.camera = fresnel.camera.Orthographic(position=(1, 0, 10), look_at=(1,0,0), up=(0,1,0), height=6)
+    scene_hex_sphere.camera = fresnel.camera.orthographic(position=(1, 0, 10), look_at=(1,0,0), up=(0,1,0), height=6)
 
     # uncomment when camera access methods are implemented
     #assert scene.camera.position == (0,0,10)
@@ -50,7 +50,7 @@ def test_light_dir(scene_hex_sphere, generate=False):
 
 def test_multiple_geometries(device, generate=False):
     scene = fresnel.Scene()
-    scene.camera = fresnel.camera.Orthographic(position=(0, 0, 10), look_at=(0,0,0), up=(0,1,0), height=7)
+    scene.camera = fresnel.camera.orthographic(position=(0, 0, 10), look_at=(0,0,0), up=(0,1,0), height=7)
     scene.light_direction = (4,3,8)
 
     geom1 = fresnel.geometry.Sphere(scene, position = [[-4, 1, 0], [-4, -1, 0], [-2, 1, 0], [-2, -1, 0]], radius=1.0)

@@ -17,6 +17,23 @@ from . import tracer
 from . import camera
 from . import color
 
+# attempt to import the cpu and gpu modules
+try:
+    from fresnel import _cpu;
+except ImportError as e:
+    # supporess "cannot import name" messages
+    if e.msg[:18] != "cannot import name":
+        raise;
+    _cpu = None;
+
+try:
+    from fresnel import _gpu;
+except ImportError as e:
+    # supporess "cannot import name" messages
+    if e.msg[:18] != "cannot import name":
+        raise;
+    _gpu = None;
+
 __version__ = "0.3.0"
 
 class Device(object):
@@ -41,23 +58,6 @@ class Device(object):
     """
 
     def __init__(self, mode='auto', limit=None,):
-        # attempt to import the cpu and gpu modules
-        try:
-            from fresnel import _cpu;
-        except ImportError as e:
-            # supporess "cannot import name" messages
-            if e.msg[:18] != "cannot import name":
-                print("Error importing:", e.msg);
-            _cpu = None;
-
-        try:
-            from fresnel import _gpu;
-        except ImportError as e:
-            # supporess "cannot import name" messages
-            if e.msg[:18] != "cannot import name":
-                print("Error importing:", e.msg);
-            _gpu = None;
-
         # determine the number of available GPUs
         num_gpus = 0;
         if _gpu is not None:
