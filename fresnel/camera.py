@@ -80,6 +80,9 @@ class Camera(object):
     def __repr__(self):
         return "fresnel.camera.orthographic(position={0}, look_at={1}, up={2}, height={3})".format(self.position, self.look_at, self.up, self.height)
 
+    def __str__(self):
+        return "<Camera object with position {0}>".format(self.position);
+
 def orthographic(position, look_at, up, height):
     R""" Orthographic camera
 
