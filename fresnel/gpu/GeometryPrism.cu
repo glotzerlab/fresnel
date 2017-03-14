@@ -3,6 +3,7 @@
 
 #include <optix_world.h>
 #include "common/VectorMath.h"
+#include "common/ColorMath.h"
 
 #include <float.h>
 
@@ -20,9 +21,9 @@ rtBuffer<float3> prism_color;
 rtDeclareVariable(float, prism_radius, , );
 
 // attributes to pass on to hit programs
-rtDeclareVariable(float3, shading_normal, attribute shading_normal, );
+rtDeclareVariable(vec3<float>, shading_normal, attribute shading_normal, );
 rtDeclareVariable(float, shading_distance, attribute shading_distance, );
-rtDeclareVariable(float3, shading_color, attribute shading_color, );
+rtDeclareVariable(RGB<float>, shading_color, attribute shading_color, );
 rtDeclareVariable(optix::Ray, ray, rtCurrentRay, );
 
 static __device__ float getShadingDistance(float height, vec3<float> n_hit, vec3<float> p_hit, vec3<float> ray_dir_local, vec3<float> r_hit, int n_planes)
@@ -183,7 +184,7 @@ RT_PROGRAM void intersect(int item)
         shading_normal = rotate(q_world, t0_n_local);
         n_hit = t0_n_local;
         p_hit = t0_p_local;
-        shading_color = prism_color[item];
+        shading_color = RGB<float>(prism_color[item]);
         shading_distance = getShadingDistance(height, n_hit, p_hit, ray_dir_local, ray_org_local + t0 * ray_dir_local, n_planes);
         rtReportIntersection(0);
         }
@@ -194,12 +195,10 @@ RT_PROGRAM void intersect(int item)
         shading_normal = rotate(q_world, t1_n_local);
         n_hit = t1_n_local;
         p_hit = t1_p_local;
-        shading_color = prism_color[item];
+        shading_color = RGB<float>(prism_color[item]);
         shading_distance = 10.0f;
         rtReportIntersection(0);
         }
-
-    // TODO: shading_distance
     }
 
 

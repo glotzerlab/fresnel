@@ -30,9 +30,9 @@ rtBuffer<uchar4, 2> srgb_output_buffer;
 ///////////////////////////////////////////////////////////////////////////////////////////
 // variables output from intersection program
 
-rtDeclareVariable(float3, shading_normal, attribute shading_normal, );
+rtDeclareVariable(vec3<float>, shading_normal, attribute shading_normal, );
 rtDeclareVariable(float, shading_distance, attribute shading_distance, );
-rtDeclareVariable(float3, shading_color, attribute shading_color, );
+rtDeclareVariable(RGB<float>, shading_color, attribute shading_color, );
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ RT_PROGRAM void direct_exception()
 // ray gen variables
 
 rtDeclareVariable(Camera, cam, , );
-rtDeclareVariable(float3, background_color, , );
+rtDeclareVariable(RGB<float>, background_color, , );
 rtDeclareVariable(float, background_alpha, , );
 rtDeclareVariable(float3, light_direction, , );
 
@@ -80,7 +80,7 @@ RT_PROGRAM void direct_ray_gen()
     rtTrace(top_object, ray, prd);
 
     // determine the output pixel color
-    RGB<float> c(background_color.x, background_color.y, background_color.z);
+    RGB<float> c(background_color);
     float a = background_alpha;
     if (prd.hit)
         {
@@ -119,8 +119,7 @@ RT_PROGRAM void direct_closest_hit()
         m = outline_material;
         }
 
-    vec3<float> Ng(shading_normal);
-    vec3<float> n = Ng * rsqrtf(dot(Ng, Ng));
+    vec3<float> n = shading_normal * rsqrtf(dot(shading_normal, shading_normal));
     vec3<float> l(light_direction);
     vec3<float> dir = vec3<float>(ray.direction);
     vec3<float> v = -dir * rsqrtf(dot(dir, dir));
@@ -129,7 +128,7 @@ RT_PROGRAM void direct_closest_hit()
 
     if (m.isSolid())
         {
-        c = m.getColor(RGB<float>(shading_color));
+        c = m.getColor(shading_color);
         }
     else
         {
@@ -137,7 +136,7 @@ RT_PROGRAM void direct_closest_hit()
         float ndotl = dot(n,l);
         if (ndotl > 0.0f)
             {
-            c = m.brdf(l, v, n, RGB<float>(shading_color)) * float(M_PI) * /* light color * */ ndotl;
+            c = m.brdf(l, v, n, shading_color) * float(M_PI) * /* light color * */ ndotl;
             }
         else
             {

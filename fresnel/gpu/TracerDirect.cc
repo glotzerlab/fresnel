@@ -61,7 +61,7 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
     context["cam"]->setUserData(sizeof(cam), &cam);
 
     // set background variables
-    context["background_color"]->setFloat(background_color.r, background_color.g, background_color.b);
+    context["background_color"]->setUserData(sizeof(background_color), &background_color);
     context["background_alpha"]->setFloat(background_alpha);
     context["light_direction"]->setFloat(light_direction.x, light_direction.y, light_direction.z);
 
