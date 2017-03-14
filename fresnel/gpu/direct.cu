@@ -97,12 +97,9 @@ RT_PROGRAM void direct_ray_gen()
 ///////////////////////////////////////////////////////////////////////////////////////////
 // closest hit variables
 
-rtDeclareVariable(float3, material_color, , );
-rtDeclareVariable(float, material_solid, , );
-rtDeclareVariable(float, material_primitive_color_mix, , );
-rtDeclareVariable(float3, outline_material_color, , );
-rtDeclareVariable(float, outline_material_solid, , );
-rtDeclareVariable(float, outline_material_primitive_color_mix, , );
+
+rtDeclareVariable(Material, material, , );
+rtDeclareVariable(Material, outline_material, , );
 rtDeclareVariable(float, outline_width, , );
 
 //! Determine result color
@@ -115,15 +112,11 @@ RT_PROGRAM void direct_closest_hit()
     // apply the material color or outline color depending on the distance to the edge
     if (shading_distance > outline_width)
         {
-        m.solid = material_solid;
-        m.color = RGB<float>(material_color);
-        m.primitive_color_mix = material_primitive_color_mix;
+        m = material;
         }
     else
         {
-        m.solid = outline_material_solid;
-        m.color = RGB<float>(outline_material_color);
-        m.primitive_color_mix = outline_material_primitive_color_mix;
+        m = outline_material;
         }
 
     vec3<float> Ng(shading_normal);

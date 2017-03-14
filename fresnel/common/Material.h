@@ -28,9 +28,18 @@ namespace fresnel {
 */
 struct Material
     {
-    float solid = 0;                     //!< Set to 1 to pass through solid color
+    float solid;                         //!< Set to 1 to pass through solid color
     RGB<float> color;                    //!< Color of the material
-    float primitive_color_mix = 0.0f;     //!< Set to 0 to force material color, 1 to use geometry color
+    float primitive_color_mix;           //!< Set to 0 to force material color, 1 to use geometry color
+
+    //! Default constructor gives uninitialized material
+    DEVICE Material() {}
+
+    //! Set material parameters
+    DEVICE explicit Material(const RGB<float> _color, float _solid=0.0f) :
+        solid(_solid), color(_color), primitive_color_mix(0.0f)
+        {
+        }
 
     DEVICE RGB<float> brdf(vec3<float> l, vec3<float> v, vec3<float> n, const RGB<float>& shading_color) const
         {

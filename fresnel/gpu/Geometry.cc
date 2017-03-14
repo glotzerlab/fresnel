@@ -80,6 +80,9 @@ void Geometry::setupInstance()
     m_instance->setMaterialCount(1);
     m_instance->setMaterial(0, m_device->getDirectMaterial());
 
+    setMaterial(Material(RGB<float>(1,0,1)));
+    setOutlineMaterial(Material(RGB<float>(0,0,0), 1.0f));
+
     m_valid = true;
     enable();
     }
@@ -92,9 +95,7 @@ void Geometry::setupInstance()
 void Geometry::setMaterial(const Material& material)
     {
     m_mat = material;
-    m_instance["material_solid"]->setFloat(m_mat.solid);
-    m_instance["material_color"]->setFloat(m_mat.color.r, m_mat.color.g, m_mat.color.b);
-    m_instance["material_primitive_color_mix"]->setFloat(m_mat.primitive_color_mix);
+    m_instance["material"]->setUserData(sizeof(m_mat), &m_mat);
     }
 
 /*! \param material New outline material to set
@@ -105,9 +106,7 @@ void Geometry::setMaterial(const Material& material)
 void Geometry::setOutlineMaterial(const Material& material)
     {
     m_outline_mat = material;
-    m_instance["outline_material_solid"]->setFloat(m_outline_mat.solid);
-    m_instance["outline_material_color"]->setFloat(m_outline_mat.color.r, m_outline_mat.color.g, m_outline_mat.color.b);
-    m_instance["outline_material_primitive_color_mix"]->setFloat(m_outline_mat.primitive_color_mix);
+    m_instance["outline_material"]->setUserData(sizeof(m_outline_mat), &m_outline_mat);
     }
 
 /*! \param material New outline material to set

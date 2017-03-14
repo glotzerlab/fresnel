@@ -34,8 +34,8 @@ struct RGB
         {
         }
 
-    //! Default construct a 0 vector
-    DEVICE RGB() : r(0), g(0), b(0)
+    //! Default construct an unitialized color
+    DEVICE RGB()
         {
         }
 
@@ -322,7 +322,7 @@ struct RGBA
         }
 
 
-    //! Default construct a 0 vector
+    //! Default construct an uninitialized color
     DEVICE RGBA() : r(0), g(0), b(0), a(1.0)
         {
         }
@@ -366,7 +366,7 @@ DEVICE inline RGBA<unsigned char> sRGB(const RGBA<float>& c)
         t.g = (1.0f + 0.055f) * powf(c.g, 1.0f / 2.4f) - 0.055f;
 
     if (c.b < 0.0031308f)
-        t.b = 12.92f*t.b;
+        t.b = 12.92f*c.b;
     else
         t.b = (1.0f + 0.055f) * powf(c.b, 1.0f / 2.4f) - 0.055f;
 
