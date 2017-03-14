@@ -9,7 +9,7 @@
 
 #include <pybind11/pybind11.h>
 
-#if (PYBIND11_VERSION_MAJOR) != 1 || (PYBIND11_VERSION_MINOR) != 9
+#if (PYBIND11_VERSION_MAJOR) != 1 || (PYBIND11_VERSION_MINOR) != 8
 #error Fresnel requires pybind11 1.8.x
 #endif
 
