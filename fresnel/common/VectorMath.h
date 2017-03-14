@@ -42,10 +42,8 @@ struct vec3
         {
         }
 
-    //! Default construct a 0 vector
-    DEVICE vec3() : x(0), y(0), z(0)
-        {
-        }
+    //! Construct an undefined vec3
+    DEVICE vec3() { }
 
     #ifdef NVCC
     //! Convenience function to generate float3 in device code
@@ -353,8 +351,8 @@ struct vec2
         {
         }
 
-    //! Default construct a 0 vector
-    DEVICE vec2() : x(0), y(0)
+    //! Default construct an undefined vector
+    DEVICE vec2()
         {
         }
 
@@ -686,8 +684,8 @@ struct quat
         {
         }
 
-    //! Default construct a unit quaternion
-    DEVICE quat() : s(1), v(vec3<Real>(0,0,0))
+    //! Default construct a undefined quaternion
+    DEVICE quat()
         {
         }
 

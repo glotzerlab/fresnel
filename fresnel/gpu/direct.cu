@@ -56,11 +56,7 @@ RT_PROGRAM void direct_exception()
 ///////////////////////////////////////////////////////////////////////////////////////////
 // ray gen variables
 
-rtDeclareVariable(float3, camera_p, , );
-rtDeclareVariable(float3, camera_d, , );
-rtDeclareVariable(float3, camera_u, , );
-rtDeclareVariable(float3, camera_r, , );
-rtDeclareVariable(float, camera_h, , );
+rtDeclareVariable(Camera, cam, , );
 rtDeclareVariable(float3, background_color, , );
 rtDeclareVariable(float, background_alpha, , );
 rtDeclareVariable(float3, light_direction, , );
@@ -70,14 +66,6 @@ rtDeclareVariable(float3, light_direction, , );
 */
 RT_PROGRAM void direct_ray_gen()
     {
-    // load camera
-    Camera cam;
-    cam.p = vec3<float>(camera_p);
-    cam.d = vec3<float>(camera_d);
-    cam.u = vec3<float>(camera_u);
-    cam.r = vec3<float>(camera_r);
-    cam.h = camera_h;
-
     // determine the viewing plane relative coordinates
     optix::size_t2 screen = linear_output_buffer.size();
     float ys = -1.0f*(launch_index.y/float(screen.y-1)-0.5f);

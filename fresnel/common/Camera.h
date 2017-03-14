@@ -49,7 +49,7 @@ struct UserCamera
 */
 struct Camera
     {
-    DEVICE Camera() {}
+    Camera() {}
     explicit Camera(const UserCamera& user)
         : p(user.position), u(user.up), h(user.h)
         {

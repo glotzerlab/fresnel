@@ -129,8 +129,8 @@ RT_PROGRAM void intersect(int item)
     vec3<float> ray_dir_local = rotate(conj(q_world), vec3<float>(ray.direction));
     vec3<float> ray_org_local = rotate(conj(q_world), vec3<float>(ray.origin) - pos_world);
 
-    vec3<float> t0_n_local, t0_p_local;
-    vec3<float> t1_n_local, t1_p_local;
+    vec3<float> t0_n_local(0,0,0), t0_p_local(0,0,0);
+    vec3<float> t1_n_local(0,0,0), t1_p_local(0,0,0);
     for(int i = 0; i < n_planes && t0 < t1; ++i )
         {
         vec3<float> n = vec3<float>(prism_plane_normal[i]);

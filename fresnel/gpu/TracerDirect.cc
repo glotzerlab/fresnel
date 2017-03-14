@@ -57,11 +57,8 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
     context["linear_output_buffer"]->set(m_linear_out_gpu);
 
     // set camera variables
-    context["camera_p"]->setFloat(camera.p.x, camera.p.y, camera.p.z);
-    context["camera_d"]->setFloat(camera.d.x, camera.d.y, camera.d.z);
-    context["camera_u"]->setFloat(camera.u.x, camera.u.y, camera.u.z);
-    context["camera_r"]->setFloat(camera.r.x, camera.r.y, camera.r.z);
-    context["camera_h"]->setFloat(camera.h);
+    const Camera cam(scene->getCamera());
+    context["cam"]->setUserData(sizeof(cam), &cam);
 
     // set background variables
     context["background_color"]->setFloat(background_color.r, background_color.g, background_color.b);
