@@ -16,7 +16,7 @@ if (ENABLE_EMBREE)
     include_directories(${Embree_INCLUDE_DIR})
 endif()
 
-find_package(TBB)
+find_package(TBB 4.3)
 option(ENABLE_TBB "Use TBB for threaded execution on the CPU" ${TBB_FOUND})
 
 if (ENABLE_TBB)
