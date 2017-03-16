@@ -9,6 +9,7 @@
 
 #include "Device.h"
 #include "common/Camera.h"
+#include "common/Light.h"
 
 namespace fresnel { namespace gpu {
 
@@ -113,20 +114,17 @@ class Scene
             return m_background_alpha;
             }
 
-        //! Set the light direction
-        void setLightDirection(const vec3<float>& v)
+        //! Get the lights
+        Lights& getLights()
             {
-            vec3<float> l = v;
-            l = l / sqrtf(dot(l,l));
-            m_light_direction = l;
+            return m_lights;
             }
 
-        //! Get the light direction
-        vec3<float> getLightDirection() const
+        //! Set the lights
+        void setLights(const Lights& lights)
             {
-            return m_light_direction;
+            m_lights = lights;
             }
-
     private:
         optix::GeometryGroup m_root;        //!< Store the scene root object
         optix::Acceleration m_accel;        //!< Store the acceleration structure
@@ -134,8 +132,8 @@ class Scene
 
         RGB<float> m_background_color;              //!< The background color
         float m_background_alpha;                   //!< Background alpha
-        vec3<float> m_light_direction;              //!< The light direction
         UserCamera m_camera;                        //!< The camera
+        Lights m_lights;                            //!< The lights
     };
 
 //! Export Scene to python

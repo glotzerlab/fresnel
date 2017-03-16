@@ -41,9 +41,9 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
     {
     const RGB<float> background_color = scene->getBackgroundColor();
     const float background_alpha = scene->getBackgroundAlpha();
-    const vec3<float> light_direction = scene->getLightDirection();
 
     const Camera camera(scene->getCamera());
+    const Lights lights(scene->getLights(), camera);
 
     Tracer::render(scene);
 
@@ -59,11 +59,11 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
     // set camera variables
     const Camera cam(scene->getCamera());
     context["cam"]->setUserData(sizeof(cam), &cam);
+    context["lights"]->setUserData(sizeof(lights), &lights);
 
     // set background variables
     context["background_color"]->setUserData(sizeof(background_color), &background_color);
     context["background_alpha"]->setFloat(background_alpha);
-    context["light_direction"]->setFloat(light_direction.x, light_direction.y, light_direction.z);
 
     context->launch(m_ray_gen_entry, m_w, m_h);
     }

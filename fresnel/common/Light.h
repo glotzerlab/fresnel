@@ -33,9 +33,9 @@ namespace fresnel {
 */
 struct Lights
     {
-    unsigned int N;             //!< Number of lights
     vec3<float> direction[4];   //!< Light directions
     RGB<float> color[4];        //!< Color of each light (linearized sRGB color space)
+    unsigned int N;             //!< Number of lights
 
     //! Default constructor leaves memory uninitialized to support OptiX variables
     Lights() {}

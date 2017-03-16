@@ -4,6 +4,7 @@
 #include <optix.h>
 #include "common/Material.h"
 #include "common/Camera.h"
+#include "common/Light.h"
 
 using namespace fresnel;
 
@@ -59,7 +60,7 @@ RT_PROGRAM void direct_exception()
 rtDeclareVariable(Camera, cam, , );
 rtDeclareVariable(RGB<float>, background_color, , );
 rtDeclareVariable(float, background_alpha, , );
-rtDeclareVariable(float3, light_direction, , );
+rtDeclareVariable(Lights, lights, , );
 
 //! Trace rays for Whitted
 /*! Implement Whitted ray generation
@@ -120,11 +121,10 @@ RT_PROGRAM void direct_closest_hit()
         }
 
     vec3<float> n = shading_normal * rsqrtf(dot(shading_normal, shading_normal));
-    vec3<float> l(light_direction);
     vec3<float> dir = vec3<float>(ray.direction);
     vec3<float> v = -dir * rsqrtf(dot(dir, dir));
 
-    RGB<float> c(1,1,1);
+    RGB<float> c(0,0,0);
 
     if (m.isSolid())
         {
@@ -132,15 +132,16 @@ RT_PROGRAM void direct_closest_hit()
         }
     else
         {
-        // only apply brdf when the light faces the surface
-        float ndotl = dot(n,l);
-        if (ndotl > 0.0f)
+        for (unsigned int light_id = 0; light_id < lights.N; light_id++)
             {
-            c = m.brdf(l, v, n, shading_color) * float(M_PI) * /* light color * */ ndotl;
-            }
-        else
-            {
-            c = RGB<float>(0,0,0);
+            vec3<float> l = lights.direction[light_id];
+
+            // only apply brdf when the light faces the surface
+            float ndotl = dot(n,l);
+            if (ndotl > 0.0f)
+                {
+                c += m.brdf(l, v, n, shading_color) * float(M_PI) * lights.color[light_id] * ndotl;
+                }
             }
         }
 

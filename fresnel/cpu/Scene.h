@@ -144,6 +144,7 @@ class Scene
             return m_lights;
             }
 
+        //! Set the lights
         void setLights(const Lights& lights)
             {
             m_lights = lights;
