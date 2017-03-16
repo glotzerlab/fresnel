@@ -3,6 +3,7 @@
 
 #include <optix_world.h>
 #include "common/VectorMath.h"
+#include "common/ColorMath.h"
 
 using namespace optix;
 using namespace fresnel;
@@ -11,9 +12,9 @@ rtBuffer<float3> sphere_position;
 rtBuffer<float> sphere_radius;
 rtBuffer<float3> sphere_color;
 
-rtDeclareVariable(float3, shading_normal, attribute shading_normal, );
+rtDeclareVariable(vec3<float>, shading_normal, attribute shading_normal, );
 rtDeclareVariable(float, shading_distance, attribute shading_distance, );
-rtDeclareVariable(float3, shading_color, attribute shading_color, );
+rtDeclareVariable(RGB<float>, shading_color, attribute shading_color, );
 rtDeclareVariable(optix::Ray, ray, rtCurrentRay, );
 
 RT_PROGRAM void intersect(int primIdx)
@@ -40,13 +41,13 @@ RT_PROGRAM void intersect(int primIdx)
         {
         shading_normal = ray_origin+t0*ray_direction-position;
         shading_distance = radius - sqrt(Dsq);
-        shading_color = sphere_color[primIdx];
+        shading_color = RGB<float>(sphere_color[primIdx]);
         rtReportIntersection(0);
         }
     else if (rtPotentialIntersection(t1))
         {
         shading_normal = ray_origin+t1*ray_direction-position;
-        shading_color = sphere_color[primIdx];
+        shading_color = RGB<float>(sphere_color[primIdx]);
         rtReportIntersection(0);
         }
     }

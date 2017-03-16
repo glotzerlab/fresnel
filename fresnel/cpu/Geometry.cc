@@ -13,6 +13,8 @@ namespace fresnel { namespace cpu {
 */
 Geometry::Geometry(std::shared_ptr<Scene> scene) : m_scene(scene), m_device(scene->getDevice())
     {
+    setMaterial(Material(RGB<float>(1,0,1)));
+    setOutlineMaterial(Material(RGB<float>(0,0,0), 1.0f));
     }
 
 Geometry::~Geometry()

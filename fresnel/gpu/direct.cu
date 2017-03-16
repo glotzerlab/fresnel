@@ -30,9 +30,9 @@ rtBuffer<uchar4, 2> srgb_output_buffer;
 ///////////////////////////////////////////////////////////////////////////////////////////
 // variables output from intersection program
 
-rtDeclareVariable(float3, shading_normal, attribute shading_normal, );
+rtDeclareVariable(vec3<float>, shading_normal, attribute shading_normal, );
 rtDeclareVariable(float, shading_distance, attribute shading_distance, );
-rtDeclareVariable(float3, shading_color, attribute shading_color, );
+rtDeclareVariable(RGB<float>, shading_color, attribute shading_color, );
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -56,12 +56,8 @@ RT_PROGRAM void direct_exception()
 ///////////////////////////////////////////////////////////////////////////////////////////
 // ray gen variables
 
-rtDeclareVariable(float3, camera_p, , );
-rtDeclareVariable(float3, camera_d, , );
-rtDeclareVariable(float3, camera_u, , );
-rtDeclareVariable(float3, camera_r, , );
-rtDeclareVariable(float, camera_h, , );
-rtDeclareVariable(float3, background_color, , );
+rtDeclareVariable(Camera, cam, , );
+rtDeclareVariable(RGB<float>, background_color, , );
 rtDeclareVariable(float, background_alpha, , );
 rtDeclareVariable(float3, light_direction, , );
 
@@ -70,14 +66,6 @@ rtDeclareVariable(float3, light_direction, , );
 */
 RT_PROGRAM void direct_ray_gen()
     {
-    // load camera
-    Camera cam;
-    cam.p = vec3<float>(camera_p);
-    cam.d = vec3<float>(camera_d);
-    cam.u = vec3<float>(camera_u);
-    cam.r = vec3<float>(camera_r);
-    cam.h = camera_h;
-
     // determine the viewing plane relative coordinates
     optix::size_t2 screen = linear_output_buffer.size();
     float ys = -1.0f*(launch_index.y/float(screen.y-1)-0.5f);
@@ -92,7 +80,7 @@ RT_PROGRAM void direct_ray_gen()
     rtTrace(top_object, ray, prd);
 
     // determine the output pixel color
-    RGB<float> c(background_color.x, background_color.y, background_color.z);
+    RGB<float> c(background_color);
     float a = background_alpha;
     if (prd.hit)
         {
@@ -109,12 +97,9 @@ RT_PROGRAM void direct_ray_gen()
 ///////////////////////////////////////////////////////////////////////////////////////////
 // closest hit variables
 
-rtDeclareVariable(float3, material_color, , );
-rtDeclareVariable(float, material_solid, , );
-rtDeclareVariable(float, material_primitive_color_mix, , );
-rtDeclareVariable(float3, outline_material_color, , );
-rtDeclareVariable(float, outline_material_solid, , );
-rtDeclareVariable(float, outline_material_primitive_color_mix, , );
+
+rtDeclareVariable(Material, material, , );
+rtDeclareVariable(Material, outline_material, , );
 rtDeclareVariable(float, outline_width, , );
 
 //! Determine result color
@@ -127,19 +112,14 @@ RT_PROGRAM void direct_closest_hit()
     // apply the material color or outline color depending on the distance to the edge
     if (shading_distance > outline_width)
         {
-        m.solid = material_solid;
-        m.color = RGB<float>(material_color);
-        m.primitive_color_mix = material_primitive_color_mix;
+        m = material;
         }
     else
         {
-        m.solid = outline_material_solid;
-        m.color = RGB<float>(outline_material_color);
-        m.primitive_color_mix = outline_material_primitive_color_mix;
+        m = outline_material;
         }
 
-    vec3<float> Ng(shading_normal);
-    vec3<float> n = Ng * rsqrtf(dot(Ng, Ng));
+    vec3<float> n = shading_normal * rsqrtf(dot(shading_normal, shading_normal));
     vec3<float> l(light_direction);
     vec3<float> dir = vec3<float>(ray.direction);
     vec3<float> v = -dir * rsqrtf(dot(dir, dir));
@@ -148,7 +128,7 @@ RT_PROGRAM void direct_closest_hit()
 
     if (m.isSolid())
         {
-        c = m.getColor(RGB<float>(shading_color));
+        c = m.getColor(shading_color);
         }
     else
         {
@@ -156,7 +136,7 @@ RT_PROGRAM void direct_closest_hit()
         float ndotl = dot(n,l);
         if (ndotl > 0.0f)
             {
-            c = m.brdf(l, v, n, RGB<float>(shading_color)) * float(M_PI) * /* light color * */ ndotl;
+            c = m.brdf(l, v, n, shading_color) * float(M_PI) * /* light color * */ ndotl;
             }
         else
             {

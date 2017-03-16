@@ -124,6 +124,7 @@ template<class T> class Array
             m_w = n;
             m_h = 1;
             m_ndim = 1;
+            memset(&m_data[0], 0, sizeof(T)*n);
             }
 
         //! Construct a 2D array
@@ -132,6 +133,7 @@ template<class T> class Array
             m_w = w;
             m_h = h;
             m_ndim = 2;
+            memset(&m_data[0], 0, sizeof(T)*w*h);
             }
 
         //! Get a python buffer pointing to the data
