@@ -24,11 +24,10 @@ def test_background_color(device):
 def test_camera(scene_hex_sphere, generate=False):
     scene_hex_sphere.camera = fresnel.camera.orthographic(position=(1, 0, 10), look_at=(1,0,0), up=(0,1,0), height=6)
 
-    # uncomment when camera access methods are implemented
-    #assert scene.camera.position == (0,0,10)
-    #assert scene.camera.look_at == (0,0,0)
-    #assert scene.camera.up == (0,1,0)
-    #assert scene.camera.height == 6
+    assert scene_hex_sphere.camera.position == (1,0,10)
+    assert scene_hex_sphere.camera.look_at == (1,0,0)
+    assert scene_hex_sphere.camera.up == (0,1,0)
+    assert scene_hex_sphere.camera.height == 6
 
     buf_proxy = fresnel.render(scene_hex_sphere, w=100, h=100)
 
