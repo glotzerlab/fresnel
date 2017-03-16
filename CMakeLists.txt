@@ -9,14 +9,14 @@ include_directories(${PYTHON_INCLUDE_DIR})
 #############################################################################################
 # Find libraries
 
-find_package(Embree)
+find_package(Embree 2.10.0)
 option(ENABLE_EMBREE "Use Embree for ray tracing on the CPU" ${Embree_FOUND})
 
 if (ENABLE_EMBREE)
     include_directories(${Embree_INCLUDE_DIR})
 endif()
 
-find_package(TBB)
+find_package(TBB 4.3)
 option(ENABLE_TBB "Use TBB for threaded execution on the CPU" ${TBB_FOUND})
 
 if (ENABLE_TBB)
