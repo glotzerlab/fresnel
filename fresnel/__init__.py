@@ -16,6 +16,7 @@ from . import geometry
 from . import tracer
 from . import camera
 from . import color
+from . import light
 
 # attempt to import the cpu and gpu modules
 try:
@@ -112,14 +113,10 @@ class Scene(object):
     :py:class:`Scene` defines the contents of the scene to be ray traced, including any number of
     :py:mod:`geometry <fresnel.geometry>` objects, the :py:mod:`camera <fresnel.camera>`,
     :py:attr:`background color <background_color>`, :py:attr:`background alpha <background_alpha>`,
-    and the :py:attr:`light direction <light_direction>`.
+    and the :py:attr:`lights <lights>`.
 
     Every :py:class:`Scene` attaches to a :py:class:`Device`. For convenience, :py:class:`Scene` creates a default
     :py:class:`Device` when **device** is *None*. If you want a non-default device, you must create it explicitly.
-
-    Warning:
-
-        The API for :py:attr:`light_direction` is temporary.
 
     Attributes:
 
@@ -129,7 +126,7 @@ class Scene(object):
                                          linearized color space. Use :py:func:`fresnel.color.linear` to convert standard
                                          sRGB colors
         background_alpha (float): Background alpha (opacity).
-        light_direction (tuple[float]): Vector pointing toward the light source.
+        lights (:py:class:`light.LightList`): Globals lights in the scene.
     """
 
     def __init__(self, device=None, camera='auto'):
@@ -193,13 +190,12 @@ class Scene(object):
         self._scene.setBackgroundAlpha(value);
 
     @property
-    def light_direction(self):
-        v = self._scene.getLightDirection();
-        return (v.x, v.y, v.z);
+    def lights(self):
+        return light.LightList(self._scene.getLights())
 
-    @light_direction.setter
-    def light_direction(self, value):
-        self._scene.setLightDirection(_common.vec3f(*value));
+    @lights.setter
+    def lights(self, value):
+        self._scene.setLights(value._lights);
 
     def _prepare(self):
         if self.auto_camera:

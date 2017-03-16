@@ -372,6 +372,13 @@ DEVICE inline RGBA<unsigned char> sRGB(const RGBA<float>& c)
 
     t.a = c.a;
 
+    if (t.r > 1.0f)
+        t.r = 1.0f;
+    if (t.g > 1.0f)
+        t.g = 1.0f;
+    if (t.b > 1.0f)
+        t.g = 1.0f;
+
     return RGBA<unsigned char>((unsigned char)(t.r * 255.0f + 0.5f),
                                (unsigned char)(t.g * 255.0f + 0.5f),
                                (unsigned char)(t.b * 255.0f + 0.5f),

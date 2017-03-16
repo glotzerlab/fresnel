@@ -23,6 +23,7 @@ fresnel
    module-camera
    module-color
    module-geometry
+   module-light
    module-material
    module-tracer
    module-util

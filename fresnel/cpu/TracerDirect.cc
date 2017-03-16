@@ -28,9 +28,9 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
 
     const RGB<float> background_color = scene->getBackgroundColor();
     const float background_alpha = scene->getBackgroundAlpha();
-    const vec3<float> light_direction = scene->getLightDirection();
 
     const Camera cam(scene->getCamera());
+    const Lights lights(scene->getLights(), cam);
     Tracer::render(scene);
 
     // update Embree data structures
@@ -78,7 +78,6 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
                 if (ray.hit())
                     {
                     vec3<float> n = ray.Ng / std::sqrt(dot(ray.Ng, ray.Ng));
-                    vec3<float> l = light_direction;
                     vec3<float> v = -ray.dir / std::sqrt(dot(ray.dir, ray.dir));
                     Material m;
 
@@ -94,15 +93,17 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
                         }
                     else
                         {
-                        // only apply brdf when the light faces the surface
-                        float ndotl = dot(n,l);
-                        if (ndotl > 0.0f)
+                        c = RGB<float>(0,0,0);
+                        for (unsigned int light_id = 0; light_id < lights.N; light_id++)
                             {
-                            c = m.brdf(l, v, n, ray.shading_color) * float(M_PI) * /* light color * */ ndotl;
-                            }
-                        else
-                            {
-                            c = RGB<float>(0,0,0);
+                            vec3<float> l = lights.direction[light_id];
+
+                            // only apply brdf when the light faces the surface
+                            float ndotl = dot(n,l);
+                            if (ndotl > 0.0f)
+                                {
+                                c += m.brdf(l, v, n, ray.shading_color) * float(M_PI) * lights.color[light_id] * ndotl;
+                                }
                             }
                         }
 

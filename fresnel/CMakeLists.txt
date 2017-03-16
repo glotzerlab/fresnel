@@ -105,6 +105,7 @@ set(files __init__.py
           camera.py
           util.py
           color.py
+          light.py
     )
 
 install(FILES ${files}
