@@ -35,7 +35,7 @@ void export_Scene(pybind11::module& m)
     {
     pybind11::class_<Scene, std::shared_ptr<Scene> >(m, "Scene")
         .def(pybind11::init<std::shared_ptr<Device> >())
-        .def("getCamera", &Scene::getCamera)
+        .def("getCamera", &Scene::getCamera, pybind11::return_value_policy::reference_internal)
         .def("setCamera", &Scene::setCamera)
         .def("getBackgroundColor", &Scene::getBackgroundColor)
         .def("setBackgroundColor", &Scene::setBackgroundColor)

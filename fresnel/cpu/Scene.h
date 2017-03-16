@@ -102,13 +102,13 @@ class Scene
             }
 
         //! Set the camera
-        void setCamera(const Camera& camera)
+        void setCamera(const UserCamera& camera)
             {
             m_camera = camera;
             }
 
         //! Get the camera
-        const Camera& getCamera() const
+        UserCamera& getCamera()
             {
             return m_camera;
             }
@@ -161,7 +161,7 @@ class Scene
         RGB<float> m_background_color;              //!< The background color
         float m_background_alpha;                   //!< Background alpha
         vec3<float> m_light_direction;              //!< The light direction
-        Camera m_camera;                            //!< The camera
+        UserCamera m_camera;                        //!< The camera
     };
 
 //! Export Scene to python

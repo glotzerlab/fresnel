@@ -10,7 +10,7 @@ class RGBf:
         self.g = args[1];
         self.b = args[2];
 
-class Camera:
+class UserCamera:
     def __init__(self, *args, **kwargs):
         pass
 

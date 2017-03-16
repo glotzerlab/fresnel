@@ -6,7 +6,8 @@ fresnel.camera
 .. autosummary::
     :nosignatures:
 
-    fresnel.camera.Orthographic
+    fresnel.camera.Camera
+    fresnel.camera.orthographic
 
 .. rubric:: Details
 

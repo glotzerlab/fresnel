@@ -7,6 +7,7 @@ Geometric primitives.
 
 from . import material
 from . import util
+import numpy
 
 class Geometry(object):
     R""" Base class for all geometry.
@@ -225,6 +226,21 @@ class Sphere(Geometry):
 
         self.scene = scene;
         self.scene.geometry.append(self);
+
+    def get_extents(self):
+        R""" Get the extents of the geometry
+
+        Returns:
+            [[minimum x, minimum y, minimum z],
+             [maximum x, maximum y, maximum z]]
+        """
+        pos = self.position[:];
+        r = self.radius[:];
+        r = r.reshape(len(r),1);
+        res = numpy.array([numpy.min(pos - r, axis=0),
+                           numpy.max(pos + r, axis=0)])
+        return res;
+
 
     @property
     def position(self):

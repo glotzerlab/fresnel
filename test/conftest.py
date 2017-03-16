@@ -6,8 +6,18 @@ import math
 import PIL
 import numpy
 
+devices = []
+if fresnel._cpu is not None:
+    devices.append( ('cpu', None) );
+    devices.append( ('cpu', 1) );
+
+if fresnel._gpu is not None:
+    devices.append( ('gpu', None) );
+
+print(devices)
+
 @pytest.fixture(scope='session',
-                params=[('cpu', None), ('cpu', 1), ('gpu', None)])
+                params=devices)
 def device(request):
     mode = request.param[0]
     limit = request.param[1]
@@ -31,7 +41,7 @@ def scene_hex_sphere(device):
     geometry.material = fresnel.material.Material(solid=0.0, color=fresnel.color.linear([1,0.874,0.169]))
     geometry.outline_width = 0.12
 
-    scene.camera = fresnel.camera.Orthographic(position=(0, 0, 10), look_at=(0,0,0), up=(0,1,0), height=6)
+    scene.camera = fresnel.camera.orthographic(position=(0, 0, 10), look_at=(0,0,0), up=(0,1,0), height=6)
 
     return scene
 
@@ -53,7 +63,7 @@ def scene_four_spheres(device):
                                        color = [[1,0,0], [0,1,0], [0,0,1], [1,0,1]]
                                        )
 
-    scene.camera = fresnel.camera.Orthographic(position=(10, 10, 10), look_at=(0,0,0), up=(0,1,0), height=4)
+    scene.camera = fresnel.camera.orthographic(position=(10, 10, 10), look_at=(0,0,0), up=(0,1,0), height=4)
     scene.light_direction = (4,3,0)  # Note: this API is temporary
 
     return scene

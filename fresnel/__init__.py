@@ -10,11 +10,29 @@ Attributes:
 """
 
 import os
+import numpy
 
 from . import geometry
 from . import tracer
 from . import camera
 from . import color
+
+# attempt to import the cpu and gpu modules
+try:
+    from fresnel import _cpu;
+except ImportError as e:
+    # supporess "cannot import name" messages
+    if e.msg[:18] != "cannot import name":
+        raise;
+    _cpu = None;
+
+try:
+    from fresnel import _gpu;
+except ImportError as e:
+    # supporess "cannot import name" messages
+    if e.msg[:18] != "cannot import name":
+        raise;
+    _gpu = None;
 
 __version__ = "0.3.0"
 
@@ -40,23 +58,6 @@ class Device(object):
     """
 
     def __init__(self, mode='auto', limit=None,):
-        # attempt to import the cpu and gpu modules
-        try:
-            from fresnel import _cpu;
-        except ImportError as e:
-            # supporess "cannot import name" messages
-            if e.msg[:18] != "cannot import name":
-                print("Error importing:", e.msg);
-            _cpu = None;
-
-        try:
-            from fresnel import _gpu;
-        except ImportError as e:
-            # supporess "cannot import name" messages
-            if e.msg[:18] != "cannot import name":
-                print("Error importing:", e.msg);
-            _gpu = None;
-
         # determine the number of available GPUs
         num_gpus = 0;
         if _gpu is not None:
@@ -123,7 +124,7 @@ class Scene(object):
     Attributes:
 
         device (:py:class:`Device`): Device this Scene is attached to.
-        camera (:py:class:`camera.Orthographic`): Camera view parameters.
+        camera (:py:class:`camera.Camera`): Camera view parameters, or 'auto' to automatically choose a camera.
         background_color (tuple[float]): Background color (r,g,b) as a tuple or other 3-length python object, in the
                                          linearized color space. Use :py:func:`fresnel.color.linear` to convert standard
                                          sRGB colors
@@ -131,7 +132,7 @@ class Scene(object):
         light_direction (tuple[float]): Vector pointing toward the light source.
     """
 
-    def __init__(self, device=None, camera=camera.Orthographic(position=(0,0, 1), look_at=(0,0,0), up=(0,1,0), height=3)):
+    def __init__(self, device=None, camera='auto'):
         if device is None:
             device = Device();
 
@@ -141,15 +142,38 @@ class Scene(object):
         self.camera = camera;
         self._tracer = None;
 
+    def get_extents(self):
+        R""" Get the extents of the scene
+
+        Returns:
+            [[minimum x, minimum y, minimum z],
+             [maximum x, maximum y, maximum z]]
+        """
+        if len(self.geometry) == 0:
+            return numpy.array([[0,0,0],[0,0,0]], dtype=numpy.float32);
+
+        scene_extents = self.geometry[0].get_extents();
+        for geom in self.geometry[1:]:
+            extents = geom.get_extents();
+            scene_extents[0,:] = numpy.min([scene_extents[0,:], extents[0,:]], axis=0)
+            scene_extents[1,:] = numpy.max([scene_extents[1,:], extents[1,:]], axis=0)
+
+        return scene_extents;
 
     @property
     def camera(self):
-        # TODO: implement me
-        raise NotImplemented;
+        if self.auto_camera:
+            return 'auto';
+        else:
+            return camera.Camera(self._scene.getCamera());
 
     @camera.setter
     def camera(self, value):
-        self._scene.setCamera(value._camera);
+        if value == 'auto':
+            self.auto_camera = True;
+        else:
+            self._scene.setCamera(value._camera);
+            self.auto_camera = False;
 
     @property
     def background_color(self):
@@ -176,6 +200,11 @@ class Scene(object):
     @light_direction.setter
     def light_direction(self, value):
         self._scene.setLightDirection(_common.vec3f(*value));
+
+    def _prepare(self):
+        if self.auto_camera:
+            cam = camera.fit(self);
+            self._scene.setCamera(cam._camera);
 
 def render(scene, w=600, h=370):
     R""" Render a scene.
