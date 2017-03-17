@@ -24,6 +24,7 @@ class Tracer(object):
     Attributes:
 
         output (:py:class:`fresnel.util.image_array`): Reference to the current output buffer (modified by :py:meth:`render`)
+        linear_output (:py:class:`fresnel.util.array`): Reference to the current output buffer in linear color space (modified by :py:meth:`render`)
     """
     def __init__(self):
         raise RuntimeError("Use a specific tracer class");
@@ -65,6 +66,10 @@ class Tracer(object):
     @property
     def output(self):
         return util.image_array(self._tracer.getSRGBOutputBuffer(), geom=None)
+
+    @property
+    def linear_output(self):
+        return util.array(self._tracer.getLinearOutputBuffer(), geom=None)
 
 class Direct(Tracer):
     R""" Direct ray tracer.

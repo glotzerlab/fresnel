@@ -6,8 +6,10 @@ Lights.
 
 """
 
+from __future__ import division
 import math
 import collections
+import math
 
 from . import _common
 
@@ -51,7 +53,8 @@ class LightList:
 
     def __init__(self, lights=None):
         if lights is None:
-            self._lights = _common.Lights;
+            self._lights = _common.Lights();
+            self._lights.N = 0;
         else:
             self._lights = lights;
 
@@ -93,3 +96,80 @@ class LightList:
         v = self._lights.getColor(idx);
         c = (v.r, v.g, v.b);
         return Light(direction=d, color=c);
+
+def butterfly():
+    R""" Create a butterfly lighting setup.
+
+    The butterfly portrait lighting setup is front lighting with the key light (0) placed high above the camera
+    and the fill light (1) below the camera.
+
+    Returns:
+
+        :py:class:`LightList`.
+    """
+
+    res = LightList();
+    theta1 = 50*math.pi/180;
+    res.append(Light(direction=(0, math.sin(theta1), math.cos(theta1)), color=(0.97,0.97,0.97)));
+    theta2 = -30*math.pi/180;
+    res.append(Light(direction=(0, math.sin(theta2), math.cos(theta2)), color=(0.1,0.1,0.1)));
+    return res
+
+def loop(side='right'):
+    R""" Create a loop lighting setup.
+
+    The loop portrait lighting setup places the key light slightly to one side of the camera and slightly up.
+    The fill light is on the other side of the camera at the level of the camera.
+
+    Args:
+
+        side (str): 'right' or 'left' to choose which side of the camera to place the key light.
+
+    Returns:
+
+        :py:class:`LightList`.
+    """
+
+    sign = {'right': 1, 'left': -1}
+
+    res = LightList();
+    phi1 = sign[side]*25*math.pi/180;
+    theta1 = (90-20)*math.pi/180;
+    res.append(Light(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
+                     color=(0.95,0.95,0.95)));
+    phi1 = -sign[side]*40*math.pi/180;
+    theta1 = (90)*math.pi/180;
+    res.append(Light(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
+                     color=(0.1,0.1,0.1)));
+    return res
+
+def rembrandt(side='right'):
+    R""" Create a Rembrandt lighting setup.
+
+    The Rembrandt portrait lighting setup places the key light 45 degrees to one side of the camera and slightly up.
+    The fill light is on the other side of the camera at the level of the camera.
+
+    Args:
+
+        side (str): 'right' or 'left' to choose which side of the camera to place the key light.
+
+    Returns:
+
+        :py:class:`LightList`.
+    """
+
+    sign = {'right': 1, 'left': -1}
+
+    res = LightList();
+    phi1 = sign[side]*45*math.pi/180;
+    theta1 = (90-20)*math.pi/180;
+    res.append(Light(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
+                     color=(0.99,0.99,0.99)));
+    phi1 = -sign[side]*45*math.pi/180;
+    theta1 = (90)*math.pi/180;
+    res.append(Light(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
+                     color=(0.1,0.1,0.1)));
+    return res
+
+
+## TODO: add more types of setups enabled by area lights: ring, side, cloudy_day, raking, ....
