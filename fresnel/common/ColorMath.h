@@ -317,7 +317,7 @@ struct RGBA
     /*! \param c Color to provide r,g,b components.
         \param _a a-component
     */
-    DEVICE RGBA(const RGB<Real>& c, const Real& _a) : r(c.r), g(c.g), b(c.b), a(a)
+    DEVICE RGBA(const RGB<Real>& c, const Real& _a) : r(c.r), g(c.g), b(c.b), a(_a)
         {
         }
 

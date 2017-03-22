@@ -8,6 +8,7 @@ Ray tracers.
 import numpy
 from . import camera
 from . import util
+from . import _common
 
 class Tracer(object):
     R""" Base class for all ray tracers.
@@ -62,6 +63,47 @@ class Tracer(object):
         scene._prepare();
         self._tracer.render(scene._scene);
         return self.output;
+
+    def enable_highlight_warning(self, color=(1,0,1)):
+        R""" Enable highlight clipping warnings.
+
+        When a pixel in the rendered image is too bright to represent, make that pixel the given *color* to flag
+        the problem to the user.
+
+        Args:
+
+            color (tuple[float]): Color to make the highlight warnings.
+        """
+        self._tracer.enableHighlightWarning(_common.RGBf(*color));
+
+    def disable_highlight_warning(self):
+        R""" Disable the highlight clipping warnings.
+        """
+        self._tracer.disableHighlightWarning();
+
+    def histogram(self):
+        R""" Compute a histogram of the image.
+
+        The histogram is computed as a lightness in the linear sRGB color space. The histogram is computed only over the
+        visible pixels in the image, fully transparent pixels are ignored.
+
+        Return:
+
+            (histogram, bin_positions).
+        """
+
+        a = numpy.array(self.linear_output[:])
+        img_sel = a[:,:,3] > 0
+        img = a[img_sel]
+        r = img[:,0]
+        g = img[:,1]
+        b = img[:,2]
+        l = 0.21*r + 0.72*g + 0.07*b
+
+        n=512;
+        l_hist, bins = numpy.histogram(l, bins=n, range=[0,1]);
+
+        return l_hist, bins[1:]
 
     @property
     def output(self):

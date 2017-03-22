@@ -41,13 +41,15 @@ class LightList:
     normalize the direction vector internally. TODO: Determine how intensity works with area lights before documenting
     it.
 
-    .. code-block:: ruby
+    .. code-block:: python
 
         l = LightList()
         print(len(l))           # 0
         l.append(Light(direction=(1,0,0), color=(1,1,1)))
-        l[0].direction = (0,1,0)
-        print(l[0].direction)   # (1,0,0)
+        print(len(l))           # 1
+        print(l[0]).direction   # (1,0,0)
+        l[0] = Light(direction=(-1,0,0), color=(1,1,1))
+        print(l[0]).direction   # (-1,0,0)
 
     """
 
@@ -96,6 +98,14 @@ class LightList:
         v = self._lights.getColor(idx);
         c = (v.r, v.g, v.b);
         return Light(direction=d, color=c);
+
+    def __setitem__(self, i, light):
+        if i >= self._lights.N:
+            raise IndexError("Indexing past the end of the list")
+
+        self._lights.setDirection(i, _common.vec3f(*light.direction))
+        self._lights.setColor(i, _common.RGBf(*light.color))
+
 
 def butterfly():
     R""" Create a butterfly lighting setup.

@@ -112,9 +112,12 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
 
                 // write the output pixel
                 unsigned int pixel = j*width + i;
-                RGBA<float> output_pixel(c.r, c.g, c.b, a);
+                RGBA<float> output_pixel(c, a);
                 linear_output[pixel] = output_pixel;
-                srgb_output[pixel] = sRGB(output_pixel);
+                if (!m_highlight_warning || (c.r <= 1.0f && c.g <= 1.0f && c.b <= 1.0f))
+                    srgb_output[pixel] = sRGB(output_pixel);
+                else
+                    srgb_output[pixel] = sRGB(RGBA<float>(m_highlight_warning_color, a));
                 }
             }
         });
