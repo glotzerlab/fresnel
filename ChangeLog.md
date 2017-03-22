@@ -2,6 +2,18 @@
 
 [TOC]
 
+## v0.4.0
+
+Not yet released
+
+* Enforce requirement: Embree >= 2.10.0
+* Enforce requirement Pybind =1.8.1
+* Enforce requirement TBB >= 4.3
+* Rewrite camera API, add camera.fit to fit the scene
+* scenes default to an automatic fit camera
+* API breaking changes:
+    * ``camera.Orthographic`` is now ``camera.orthographic``
+
 ## v0.3.0
 
 Released 2017/03/09
