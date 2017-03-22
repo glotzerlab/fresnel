@@ -20,6 +20,10 @@ GeometrySphere::GeometrySphere(std::shared_ptr<Scene> scene, unsigned int N)
     m_geom_id = rtcNewUserGeometry(m_scene->getRTCScene(), N);
     m_device->checkError();
 
+    // set default material
+    setMaterial(Material(RGB<float>(1,0,1)));
+    setOutlineMaterial(Material(RGB<float>(0,0,0), 1.0f));
+
     // initialize the buffers
     m_position = std::shared_ptr< Array< vec3<float> > >(new Array< vec3<float> >(N));
     m_radius = std::shared_ptr< Array< float > >(new Array< float >(N));
