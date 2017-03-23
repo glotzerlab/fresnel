@@ -13,18 +13,32 @@ import math
 
 from . import _common
 
-Light = collections.namedtuple('Light', ['direction', 'color']);
-Light.__doc__ = """Light(direction, color)
+class _light_proxy(object):
+    def __init__(self, light_list, idx):
+        self._light_list = light_list;
+        self._idx = idx;
 
-Directional light
+    @property
+    def direction(self):
+        v = self._light_list._lights.getDirection(self._idx);
+        d = (v.x, v.y, v.z)
+        return d;
 
-Attributes:
+    @direction.setter
+    def direction(self, v):
+        self._light_list._lights.setDirection(self._idx, _common.vec3f(*v))
 
-    direction: A 3-tuple that defines the direction the light points.
-    color:  A 3-tuple that defines the color and intensity of the light as a linear sRGB value (see :py:func:`fresnel.color.linear`)
-"""
+    @property
+    def color(self):
+        v = self._light_list._lights.getColor(self._idx);
+        c = (v.r, v.g, v.b);
+        return c
 
-class LightList:
+    @color.setter
+    def color(self, v):
+        self._light_list._lights.setColor(self._idx, _common.RGBf(*v))
+
+class LightList(object):
     R""" Manage a list of lights.
 
     A :py:class:`LightList` stores up to 4 directional lights to light a :py:class:`Scene <fresnel.Scene>`.
@@ -48,7 +62,7 @@ class LightList:
         l.append(Light(direction=(1,0,0), color=(1,1,1)))
         print(len(l))           # 1
         print(l[0]).direction   # (1,0,0)
-        l[0] = Light(direction=(-1,0,0), color=(1,1,1))
+        l[0].direction = (-1,0,0)
         print(l[0]).direction   # (-1,0,0)
 
     """
@@ -71,41 +85,30 @@ class LightList:
 
         self._lights.N = 0;
 
-    def append(self, light):
+    def append(self, direction, color):
         R""" Add a light.
 
         :py:meth:`append` adds a light to the list.
 
         Args:
 
-            light (Light): The light to add
+            direction: A 3-tuple that defines the direction the light points.
+            color:  A 3-tuple that defines the color and intensity of the light as a linear sRGB value (see :py:func:`fresnel.color.linear`)
         """
 
         if len(self) >= 4:
             raise IndexError("Cannot add more than 4 lights")
 
         i = self._lights.N
-        self._lights.setDirection(i, _common.vec3f(*light.direction))
-        self._lights.setColor(i, _common.RGBf(*light.color))
+        self._lights.setDirection(i, _common.vec3f(*direction))
+        self._lights.setColor(i, _common.RGBf(*color))
         self._lights.N = i + 1;
 
     def __getitem__(self, idx):
         if idx >= self._lights.N:
             raise IndexError("Indexing past the end of the list")
 
-        v = self._lights.getDirection(idx);
-        d = (v.x, v.y, v.z)
-        v = self._lights.getColor(idx);
-        c = (v.r, v.g, v.b);
-        return Light(direction=d, color=c);
-
-    def __setitem__(self, i, light):
-        if i >= self._lights.N:
-            raise IndexError("Indexing past the end of the list")
-
-        self._lights.setDirection(i, _common.vec3f(*light.direction))
-        self._lights.setColor(i, _common.RGBf(*light.color))
-
+        return _light_proxy(self, idx);
 
 def butterfly():
     R""" Create a butterfly lighting setup.
@@ -120,9 +123,9 @@ def butterfly():
 
     res = LightList();
     theta1 = 50*math.pi/180;
-    res.append(Light(direction=(0, math.sin(theta1), math.cos(theta1)), color=(0.97,0.97,0.97)));
+    res.append(direction=(0, math.sin(theta1), math.cos(theta1)), color=(0.97,0.97,0.97));
     theta2 = -30*math.pi/180;
-    res.append(Light(direction=(0, math.sin(theta2), math.cos(theta2)), color=(0.1,0.1,0.1)));
+    res.append(direction=(0, math.sin(theta2), math.cos(theta2)), color=(0.1,0.1,0.1));
     return res
 
 def loop(side='right'):
@@ -145,12 +148,12 @@ def loop(side='right'):
     res = LightList();
     phi1 = sign[side]*25*math.pi/180;
     theta1 = (90-20)*math.pi/180;
-    res.append(Light(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
-                     color=(0.95,0.95,0.95)));
+    res.append(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
+               color=(0.95,0.95,0.95));
     phi1 = -sign[side]*40*math.pi/180;
     theta1 = (90)*math.pi/180;
-    res.append(Light(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
-                     color=(0.1,0.1,0.1)));
+    res.append(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
+               color=(0.1,0.1,0.1));
     return res
 
 def rembrandt(side='right'):
@@ -173,12 +176,12 @@ def rembrandt(side='right'):
     res = LightList();
     phi1 = sign[side]*45*math.pi/180;
     theta1 = (90-20)*math.pi/180;
-    res.append(Light(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
-                     color=(0.99,0.99,0.99)));
+    res.append(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
+               color=(0.99,0.99,0.99));
     phi1 = -sign[side]*45*math.pi/180;
     theta1 = (90)*math.pi/180;
-    res.append(Light(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
-                     color=(0.1,0.1,0.1)));
+    res.append(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
+               color=(0.1,0.1,0.1));
     return res
 
 
