@@ -6,7 +6,6 @@ fresnel.light
 .. autosummary::
     :nosignatures:
 
-    fresnel.light.Light
     fresnel.light.LightList
 
 .. rubric:: Details

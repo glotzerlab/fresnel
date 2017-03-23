@@ -41,7 +41,7 @@ class _light_proxy(object):
 class LightList(object):
     R""" Manage a list of lights.
 
-    A :py:class:`LightList` stores up to 4 directional lights to light a :py:class:`Scene <fresnel.Scene>`.
+    A :py:class:`LightList` stores up to 4 directional lights.
     The maximum limit is partly for performance and partly to enforce good lighting design.
 
     Each light has a direction and color. The color also defines the intensity of the light, and is defined in
@@ -49,21 +49,35 @@ class LightList(object):
 
     You can query the length of a :py:class:`LightList` with :py:func:`len`, append lights to the list with
     :py:meth:`append`, remove all lights with :py:meth:`clear`, and use indexing to query and modify lights
-    in the list. :py:meth:`append` and indexed access work with :py:class:`Light` data structures.
+    in the list.
+
+    Each light has the following attributes. These attributes are passed as keyword arguments to :py:meth:`append`
+    and are read-write properties of entries accessed by index.
+
+        * direction: 3-tuple defining the direction pointing to the light in camera space.
+        * color: A 3-tuple that defines the color and intensity of the light as a linear sRGB value (see :py:func:`fresnel.color.linear`)
 
     Direction vectors may have any non-zero length, but only the direction the vector points matters. Fresnel will
     normalize the direction vector internally. TODO: Determine how intensity works with area lights before documenting
     it.
 
+    Warning:
+
+        The *lights* argument is for internal use only.
+
     .. code-block:: python
 
-        l = LightList()
-        print(len(l))           # 0
-        l.append(Light(direction=(1,0,0), color=(1,1,1)))
-        print(len(l))           # 1
-        print(l[0]).direction   # (1,0,0)
-        l[0].direction = (-1,0,0)
-        print(l[0]).direction   # (-1,0,0)
+        >>> l = LightList()
+        >>> print(len(l))
+        0
+        >>> l.append(Light(direction=(1,0,0), color=(1,1,1)))
+        >>> print(len(l))
+        1
+        >>> print(l[0]).direction
+        (1,0,0)
+        >>> l[0].direction = (-1,0,0)
+        print(l[0]).direction
+        (-1,0,0)
 
     """
 
@@ -92,7 +106,7 @@ class LightList(object):
 
         Args:
 
-            direction: A 3-tuple that defines the direction the light points.
+            direction: A 3-tuple that defines the direction the light points in camera space.
             color:  A 3-tuple that defines the color and intensity of the light as a linear sRGB value (see :py:func:`fresnel.color.linear`)
         """
 

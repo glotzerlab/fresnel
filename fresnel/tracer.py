@@ -72,7 +72,7 @@ class Tracer(object):
 
         Args:
 
-            color (tuple[float]): Color to make the highlight warnings.
+            color (tuple): Color to make the highlight warnings.
         """
         self._tracer.enableHighlightWarning(_common.RGBf(*color));
 
@@ -86,7 +86,7 @@ class Tracer(object):
 
         The histogram is computed as a lightness in the sRGB color space. The histogram is computed only over the
         visible pixels in the image, fully transparent pixels are ignored. The returned histogram is nbins x 4,
-        the first column contains the lightness histogram and the next 3 contain R,B,G channel histograms
+        the first column contains the lightness histogram and the next 3 contain R,B, and G channel histograms
         respectively.
 
         Return:
