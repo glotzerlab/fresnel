@@ -23,7 +23,7 @@ try:
     from fresnel import _cpu;
 except ImportError as e:
     # supporess "cannot import name" messages
-    if e.msg[:18] != "cannot import name":
+    if str(e)[:18] != "cannot import name":
         raise;
     _cpu = None;
 
@@ -31,7 +31,7 @@ try:
     from fresnel import _gpu;
 except ImportError as e:
     # supporess "cannot import name" messages
-    if e.msg[:18] != "cannot import name":
+    if str(e)[:18] != "cannot import name":
         raise;
     _gpu = None;
 

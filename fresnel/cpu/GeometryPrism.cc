@@ -24,6 +24,10 @@ GeometryPrism::GeometryPrism(std::shared_ptr<Scene> scene,
     m_geom_id = rtcNewUserGeometry(m_scene->getRTCScene(), N);
     m_device->checkError();
 
+    // set default material
+    setMaterial(Material(RGB<float>(1,0,1)));
+    setOutlineMaterial(Material(RGB<float>(0,0,0), 1.0f));
+
     // allocate buffer data
     m_position = std::shared_ptr< Array< vec2<float> > >(new Array< vec2<float> >(N));
     m_angle = std::shared_ptr< Array< float > >(new Array< float >(N));
