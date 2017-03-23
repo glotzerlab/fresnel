@@ -84,8 +84,10 @@ class Tracer(object):
     def histogram(self):
         R""" Compute a histogram of the image.
 
-        The histogram is computed as a lightness in the linear sRGB color space. The histogram is computed only over the
-        visible pixels in the image, fully transparent pixels are ignored.
+        The histogram is computed as a lightness in the sRGB color space. The histogram is computed only over the
+        visible pixels in the image, fully transparent pixels are ignored. The returned histogram is nbins x 4,
+        the first column contains the lightness histogram and the next 3 contain R,B,G channel histograms
+        respectively.
 
         Return:
 
@@ -99,11 +101,17 @@ class Tracer(object):
         g = img[:,1]
         b = img[:,2]
         l = 0.21*r + 0.72*g + 0.07*b
+        gamma_l = l**(1/2.2);
 
         n=512;
-        l_hist, bins = numpy.histogram(l, bins=n, range=[0,1]);
+        l_hist, bins = numpy.histogram(gamma_l, bins=n, range=[0,1]);
+        r_hist, bins = numpy.histogram(r**(1/2.2), bins=n, range=[0,1]);
+        g_hist, bins = numpy.histogram(g**(1/2.2), bins=n, range=[0,1]);
+        b_hist, bins = numpy.histogram(b**(1/2.2), bins=n, range=[0,1]);
 
-        return l_hist, bins[1:]
+        out = numpy.stack((l_hist, r_hist, g_hist, b_hist), axis=1)
+
+        return out, bins[1:]
 
     @property
     def output(self):
