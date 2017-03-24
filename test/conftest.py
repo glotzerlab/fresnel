@@ -16,6 +16,18 @@ if fresnel._gpu is not None:
 
 print(devices)
 
+def test_lights():
+    lights = fresnel.light.LightList();
+    phi1 = 1*45*math.pi/180;
+    theta1 = (90-20)*math.pi/180;
+    lights.append(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
+                  color=(0.99,0.99,0.99));
+    phi1 = -1*45*math.pi/180;
+    theta1 = (90)*math.pi/180;
+    lights.append(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
+                  color=(0.1,0.1,0.1));
+    return lights;
+
 @pytest.fixture(scope='session',
                 params=devices)
 def device(request):
@@ -31,7 +43,7 @@ def device(request):
 
 @pytest.fixture(scope='function')
 def scene_hex_sphere(device):
-    scene = fresnel.Scene(device)
+    scene = fresnel.Scene(device, lights = test_lights())
 
     position = []
     for i in range(6):
@@ -47,7 +59,7 @@ def scene_hex_sphere(device):
 
 @pytest.fixture(scope='function')
 def scene_four_spheres(device):
-    scene = fresnel.Scene(device)
+    scene = fresnel.Scene(device, lights = test_lights())
 
     position = []
     for i in range(6):
@@ -64,7 +76,6 @@ def scene_four_spheres(device):
                                        )
 
     scene.camera = fresnel.camera.orthographic(position=(10, 10, 10), look_at=(0,0,0), up=(0,1,0), height=4)
-    scene.light_direction = (4,3,0)  # Note: this API is temporary
 
     return scene
 

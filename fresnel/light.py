@@ -63,7 +63,7 @@ class LightList(object):
 
     Warning:
 
-        The *lights* argument is for internal use only.
+        The *_lights* argument is for internal use only.
 
     .. code-block:: python
 
@@ -81,12 +81,12 @@ class LightList(object):
 
     """
 
-    def __init__(self, lights=None):
-        if lights is None:
+    def __init__(self, _lights=None):
+        if _lights is None:
             self._lights = _common.Lights();
             self._lights.N = 0;
         else:
-            self._lights = lights;
+            self._lights = _lights;
 
     def __len__(self):
         return self._lights.N;

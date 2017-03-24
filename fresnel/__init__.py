@@ -129,7 +129,7 @@ class Scene(object):
         lights (:py:class:`light.LightList`): Globals lights in the scene.
     """
 
-    def __init__(self, device=None, camera='auto'):
+    def __init__(self, device=None, camera='auto', lights=light.rembrandt()):
         if device is None:
             device = Device();
 
@@ -137,6 +137,7 @@ class Scene(object):
         self._scene = self.device.module.Scene(self.device._device);
         self.geometry = [];
         self.camera = camera;
+        self.lights = lights;
         self._tracer = None;
 
     def get_extents(self):
