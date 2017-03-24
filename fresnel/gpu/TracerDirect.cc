@@ -65,6 +65,10 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
     context["background_color"]->setUserData(sizeof(background_color), &background_color);
     context["background_alpha"]->setFloat(background_alpha);
 
+    // set highlight warning
+    context["highlight_warning_color"]->setUserData(sizeof(m_highlight_warning_color), &m_highlight_warning_color);
+    context["highlight_warning"]->setUint(m_highlight_warning);
+
     context->launch(m_ray_gen_entry, m_w, m_h);
     }
 

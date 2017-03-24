@@ -59,6 +59,8 @@ RT_PROGRAM void direct_exception()
 
 rtDeclareVariable(Camera, cam, , );
 rtDeclareVariable(RGB<float>, background_color, , );
+rtDeclareVariable(RGB<float>, highlight_warning_color, , );
+rtDeclareVariable(unsigned int, highlight_warning, , );
 rtDeclareVariable(float, background_alpha, , );
 rtDeclareVariable(Lights, lights, , );
 
@@ -90,8 +92,13 @@ RT_PROGRAM void direct_ray_gen()
         }
 
     // write the output pixel
+    RGBA<unsigned char> srgb_output_pixel(0,0,0,0);
+    if (!highlight_warning || (c.r <= 1.0f && c.g <= 1.0f && c.b <= 1.0f))
+        srgb_output_pixel = sRGB(RGBA<float>(c.r, c.g, c.b, a));
+    else
+        srgb_output_pixel = sRGB(RGBA<float>(highlight_warning_color, a));
+
     linear_output_buffer[launch_index] = make_float4(c.r, c.g, c.b, a);
-    RGBA<unsigned char> srgb_output_pixel = sRGB(RGBA<float>(c.r, c.g, c.b, a));
     srgb_output_buffer[launch_index] = make_uchar4(srgb_output_pixel.r, srgb_output_pixel.g, srgb_output_pixel.b, srgb_output_pixel.a);
     }
 
