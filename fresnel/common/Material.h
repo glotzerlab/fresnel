@@ -18,6 +18,18 @@
 
 namespace fresnel {
 
+//! Compute schlick approximation to fresnel
+/*! This function computes the (1-(cos(theta))**5 term only
+    \param x cos(theta)
+*/
+DEVICE inline float schlick(float x)
+    {
+    float v = 1.0f - x;
+    float v_sq = v*v;
+    float v_fifth = v_sq * v_sq * v;
+    return v_fifth;
+    }
+
 //! Material properties
 /*! Material is a plain old data struct that holds material properties, and a few methods for computing
     an output brdf based on input vectors.
@@ -31,6 +43,7 @@ struct Material
     float solid;                         //!< Set to 1 to pass through solid color
     RGB<float> color;                    //!< Color of the material
     float primitive_color_mix;           //!< Set to 0 to force material color, 1 to use geometry color
+    float roughness;                     //!< Set to 0 for a smooth material, non-zero for a rough material
 
     //! Default constructor gives uninitialized material
     DEVICE Material() {}
@@ -44,9 +57,29 @@ struct Material
     DEVICE RGB<float> brdf(vec3<float> l, vec3<float> v, vec3<float> n, const RGB<float>& shading_color) const
         {
         // BRDF is 0 when behind the surface
-        if (dot(n,v) <= 0)
+        float ndotv = dot(n,v);
+        if (ndotv <= 0)
             return RGB<float>(0,0,0);
-        return getColor(shading_color) / float(M_PI);
+
+        // compute h vector and cosines of relevant angles
+        vec3<float> h = l+v;
+        h /= sqrtf(dot(h,h));
+
+        float ndotl = dot(n,l);
+        float vdoth = dot(v,h);
+
+        // precomputed parameters
+        RGB<float> base_color = getColor(shading_color);
+        float sigma = roughness*roughness;
+
+        // diffuse term (section 5.3 from Physically based Shading at Disney)
+        float FD90 = 0.5f + 2.0f * vdoth * vdoth * sigma;
+        float f = (1.0f + (FD90 - 1.0f) * schlick(ndotl)) * (1.0f + (FD90 - 1.0f) * schlick(ndotv));
+        if (f > 1.5)
+            std::cout << f << std::endl;
+        RGB<float> f_d = base_color / float(M_PI) * f;
+
+        return f_d;
         }
 
     DEVICE bool isSolid() const
