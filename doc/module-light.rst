@@ -6,7 +6,10 @@ fresnel.light
 .. autosummary::
     :nosignatures:
 
-    fresnel.light.LightList
+    fresnel.light.Light
+    fresnel.light.butterfly
+    fresnel.light.loop
+    fresnel.light.rembrandt
 
 .. rubric:: Details
 

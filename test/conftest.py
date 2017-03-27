@@ -17,15 +17,19 @@ if fresnel._gpu is not None:
 print(devices)
 
 def test_lights():
-    lights = fresnel.light.LightList();
+    lights = [];
     phi1 = 1*45*math.pi/180;
     theta1 = (90-20)*math.pi/180;
-    lights.append(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
-                  color=(0.99,0.99,0.99));
+    lights.append(fresnel.light.Light(direction=(math.sin(theta1)*math.sin(phi1),
+                                                 math.cos(theta1),
+                                                 math.sin(theta1)*math.cos(phi1)),
+                                      color=(0.99,0.99,0.99)));
     phi1 = -1*45*math.pi/180;
     theta1 = (90)*math.pi/180;
-    lights.append(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
-                  color=(0.1,0.1,0.1));
+    lights.append(fresnel.light.Light(direction=(math.sin(theta1)*math.sin(phi1),
+                                                 math.cos(theta1),
+                                                 math.sin(theta1)*math.cos(phi1)),
+                                      color=(0.1,0.1,0.1)));
     return lights;
 
 @pytest.fixture(scope='session',

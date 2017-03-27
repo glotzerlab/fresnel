@@ -113,10 +113,40 @@ class Scene(object):
     :py:class:`Scene` defines the contents of the scene to be ray traced, including any number of
     :py:mod:`geometry <fresnel.geometry>` objects, the :py:mod:`camera <fresnel.camera>`,
     :py:attr:`background color <background_color>`, :py:attr:`background alpha <background_alpha>`,
-    and the :py:attr:`lights <lights>`.
+    and the :py:attr:`lights`.
 
     Every :py:class:`Scene` attaches to a :py:class:`Device`. For convenience, :py:class:`Scene` creates a default
     :py:class:`Device` when **device** is *None*. If you want a non-default device, you must create it explicitly.
+
+    .. rubric:: Lights
+
+    :py:attr:`lights` is a sequence of up to 4 directional lights that apply to the scene globally. Each light has a
+    direction and color. You can assign lights using one of the predefined setups:
+
+    .. code-block:: python
+
+        scene.lights = fresnel.light.butterfly()
+
+    You can assign a sequence of :py:class:`Light <fresnel.light.Light>` objects:
+
+    .. code-block:: python
+
+        scene.lights = [fresnel.light.Light(direction=(1,2,3))]
+
+    You can modify the lights in place:
+
+    .. code-block:: python
+
+        >>> print(len(scene.lights))
+        2
+        >>> l.append(fresnel.light.Light(direction=(1,0,0), color=(1,1,1)))
+        >>> print(len(3))
+        1
+        >>> print(l[2]).direction
+        (1,0,0)
+        >>> l[0].direction = (-1,0,0)
+        >>> print(l[0]).direction
+        (-1,0,0)
 
     Attributes:
 
@@ -126,7 +156,7 @@ class Scene(object):
                                          linearized color space. Use :py:func:`fresnel.color.linear` to convert standard
                                          sRGB colors
         background_alpha (float): Background alpha (opacity).
-        lights (:py:class:`light.LightList`): Globals lights in the scene.
+        lights (list of `light.Light`): Globals lights in the scene.
     """
 
     def __init__(self, device=None, camera='auto', lights=light.rembrandt()):
@@ -192,11 +222,15 @@ class Scene(object):
 
     @property
     def lights(self):
-        return light.LightList(self._scene.getLights())
+        return light._lightlist_proxy(self._scene.getLights())
 
     @lights.setter
-    def lights(self, value):
-        self._scene.setLights(value._lights);
+    def lights(self, values):
+        tmp = light._lightlist_proxy()
+        for v in values:
+            tmp.append(v);
+
+        self._scene.setLights(tmp._lights);
 
     def _prepare(self):
         if self.auto_camera:
