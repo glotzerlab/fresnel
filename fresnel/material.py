@@ -15,20 +15,24 @@ class Material(object):
         solid (float): Set to 1 to pass through a solid color, regardless of the light and view angle.
         color (tuple): The linear RGB color of the material as a 3-tuple, list or other iterable.
         primitive_color_mix (float): Set to 1 to use the color provided in the Geometry, 0 to use the color
-          specified in the material, or a value in the range (0,1) to mix the two colors.
-        roughness (float): Roughness of the material. Nominally in the range [0,1], though values greater than 1
-                           are valid.
+          specified in the material, or a value in the range [0,1] to mix the two colors.
+        roughness (float): Roughness of the material. Nominally in the range [0,1], though 0.1 is a realistic minimum.
+        specular (float): Control the strength of the specular highlights. Nominally in the range [0,1].
+        metal (float): Set to 0 for dielectric material, or 1 for metal. Intermediate values interpolate between
+                       the two.
 
     Colors are in the linearized sRGB color space. Use :py:func:`fresnel.color.linear` to convert standard sRGB colors
     into this space.
     """
 
-    def __init__(self, solid=0, color=(0,0,0), primitive_color_mix=0, roughness=0):
+    def __init__(self, solid=0, color=(0,0,0), primitive_color_mix=0, roughness=0.2, specular=0.1, metal=0):
         self._material = _common.Material();
 
         self.solid = solid;
         self.color = color;
         self.roughness = roughness;
+        self.specular = specular;
+        self.metal = metal;
         self.primitive_color_mix = primitive_color_mix;
 
     def __repr__(self):
@@ -67,6 +71,22 @@ class Material(object):
     @roughness.setter
     def roughness(self, value):
         self._material.roughness = float(value);
+
+    @property
+    def specular(self):
+        return self._material.specular;
+
+    @specular.setter
+    def specular(self, value):
+        self._material.specular = float(value);
+
+    @property
+    def metal(self):
+        return self._material.metal;
+
+    @metal.setter
+    def metal(self, value):
+        self._material.metal = float(value);
 
     def _get_cpp_material(self):
         return self._material;
@@ -124,6 +144,28 @@ class _material_proxy(object):
         m.roughness = float(value);
         self._geometry.setMaterial(m);
 
+    @property
+    def specular(self):
+        m = self._geometry.getMaterial();
+        return m.specular;
+
+    @specular.setter
+    def specular(self, value):
+        m = self._geometry.getMaterial();
+        m.specular = float(value);
+        self._geometry.setMaterial(m);
+
+    @property
+    def metal(self):
+        m = self._geometry.getMaterial();
+        return m.metal;
+
+    @metal.setter
+    def metal(self, value):
+        m = self._geometry.getMaterial();
+        m.metal = float(value);
+        self._geometry.setMaterial(m);
+
     def _get_cpp_material(self):
         return self._geometry.getMaterial();
 
@@ -178,6 +220,28 @@ class _outline_material_proxy(object):
     def roughness(self, value):
         m = self._geometry.getOutlineMaterial();
         m.roughness = float(value);
+        self._geometry.setOutlineMaterial(m);
+
+    @property
+    def specular(self):
+        m = self._geometry.getOutlineMaterial();
+        return m.specular;
+
+    @specular.setter
+    def specular(self, value):
+        m = self._geometry.getOutlineMaterial();
+        m.specular = float(value);
+        self._geometry.setOutlineMaterial(m);
+
+    @property
+    def metal(self):
+        m = self._geometry.getOutlineMaterial();
+        return m.metal;
+
+    @metal.setter
+    def metal(self, value):
+        m = self._geometry.getOutlineMaterial();
+        m.metal = float(value);
         self._geometry.setOutlineMaterial(m);
 
     def _get_cpp_material(self):

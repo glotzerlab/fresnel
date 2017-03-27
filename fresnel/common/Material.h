@@ -44,20 +44,22 @@ struct Material
     RGB<float> color;                    //!< Color of the material
     float primitive_color_mix;           //!< Set to 0 to force material color, 1 to use geometry color
     float roughness;                     //!< Set to 0 for a smooth material, non-zero for a rough material
+    float specular;                      //!< Set to 0 for no specular highlights, 1 for strong highlights
+    float metal;                         //!< Set to 0 for dielectric materials, set to 1 for metals
 
     //! Default constructor gives uninitialized material
     DEVICE Material() {}
 
     //! Set material parameters
     DEVICE explicit Material(const RGB<float> _color, float _solid=0.0f) :
-        solid(_solid), color(_color), primitive_color_mix(0.0f)
+        solid(_solid), color(_color), primitive_color_mix(0.0f), roughness(0.1f), specular(0.5f), metal(0.0f)
         {
         }
 
     DEVICE RGB<float> brdf(vec3<float> l, vec3<float> v, vec3<float> n, const RGB<float>& shading_color) const
         {
         // BRDF is 0 when behind the surface
-        float ndotv = dot(n,v);
+        float ndotv = dot(n,v);     // cos(theta_v)
         if (ndotv <= 0)
             return RGB<float>(0,0,0);
 
@@ -65,21 +67,49 @@ struct Material
         vec3<float> h = l+v;
         h /= sqrtf(dot(h,h));
 
-        float ndotl = dot(n,l);
-        float vdoth = dot(v,h);
+        float ndotl = dot(n,l);     // cos(theta_l)
+        float ldoth = dot(l,h);     // cos(theta_d)
+        float ndoth = dot(n,h);     // cos(theta_h)
 
         // precomputed parameters
         RGB<float> base_color = getColor(shading_color);
-        float sigma = roughness*roughness;
 
-        // diffuse term (section 5.3 from Physically based Shading at Disney)
-        float FD90 = 0.5f + 2.0f * vdoth * vdoth * sigma;
-        float f = (1.0f + (FD90 - 1.0f) * schlick(ndotl)) * (1.0f + (FD90 - 1.0f) * schlick(ndotv));
-        if (f > 1.5)
-            std::cout << f << std::endl;
-        RGB<float> f_d = base_color / float(M_PI) * f;
+        // diffuse term (section 2.3 from Extending  the  Disney  BRDF  to  a  BSDF  with Integrated Subsurface Scattering)
+        float FL = schlick(ndotl);
+        float FV = schlick(ndotv);
+        float RR = 2*roughness*ldoth*ldoth;
+        RGB<float> f_d = base_color / float(M_PI) * ((1.0f - 0.5f * FL) * (1.0f - 0.5f * FV) +
+                                                     RR * (FL + FV + FL*FV*(RR-1.0f)));
 
-        return f_d;
+        // specular term
+        // D(theta_h) - using D_GTR_2 (eq 8 from Physically based Shading at Disney)
+        float alpha = roughness*roughness;
+        float alpha_sq = alpha*alpha;
+        float denom_rt = (1 + (alpha_sq - 1)*ndoth*ndoth);
+        float D = alpha_sq / (float(M_PI) * denom_rt*denom_rt);
+
+        // F(theta_d)
+        RGB<float> F0_dielectric(0.08f*specular, 0.08f*specular, 0.08f*specular);
+        RGB<float> F0 = lerp(metal, F0_dielectric, color);
+        RGB<float> F = F0 + (RGB<float>(1.0f, 1.0f, 1.0f) - F0)*schlick(ldoth);
+
+        // G(theta_l, theta_v)
+        // http://graphicrants.blogspot.com/2013/08/specular-brdf-reference.html
+
+        // with roughness remapping by Disney
+        // float roughness_remap = 0.5f+roughness/2.0f;
+        // float alphag = roughness_remap*roughness_remap;
+        // float alphag_sq = alphag*alphag;
+        float ndotv_sq = ndotv*ndotv;
+        float ndotl_sq = ndotl*ndotl;
+        float V1 = 1.0f / (ndotv + sqrtf(alpha_sq + ndotv_sq - alpha_sq * ndotv_sq));
+        float V2 = 1.0f / (ndotl + sqrtf(alpha_sq + ndotl_sq - alpha_sq * ndotl_sq));
+        float V = V1*V2;
+
+        // the 4 cos(theta_l) cos(theta_v) factor is built into V
+        RGB<float> f_s = D * F * V;
+
+        return f_d * (1.0f - metal) + f_s;
         }
 
     DEVICE bool isSolid() const

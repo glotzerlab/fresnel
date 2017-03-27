@@ -28,6 +28,8 @@ PYBIND11_PLUGIN(_common)
         .def_readwrite("solid", &Material::solid)
         .def_readwrite("primitive_color_mix", &Material::primitive_color_mix)
         .def_readwrite("roughness", &Material::roughness)
+        .def_readwrite("specular", &Material::specular)
+        .def_readwrite("metal", &Material::metal)
         .def_readwrite("color", &Material::color)
         .def("__repr__",
             [](const Material &a)
@@ -38,6 +40,8 @@ PYBIND11_PLUGIN(_common)
                   << " color=(" << a.color.r << ", " << a.color.g << ", " << a.color.b << ")"
                   << " primitive_color_mix=" << a.primitive_color_mix
                   << " roughness=" << a.roughness
+                  << " specular=" << a.specular
+                  << " metal=" << a.metal
                   << ">";
 
                 return s.str();
