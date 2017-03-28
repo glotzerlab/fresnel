@@ -147,7 +147,9 @@ RT_PROGRAM void direct_closest_hit()
             float ndotl = dot(n,l);
             if (ndotl > 0.0f)
                 {
-                c += m.brdf(l, v, n, shading_color) * float(M_PI) * lights.color[light_id] * ndotl;
+                RGB<float> f_d = m.brdf_diffuse(l, v, n, shading_color);
+                RGB<float> f_s = m.brdf_specular(l, v, n, shading_color);
+                c += (f_d + f_s) * float(M_PI) * lights.color[light_id] * ndotl;
                 }
             }
         }

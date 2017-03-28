@@ -102,7 +102,9 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
                             float ndotl = dot(n,l);
                             if (ndotl > 0.0f)
                                 {
-                                c += m.brdf(l, v, n, ray.shading_color) * float(M_PI) * lights.color[light_id] * ndotl;
+                                RGB<float> f_d = m.brdf_diffuse(l, v, n, ray.shading_color);
+                                RGB<float> f_s = m.brdf_specular(l, v, n, ray.shading_color);
+                                c += (f_d + f_s) * float(M_PI) * lights.color[light_id] * ndotl;
                                 }
                             }
                         }
