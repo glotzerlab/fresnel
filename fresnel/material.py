@@ -25,7 +25,7 @@ class Material(object):
     into this space.
     """
 
-    def __init__(self, solid=0, color=(0,0,0), primitive_color_mix=0, roughness=0.1, specular=0.5, metal=0):
+    def __init__(self, solid=0, color=(0,0,0), primitive_color_mix=0, roughness=0.3, specular=0.5, metal=0):
         self._material = _common.Material();
 
         self.solid = solid;

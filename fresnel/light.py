@@ -26,7 +26,7 @@ class Light(object):
     The color also sets the light intensity. A (0.5, 0.5, 0.5) light is twice as bright as (0.25, 0.25, 0.25).
     """
 
-    def __init__(self, direction, color=(1,1,1), theta=0.3):
+    def __init__(self, direction, color=(1,1,1), theta=0.4):
         self.direction = tuple(direction);
         self.color = tuple(color);
         self.theta = float(theta)
@@ -113,9 +113,13 @@ def butterfly():
 
     res = [];
     theta1 = 50*math.pi/180;
-    res.append(Light(direction=(0, math.sin(theta1), math.cos(theta1)), color=(0.97,0.97,0.97)));
+    res.append(Light(direction=(0, math.sin(theta1), math.cos(theta1)),
+                     color=(0.75,0.75,0.75),
+                     theta=math.pi/8));
     theta2 = -30*math.pi/180;
-    res.append(Light(direction=(0, math.sin(theta2), math.cos(theta2)), color=(0.1,0.1,0.1)));
+    res.append(Light(direction=(0, math.sin(theta2), math.cos(theta2)),
+                     color=(0.1,0.1,0.1),
+                     theta=math.pi/2));
     return res
 
 def loop(side='right'):
@@ -139,11 +143,13 @@ def loop(side='right'):
     phi1 = sign[side]*25*math.pi/180;
     theta1 = (90-20)*math.pi/180;
     res.append(Light(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
-                     color=(0.95,0.95,0.95)));
+                     color=(0.75,0.75,0.75),
+                     theta=math.pi/8));
     phi1 = -sign[side]*40*math.pi/180;
     theta1 = (90)*math.pi/180;
     res.append(Light(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
-                     color=(0.1,0.1,0.1)));
+                     color=(0.1,0.1,0.1),
+                     theta=math.pi/2));
     return res
 
 def rembrandt(side='right'):
@@ -167,11 +173,13 @@ def rembrandt(side='right'):
     phi1 = sign[side]*45*math.pi/180;
     theta1 = (90-20)*math.pi/180;
     res.append(Light(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
-               color=(0.99,0.99,0.99)));
+               color=(0.75,0.75,0.75),
+               theta=math.pi/8));
     phi1 = -sign[side]*45*math.pi/180;
     theta1 = (90)*math.pi/180;
     res.append(Light(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
-               color=(0.1,0.1,0.1)));
+               color=(0.1,0.1,0.1),
+               theta=math.pi/2));
     return res
 
 
