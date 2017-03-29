@@ -23,13 +23,15 @@ def test_lights():
     lights.append(fresnel.light.Light(direction=(math.sin(theta1)*math.sin(phi1),
                                                  math.cos(theta1),
                                                  math.sin(theta1)*math.cos(phi1)),
-                                      color=(0.99,0.99,0.99)));
+                                      color=(0.75,0.75,0.75),
+                                      theta=math.pi/8));
     phi1 = -1*45*math.pi/180;
     theta1 = (90)*math.pi/180;
     lights.append(fresnel.light.Light(direction=(math.sin(theta1)*math.sin(phi1),
                                                  math.cos(theta1),
                                                  math.sin(theta1)*math.cos(phi1)),
-                                      color=(0.1,0.1,0.1)));
+                                      color=(0.1,0.1,0.1),
+                                      theta=math.pi/2));
     return lights;
 
 @pytest.fixture(scope='session',

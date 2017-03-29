@@ -26,7 +26,7 @@ class Light(object):
     The color also sets the light intensity. A (0.5, 0.5, 0.5) light is twice as bright as (0.25, 0.25, 0.25).
     """
 
-    def __init__(self, direction, color=(1,1,1), theta=0.4):
+    def __init__(self, direction, color=(1,1,1), theta=0.375):
         self.direction = tuple(direction);
         self.color = tuple(color);
         self.theta = float(theta)
