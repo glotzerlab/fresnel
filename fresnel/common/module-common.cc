@@ -31,6 +31,8 @@ PYBIND11_PLUGIN(_common)
         .def_readwrite("specular", &Material::specular)
         .def_readwrite("metal", &Material::metal)
         .def_readwrite("color", &Material::color)
+        .def_readwrite("clearcoat", &Material::clearcoat)
+        .def_readwrite("clearcoat_gloss", &Material::clearcoat_gloss)
         .def("__repr__",
             [](const Material &a)
                 {
@@ -42,6 +44,8 @@ PYBIND11_PLUGIN(_common)
                   << " roughness=" << a.roughness
                   << " specular=" << a.specular
                   << " metal=" << a.metal
+                  << " clearcoat=" << a.clearcoat
+                  << " clearcoat_gloss=" << a.clearcoat_gloss
                   << ">";
 
                 return s.str();
