@@ -139,18 +139,50 @@ RT_PROGRAM void direct_closest_hit()
         }
     else
         {
+        c = RGB<float>(0,0,0);
         for (unsigned int light_id = 0; light_id < lights.N; light_id++)
             {
             vec3<float> l = lights.direction[light_id];
 
-            // only apply brdf when the light faces the surface
-            float ndotl = dot(n,l);
-            if (ndotl > 0.0f)
+            // find the representative point, a vector pointing to the a point on the area light
+            // with a smallest angle to the reflection vector
+            vec3<float> r = -v + (2.0f * n * dot(n,v));
+
+            // find the closest point on the area light
+            float half_angle = lights.theta[light_id];
+            float cos_half_angle = cosf(half_angle);
+            float ldotr = dot(l,r);
+            if (ldotr < cos_half_angle)
                 {
-                RGB<float> f_d = m.brdf_diffuse(l, v, n, shading_color);
-                RGB<float> f_s = m.brdf_specular(l, v, n, shading_color);
-                c += (f_d + f_s) * float(M_PI) * lights.color[light_id] * ndotl;
+                vec3<float> a = cross(l,r);
+                a = a / sqrtf(dot(a,a));
+
+                // miss the light, need to rotate r by the difference in the angles about l cross r
+                quat<float> q = quat<float>::fromAxisAngle(a, -acosf(ldotr) + half_angle);
+                r = rotate(q, r);
                 }
+            else
+                {
+                // hit the light, no modification necessary to r
+                }
+
+            // only apply brdf when the light faces the surface
+            RGB<float> f_d;
+            float ndotl = dot(n, l);
+            if (ndotl >= 0.0f)
+                f_d = m.brdf_diffuse(l, v, n, shading_color) * ndotl;
+            else
+                f_d = RGB<float>(0.0f,0.0f,0.0f);
+
+            RGB<float> f_s;
+            if (dot(n, r) >= 0.0f)
+                {
+                f_s = m.brdf_specular(r, v, n, shading_color, half_angle) * dot(n, r);
+                }
+            else
+                f_s = RGB<float>(0.0f,0.0f,0.0f);
+
+            c += (f_d + f_s) * float(M_PI) * lights.color[light_id];
             }
         }
 
