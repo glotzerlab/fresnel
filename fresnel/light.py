@@ -26,9 +26,10 @@ class Light(object):
     The color also sets the light intensity. A (0.5, 0.5, 0.5) light is twice as bright as (0.25, 0.25, 0.25).
     """
 
-    def __init__(self, direction, color=(1,1,1)):
+    def __init__(self, direction, color=(1,1,1), theta=0.3):
         self.direction = tuple(direction);
         self.color = tuple(color);
+        self.theta = float(theta)
 
     def __str__(self):
         return "<Light object with direction {0} and color {1}>".format(self.direction, self.color);
@@ -46,7 +47,7 @@ class _light_proxy(object):
 
     @direction.setter
     def direction(self, v):
-        self._light_list._lights.setDirection(self._idx, _common.vec3f(*v))
+        self._light_list._lights.setDirection(self._idx, _common.vec3f(*v));
 
     @property
     def color(self):
@@ -56,7 +57,15 @@ class _light_proxy(object):
 
     @color.setter
     def color(self, v):
-        self._light_list._lights.setColor(self._idx, _common.RGBf(*v))
+        self._light_list._lights.setColor(self._idx, _common.RGBf(*v));
+
+    @property
+    def theta(self):
+        return self._light_list._lights.getTheta(self._idx);
+
+    @theta.setter
+    def theta(self, v):
+        self._light_list._lights.setTheta(self._idx, v);
 
     def __str__(self):
         return "<Light proxy object with direction {0} and color {1}>".format(self.direction, self.color);
@@ -82,6 +91,7 @@ class _lightlist_proxy(object):
         i = self._lights.N
         self._lights.setDirection(i, _common.vec3f(*light.direction))
         self._lights.setColor(i, _common.RGBf(*light.color))
+        self._lights.setTheta(i, light.theta)
         self._lights.N = i + 1;
 
     def __getitem__(self, idx):

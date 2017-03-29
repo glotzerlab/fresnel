@@ -23,8 +23,8 @@ namespace fresnel {
 /*! Store user provided light properties. These properties are convenient parameters for users to think about
     and set. The actual device camera properties are derived from these and stored in Lights.
 
-    A single light is defined by a vector that points toward the light (in camera coordinates) and a color.
-    Later, the sampling tracer will support area lights.
+    A single light is defined by a vector that points toward the light (in camera coordinates), a color, and
+    the half angle of the area light.
 
     The Lights class stores up to 4 lights. They are stored in a fixed size plain old data struct for direct transfer
     to an OptiX variable.
@@ -35,6 +35,7 @@ struct Lights
     {
     vec3<float> direction[4];   //!< Light directions
     RGB<float> color[4];        //!< Color of each light (linearized sRGB color space)
+    float theta[4];             //!< Half angle of the area light
     unsigned int N;             //!< Number of lights
 
     //! Default constructor leaves memory uninitialized to support OptiX variables
@@ -55,6 +56,9 @@ struct Lights
 
             // put direction into scene coordinates
             direction[i] = v.x * cam.r + v.y * cam.u - v.z * cam.d;
+
+            // copy the angle
+            theta[i] = lights.theta[i];
             }
         }
 
@@ -76,6 +80,16 @@ struct Lights
     void setColor(unsigned int i, const RGB<float>& v)
         {
         color[i] = v;
+        }
+
+    float getTheta(unsigned int i)
+        {
+        return theta[i];
+        }
+
+    void setTheta(unsigned int i, float v)
+        {
+        theta[i] = v;
         }
     };
 

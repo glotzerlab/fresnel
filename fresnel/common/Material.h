@@ -27,6 +27,7 @@ DEVICE inline float schlick(float x)
     float v = 1.0f - x;
     float v_sq = v*v;
     float v_fifth = v_sq * v_sq * v;
+
     return v_fifth;
     }
 
@@ -111,6 +112,7 @@ struct Material
         float alpha_sq = alpha*alpha;
         float denom_rt = (1 + (alpha_sq - 1)*ndoth*ndoth);
         float D = alpha_sq / (float(M_PI) * denom_rt*denom_rt);
+        float alpha_prime;
 
         // normalization correction per UE4 paper
         if (light_half_angle > 0.0f)
@@ -118,7 +120,7 @@ struct Material
             if (light_half_angle > 0.99*float(M_PI)/2)
                 light_half_angle = 0.99*float(M_PI)/2;
 
-            float alpha_prime = alpha + 0.5f * tanf(light_half_angle);
+            alpha_prime = alpha + 0.5f * tanf(light_half_angle);
             if (alpha_prime > 1.0f)
                 alpha_prime = 1.0f;
             D = D*alpha_sq / (alpha_prime*alpha_prime);
@@ -131,6 +133,9 @@ struct Material
 
         // G(theta_l, theta_v)
         // http://graphicrants.blogspot.com/2013/08/specular-brdf-reference.html
+        // using disney's alpha_g remapping
+        //float alpha_g = 0.5f + alpha / 2.0f;
+        //float alpha_g_sq = alpha_g*alpha_g;
         float ndotv_sq = ndotv*ndotv;
         float ndotl_sq = ndotl*ndotl;
         float V1 = 1.0f / (ndotv + sqrtf(alpha_sq + ndotv_sq - alpha_sq * ndotv_sq));

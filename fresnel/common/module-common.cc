@@ -79,6 +79,8 @@ PYBIND11_PLUGIN(_common)
         .def("setDirection", &Lights::setDirection)
         .def("getColor", &Lights::getColor)
         .def("setColor", &Lights::setColor)
+        .def("getTheta", &Lights::getTheta)
+        .def("setTheta", &Lights::setTheta)
         ;
 
     return m.ptr();
