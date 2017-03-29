@@ -53,10 +53,24 @@ class Tracer
             return m_linear_out;
             }
 
+        //! Enable highlight warnings
+        void enableHighlightWarning(const RGB<float>& color)
+            {
+            m_highlight_warning = true;
+            m_highlight_warning_color = color;
+            }
+
+        void disableHighlightWarning()
+            {
+            m_highlight_warning = false;
+            }
+
     protected:
         std::shared_ptr<Device> m_device;                           //!< The device the Scene is attached to
         std::shared_ptr< Array< RGBA<float> > > m_linear_out;       //!< The output buffer (linear space)
         std::shared_ptr< Array< RGBA<unsigned char> > > m_srgb_out; //!< The output buffer (srgb space)
+        bool m_highlight_warning;                                   //!< Set to true to enable highlight warnings in sRGB output
+        RGB<float> m_highlight_warning_color;                       //!< The highlight warning color
     };
 
 //! Export Tracer to python

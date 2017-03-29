@@ -16,6 +16,7 @@ from . import geometry
 from . import tracer
 from . import camera
 from . import color
+from . import light
 
 # attempt to import the cpu and gpu modules
 try:
@@ -112,14 +113,40 @@ class Scene(object):
     :py:class:`Scene` defines the contents of the scene to be ray traced, including any number of
     :py:mod:`geometry <fresnel.geometry>` objects, the :py:mod:`camera <fresnel.camera>`,
     :py:attr:`background color <background_color>`, :py:attr:`background alpha <background_alpha>`,
-    and the :py:attr:`light direction <light_direction>`.
+    and the :py:attr:`lights`.
 
     Every :py:class:`Scene` attaches to a :py:class:`Device`. For convenience, :py:class:`Scene` creates a default
     :py:class:`Device` when **device** is *None*. If you want a non-default device, you must create it explicitly.
 
-    Warning:
+    .. rubric:: Lights
 
-        The API for :py:attr:`light_direction` is temporary.
+    :py:attr:`lights` is a sequence of up to 4 directional lights that apply to the scene globally. Each light has a
+    direction and color. You can assign lights using one of the predefined setups:
+
+    .. code-block:: python
+
+        scene.lights = fresnel.light.butterfly()
+
+    You can assign a sequence of :py:class:`Light <fresnel.light.Light>` objects:
+
+    .. code-block:: python
+
+        scene.lights = [fresnel.light.Light(direction=(1,2,3))]
+
+    You can modify the lights in place:
+
+    .. code-block:: python
+
+        >>> print(len(scene.lights))
+        2
+        >>> l.append(fresnel.light.Light(direction=(1,0,0), color=(1,1,1)))
+        >>> print(len(3))
+        1
+        >>> print(l[2]).direction
+        (1,0,0)
+        >>> l[0].direction = (-1,0,0)
+        >>> print(l[0]).direction
+        (-1,0,0)
 
     Attributes:
 
@@ -129,10 +156,10 @@ class Scene(object):
                                          linearized color space. Use :py:func:`fresnel.color.linear` to convert standard
                                          sRGB colors
         background_alpha (float): Background alpha (opacity).
-        light_direction (tuple[float]): Vector pointing toward the light source.
+        lights (list of `light.Light`): Globals lights in the scene.
     """
 
-    def __init__(self, device=None, camera='auto'):
+    def __init__(self, device=None, camera='auto', lights=light.rembrandt()):
         if device is None:
             device = Device();
 
@@ -140,6 +167,7 @@ class Scene(object):
         self._scene = self.device.module.Scene(self.device._device);
         self.geometry = [];
         self.camera = camera;
+        self.lights = lights;
         self._tracer = None;
 
     def get_extents(self):
@@ -193,13 +221,16 @@ class Scene(object):
         self._scene.setBackgroundAlpha(value);
 
     @property
-    def light_direction(self):
-        v = self._scene.getLightDirection();
-        return (v.x, v.y, v.z);
+    def lights(self):
+        return light._lightlist_proxy(self._scene.getLights())
 
-    @light_direction.setter
-    def light_direction(self, value):
-        self._scene.setLightDirection(_common.vec3f(*value));
+    @lights.setter
+    def lights(self, values):
+        tmp = light._lightlist_proxy()
+        for v in values:
+            tmp.append(v);
+
+        self._scene.setLights(tmp._lights);
 
     def _prepare(self):
         if self.auto_camera:

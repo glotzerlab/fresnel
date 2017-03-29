@@ -37,8 +37,10 @@ def test_camera(scene_hex_sphere, generate=False):
         conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_scene.test_camera.png')
 
 def test_light_dir(scene_hex_sphere, generate=False):
-    scene_hex_sphere.light_direction = (-1, 0, 0)
-    assert scene_hex_sphere.light_direction == (-1, 0, 0)
+    scene_hex_sphere.lights[0].direction = (1, 0, 0)
+    scene_hex_sphere.lights[0].color = (0.5, 0.5, 0.5)
+    assert scene_hex_sphere.lights[0].direction == (1, 0, 0)
+    assert scene_hex_sphere.lights[0].color == (0.5, 0.5, 0.5)
 
     buf_proxy = fresnel.render(scene_hex_sphere, w=100, h=100)
 
@@ -48,9 +50,8 @@ def test_light_dir(scene_hex_sphere, generate=False):
         conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_scene.test_light_dir.png')
 
 def test_multiple_geometries(device, generate=False):
-    scene = fresnel.Scene()
+    scene = fresnel.Scene(lights=conftest.test_lights())
     scene.camera = fresnel.camera.orthographic(position=(0, 0, 10), look_at=(0,0,0), up=(0,1,0), height=7)
-    scene.light_direction = (4,3,8)
 
     geom1 = fresnel.geometry.Sphere(scene, position = [[-4, 1, 0], [-4, -1, 0], [-2, 1, 0], [-2, -1, 0]], radius=1.0)
     geom1.material = fresnel.material.Material(solid=1.0, color=fresnel.color.linear([0.42,0.267,1]))

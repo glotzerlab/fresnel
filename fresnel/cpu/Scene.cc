@@ -15,9 +15,12 @@ Scene::Scene(std::shared_ptr<Device> device) : m_device(device), m_background_co
     m_scene = rtcDeviceNewScene(device->getRTCDevice(), RTC_SCENE_DYNAMIC, RTC_INTERSECT1);
     m_device->checkError();
 
-    vec3<float> l = vec3<float>(0.2,1,0.5);
-    l = l / sqrtf(dot(l,l));
-    m_light_direction = l;
+    m_lights.N = 2;
+    m_lights.direction[0] = vec3<float>(-1,0.3,1);
+    m_lights.color[0] = RGB<float>(1,1,1);
+
+    m_lights.direction[1] = vec3<float>(1,0,1);
+    m_lights.color[1] = RGB<float>(0.1,0.1,0.1);
     }
 
 /*! Destroys the underlying RTCScene
@@ -40,8 +43,8 @@ void export_Scene(pybind11::module& m)
         .def("setBackgroundColor", &Scene::setBackgroundColor)
         .def("getBackgroundAlpha", &Scene::getBackgroundAlpha)
         .def("setBackgroundAlpha", &Scene::setBackgroundAlpha)
-        .def("getLightDirection", &Scene::getLightDirection)
-        .def("setLightDirection", &Scene::setLightDirection)
+        .def("getLights", &Scene::getLights, pybind11::return_value_policy::reference_internal)
+        .def("setLights", &Scene::setLights)
         ;
     }
 

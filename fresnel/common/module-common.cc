@@ -4,6 +4,7 @@
 #include <pybind11/pybind11.h>
 #include "common/Material.h"
 #include "common/Camera.h"
+#include "common/Light.h"
 #include "common/VectorMath.h"
 #include "common/ColorMath.h"
 
@@ -63,6 +64,15 @@ PYBIND11_PLUGIN(_common)
         .def_readwrite("look_at", &UserCamera::look_at)
         .def_readwrite("up", &UserCamera::up)
         .def_readwrite("h", &UserCamera::h)
+        ;
+
+    pybind11::class_< Lights >(m, "Lights")
+        .def(pybind11::init<>())
+        .def_readwrite("N", &Lights::N)
+        .def("getDirection", &Lights::getDirection)
+        .def("setDirection", &Lights::setDirection)
+        .def("getColor", &Lights::getColor)
+        .def("setColor", &Lights::setColor)
         ;
 
     return m.ptr();

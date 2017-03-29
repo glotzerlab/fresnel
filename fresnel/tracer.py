@@ -8,6 +8,7 @@ Ray tracers.
 import numpy
 from . import camera
 from . import util
+from . import _common
 
 class Tracer(object):
     R""" Base class for all ray tracers.
@@ -24,6 +25,7 @@ class Tracer(object):
     Attributes:
 
         output (:py:class:`fresnel.util.image_array`): Reference to the current output buffer (modified by :py:meth:`render`)
+        linear_output (:py:class:`fresnel.util.array`): Reference to the current output buffer in linear color space (modified by :py:meth:`render`)
     """
     def __init__(self):
         raise RuntimeError("Use a specific tracer class");
@@ -62,9 +64,62 @@ class Tracer(object):
         self._tracer.render(scene._scene);
         return self.output;
 
+    def enable_highlight_warning(self, color=(1,0,1)):
+        R""" Enable highlight clipping warnings.
+
+        When a pixel in the rendered image is too bright to represent, make that pixel the given *color* to flag
+        the problem to the user.
+
+        Args:
+
+            color (tuple): Color to make the highlight warnings.
+        """
+        self._tracer.enableHighlightWarning(_common.RGBf(*color));
+
+    def disable_highlight_warning(self):
+        R""" Disable the highlight clipping warnings.
+        """
+        self._tracer.disableHighlightWarning();
+
+    def histogram(self):
+        R""" Compute a histogram of the image.
+
+        The histogram is computed as a lightness in the sRGB color space. The histogram is computed only over the
+        visible pixels in the image, fully transparent pixels are ignored. The returned histogram is nbins x 4,
+        the first column contains the lightness histogram and the next 3 contain R,B, and G channel histograms
+        respectively.
+
+        Return:
+
+            (histogram, bin_positions).
+        """
+
+        a = numpy.array(self.linear_output[:])
+        img_sel = a[:,:,3] > 0
+        img = a[img_sel]
+        r = img[:,0]
+        g = img[:,1]
+        b = img[:,2]
+        l = 0.21*r + 0.72*g + 0.07*b
+        gamma_l = l**(1/2.2);
+
+        n=512;
+        l_hist, bins = numpy.histogram(gamma_l, bins=n, range=[0,1]);
+        r_hist, bins = numpy.histogram(r**(1/2.2), bins=n, range=[0,1]);
+        g_hist, bins = numpy.histogram(g**(1/2.2), bins=n, range=[0,1]);
+        b_hist, bins = numpy.histogram(b**(1/2.2), bins=n, range=[0,1]);
+
+        out = numpy.stack((l_hist, r_hist, g_hist, b_hist), axis=1)
+
+        return out, bins[1:]
+
     @property
     def output(self):
         return util.image_array(self._tracer.getSRGBOutputBuffer(), geom=None)
+
+    @property
+    def linear_output(self):
+        return util.array(self._tracer.getLinearOutputBuffer(), geom=None)
 
 class Direct(Tracer):
     R""" Direct ray tracer.

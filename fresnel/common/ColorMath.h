@@ -317,7 +317,7 @@ struct RGBA
     /*! \param c Color to provide r,g,b components.
         \param _a a-component
     */
-    DEVICE RGBA(const RGB<Real>& c, const Real& _a) : r(c.r), g(c.g), b(c.b), a(a)
+    DEVICE RGBA(const RGB<Real>& c, const Real& _a) : r(c.r), g(c.g), b(c.b), a(_a)
         {
         }
 
@@ -371,6 +371,13 @@ DEVICE inline RGBA<unsigned char> sRGB(const RGBA<float>& c)
         t.b = (1.0f + 0.055f) * powf(c.b, 1.0f / 2.4f) - 0.055f;
 
     t.a = c.a;
+
+    if (t.r > 1.0f)
+        t.r = 1.0f;
+    if (t.g > 1.0f)
+        t.g = 1.0f;
+    if (t.b > 1.0f)
+        t.b = 1.0f;
 
     return RGBA<unsigned char>((unsigned char)(t.r * 255.0f + 0.5f),
                                (unsigned char)(t.g * 255.0f + 0.5f),

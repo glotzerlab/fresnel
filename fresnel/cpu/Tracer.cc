@@ -11,6 +11,8 @@ Tracer::Tracer(std::shared_ptr<Device> device, unsigned int w, unsigned int h)
     : m_device(device)
     {
     resize(w,h);
+    m_highlight_warning = false;
+    m_highlight_warning_color = RGB<float>(1,0,1);
     }
 
 Tracer::~Tracer()
@@ -51,6 +53,8 @@ void export_Tracer(pybind11::module& m)
         .def("resize", &Tracer::resize)
         .def("getSRGBOutputBuffer", &Tracer::getSRGBOutputBuffer)
         .def("getLinearOutputBuffer", &Tracer::getLinearOutputBuffer)
+        .def("enableHighlightWarning", &Tracer::enableHighlightWarning)
+        .def("disableHighlightWarning", &Tracer::disableHighlightWarning)
         ;
     }
 
