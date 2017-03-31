@@ -18,22 +18,11 @@ from . import camera
 from . import color
 from . import light
 
-# attempt to import the cpu and gpu modules
-try:
-    from fresnel import _cpu;
-except ImportError as e:
-    # supporess "cannot import name" messages
-    if str(e)[:18] != "cannot import name":
-        raise;
-    _cpu = None;
-
-try:
-    from fresnel import _gpu;
-except ImportError as e:
-    # supporess "cannot import name" messages
-    if str(e)[:18] != "cannot import name":
-        raise;
-    _gpu = None;
+from . import _common
+if _common.cpu_built():
+    from . import _cpu
+if _common.gpu_built():
+    from .import _gpu
 
 __version__ = "0.3.0"
 
@@ -56,12 +45,28 @@ class Device(object):
 
     .. tip::
         Use only a single :py:class:`Device` to reduce memory consumption.
+
+    The static member :py:attr:`available_modes` lists which modes are available. For a mode to be available, the
+    corresponding module must be enabled at compile time. Additionally, there must be at least one GPU present
+    for the ``gpu`` mode to be available.
+
+    .. code::
+
+        >>> fresnel.Device.available_modes
+        ['gpu', 'cpu', 'auto']
+
+    Attributes:
+
+        available_modes (list): List of the available execution modes (static member).
+
     """
 
-    def __init__(self, mode='auto', limit=None,):
+    available_modes = []
+
+    def __init__(self, mode='auto', limit=None):
         # determine the number of available GPUs
         num_gpus = 0;
-        if _gpu is not None:
+        if _common.gpu_built():
             num_gpus = _gpu.get_num_available_devices();
 
         # determine the selected mode
@@ -72,18 +77,18 @@ class Device(object):
                 selected_mode = 'gpu'
             else:
                 selected_mode = 'cpu'
-                if _cpu is None:
-                    raise RuntimeError("No GPUs available AND CPU fallback library is not compiled");
+                if not _common.cpu_built():
+                    raise RuntimeError("No GPUs available AND CPU implementation is not compiled");
 
         if mode == 'gpu':
-            if _gpu is None:
+            if not _common.gpu_built():
                 raise RuntimeError("GPU implementation is not compiled");
             if num_gpus == 0:
                 raise RuntimeError("No GPUs are available");
             selected_mode = 'gpu';
 
         if mode == 'cpu':
-            if _cpu is None:
+            if not _common.cpu_built():
                 raise RuntimeError("CPU implementation is not compiled");
             selected_mode = 'cpu';
 
@@ -102,6 +107,16 @@ class Device(object):
             self._device = _cpu.Device(thread_limit);
         else:
             raise ValueError("Invalid mode");
+
+if _common.gpu_built():
+    if _gpu.get_num_available_devices() > 0:
+        Device.available_modes.append('gpu');
+
+if _common.cpu_built():
+    Device.available_modes.append('cpu');
+
+if len(Device.available_modes) > 0:
+    Device.available_modes.append('auto');
 
 class Scene(object):
     R""" Content of the scene to ray trace.

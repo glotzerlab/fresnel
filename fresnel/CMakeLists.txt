@@ -31,6 +31,8 @@ add_python_module(_common "common/module-common.cc")
 # _cpu
 if (ENABLE_EMBREE AND ENABLE_TBB)
 
+target_compile_definitions(_common PUBLIC FRESNEL_BUILD_CPU)
+
 set(_cpu_sources
      cpu/module-cpu.cc
      cpu/Device.cc
@@ -50,6 +52,8 @@ endif()
 
 # _gpu
 if (ENABLE_CUDA AND ENABLE_OPTIX)
+
+target_compile_definitions(_common PUBLIC FRESNEL_BUILD_GPU)
 
 # Build the PTX files for the OptiX programs
 set(_ptx_sources

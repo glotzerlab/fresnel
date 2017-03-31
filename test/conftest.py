@@ -7,11 +7,11 @@ import PIL
 import numpy
 
 devices = []
-if fresnel._cpu is not None:
+if 'cpu' in fresnel.Device.available_modes:
     devices.append( ('cpu', None) );
     devices.append( ('cpu', 1) );
 
-if fresnel._gpu is not None:
+if 'gpu' in fresnel.Device.available_modes:
     devices.append( ('gpu', None) );
 
 print(devices)

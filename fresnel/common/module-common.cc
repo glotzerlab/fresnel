@@ -13,9 +13,30 @@
 using namespace std;
 using namespace fresnel;
 
+bool gpu_built()
+    {
+    #ifdef FRESNEL_BUILD_GPU
+    return true;
+    #else
+    return false;
+    #endif
+    }
+
+bool cpu_built()
+    {
+    #ifdef FRESNEL_BUILD_CPU
+    return true;
+    #else
+    return false;
+    #endif
+    }
+
 PYBIND11_PLUGIN(_common)
     {
     pybind11::module m("_common");
+
+    m.def("gpu_built", &gpu_built);
+    m.def("cpu_built", &cpu_built);
 
     pybind11::class_< RGB<float> >(m, "RGBf")
         .def(pybind11::init<float, float, float>())

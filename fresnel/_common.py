@@ -1,4 +1,6 @@
 # placeholder to take place of _common.so when building sphinx docs from source
+print("**** You are importing fresnel from the source directory.")
+print("**** This will not work, compile and import from the build directory")
 
 class Material:
     def __init__(self, *args, **kwargs):
@@ -17,3 +19,9 @@ class UserCamera:
 class vec3f:
     def __init__(self, *args, **kwargs):
         pass
+
+def cpu_built():
+    return False
+
+def gpu_built():
+    return False
