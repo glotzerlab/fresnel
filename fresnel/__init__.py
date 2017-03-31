@@ -108,6 +108,9 @@ class Device(object):
         else:
             raise ValueError("Invalid mode");
 
+    def __str__(self):
+        return '<fresnel.Device: ' + self._device.describe() + '>'
+
 if _common.gpu_built():
     if _gpu.get_num_available_devices() > 0:
         Device.available_modes.append('gpu');

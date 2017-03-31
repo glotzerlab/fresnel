@@ -45,7 +45,7 @@ Device::~Device()
 
 /*! \returns Human readable string containing useful device information
 */
-std::string Device::getStats()
+std::string Device::describe()
     {
     std::string s("OptiX devices:");
 
@@ -53,7 +53,7 @@ std::string Device::getStats()
 
     for (const int& i : devices)
         {
-        s += "\n[" + to_string(i) + "]: " + m_context->getDeviceName(i);
+        s += " [" + to_string(i) + "]: " + m_context->getDeviceName(i);
         }
 
     return s;
@@ -117,7 +117,7 @@ void export_Device(pybind11::module& m)
     {
     pybind11::class_<Device, std::shared_ptr<Device> >(m, "Device")
         .def(pybind11::init<const std::string&>())
-        .def("getStats", &Device::getStats)
+        .def("describe", &Device::describe)
         ;
     }
 

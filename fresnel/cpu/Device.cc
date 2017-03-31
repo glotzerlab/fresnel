@@ -11,7 +11,7 @@ namespace fresnel { namespace cpu {
 /*! Construct a new RTCDevice with default options.
     \param limit Set a maximum number of threads limit. -1 will auto-select.
 */
-Device::Device(int limit)
+Device::Device(int limit) : m_limit(limit)
     {
     m_device = rtcNewDevice(nullptr);
 
@@ -39,6 +39,7 @@ void export_Device(pybind11::module& m)
     {
     pybind11::class_<Device, std::shared_ptr<Device> >(m, "Device")
         .def(pybind11::init<int>())
+        .def("describe", &Device::describe)
         ;
     }
 

@@ -56,7 +56,7 @@ class Device
             }
 
         //! Get information about this device
-        std::string getStats();
+        std::string describe();
 
         //! Get a cached program
         optix::Program getProgram(const std::string& filename, const std::string& funcname);
@@ -69,6 +69,7 @@ class Device
             {
             return m_direct_mat;
             }
+
     private:
         optix::Context m_context;       //!< Store the context
         std::string m_ptx_root;         //!< Directory where PTX files are stored
