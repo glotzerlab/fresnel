@@ -26,9 +26,10 @@ class Light(object):
     The color also sets the light intensity. A (0.5, 0.5, 0.5) light is twice as bright as (0.25, 0.25, 0.25).
     """
 
-    def __init__(self, direction, color=(1,1,1)):
+    def __init__(self, direction, color=(1,1,1), theta=0.375):
         self.direction = tuple(direction);
         self.color = tuple(color);
+        self.theta = float(theta)
 
     def __str__(self):
         return "<Light object with direction {0} and color {1}>".format(self.direction, self.color);
@@ -46,7 +47,7 @@ class _light_proxy(object):
 
     @direction.setter
     def direction(self, v):
-        self._light_list._lights.setDirection(self._idx, _common.vec3f(*v))
+        self._light_list._lights.setDirection(self._idx, _common.vec3f(*v));
 
     @property
     def color(self):
@@ -56,7 +57,15 @@ class _light_proxy(object):
 
     @color.setter
     def color(self, v):
-        self._light_list._lights.setColor(self._idx, _common.RGBf(*v))
+        self._light_list._lights.setColor(self._idx, _common.RGBf(*v));
+
+    @property
+    def theta(self):
+        return self._light_list._lights.getTheta(self._idx);
+
+    @theta.setter
+    def theta(self, v):
+        self._light_list._lights.setTheta(self._idx, v);
 
     def __str__(self):
         return "<Light proxy object with direction {0} and color {1}>".format(self.direction, self.color);
@@ -82,6 +91,7 @@ class _lightlist_proxy(object):
         i = self._lights.N
         self._lights.setDirection(i, _common.vec3f(*light.direction))
         self._lights.setColor(i, _common.RGBf(*light.color))
+        self._lights.setTheta(i, light.theta)
         self._lights.N = i + 1;
 
     def __getitem__(self, idx):
@@ -103,9 +113,13 @@ def butterfly():
 
     res = [];
     theta1 = 50*math.pi/180;
-    res.append(Light(direction=(0, math.sin(theta1), math.cos(theta1)), color=(0.97,0.97,0.97)));
+    res.append(Light(direction=(0, math.sin(theta1), math.cos(theta1)),
+                     color=(0.75,0.75,0.75),
+                     theta=math.pi/8));
     theta2 = -30*math.pi/180;
-    res.append(Light(direction=(0, math.sin(theta2), math.cos(theta2)), color=(0.1,0.1,0.1)));
+    res.append(Light(direction=(0, math.sin(theta2), math.cos(theta2)),
+                     color=(0.1,0.1,0.1),
+                     theta=math.pi/2));
     return res
 
 def loop(side='right'):
@@ -129,11 +143,13 @@ def loop(side='right'):
     phi1 = sign[side]*25*math.pi/180;
     theta1 = (90-20)*math.pi/180;
     res.append(Light(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
-                     color=(0.95,0.95,0.95)));
+                     color=(0.75,0.75,0.75),
+                     theta=math.pi/8));
     phi1 = -sign[side]*40*math.pi/180;
     theta1 = (90)*math.pi/180;
     res.append(Light(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
-                     color=(0.1,0.1,0.1)));
+                     color=(0.1,0.1,0.1),
+                     theta=math.pi/2));
     return res
 
 def rembrandt(side='right'):
@@ -157,11 +173,13 @@ def rembrandt(side='right'):
     phi1 = sign[side]*45*math.pi/180;
     theta1 = (90-20)*math.pi/180;
     res.append(Light(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
-               color=(0.99,0.99,0.99)));
+               color=(0.75,0.75,0.75),
+               theta=math.pi/8));
     phi1 = -sign[side]*45*math.pi/180;
     theta1 = (90)*math.pi/180;
     res.append(Light(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
-               color=(0.1,0.1,0.1)));
+               color=(0.1,0.1,0.1),
+               theta=math.pi/2));
     return res
 
 

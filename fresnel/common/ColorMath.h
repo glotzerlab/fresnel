@@ -343,7 +343,7 @@ struct RGBA
 template <class T>
 DEVICE inline T lerp(float x, const T& a, const T& b)
     {
-    return (1-x) * a + x * b;
+    return (1.0f-x) * a + x * b;
     }
 
 //! Convert from linear color to sRGB
