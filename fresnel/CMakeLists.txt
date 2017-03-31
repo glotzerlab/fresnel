@@ -61,6 +61,7 @@ set(_ptx_sources
 	gpu/GeometrySphere.cu
     gpu/GeometryPrism.cu)
 
+set(CUDA_NVCC_FLAGS "-arch compute_30")
 CUDA_WRAP_SRCS(_ptx PTX generated_ptx_files ${_ptx_sources})
 add_custom_target(_ptx ALL
     DEPENDS ${generated_ptx_files} ${_ptx_sources}
