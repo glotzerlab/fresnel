@@ -4,15 +4,23 @@
 
 ## v0.4.0
 
-Not yet released
+Released 2017/04/03
 
 * Enforce requirement: Embree >= 2.10.0
 * Enforce requirement Pybind =1.8.1
 * Enforce requirement TBB >= 4.3
 * Rewrite camera API, add camera.fit to fit the scene
 * scenes default to an automatic fit camera
+* Implement area lights, add default lighting setups
+* Implement Disney's principled BRDF
+* ``Tracer.histogram`` computes a histogram of the rendered image
+* ``Tracer.enable_highlight_warning`` highlights overexposed pixels with a given warning color
+* ``Device.available_modes`` lists the available execution modes
+* ``Device.available_gpus`` lists the available GPUs
+* ``Device`` can now be limited to *n* GPUs
 * API breaking changes:
     * ``camera.Orthographic`` is now ``camera.orthographic``
+    * ``Device`` now takes the argument *n* instead of *limit*
 
 ## v0.3.0
 
