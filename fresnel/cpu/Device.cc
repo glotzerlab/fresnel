@@ -18,7 +18,7 @@ Device::Device(int limit) : m_limit(limit)
     if (limit == -1)
         limit = tbb::task_arena::automatic;
 
-    m_arena = std::make_shared<tbb::task_arena>(limit, 0);
+    m_arena = std::make_shared<tbb::task_arena>(limit);
 
     if (m_device == nullptr)
         {
