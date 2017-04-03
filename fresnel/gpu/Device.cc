@@ -16,14 +16,26 @@ namespace fresnel { namespace gpu {
 /*! Construct a new optix::Context with default options.
 
     \param ptx_root Directory where the PTX files are stored
+    \param n Number of GPUs to use (-1 to use all).
 
     OptiX programs are loaded from PTX files, built from the .cu source files. These PTX files are stored in the
     python library directory. The Device instance tracks this directory for other classes (i.e. Tracer) to use
     when loading OptiX programs.
 */
-Device::Device(const std::string& ptx_root) : m_ptx_root(ptx_root)
+Device::Device(const std::string& ptx_root, int n) : m_ptx_root(ptx_root)
     {
+    // list the device ids to use
+    int n_to_use = optix::ContextObj::getDeviceCount();
+    if (n != -1)
+        n_to_use = n;
+
+    vector<int> devices;
+
+    for (int i = 0; i < n_to_use; i++)
+        devices.push_back(i);
+
     m_context = optix::Context::create();
+    m_context->setDevices(devices.begin(), devices.end());
 
     m_context->setRayTypeCount(1);
 
@@ -153,7 +165,7 @@ unsigned int Device::getEntryPoint(const std::string& filename, const std::strin
 void export_Device(pybind11::module& m)
     {
     pybind11::class_<Device, std::shared_ptr<Device> >(m, "Device")
-        .def(pybind11::init<const std::string&>())
+        .def(pybind11::init<const std::string&, int>())
         .def("describe", &Device::describe)
         .def("getAllGPUs", &Device::getAllGPUs)
         ;

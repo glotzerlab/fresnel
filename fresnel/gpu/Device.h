@@ -44,7 +44,7 @@ class Device
     {
     public:
         //! Constructor
-        Device(const std::string& ptx_root);
+        Device(const std::string& ptx_root, int n);
 
         //! Destructor
         ~Device();

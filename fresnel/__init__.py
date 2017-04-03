@@ -32,16 +32,21 @@ class Device(object):
     Args:
 
         mode (str): Specify execution mode: Valid values are `auto`, `gpu`, and `cpu`.
-        limit (int): Specify a limit to the number of threads this device will use (cpu).
+        n (int): Specify the number of cpu threads / gpus this device will use.
                      *None* sets no limit.
 
     :py:class:`Device` defines hardware device to use for ray tracing. :py:class:`Scene` and
     :py:mod:`tracer <fresnel.tracer>` instances must be attached to a :py:class:`Device`. You may attach any number of
     scenes and tracers to a single :py:class:`Device`.
 
-    When mode is `auto`, the default, :py:class:`Device` will automatically select all available GPU devices in the system or
+    When mode is `auto`, the default, :py:class:`Device` GPU rendering and
     fall back on CPU rendering if there is no GPU available or GPU support was not compiled in. Set mode to
     `gpu` or `cpu` to force a specific mode.
+
+    .. important::
+        By default (n==None), this device will use all available GPUs or CPU cores. Set *n* to the number of GPUs or CPU
+        cores this device should use. When selecting *n* GPUs, the device selects the first *n* in the
+        :py:attr:`available_gpus` list.
 
     .. tip::
         Use only a single :py:class:`Device` to reduce memory consumption.
@@ -65,7 +70,7 @@ class Device(object):
     available_modes = []
     available_gpus = []
 
-    def __init__(self, mode='auto', limit=None):
+    def __init__(self, mode='auto', n=None):
         # determine the number of available GPUs
         num_gpus = 0;
         if _common.gpu_built():
@@ -94,17 +99,17 @@ class Device(object):
                 raise RuntimeError("CPU implementation is not compiled");
             selected_mode = 'cpu';
 
+        if n is None:
+            thread_limit = -1
+        else:
+            thread_limit = int(n)
+
         # inititialize the device
         if selected_mode == 'gpu':
             self.module = _gpu;
-            self._device = _gpu.Device(os.path.dirname(os.path.realpath(__file__)));
+            self._device = _gpu.Device(os.path.dirname(os.path.realpath(__file__)), thread_limit);
         elif selected_mode == 'cpu':
             self.module = _cpu;
-
-            if limit is None:
-                thread_limit = -1
-            else:
-                thread_limit = int(limit)
 
             self._device = _cpu.Device(thread_limit);
         else:
