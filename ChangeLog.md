@@ -12,6 +12,7 @@ Released 2017/04/03
 * Rewrite camera API, add camera.fit to fit the scene
 * scenes default to an automatic fit camera
 * Implement area lights, add default lighting setups
+* ``Scene`` now supports up to 4 lights, specified in camera space
 * Implement Disney's principled BRDF
 * ``Tracer.histogram`` computes a histogram of the rendered image
 * ``Tracer.enable_highlight_warning`` highlights overexposed pixels with a given warning color
@@ -21,6 +22,7 @@ Released 2017/04/03
 * API breaking changes:
     * ``camera.Orthographic`` is now ``camera.orthographic``
     * ``Device`` now takes the argument *n* instead of *limit*
+    * ``Scene`` no longer has a ``light_direction`` member
 
 ## v0.3.0
 
