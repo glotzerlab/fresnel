@@ -167,7 +167,7 @@ void export_Device(pybind11::module& m)
     pybind11::class_<Device, std::shared_ptr<Device> >(m, "Device")
         .def(pybind11::init<const std::string&, int>())
         .def("describe", &Device::describe)
-        .def("getAllGPUs", &Device::getAllGPUs)
+        .def_static("getAllGPUs", &Device::getAllGPUs)
         ;
     }
 
