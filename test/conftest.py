@@ -12,7 +12,7 @@ if 'cpu' in fresnel.Device.available_modes:
     devices.append( ('cpu', 1) );
 
 if 'gpu' in fresnel.Device.available_modes:
-    devices.append( ('gpu', None) );
+    devices.append( ('gpu', 1) );
 
 print(devices)
 
@@ -40,10 +40,7 @@ def device(request):
     mode = request.param[0]
     limit = request.param[1]
 
-    if mode == 'cpu':
-        dev = fresnel.Device(mode=mode, limit=limit)
-    else:
-        dev = fresnel.Device(mode=mode)
+    dev = fresnel.Device(mode=mode, n=limit)
 
     return dev
 
