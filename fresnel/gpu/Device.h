@@ -58,6 +58,9 @@ class Device
         //! Get information about this device
         std::string describe();
 
+        //! List all GPUs
+        static std::string getAllGPUs();
+
         //! Get a cached program
         optix::Program getProgram(const std::string& filename, const std::string& funcname);
 

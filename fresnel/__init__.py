@@ -58,10 +58,12 @@ class Device(object):
     Attributes:
 
         available_modes (list): List of the available execution modes (static member).
+        available_gpus (list): List of the available gpus (static member).
 
     """
 
     available_modes = []
+    available_gpus = []
 
     def __init__(self, mode='auto', limit=None):
         # determine the number of available GPUs
@@ -111,6 +113,7 @@ class Device(object):
     def __str__(self):
         return '<fresnel.Device: ' + self._device.describe() + '>'
 
+# determine available Device modes
 if _common.gpu_built():
     if _gpu.get_num_available_devices() > 0:
         Device.available_modes.append('gpu');
@@ -120,6 +123,13 @@ if _common.cpu_built():
 
 if len(Device.available_modes) > 0:
     Device.available_modes.append('auto');
+
+# determine available Device GPUs
+if _common.gpu_built():
+    gpus_str = _gpu.Device.getAllGPUs();
+    gpus_list = gpus_str.split('\n')
+    if len(gpus_list) >= 2:
+        Device.available_gpus = gpus_list[:-1]
 
 class Scene(object):
     R""" Content of the scene to ray trace.

@@ -3,6 +3,8 @@
 
 #include <memory>
 #include <string>
+#include <sstream>
+#include <iomanip>
 
 #include "Device.h"
 #include "TracerDirect.h"
@@ -43,20 +45,55 @@ Device::~Device()
     m_context->destroy();
     }
 
+static std::string _formatOptiXDeviceList(const std::vector<int>& devices)
+    {
+    ostringstream s;
+
+    for (const int& i : devices)
+        {
+        int sm = 0;
+        optix::int2 cc;
+        int clock_rate = 0;
+        RTsize total_mem = 0;
+        optix::ContextObj::getDeviceAttribute(i, RT_DEVICE_ATTRIBUTE_MULTIPROCESSOR_COUNT, sizeof(int), &sm);
+        optix::ContextObj::getDeviceAttribute(i, RT_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY, sizeof(optix::int2), &cc);
+        optix::ContextObj::getDeviceAttribute(i, RT_DEVICE_ATTRIBUTE_CLOCK_RATE, sizeof(int), &clock_rate);
+        optix::ContextObj::getDeviceAttribute(i, RT_DEVICE_ATTRIBUTE_TOTAL_MEMORY, sizeof(RTsize), &total_mem);
+
+        float ghz = float(clock_rate)/1e6;
+        int mib = int(float(total_mem)/(1024.0f*2014.0f));
+
+        s << " [" + to_string(i) + "]: " <<
+             setw(22) << optix::ContextObj::getDeviceName(i) << " " <<
+             setw(4) << sm << " " <<
+             "SM_" << cc.x << "." << cc.y << " ";
+        s.precision(3);
+        s.fill('0');
+
+        s << "@ " << setw(4) << ghz << " GHz";
+        s.fill(' ');
+        s << ", " << setw(5) << mib << " MiB DRAM" << std::endl;
+        }
+
+    return s.str();
+    }
+
 /*! \returns Human readable string containing useful device information
 */
 std::string Device::describe()
     {
-    std::string s("OptiX devices:");
-
     vector<int> devices = m_context->getEnabledDevices();
+    return "Enabled OptiX devices:\n" + _formatOptiXDeviceList(devices);
+    }
 
-    for (const int& i : devices)
-        {
-        s += " [" + to_string(i) + "]: " + m_context->getDeviceName(i);
-        }
+std::string Device::getAllGPUs()
+    {
+    vector<int> devices;
 
-    return s;
+    for (unsigned int i = 0; i < optix::ContextObj::getDeviceCount(); i++)
+        devices.push_back(i);
+
+    return _formatOptiXDeviceList(devices);
     }
 
 
@@ -118,6 +155,7 @@ void export_Device(pybind11::module& m)
     pybind11::class_<Device, std::shared_ptr<Device> >(m, "Device")
         .def(pybind11::init<const std::string&>())
         .def("describe", &Device::describe)
+        .def("getAllGPUs", &Device::getAllGPUs)
         ;
     }
 
