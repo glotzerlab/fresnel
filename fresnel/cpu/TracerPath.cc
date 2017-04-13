@@ -22,6 +22,18 @@ TracerPath::~TracerPath()
     {
     }
 
+void TracerPath::reset()
+    {
+    m_n_samples = 0;
+    RGBA<float>* linear_output = m_linear_out->map();
+    memset(linear_output, 0, sizeof(RGBA<float>)*m_linear_out->getW()*m_linear_out->getH());
+    m_linear_out->unmap();
+
+    RGBA<unsigned char>* srgb_output = m_srgb_out->map();
+    memset(srgb_output, 0, sizeof(RGBA<unsigned char>)*m_linear_out->getW()*m_linear_out->getH());
+    m_srgb_out->unmap();
+    }
+
 void TracerPath::render(std::shared_ptr<Scene> scene)
     {
     std::shared_ptr<tbb::task_arena> arena = scene->getDevice()->getTBBArena();
@@ -39,6 +51,9 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
 
     RGBA<float>* linear_output = m_linear_out->map();
     RGBA<unsigned char>* srgb_output = m_srgb_out->map();
+
+    // update number of samples (the first sample is 1)
+    m_n_samples++;
 
     // for each pixel
     const unsigned int height = m_linear_out->getH();
@@ -147,12 +162,16 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                     }
 
                 // take the current sample and compute the average with the previous samples
-                nsigned int pixel = j*width + i;
-                RGBA<float> output_pixel(c, a);
-                // TODO: compute average
-                linear_output[pixel] = output_pixel;
+                unsigned int pixel = j*width + i;
+                RGBA<float> output_sample(c, a);
+
+                // running average and variance (TODO) using Welford's method
+                // (http://jonisalonen.com/2013/deriving-welfords-method-for-computing-variance/)
+                RGBA<float> old_mean = linear_output[pixel];
+                linear_output[pixel] = old_mean + (output_sample-old_mean)/float(m_n_samples);
 
                 // convert the current average output to sRGB
+                RGBA<float> output_pixel = linear_output[pixel];
                 if (!m_highlight_warning || (output_pixel.r <= 1.0f && output_pixel.g <= 1.0f && output_pixel.b <= 1.0f))
                     srgb_output[pixel] = sRGB(output_pixel);
                 else
@@ -172,6 +191,8 @@ void export_TracerPath(pybind11::module& m)
     {
     pybind11::class_<TracerPath, std::shared_ptr<TracerPath> >(m, "TracerPath", pybind11::base<Tracer>())
         .def(pybind11::init<std::shared_ptr<Device>, unsigned int, unsigned int>())
+        .def("getNumSamples", &TracerPath::getNumSamples)
+        .def("reset", &TracerPath::reset)
         ;
     }
 

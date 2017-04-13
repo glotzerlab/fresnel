@@ -14,7 +14,14 @@
 namespace fresnel { namespace cpu {
 
 //! Path tracer
-/*!
+/*! The path tracer randomly samples light paths in the scene to obtain soft lighting from area light sources
+    and other global illumination techniques (reflection, refraction, anti-aliasing, etc...).
+
+    Every time render() is called, a sample is taken and the output updated to match the current average. Many
+    samples may be needed to obtain a converged image. Call reset() to clear the current image and start a new
+    sampling run. The Tracer does not know when the camera angle, materials, or other properties of the scene
+    have changed, so the caller must call reset() whenever needed to start sampling a new view or changed
+    scene (unless motion blur or other multiple exposure techniques are the desired output).
 */
 class TracerPath : public Tracer
     {
@@ -26,6 +33,18 @@ class TracerPath : public Tracer
 
         //! Render a scene
         virtual void render(std::shared_ptr<Scene> scene);
+
+        //! Reset the sampling
+        virtual void reset();
+
+        //! Get the number of samples taken
+        unsigned int getNumSamples()
+            {
+            return m_n_samples;
+            }
+
+    protected:
+        unsigned int m_n_samples;   //!< Number of samples taken since the last reset
     };
 
 //! Export TracerDirect to python

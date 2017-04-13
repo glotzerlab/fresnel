@@ -42,6 +42,7 @@ set(_cpu_sources
      cpu/GeometrySphere.cc
      cpu/Tracer.cc
      cpu/TracerDirect.cc
+     cpu/TracerPath.cc
      cpu/Array.cc
    )
 
