@@ -66,7 +66,7 @@ struct Material
         {
         // diffuse BRDF is 0 when behind the surface or metal is 1.0f
         float ndotv = dot(n,v);     // cos(theta_v)
-        if (ndotv <= 0 || metal == 1.0f)
+        if (ndotv <= 0)
             return RGB<float>(0,0,0);
 
         // compute h vector and cosines of relevant angles

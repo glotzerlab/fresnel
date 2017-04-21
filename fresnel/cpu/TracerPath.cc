@@ -6,6 +6,8 @@
 #include <stdexcept>
 
 #include "tbb/tbb.h"
+#include "Random123/philox.h"
+#include "boxmuller.hpp"
 
 using namespace tbb;
 
@@ -78,91 +80,147 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
 
             for (unsigned int j=y0; j<y1; j++) for (unsigned int i=x0; i<x1; i++)
                 {
+                unsigned int pixel = j*width + i;
+
+                // initialize RNG
+                // seeding strategy: the key consists of the pixel number and a unique id for this usage
+                // different rngs used in different places in fresnel need different uids
+                // the counter entries consist of: a counter, the ray depth, the sample index, and a user seed
+                // the last 3 provide unique RNG streams for different rays and samples. The first allows
+                // multiple random numbers to be produced by incrementing the counter
+                r123::Philox4x32 rng;
+                r123::Philox4x32::ukey_type rng_uk={{pixel, 0x11ffabcd}};
+                r123::Philox4x32::key_type rng_key = rng_uk;
+
                 // determine the viewing plane relative coordinates
                 float ys = -1.0f*(j/float(height-1)-0.5f);
                 float xs = i/float(height-1)-0.5f*float(width)/float(height);
 
-                // trace a ray into the scene
-                RTCRay ray(cam.origin(xs, ys), cam.direction(xs, ys));
-                rtcIntersect(scene->getRTCScene(), ray);
+                vec3<float> origin = cam.origin(xs, ys);
+                vec3<float> direction = cam.direction(xs, ys);
 
                 // determine the output pixel color
-                RGB<float> c = background_color;
-                float a = background_alpha;
+                RGB<float> c(0,0,0);
+                RGB<float> attenuation(1.0f,1.0f,1.0f);
+                float a = 1.0f;
+                int lastprimID = -1;
 
-                if (ray.hit())
+                // trace a path into the scene
+                for (unsigned int depth = 0; depth <= 1; depth++)
                     {
-                    vec3<float> n = ray.Ng / std::sqrt(dot(ray.Ng, ray.Ng));
-                    vec3<float> v = -ray.dir / std::sqrt(dot(ray.dir, ray.dir));
-                    Material m;
+                    RTCRay ray(origin,  direction);
+                    ray.tnear = 1e-3f;
+                    rtcIntersect(scene->getRTCScene(), ray);
 
-                    // apply the material color or outline color depending on the distance to the edge
-                    if (ray.d > scene->getOutlineWidth(ray.geomID))
-                        m = scene->getMaterial(ray.geomID);
-                    else
-                        m = scene->getOutlineMaterial(ray.geomID);
-
-                    if (m.isSolid())
+                    if (depth == 0 && !ray.hit())
                         {
-                        c = m.getColor(ray.shading_color);
+                        // if the ray from the camera misses geometry, then apply the background color and alpha
+                        c = background_color;
+                        a = background_alpha;
+                        // std::cout << "hit background at depth 0" << std::endl;
+                        break;
+                        }
+
+                    if (ray.hit())
+                        {
+                        if (depth==0)
+                            lastprimID = ray.primID;
+                        else
+                            {
+                            if (lastprimID == ray.primID)
+                                {
+                                std::cout << "Warning: Hit source primitive!" << std::endl;
+                                }
+                            lastprimID = ray.primID;
+                            }
+
+                        // std::cout << "hit at depth " << depth << " / geom " << ray.primID << std::endl;
+                        vec3<float> n = ray.Ng / std::sqrt(dot(ray.Ng, ray.Ng));
+                        vec3<float> v = -ray.dir / std::sqrt(dot(ray.dir, ray.dir));
+                        Material m;
+
+                        vec3<float> hit_point = ray.org + ray.dir * ray.tfar;
+                        // std::cout << "hit: <" << hit_point.x << " " << hit_point.y << " " << hit_point.z << "> "
+                                  // <<          "<" << n.x << " " << n.y << " " << n.z << ">" << std::endl;
+
+
+                        // apply the material color or outline color depending on the distance to the edge
+                        if (ray.d > scene->getOutlineWidth(ray.geomID))
+                            m = scene->getMaterial(ray.geomID);
+                        else
+                            m = scene->getOutlineMaterial(ray.geomID);
+
+                        if (m.isSolid())
+                            {
+                            // testing: treat solid colors as emitters
+                            // when the ray hits an emitter, terminate the path and evaluate the final color
+                            c += attenuation * m.getColor(ray.shading_color);
+                            }
+                        else
+                            {
+                            // when the ray hits an object with a normal material, update the attenuation using the BRDF
+
+                            // choose a random direction l to continue the path.
+                            // use gaussian RNGs and sphere point picking: http://mathworld.wolfram.com/SpherePointPicking.html
+                            r123::Philox4x32::ctr_type rng_counter = {{0, depth, m_n_samples, 0}};
+                            r123::Philox4x32::ctr_type rng_u = rng(rng_counter, rng_key);
+                            r123::float2 rng_gauss1 = r123::boxmuller(rng_u[0], rng_u[1]);
+                            r123::float2 rng_gauss2 = r123::boxmuller(rng_u[2], rng_u[3]);
+
+                            vec3<float> l(rng_gauss1.x, rng_gauss1.y, rng_gauss2.x);
+                            // vec3<float> l(0, 0, 1);
+                            // TODO: normalize method in VectorMath
+                            l = l / std::sqrt(dot(l, l));
+
+                            float ndotl = dot(n, l);
+                            // l is generated on the whole sphere, if it points down into the surface, make it point up
+                            if (ndotl < 0.0f)
+                                {
+                                l = -l;
+                                ndotl = -ndotl;
+                                }
+
+
+                            attenuation *= m.brdf(l, v, n, ray.shading_color) * ndotl;
+                            // std::cout << "attenuation " << "<" << attenuation.r << " " << attenuation.g << " " << attenuation.b << ">" << std::endl;
+
+                            // std::cout << "ndotl: " << ndotl << " ndotv: " << dot(n,v) << std::endl;
+                            // set the origin and direction for the next ray in the path
+                            origin = ray.org + ray.dir * ray.tfar;
+                            direction = l;
+                            // std::cout << "new ray: <" << origin.x << " " << origin.y << " " << origin.z << "> "
+                                      // <<          "<" << direction.x << " " << direction.y << " " << direction.z << ">" << std::endl;
+                            }
                         }
                     else
                         {
-                        c = RGB<float>(0,0,0);
-
-                        // choose a random direction to
-
+                        // std::cout << "miss at depth " << depth << std::endl;
+                        // ray missed geometry entirely (and depth > 1)
+                        // see if it hit any lights and compute the output color accordingly
                         for (unsigned int light_id = 0; light_id < lights.N; light_id++)
                             {
                             vec3<float> l = lights.direction[light_id];
-
-                            // find the representative point, a vector pointing to the a point on the area light
-                            // with a smallest angle to the reflection vector
-                            vec3<float> r = -v + (2.0f * n * dot(n,v));
-
-                            // find the closest point on the area light
                             float half_angle = lights.theta[light_id];
                             float cos_half_angle = cosf(half_angle);
-                            float ldotr = dot(l,r);
-                            if (ldotr < cos_half_angle)
+                            float ldotd = dot(l,ray.dir);
+                            // TODO: this assumes the ray direction is normalized. Either we normalize here or ensure that
+                            // is always the case
+                            if (ldotd >= cos_half_angle)
                                 {
-                                vec3<float> a = cross(l,r);
-                                a = a / sqrtf(dot(a,a));
-
-                                // miss the light, need to rotate r by the difference in the angles about l cross r
-                                quat<float> q = quat<float>::fromAxisAngle(a, -acosf(ldotr) + half_angle);
-                                r = rotate(q, r);
+                                // hit the light
+                                // TODO: some sort of normalization so that a large area 1,1,1 light
+                                // does not create a brighter output than a small area 1,1,1 light
+                                c += attenuation * lights.color[light_id];
+                                // std::cout << "hit light " << light_id << std::endl;
                                 }
-                            else
-                                {
-                                // hit the light, no modification necessary to r
-                                }
+                            } // end loop over lights
 
-                            // only apply brdf when the light faces the surface
-                            RGB<float> f_d;
-                            float ndotl = dot(n, l);
-                            if (ndotl >= 0.0f)
-                                f_d = m.brdf_diffuse(l, v, n, ray.shading_color) * ndotl;
-                            else
-                                f_d = RGB<float>(0.0f,0.0f,0.0f);
-
-                            RGB<float> f_s;
-                            if (dot(n, r) >= 0.0f)
-                                {
-                                f_s = m.brdf_specular(r, v, n, ray.shading_color, half_angle) * dot(n, r);
-                                }
-                            else
-                                f_s = RGB<float>(0.0f,0.0f,0.0f);
-
-                            c += (f_d + f_s) * float(M_PI) * lights.color[light_id];
-                            }
+                        // the ray missed geometry, no more tracing to do
+                        break;
                         }
-
-                    a = 1.0;
-                    }
+                    } // end depth loop
 
                 // take the current sample and compute the average with the previous samples
-                unsigned int pixel = j*width + i;
                 RGBA<float> output_sample(c, a);
 
                 // running average and variance (TODO) using Welford's method
@@ -176,10 +234,10 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                     srgb_output[pixel] = sRGB(output_pixel);
                 else
                     srgb_output[pixel] = sRGB(RGBA<float>(m_highlight_warning_color, a));
-                }
-            }
-        });
-    });
+                } // end loop over pixels in a tile
+            } // end loop over tiles in this work unit
+        }); // end parallel loop over all tiles
+    }); // end arena limited execution
 
     m_linear_out->unmap();
     m_srgb_out->unmap();

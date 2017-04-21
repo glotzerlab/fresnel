@@ -143,3 +143,21 @@ class Direct(Tracer):
     def __init__(self, device, w, h):
         self.device = device;
         self._tracer = device.module.TracerDirect(device._device, w, h);
+
+class Path(Tracer):
+    R""" Path tracer.
+
+    Args:
+
+        device (:py:class:`Device <fresnel.Device>`): Device to use for rendering.
+        w (int): Output image width.
+        h (int): Output image height.
+
+    """
+
+    def __init__(self, device, w, h):
+        self.device = device;
+        self._tracer = device.module.TracerPath(device._device, w, h);
+
+    def reset(self):
+        self._tracer.reset();
