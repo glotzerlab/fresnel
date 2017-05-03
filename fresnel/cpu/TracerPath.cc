@@ -117,7 +117,6 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                         // if the ray from the camera misses geometry, then apply the background color and alpha
                         c = background_color;
                         a = background_alpha;
-                        // std::cout << "hit background at depth 0" << std::endl;
                         break;
                         }
 
@@ -134,15 +133,9 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                             lastprimID = ray.primID;
                             }
 
-                        // std::cout << "hit at depth " << depth << " / geom " << ray.primID << std::endl;
                         vec3<float> n = ray.Ng / std::sqrt(dot(ray.Ng, ray.Ng));
                         vec3<float> v = -ray.dir / std::sqrt(dot(ray.dir, ray.dir));
                         Material m;
-
-                        vec3<float> hit_point = ray.org + ray.dir * ray.tfar;
-                        // std::cout << "hit: <" << hit_point.x << " " << hit_point.y << " " << hit_point.z << "> "
-                                  // <<          "<" << n.x << " " << n.y << " " << n.z << ">" << std::endl;
-
 
                         // apply the material color or outline color depending on the distance to the edge
                         if (ray.d > scene->getOutlineWidth(ray.geomID))
@@ -168,7 +161,7 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                             r123::float2 rng_gauss2 = r123::boxmuller(rng_u[2], rng_u[3]);
 
                             vec3<float> l(rng_gauss1.x, rng_gauss1.y, rng_gauss2.x);
-                            // vec3<float> l(0, 0, 1);
+
                             // TODO: normalize method in VectorMath
                             l = l / std::sqrt(dot(l, l));
 
@@ -180,21 +173,15 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                                 ndotl = -ndotl;
                                 }
 
-
                             attenuation *= m.brdf(l, v, n, ray.shading_color) * ndotl;
-                            // std::cout << "attenuation " << "<" << attenuation.r << " " << attenuation.g << " " << attenuation.b << ">" << std::endl;
 
-                            // std::cout << "ndotl: " << ndotl << " ndotv: " << dot(n,v) << std::endl;
                             // set the origin and direction for the next ray in the path
                             origin = ray.org + ray.dir * ray.tfar;
                             direction = l;
-                            // std::cout << "new ray: <" << origin.x << " " << origin.y << " " << origin.z << "> "
-                                      // <<          "<" << direction.x << " " << direction.y << " " << direction.z << ">" << std::endl;
                             }
                         }
                     else
                         {
-                        // std::cout << "miss at depth " << depth << std::endl;
                         // ray missed geometry entirely (and depth > 1)
                         // see if it hit any lights and compute the output color accordingly
                         for (unsigned int light_id = 0; light_id < lights.N; light_id++)
@@ -202,16 +189,19 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                             vec3<float> l = lights.direction[light_id];
                             float half_angle = lights.theta[light_id];
                             float cos_half_angle = cosf(half_angle);
+                            if (half_angle > float(M_PI)/2.0f)
+                                half_angle = float(M_PI)/2.0f;
                             float ldotd = dot(l,ray.dir);
                             // TODO: this assumes the ray direction is normalized. Either we normalize here or ensure that
                             // is always the case
                             if (ldotd >= cos_half_angle)
                                 {
                                 // hit the light
-                                // TODO: some sort of normalization so that a large area 1,1,1 light
-                                // does not create a brighter output than a small area 1,1,1 light
-                                c += attenuation * lights.color[light_id];
-                                // std::cout << "hit light " << light_id << std::endl;
+                                // the division bin sin(light half angle) normalizes the lights so that
+                                // a light of color 1 of any non-zero size results in an output of 1
+                                // when that light is straight over the surface
+                                // TODO: move these out into a precomputation per light in the light config
+                                c += attenuation * lights.color[light_id] / sinf(half_angle);
                                 }
                             } // end loop over lights
 
@@ -221,7 +211,9 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                     } // end depth loop
 
                 // take the current sample and compute the average with the previous samples
-                RGBA<float> output_sample(c, a);
+                // the 2pi comes from factoring out the division by the pdf of 1/2pi
+                // from the uniform hemisphere sampling (the phi term)
+                RGBA<float> output_sample(c*2.0f*float(M_PI), a);
 
                 // running average and variance (TODO) using Welford's method
                 // (http://jonisalonen.com/2013/deriving-welfords-method-for-computing-variance/)
