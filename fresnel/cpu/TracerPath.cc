@@ -18,6 +18,7 @@ namespace fresnel { namespace cpu {
 TracerPath::TracerPath(std::shared_ptr<Device> device, unsigned int w, unsigned int h)
     : Tracer(device, w, h)
     {
+    reset();
     }
 
 TracerPath::~TracerPath()
