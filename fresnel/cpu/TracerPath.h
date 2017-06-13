@@ -38,13 +38,26 @@ class TracerPath : public Tracer
         virtual void reset();
 
         //! Get the number of samples taken
-        unsigned int getNumSamples()
+        unsigned int getNumSamples() const
             {
             return m_n_samples;
             }
 
+        //! Set the random number seed
+        void setSeed(unsigned int seed)
+            {
+            m_seed=seed;
+            }
+
+        //! Get the random number seed
+        unsigned int getSeed() const
+            {
+            return m_seed;
+            }
+
     protected:
         unsigned int m_n_samples;   //!< Number of samples taken since the last reset
+        unsigned int m_seed;        //!< Random number seed
     };
 
 //! Export TracerDirect to python

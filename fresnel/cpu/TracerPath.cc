@@ -8,6 +8,7 @@
 #include "tbb/tbb.h"
 #include "Random123/philox.h"
 #include "boxmuller.hpp"
+#include "uniform.hpp"
 
 using namespace tbb;
 
@@ -16,7 +17,7 @@ namespace fresnel { namespace cpu {
 /*! \param device Device to attach the raytracer to
 */
 TracerPath::TracerPath(std::shared_ptr<Device> device, unsigned int w, unsigned int h)
-    : Tracer(device, w, h)
+    : Tracer(device, w, h), m_seed(0)
     {
     reset();
     }
@@ -57,6 +58,7 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
 
     // update number of samples (the first sample is 1)
     m_n_samples++;
+    std::cout << "Sample: " << m_n_samples << std::endl;
 
     // for each pixel
     const unsigned int height = m_linear_out->getH();
@@ -107,7 +109,7 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                 int lastprimID = -1;
 
                 // trace a path into the scene
-                for (unsigned int depth = 0; depth <= 1; depth++)
+                for (unsigned int depth = 0; depth <= 4; depth++)
                     {
                     RTCRay ray(origin,  direction);
                     ray.tnear = 1e-3f;
@@ -129,7 +131,7 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                             {
                             if (lastprimID == ray.primID)
                                 {
-                                std::cout << "Warning: Hit source primitive!" << std::endl;
+                                //std::cout << "Warning: Hit source primitive!" << std::endl;
                                 }
                             lastprimID = ray.primID;
                             }
@@ -156,25 +158,64 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
 
                             // choose a random direction l to continue the path.
                             // use gaussian RNGs and sphere point picking: http://mathworld.wolfram.com/SpherePointPicking.html
-                            r123::Philox4x32::ctr_type rng_counter = {{0, depth, m_n_samples, 0}};
+                            r123::Philox4x32::ctr_type rng_counter = {{0, depth, m_n_samples, m_seed}};
                             r123::Philox4x32::ctr_type rng_u = rng(rng_counter, rng_key);
-                            r123::float2 rng_gauss1 = r123::boxmuller(rng_u[0], rng_u[1]);
-                            r123::float2 rng_gauss2 = r123::boxmuller(rng_u[2], rng_u[3]);
 
-                            vec3<float> l(rng_gauss1.x, rng_gauss1.y, rng_gauss2.x);
+                            // // uniform sampling
+                            // r123::float2 rng_gauss1 = r123::boxmuller(rng_u[0], rng_u[1]);
+                            // r123::float2 rng_gauss2 = r123::boxmuller(rng_u[2], rng_u[3]);
+                            // vec3<float> l(rng_gauss1.x, rng_gauss1.y, rng_gauss2.x);
 
-                            // TODO: normalize method in VectorMath
-                            l = l / std::sqrt(dot(l, l));
+                            // // TODO: normalize method in VectorMath
+                            // l = l / std::sqrt(dot(l, l));
 
-                            float ndotl = dot(n, l);
-                            // l is generated on the whole sphere, if it points down into the surface, make it point up
-                            if (ndotl < 0.0f)
+                            // float ndotl = dot(n, l);
+                            // // l is generated on the whole sphere, if it points down into the surface, make it point up
+                            // if (ndotl < 0.0f)
+                            //     {
+                            //     l = -l;
+                            //     ndotl = -ndotl;
+                            //     }
+                            // float pdf = 1.0f / (2.0f * float(M_PI));
+                            // float factor = 1.0f / pdf;
+
+                            // // importance sampling
+                            vec2<float> xi(r123::u01<float>(rng_u[0]), r123::u01<float>(rng_u[1]));
+                            // vec3<float> l = m.importanceSampleGGX(xi, v, n);
+                            // float pdf = m.pdfGGX(l, v, n);
+                            // float factor = 1.0f / pdf;
+
+                            // multiple importance sampling
+                            float choice = r123::u01<float>(rng_u[2]);
+                            float factor;
+                            vec3<float> l;
+                            if (choice <= 0.5f)
                                 {
-                                l = -l;
-                                ndotl = -ndotl;
+                                // diffuse sampling
+                                l = m.importanceSampleDiffuse(xi, v, n);
+                                float pdf_diffuse = m.pdfDiffuse(l, v, n);
+                                float pdf_ggx = m.pdfGGX(l, v, n);
+                                float w_diffuse = pdf_diffuse / (pdf_diffuse + pdf_ggx);
+                                factor = w_diffuse / (0.5f * pdf_diffuse);
+                                }
+                            else
+                                {
+                                l = m.importanceSampleGGX(xi, v, n);
+                                float pdf_diffuse = m.pdfDiffuse(l, v, n);
+                                float pdf_ggx = m.pdfGGX(l, v, n);
+                                float w_ggx = pdf_ggx / (pdf_diffuse + pdf_ggx);
+                                factor = w_ggx / (0.5f * pdf_ggx);
                                 }
 
-                            attenuation *= m.brdf(l, v, n, ray.shading_color) * ndotl;
+                            float ndotl = dot(n, l);
+
+                            if (ndotl > 0.0f)
+                                attenuation *= m.brdf(l, v, n, ray.shading_color) * ndotl * factor;
+                            else
+                                {
+                                attenuation = RGB<float>(0,0,0);
+                                break;
+                                }
 
                             // set the origin and direction for the next ray in the path
                             origin = ray.org + ray.dir * ray.tfar;
@@ -214,7 +255,7 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                 // take the current sample and compute the average with the previous samples
                 // the 2pi comes from factoring out the division by the pdf of 1/2pi
                 // from the uniform hemisphere sampling (the phi term)
-                RGBA<float> output_sample(c*2.0f*float(M_PI), a);
+                RGBA<float> output_sample(c, a);
 
                 // running average and variance (TODO) using Welford's method
                 // (http://jonisalonen.com/2013/deriving-welfords-method-for-computing-variance/)
@@ -244,6 +285,8 @@ void export_TracerPath(pybind11::module& m)
         .def(pybind11::init<std::shared_ptr<Device>, unsigned int, unsigned int>())
         .def("getNumSamples", &TracerPath::getNumSamples)
         .def("reset", &TracerPath::reset)
+        .def("getSeed", &TracerPath::getSeed)
+        .def("setSeed", &TracerPath::setSeed)
         ;
     }
 

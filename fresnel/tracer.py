@@ -161,3 +161,11 @@ class Path(Tracer):
 
     def reset(self):
         self._tracer.reset();
+
+    @property
+    def seed(self):
+        return self._tracer.getSeed()
+
+    @seed.setter
+    def seed(self, value):
+        self._tracer.setSeed(value);

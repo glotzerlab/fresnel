@@ -64,7 +64,7 @@ struct Material
 
     DEVICE RGB<float> brdf(vec3<float> l, vec3<float> v, vec3<float> n, const RGB<float>& shading_color) const
         {
-        // diffuse BRDF is 0 when behind the surface or metal is 1.0f
+        // BRDF is 0 when behind the surface
         float ndotv = dot(n,v);     // cos(theta_v)
         if (ndotv <= 0)
             return RGB<float>(0,0,0);
@@ -261,6 +261,91 @@ struct Material
         return lerp(primitive_color_mix, color, shading_color);
         }
 
+    DEVICE vec3<float> importanceSampleGGX(vec2<float> xi, vec3<float> v, vec3<float> n) const
+        {
+        // use eq 9 from "Physically based shading at Disney" to compute the random direction to sample
+        float alpha = roughness*roughness;
+        float phi = 2.0f * float(M_PI) * xi.x;
+        float cos_theta = sqrtf((1.0f - xi.y) / (1.0f + (alpha*alpha - 1.0f) * xi.y));
+        float sin_theta = sqrt(1.0f - cos_theta * cos_theta);
+
+        // put into vector form in the tangent space
+        vec3<float> h_t(sin_theta * cosf(phi),
+                        sin_theta * sinf(phi),
+                        cos_theta);
+
+        // convert tangent space to world space
+        vec3<float> up(0,0,1.0f);
+        if (fabs(n.z > 0.999))
+            up = vec3<float>(1.0f,0,0);
+        vec3<float> t_x = cross(up, n);
+        // TODO: normalize method in vectormath
+        t_x = t_x / sqrtf(dot(t_x, t_x));
+        vec3<float> t_y = cross(n, t_x);
+
+        vec3<float> h = t_x * h_t.x + t_y * h_t.y + n * h_t.z;
+
+        // convert from half vector to l vector
+        vec3<float> l = 2.0f * dot(v, h) * h - v;
+        return l;
+        }
+
+    DEVICE float pdfGGX(vec3<float> l, vec3<float> v, vec3<float> n) const
+        {
+        // compute h vector and cosines of relevant angles
+        vec3<float> h = l+v;
+        h /= sqrtf(dot(h,h));
+
+        float ldoth = dot(l,h);     // cos(theta_d)
+        float ndoth = dot(n,h);     // cos(theta_h)
+
+        // D(theta_h) - using D_GTR_2 (eq 8 from Physically based Shading at Disney)
+        float alpha = roughness*roughness;
+        float alpha_sq = alpha*alpha;
+        float denom_rt = (1.0f + (alpha_sq - 1.0f)*ndoth*ndoth);
+        float D = alpha_sq / (float(M_PI) * denom_rt*denom_rt);
+
+        // convert to pdf_l per equation in B.1 from "Physically based Shading at Disney"
+        float pdf_l = D*ndoth / (4.0f * ldoth);
+
+        if (pdf_l > 0.0f)
+            return pdf_l;
+        else
+            return 0.0f;
+        }
+
+    DEVICE vec3<float> importanceSampleDiffuse(vec2<float> xi, vec3<float> v, vec3<float> n) const
+        {
+        const float r = sqrtf(xi.x);
+        const float theta = 2 * float(M_PI) * xi.y;
+
+        const float x = r * cosf(theta);
+        const float y = r * sinf(theta);
+
+        vec3<float> v_t(x, y, sqrt(1.0f - xi.x));
+
+        // convert tangent space to world space
+        vec3<float> up(0,0,1.0f);
+        if (fabs(n.z > 0.999))
+            up = vec3<float>(1.0f,0,0);
+        vec3<float> t_x = cross(up, n);
+        // TODO: normalize method in vectormath
+        t_x = t_x / sqrtf(dot(t_x, t_x));
+        vec3<float> t_y = cross(n, t_x);
+
+        vec3<float> l = t_x * v_t.x + t_y * v_t.y + n * v_t.z;
+
+        return l;
+        }
+
+    DEVICE float pdfDiffuse(vec3<float> l, vec3<float> v, vec3<float> n) const
+        {
+        float ndotl = dot(n, l);
+        if (ndotl > 0.0f)
+            return ndotl / float(M_PI);
+        else
+            return 0.0f;
+        }
 
     };
 
