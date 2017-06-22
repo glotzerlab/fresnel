@@ -276,7 +276,7 @@ struct Material
 
         // convert tangent space to world space
         vec3<float> up(0,0,1.0f);
-        if (fabs(n.z > 0.999))
+        if (fabs(n.z) > 0.999)
             up = vec3<float>(1.0f,0,0);
         vec3<float> t_x = cross(up, n);
         // TODO: normalize method in vectormath
@@ -326,7 +326,7 @@ struct Material
 
         // convert tangent space to world space
         vec3<float> up(0,0,1.0f);
-        if (fabs(n.z > 0.999))
+        if (fabs(n.z) > 0.999)
             up = vec3<float>(1.0f,0,0);
         vec3<float> t_x = cross(up, n);
         // TODO: normalize method in vectormath
