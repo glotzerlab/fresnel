@@ -58,7 +58,6 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
 
     // update number of samples (the first sample is 1)
     m_n_samples++;
-    std::cout << "Sample: " << m_n_samples << std::endl;
 
     // for each pixel
     const unsigned int height = m_linear_out->getH();
