@@ -291,6 +291,5 @@ def render(scene, w=600, h=370, samples=0):
         return t.render(scene);
     else:
         t = tracer.Path(scene.device, w=w, h=h);
-        for i in range(samples):
-            t.render(scene)
+        t.sample(scene, samples=1, light_samples=samples)
         return t.output;
