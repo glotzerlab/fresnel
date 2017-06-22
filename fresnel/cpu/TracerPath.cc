@@ -275,7 +275,8 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                 // from the uniform hemisphere sampling (the phi term)
                 RGBA<float> output_sample(c / float(m_light_samples), a);
 
-                // running average and variance (TODO) using Welford's method
+                // running average using Welford's method. Variance is not particularly useful to users,
+                // so don't compute that.
                 // (http://jonisalonen.com/2013/deriving-welfords-method-for-computing-variance/)
                 RGBA<float> old_mean = linear_output[pixel];
                 linear_output[pixel] = old_mean + (output_sample-old_mean)/float(m_n_samples);
