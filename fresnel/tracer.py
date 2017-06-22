@@ -170,7 +170,8 @@ class Path(Tracer):
 
     def reset(self):
         R"""
-        Clear the output buffer and start sampling a new image.
+        Clear the output buffer and start sampling a new image. Increment the random number seed so that the
+        new image is statistically independent from the previous.
         """
 
         self._tracer.reset();

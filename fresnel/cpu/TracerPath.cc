@@ -29,6 +29,8 @@ TracerPath::~TracerPath()
 void TracerPath::reset()
     {
     m_n_samples = 0;
+    m_seed++;
+
     RGBA<float>* linear_output = m_linear_out->map();
     memset(linear_output, 0, sizeof(RGBA<float>)*m_linear_out->getW()*m_linear_out->getH());
     m_linear_out->unmap();
