@@ -20,6 +20,7 @@ class Light(object):
 
         direction: A 3-tuple that defines the direction the light points in camera space.
         color:  A 3-tuple that defines the color and intensity of the light as a linear sRGB value (see :py:func:`fresnel.color.linear`)
+        theta (float): Half angle of the cone that defines the area of the light (in radians)
 
     The direction vector may have any non-zero length, but only the direction the vector points matters.
 
@@ -114,8 +115,8 @@ def butterfly():
     res = [];
     theta1 = 50*math.pi/180;
     res.append(Light(direction=(0, math.sin(theta1), math.cos(theta1)),
-                     color=(0.75,0.75,0.75),
-                     theta=math.pi/8));
+                     color=(1.0,1.0,1.0),
+                     theta=math.pi/4));
     theta2 = -30*math.pi/180;
     res.append(Light(direction=(0, math.sin(theta2), math.cos(theta2)),
                      color=(0.1,0.1,0.1),
@@ -143,8 +144,8 @@ def loop(side='right'):
     phi1 = sign[side]*25*math.pi/180;
     theta1 = (90-20)*math.pi/180;
     res.append(Light(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
-                     color=(0.75,0.75,0.75),
-                     theta=math.pi/8));
+                     color=(1.0,1.0,1.0),
+                     theta=math.pi/4));
     phi1 = -sign[side]*40*math.pi/180;
     theta1 = (90)*math.pi/180;
     res.append(Light(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
@@ -173,8 +174,8 @@ def rembrandt(side='right'):
     phi1 = sign[side]*45*math.pi/180;
     theta1 = (90-20)*math.pi/180;
     res.append(Light(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
-               color=(0.75,0.75,0.75),
-               theta=math.pi/8));
+               color=(1.0,1.0,1.0),
+               theta=math.pi/4));
     phi1 = -sign[side]*45*math.pi/180;
     theta1 = (90)*math.pi/180;
     res.append(Light(direction=(math.sin(theta1)*math.sin(phi1), math.cos(theta1), math.sin(theta1)*math.cos(phi1)),
@@ -182,5 +183,57 @@ def rembrandt(side='right'):
                theta=math.pi/2));
     return res
 
+def lightbox():
+    R""" Create a light box lighting setup.
 
-## TODO: add more types of setups enabled by area lights: ring, side, cloudy_day, raking, ....
+    The light box lighting setup places a single massive area light that covers the top, bottom, left,
+    and right. Use path tracing for best results with this setup.
+
+    Returns:
+
+        A list of lights.
+    """
+
+    res = [];
+    res.append(Light(direction=(0,0,-1),
+               color=(0.9,0.9,0.9),
+               theta=math.pi*0.8));
+    return res
+
+def cloudy():
+    R""" Create a cloudy day lighting setup.
+
+    The cloudy lighting setup mimics a cloudy day. A strong light comes from all directions above. A weaker
+    light comes from all directions below (accounting for light "reflected" off the ground).
+    Use path tracing for best results with this setup.
+
+    Returns:
+
+        A list of lights.
+    """
+
+    res = [];
+    res.append(Light(direction=(0,1,0),
+               color=(0.9,0.9,0.9),
+               theta=math.pi/2));
+    res.append(Light(direction=(0,1,0),
+               color=(0.1,0.1,0.1),
+               theta=math.pi/2));
+    return res
+
+def ring():
+    R""" Create a ring lighting setup.
+
+    The ring lighting setup provides a strong front area light. This type of lighting is common
+    in fashion photography. Use path tracing for best results with this setup.
+
+    Returns:
+
+        A list of lights.
+    """
+
+    res = [];
+    res.append(Light(direction=(0,0,1),
+               color=(0.9,0.9,0.9),
+               theta=math.pi/4));
+    return res
