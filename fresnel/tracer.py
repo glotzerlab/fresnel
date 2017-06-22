@@ -166,7 +166,7 @@ class Path(Tracer):
 
     def __init__(self, device, w, h):
         self.device = device;
-        self._tracer = device.module.TracerPath(device._device, w, h);
+        self._tracer = device.module.TracerPath(device._device, w, h, 1);
 
     def reset(self):
         R"""
@@ -176,7 +176,7 @@ class Path(Tracer):
 
         self._tracer.reset();
 
-    def sample(self, scene, samples, reset=True):
+    def sample(self, scene, samples, reset=True, light_samples=1):
         R"""
         Args:
 
@@ -189,14 +189,21 @@ class Path(Tracer):
 
         Note:
             When *reset* is False, subsequent calls to :py:meth:`sample()` will continue to add samples
-            to the current output image.
+            to the current output image. Use the same number of light samples when sampling an image
+            in this way.
         """
 
         if reset:
             self.reset()
 
+        self._tracer.setLightSamples(light_samples);
+
         for i in range(samples):
             out = self.render(scene);
+
+        # reset the number of light samples to 1 to avoid side effects with future calls to render() by the user
+        self._tracer.setLightSamples(1);
+
         return out;
 
     @property

@@ -27,7 +27,7 @@ class TracerPath : public Tracer
     {
     public:
         //! Constructor
-        TracerPath(std::shared_ptr<Device> device, unsigned int w, unsigned int h);
+        TracerPath(std::shared_ptr<Device> device, unsigned int w, unsigned int h, unsigned int light_samples);
         //! Destructor
         virtual ~TracerPath();
 
@@ -55,9 +55,15 @@ class TracerPath : public Tracer
             return m_seed;
             }
 
+        //! Set the number of light samples
+        void setLightSamples(unsigned int light_samples)
+            {
+            m_light_samples = light_samples;
+            }
     protected:
         unsigned int m_n_samples;   //!< Number of samples taken since the last reset
         unsigned int m_seed;        //!< Random number seed
+        unsigned int m_light_samples; //!< Number of light samples to take each render()
     };
 
 //! Export TracerDirect to python
