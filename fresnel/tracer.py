@@ -153,6 +153,15 @@ class Path(Tracer):
         w (int): Output image width.
         h (int): Output image height.
 
+    Attributes:
+
+        seed (int): Random number seed.
+
+    The path tracer applies advanced lighting effects, including soft shadows, reflections, etc....
+    It operates by Monte Carlo sampling. Each call to `:py:meth:render()` performs one sample per pixel.
+    The output image is the mean of all the samples. Many samples are required to produce a smooth image.
+
+    :py:meth:`sample()` provides a convenience API to make many samples with a single call.
     """
 
     def __init__(self, device, w, h):
@@ -160,7 +169,34 @@ class Path(Tracer):
         self._tracer = device.module.TracerPath(device._device, w, h);
 
     def reset(self):
+        R"""
+        Clear the output buffer and start sampling a new image.
+        """
+
         self._tracer.reset();
+
+    def sample(self, scene, samples, reset=True):
+        R"""
+        Args:
+
+            scene (:py:class:`Scene <fresnel.Scene>`): The scene to render.
+            samples (int): The number of samples to take per pixel.
+            reset (bool): When True, call :py:meth:`reset()` before sampling
+
+        Returns:
+            A reference to the current output buffer as a :py:class:`fresnel.util.image_array`.
+
+        Note:
+            When *reset* is False, subsequent calls to :py:meth:`sample()` will continue to add samples
+            to the current output image.
+        """
+
+        if reset:
+            self.reset()
+
+        for i in range(samples):
+            out = self.render(scene);
+        return out;
 
     @property
     def seed(self):
