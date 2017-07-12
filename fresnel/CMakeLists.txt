@@ -39,6 +39,7 @@ set(_cpu_sources
      cpu/Scene.cc
      cpu/Geometry.cc
      cpu/GeometryPrism.cc
+     cpu/GeometryMesh.cc
      cpu/GeometrySphere.cc
      cpu/Tracer.cc
      cpu/TracerDirect.cc

@@ -253,3 +253,98 @@ class Sphere(Geometry):
     @property
     def color(self):
         return util.array(self._geometry.getColorBuffer(), geom=self)
+
+class Mesh(Geometry):
+    R""" Mesh geometry.
+
+    Define a set of triangle mesh primitives.
+
+    Args:
+        scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
+        vertices: The vertices of the triangles
+          **Type:** anything convertible by numpy to a Nvertsx3 array of floats.
+        triangles: The face indices of the triangles in a counter clockwise winding direction.
+          **Type:** anything convertible by numpy to a Nvertsx3 array of ints.
+        position: Positions of the triangle meshes, *optional*.
+          **Type:** anything convertible by numpy to a Nx3 array of floats.
+        orientation: Orientation quaternion angle of each triangle mesh, *optional*.
+          **Type:** anything convertible by numpy to a Nx4 length array of floats.
+        color: (r,g,b) color of each particle, *optional*.
+          **Type:** anything convertible by numpy to a Nx3 array of floats.
+        N (int): Number of triangle meshes in the geometry. If ``None``, determine ``N`` from ``position``.
+
+    Note:
+        The constructor arguments ``position``, ``orientation``, and ``color`` are optional, and just short-hand
+        for assigning the attribute after construction.
+
+    Colors are in the linearized sRGB color space. Use :py:func:`fresnel.color.linear` to convert standard sRGB colors
+    into this space.
+
+    .. hint::
+        Avoid costly memory allocations and type conversions by specifying primitive properties in the appropriate
+        numpy array type.
+
+    Attributes:
+        position (:py:class:`fresnel.util.array`): Read or modify the positions of the triangle meshes.
+        orientation (:py:class:`fresnel.util.array`): Read or modify the orientations of the triangle meshes.
+        color (:py:class:`fresnel.util.array`): Read or modify the color of the meshes.
+
+    """
+
+    def __init__(self,
+                 scene,
+                 vertices,
+                 triangles,
+                 position=None,
+                 orientation=None,
+                 color=None,
+                 N=None,
+                 material=material.Material(solid=1.0, color=(1,0,1)),
+                 outline_material=material.Material(solid=1.0, color=(0,0,0)),
+                 outline_width=0.0):
+        if N is None:
+            N = len(position);
+
+        self.vertices = numpy.asarray(vertices,dtype=numpy.float32)
+        self.triangles = numpy.asarray(triangles,dtype=numpy.uint)
+        self._geometry = scene.device.module.GeometryMesh(scene._scene, self.vertices, self.triangles, N);
+        self.material = material;
+        self.outline_material = outline_material;
+        self.outline_width = outline_width;
+
+        if position is not None:
+            self.position[:] = position;
+
+        if orientation is not None:
+            self.orientation[:] = orientation;
+
+        if color is not None:
+            self.color[:] = color;
+
+        self.scene = scene;
+        self.scene.geometry.append(self);
+
+    @property
+    def position(self):
+        return util.array(self._geometry.getPositionBuffer(), geom=self)
+
+    @property
+    def orientation(self):
+        return util.array(self._geometry.getOrientationBuffer(), geom=self)
+
+    @property
+    def color(self):
+        return util.array(self._geometry.getColorBuffer(), geom=self)
+
+    def get_extents(self):
+        R""" Get the extents of the geometry
+
+        Returns:
+            [[minimum x, minimum y, minimum z],
+             [maximum x, maximum y, maximum z]]
+        """
+        r = numpy.max(numpy.linalg.norm(self.vertices,axis=0)).reshape(-1,1)
+        pos = self.position[:];
+        res = numpy.array([numpy.min(pos - r, axis=0),
+                           numpy.max(pos + r, axis=0)])
+        return res;
