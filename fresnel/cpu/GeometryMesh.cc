@@ -70,23 +70,25 @@ GeometryMesh::GeometryMesh(std::shared_ptr<Scene> scene,
 
         vec3<float> n = cross(a,b);
 
-        const float machine_eps = 1e-12;
-        if (dot(n,n) < machine_eps)
+        const float eps = 1e-12*std::max(dot(a,a),std::max(dot(b,b),dot(c,c)));
+        if (dot(n,n) < eps)
             {
             // the edges are colinear
             n = cross(a,vec3<float>(1,0,0));
-            if (dot(n,n) < machine_eps)
+            if (dot(n,n) < eps)
                 {
                 n = cross(a,vec3<float>(0,1,0));
                 }
+            if (dot(n,cross(b,c)) < 0) n = -n;
             }
 
         n = n / sqrtf(dot(n,n));
 
         // validate winding order
         if (dot(n,cross(b, c)) <= 0)
+            {
             throw std::invalid_argument("triangles vertices must be counterclockwise and convex");
-
+            }
         // store vertices
         m_vertices.push_back(v_0);
         m_vertices.push_back(v_1);

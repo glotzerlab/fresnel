@@ -343,7 +343,7 @@ class Mesh(Geometry):
             [[minimum x, minimum y, minimum z],
              [maximum x, maximum y, maximum z]]
         """
-        r = numpy.max(numpy.linalg.norm(self.vertices,axis=0)).reshape(-1,1)
+        r = numpy.max(numpy.linalg.norm(self.vertices,axis=1)).reshape(-1,1)
         pos = self.position[:];
         res = numpy.array([numpy.min(pos - r, axis=0),
                            numpy.max(pos + r, axis=0)])
