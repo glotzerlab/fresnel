@@ -684,8 +684,8 @@ struct quat
         {
         }
 
-    //! Default construct a undefined quaternion
-    DEVICE quat()
+    //! Default construct a unit quaternion
+    DEVICE quat() : s(1), v(vec3<Real>(0,0,0))
         {
         }
 
