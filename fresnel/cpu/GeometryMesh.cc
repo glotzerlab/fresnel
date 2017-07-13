@@ -59,7 +59,6 @@ GeometryMesh::GeometryMesh(std::shared_ptr<Scene> scene,
         if (t1 >= n_verts || t2 >= n_verts || t3 >= n_verts)
             throw std::runtime_error("face indices out of bounds");
 
-
         vec3<float> v_0 = vec3<float>(verts_f[3*t1],verts_f[3*t1+1],verts_f[3*t1+2]);
         vec3<float> v_1 = vec3<float>(verts_f[3*t2],verts_f[3*t2+1],verts_f[3*t2+2]);
         vec3<float> v_2 = vec3<float>(verts_f[3*t3],verts_f[3*t3+1],verts_f[3*t3+2]);
@@ -70,25 +69,14 @@ GeometryMesh::GeometryMesh(std::shared_ptr<Scene> scene,
 
         vec3<float> n = cross(a,b);
 
-        const float eps = 1e-12*std::max(dot(a,a),std::max(dot(b,b),dot(c,c)));
-        if (dot(n,n) < eps)
+        // validate winding order
+        if (dot(n,cross(b, c)) <= 0)
             {
-            // the edges are colinear
-            n = cross(a,vec3<float>(1,0,0));
-            if (dot(n,n) < eps)
-                {
-                n = cross(a,vec3<float>(0,1,0));
-                }
-            if (dot(n,cross(b,c)) < 0) n = -n;
+            throw std::invalid_argument("triangles vertices must not be colinear");
             }
 
         n = n / sqrtf(dot(n,n));
 
-        // validate winding order
-        if (dot(n,cross(b, c)) <= 0)
-            {
-            throw std::invalid_argument("triangles vertices must be counterclockwise and convex");
-            }
         // store vertices
         m_vertices.push_back(v_0);
         m_vertices.push_back(v_1);
@@ -229,11 +217,10 @@ void GeometryMesh::intersect(void *ptr, RTCRay& ray, size_t item)
 
     const vec3<float> p3 = geom->m_position->get(i_poly);
     const quat<float> q_world = geom->m_orientation->get(i_poly);
-    const vec3<float> pos_world = p3 + rotate(q_world, geom->m_face_origin[i_face]);
 
     // transform the ray into the primitive coordinate system
     vec3<float> ray_dir_local = rotate(conj(q_world), ray.dir);
-    vec3<float> ray_org_local = rotate(conj(q_world), ray.org - pos_world);
+    vec3<float> ray_org_local = rotate(conj(q_world), ray.org - p3);
 
     vec3<float> v0 = geom->m_vertices[i_face*3];
     vec3<float> v1 = geom->m_vertices[i_face*3+1];
@@ -241,6 +228,7 @@ void GeometryMesh::intersect(void *ptr, RTCRay& ray, size_t item)
     float u,v,w,t;
     if (!IntersectRayTriangle(ray_org_local, ray_org_local+ray_dir_local, v0, v1, v2, u,v,w,t))
         return;
+
     // if the t is in (tnear,tfar), we hit the entry plane
     if ((ray.tnear < t) & (t < ray.tfar))
         {
@@ -321,7 +309,7 @@ void GeometryMesh::occlude(void *ptr, RTCRay& ray, size_t item)
     if (!IntersectRayTriangle(ray_org_local, ray_org_local+ray_dir_local, v0, v1, v2, u,v,w,t))
         return;
 
-    ray.geomID = 0;
+    if ((ray.tnear < t) & (t < ray.tfar)) ray.geomID = 0;
     }
 
 /*! \param m Python module to export in
