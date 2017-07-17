@@ -66,21 +66,6 @@ def test_roughness(scene_hex_sphere, generate=False):
     else:
         conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_material.test_roughness.png')
 
-def test_clearcoat(scene_hex_sphere, generate=False):
-    geometry = scene_hex_sphere.geometry[0]
-    geometry.material.specular = 0;
-    geometry.material.clearcoat = 1.0
-    assert geometry.material.clearcoat == 1.0
-    geometry.material.clearcoat_gloss = 0.5
-    assert geometry.material.clearcoat_gloss == 0.5
-
-    buf_proxy = fresnel.render(scene_hex_sphere, w=100, h=100)
-
-    if generate:
-        PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_material.test_clearcoat.png', 'wb'), 'png');
-    else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_material.test_clearcoat.png')
-
 def test_metal(scene_hex_sphere, generate=False):
     geometry = scene_hex_sphere.geometry[0]
     geometry.material.metal = 1.0
@@ -132,9 +117,6 @@ if __name__ == '__main__':
 
     scene_hex_sphere = conftest.scene_hex_sphere(device)
     test_roughness(scene_hex_sphere, generate=True)
-
-    scene_hex_sphere = conftest.scene_hex_sphere(device)
-    test_clearcoat(scene_hex_sphere, generate=True)
 
     scene_hex_sphere = conftest.scene_hex_sphere(device)
     test_metal(scene_hex_sphere, generate=True)

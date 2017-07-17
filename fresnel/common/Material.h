@@ -50,15 +50,13 @@ struct Material
     float roughness;                     //!< Set to 0 for a smooth material, non-zero for a rough material
     float specular;                      //!< Set to 0 for no specular highlights, 1 for strong highlights
     float metal;                         //!< Set to 0 for dielectric materials, set to 1 for metals
-    float clearcoat;                     //!< Control the strength of the clearcoat layer
-    float clearcoat_gloss;               //!< Glossiness of the clearcoat
 
     //! Default constructor gives uninitialized material
     DEVICE Material() {}
 
     //! Set material parameters
     DEVICE explicit Material(const RGB<float> _color, float _solid=0.0f) :
-        solid(_solid), color(_color), primitive_color_mix(0.0f), roughness(0.1f), specular(0.5f), metal(0.0f), clearcoat(0.0f), clearcoat_gloss(0.8f)
+        solid(_solid), color(_color), primitive_color_mix(0.0f), roughness(0.1f), specular(0.5f), metal(0.0f)
         {
         }
 
@@ -112,24 +110,6 @@ struct Material
 
         // the 4 cos(theta_l) cos(theta_v) factor is built into V
         RGB<float> f_s = D * F * V;
-
-        // add clearcoat term
-        if (clearcoat > 0.0f)
-            {
-            float alpha_c = lerp(clearcoat_gloss, 0.1f, 0.001f);
-            float alpha_c_sq = alpha_c * alpha_c;
-            float denom_ct = 1.0f + (alpha_c_sq - 1.0f) * ndoth * ndoth;
-            float Dc = (alpha_c_sq - 1.0f) / (float(M_PI) * logf(alpha_c_sq) * denom_ct);
-
-            float Fc = 0.04;
-
-            float alpha_gc_sq = 0.25f * 0.25f;
-            float V1c = 1.0f / (ndotv + sqrtf(alpha_gc_sq + ndotv_sq - alpha_gc_sq * ndotv_sq));
-            float V2c = 1.0f / (ndotl + sqrtf(alpha_gc_sq + ndotl_sq - alpha_gc_sq * ndotl_sq));
-            float Vc = V1c*V2c;
-
-            f_s += RGB<float>(0.25f, 0.25f, 0.25f) * clearcoat * Dc * Fc * Vc;
-            }
 
         return f_d * (1.0f - metal) + f_s;
         }
@@ -220,33 +200,6 @@ struct Material
 
         // the 4 cos(theta_l) cos(theta_v) factor is built into V
         RGB<float> f_s = D * F * V;
-
-        // add clearcoat term
-        if (clearcoat > 0.0f)
-            {
-            float alpha_c = lerp(clearcoat_gloss, 0.1f, 0.001f);
-            float alpha_c_sq = alpha_c * alpha_c;
-            float denom_ct = 1.0f + (alpha_c_sq - 1.0f) * ndoth * ndoth;
-            float Dc = (alpha_c_sq - 1.0f) / (float(M_PI) * logf(alpha_c_sq) * denom_ct);
-            if (light_half_angle > 0.0f)
-                {
-                float alpha_c_prime = alpha_c + 0.5f * tanf(light_half_angle);
-                if (alpha_c_prime > 0.99f)
-                    alpha_c_prime = 0.99f;
-                float alpha_c_prime_sq = alpha_c_prime * alpha_c_prime;
-
-                Dc *= ((alpha_c_sq - 1.0f) / logf(alpha_c_sq)) / ((alpha_c_prime_sq - 1.0f) / logf(alpha_c_prime_sq));
-                }
-
-            float Fc = 0.04;
-
-            float alpha_gc_sq = 0.25f * 0.25f;
-            float V1c = 1.0f / (ndotv + sqrtf(alpha_gc_sq + ndotv_sq - alpha_gc_sq * ndotv_sq));
-            float V2c = 1.0f / (ndotl + sqrtf(alpha_gc_sq + ndotl_sq - alpha_gc_sq * ndotl_sq));
-            float Vc = V1c*V2c;
-
-            f_s += RGB<float>(0.25f, 0.25f, 0.25f) * clearcoat * Dc * Fc * Vc;
-            }
 
         return f_s;
         }
