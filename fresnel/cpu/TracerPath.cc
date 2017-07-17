@@ -106,7 +106,6 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                 // determine the output pixel color
                 RGB<float> c(0,0,0);
                 float a = 1.0f;
-                int lastprimID = -1;
 
                 // trace the first ray into the scene
                 RTCRay ray_initial(origin,  direction);
@@ -142,17 +141,6 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
 
                             if (ray.hit())
                                 {
-                                if (depth==0)
-                                    lastprimID = ray.primID;
-                                else
-                                    {
-                                    if (lastprimID == ray.primID)
-                                        {
-                                        //std::cout << "Warning: Hit source primitive!" << std::endl;
-                                        }
-                                    lastprimID = ray.primID;
-                                    }
-
                                 vec3<float> n = ray.Ng / std::sqrt(dot(ray.Ng, ray.Ng));
                                 vec3<float> v = -ray.dir / std::sqrt(dot(ray.dir, ray.dir));
                                 Material m;
@@ -183,7 +171,6 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                                     // r123::float2 rng_gauss2 = r123::boxmuller(rng_u[2], rng_u[3]);
                                     // vec3<float> l(rng_gauss1.x, rng_gauss1.y, rng_gauss2.x);
 
-                                    // // TODO: normalize method in VectorMath
                                     // l = l / std::sqrt(dot(l, l));
 
                                     // float ndotl = dot(n, l);
@@ -196,13 +183,8 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                                     // float pdf = 1.0f / (2.0f * float(M_PI));
                                     // float factor = 1.0f / pdf;
 
-                                    // // importance sampling
-                                    vec2<float> xi(r123::u01<float>(rng_u[0]), r123::u01<float>(rng_u[1]));
-                                    // vec3<float> l = m.importanceSampleGGX(xi, v, n);
-                                    // float pdf = m.pdfGGX(l, v, n);
-                                    // float factor = 1.0f / pdf;
-
                                     // multiple importance sampling
+                                    vec2<float> xi(r123::u01<float>(rng_u[0]), r123::u01<float>(rng_u[1]));
                                     float choice = r123::u01<float>(rng_u[2]);
                                     float factor;
                                     vec3<float> l;
