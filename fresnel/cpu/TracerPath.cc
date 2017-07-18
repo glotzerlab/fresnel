@@ -124,7 +124,7 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                     for (unsigned int light_sample = 0; light_sample < m_light_samples; light_sample++)
                         {
                         RGB<float> attenuation(1.0f,1.0f,1.0f);
-                        for (unsigned int depth = 1; depth <= 10; depth++)
+                        for (unsigned int depth = 1; depth <= 10000; depth++)
                             {
                             RTCRay ray(origin,  direction);
                             if (depth == 1)
