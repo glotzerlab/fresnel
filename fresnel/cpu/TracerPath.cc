@@ -156,6 +156,7 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                                     // testing: treat solid colors as emitters
                                     // when the ray hits an emitter, terminate the path and evaluate the final color
                                     c += attenuation * m.getColor(ray.shading_color);
+                                    break;
                                     }
                                 else
                                     {
