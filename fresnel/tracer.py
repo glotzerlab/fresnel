@@ -55,9 +55,6 @@ class Tracer(object):
             A reference to the current output buffer as a :py:class:`fresnel.util.image_array`.
 
         Render the given scene and write the resulting pixels into the output buffer.
-
-        Warning:
-            :py:meth:`render` clears any existing image in the output buffer.
         """
 
         scene._prepare();
@@ -158,7 +155,7 @@ class Path(Tracer):
         seed (int): Random number seed.
 
     The path tracer applies advanced lighting effects, including soft shadows, reflections, etc....
-    It operates by Monte Carlo sampling. Each call to `:py:meth:render()` performs one sample per pixel.
+    It operates by Monte Carlo sampling. Each call to :py:meth:`render() <Tracer.render()>` performs one sample per pixel.
     The output image is the mean of all the samples. Many samples are required to produce a smooth image.
 
     :py:meth:`sample()` provides a convenience API to make many samples with a single call.

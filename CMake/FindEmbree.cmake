@@ -16,6 +16,15 @@ if(Embree_INCLUDE_DIR AND EXISTS "${Embree_INCLUDE_DIR}/embree2/rtcore.h")
     set(Embree_VERSION_STRING "${Embree_VERSION_MAJOR}.${Embree_VERSION_MINOR}.${Embree_VERSION_PATCH}")
 endif()
 
+if(Embree_INCLUDE_DIR AND EXISTS "${Embree_INCLUDE_DIR}/embree2/rtcore_version.h")
+    file(STRINGS "${Embree_INCLUDE_DIR}/embree2/rtcore_version.h" Embree_H REGEX "^#define RTCORE_VERSION_.*$")
+
+    string(REGEX REPLACE ".*#define RTCORE_VERSION_MAJOR ([0-9]+).*$" "\\1" Embree_VERSION_MAJOR "${Embree_H}")
+    string(REGEX REPLACE "^.*RTCORE_VERSION_MINOR ([0-9]+).*$" "\\1" Embree_VERSION_MINOR  "${Embree_H}")
+    string(REGEX REPLACE "^.*RTCORE_VERSION_PATCH ([0-9]+).*$" "\\1" Embree_VERSION_PATCH "${Embree_H}")
+    set(Embree_VERSION_STRING "${Embree_VERSION_MAJOR}.${Embree_VERSION_MINOR}.${Embree_VERSION_PATCH}")
+endif()
+
 # handle the QUIETLY and REQUIRED arguments and set Embree_FOUND to TRUE if
 # all listed variables are TRUE
 include(FindPackageHandleStandardArgs)
