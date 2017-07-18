@@ -54,4 +54,6 @@ set(PYTHON_MODULE_BASE_DIR fresnel)
 #############################################################################################
 ### Add project subdirs
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extern/pybind11/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extern/random123/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extern/random123/examples)
 add_subdirectory(fresnel)

@@ -333,6 +333,234 @@ struct RGBA
     Real a; //!< a-component of the vector
     };
 
+//! Addition of two RGBs
+/*! \param a First vector
+    \param b Second vector
+
+    Addition is component wise.
+    \returns The vector (a.r+b.r, a.g+b.g, a.b+b.b, a.a+b.a).
+*/
+template < class Real >
+DEVICE inline RGBA<Real> operator+(const RGBA<Real>& a, const RGBA<Real>& b)
+    {
+    return RGBA<Real>(a.r + b.r,
+                      a.g + b.g,
+                      a.b + b.b,
+                      a.a + b.a);
+    }
+
+//! Subtraction of two RGBs
+/*! \param a First vector
+    \param b Second vector
+
+    Subtraction is component wise.
+    \returns The vector (a.r-b.r, a.g-b.g, a.b-b.b, a.a-b.a).
+*/
+template < class Real >
+DEVICE inline RGBA<Real> operator-(const RGBA<Real>& a, const RGBA<Real>& b)
+    {
+    return RGBA<Real>(a.r - b.r,
+                      a.g - b.g,
+                      a.b - b.b,
+                      a.a - b.a);
+    }
+
+//! Multiplication of two RGBs
+/*! \param a First vector
+    \param b Second vector
+
+    Multiplication is component wise.
+    \returns The vector (a.r*b.r, a.g*b.g, a.b*b.b, a.a*b.a).
+*/
+template < class Real >
+DEVICE inline RGBA<Real> operator*(const RGBA<Real>& a, const RGBA<Real>& b)
+    {
+    return RGBA<Real>(a.r * b.r,
+                      a.g * b.g,
+                      a.b * b.b,
+                      a.a * b.a);
+    }
+
+//! Division of two RGBs
+/*! \param a First vector
+    \param b Second vector
+
+    Division is component wise.
+    \returns The vector (a.r/b.r, a.g/b.g, a.b/b.b, a.a/b.a).
+*/
+template < class Real >
+DEVICE inline RGBA<Real> operator/(const RGBA<Real>& a, const RGBA<Real>& b)
+    {
+    return RGBA<Real>(a.r / b.r,
+                      a.g / b.g,
+                      a.b / b.b,
+                      a.a / b.a);
+    }
+
+//! Negation of a RGB
+/*! \param a Vector
+
+    Negation is component wise.
+    \returns The vector (-a.x, -a.y, -a.z, -a.a).
+*/
+template < class Real >
+DEVICE inline RGBA<Real> operator-(const RGBA<Real>& a)
+    {
+    return RGBA<Real>(-a.r,
+                      -a.g,
+                      -a.b,
+                      -a.a);
+    }
+
+
+//! Assignment-addition of two RGBs
+/*! \param a First vector
+    \param b Second vector
+
+    Addition is component wise.
+    \returns The vector (a.r += b.r, a.g += b.g, a.b += b.b, a.a += b.a).
+*/
+template < class Real >
+DEVICE inline RGBA<Real>& operator +=(RGBA<Real>& a, const RGBA<Real>& b)
+    {
+    a.r += b.r;
+    a.g += b.g;
+    a.b += b.b;
+    a.a += b.a;
+    return a;
+    }
+
+//! Assignment-subtraction of two RGBs
+/*! \param a First vector
+    \param b Second vector
+
+    Subtraction is component wise.
+    \returns The vector (a.r -= b.r, a.g -= b.g, a.b -= b.b, a.a -= b.a).
+*/
+template < class Real >
+DEVICE inline RGBA<Real>& operator -=(RGBA<Real>& a, const RGBA<Real>& b)
+    {
+    a.r -= b.r;
+    a.g -= b.g;
+    a.b -= b.b;
+    a.a -= b.a;
+    return a;
+    }
+
+//! Assignment-multiplication of two RGBs
+/*! \param a First vector
+    \param b Second vector
+
+    Multiplication is component wise.
+    \returns The vector (a.r *= b.r, a.g *= b.g, a.b *= b.b, a.a *= b.a).
+*/
+template < class Real >
+DEVICE inline RGBA<Real>& operator *=(RGBA<Real>& a, const RGBA<Real>& b)
+    {
+    a.r *= b.r;
+    a.g *= b.g;
+    a.b *= b.b;
+    a.a *= b.a;
+    return a;
+    }
+
+//! Assignment-division of two RGBs
+/*! \param a First vector
+    \param b Second vector
+
+    Division is component wise.
+    \returns The vector (a.r /= b.r, a.g /= b.g, a.b /= b.b, a.a /= b.a).
+*/
+template < class Real >
+DEVICE inline RGBA<Real>& operator /=(RGBA<Real>& a, const RGBA<Real>& b)
+    {
+    a.r /= b.r;
+    a.g /= b.g;
+    a.b /= b.b;
+    a.a /= b.a;
+    return a;
+    }
+
+//! Multiplication of a RGB by a scalar
+/*! \param a vector
+    \param b scalar
+
+    Multiplication is component wise.
+    \returns The vector (a.r*b, a.g*b, a.b*b, a.a*b).
+*/
+template < class Real >
+DEVICE inline RGBA<Real> operator*(const RGBA<Real>& a, const Real& b)
+    {
+    return RGBA<Real>(a.r * b,
+                      a.g * b,
+                      a.b * b,
+                      a.a * b);
+    }
+
+//! Multiplication of a RGB by a scalar
+/*! \param a vector
+    \param b scalar
+
+    Multiplication is component wise.
+    \returns The vector (a.r*b, a.g*b, a.b*b, a.a*b).
+*/
+template < class Real >
+DEVICE inline RGBA<Real> operator*(const Real& b, const RGBA<Real>& a)
+    {
+    return RGBA<Real>(a.r * b,
+                      a.g * b,
+                      a.b * b,
+                      a.a * b);
+    }
+
+//! Division of a RGB by a scalar
+/*! \param a vector
+    \param b scalar
+
+    Division is component wise.
+    \returns The vector (a.r/b, a.g/b, a.b/b, a.a/b).
+*/
+template < class Real >
+DEVICE inline RGBA<Real> operator/(const RGBA<Real>& a, const Real& b)
+    {
+    Real q = Real(1.0)/b;
+    return a * q;
+    }
+
+//! Assignment-multiplication of a RGB by a scalar
+/*! \param a First vector
+    \param b scalar
+
+    Multiplication is component wise.
+    \returns The vector (a.r *= b, a.g *= b, a.b *= b, a.a *= b).
+*/
+template < class Real >
+DEVICE inline RGBA<Real>& operator *=(RGBA<Real>& a, const Real& b)
+    {
+    a.r *= b;
+    a.g *= b;
+    a.b *= b;
+    a.a *= b;
+    return a;
+    }
+
+//! Assignment-division of a RGB by a scalar
+/*! \param a First vector
+    \param b scalar
+
+    Division is component wise.
+    \returns The vector (a.r /= b, a.g /= b, a.b /= b, a.a /= b).
+*/
+template < class Real >
+DEVICE inline RGBA<Real>& operator /=(RGBA<Real>& a, const Real& b)
+    {
+    a.r /= b;
+    a.g /= b;
+    a.b /= b;
+    a.a /= b;
+    return a;
+    }
+
 //! Linear interpolate between two values
 /*! \param x interpolation fraction
     \param a left side of the interpolation (x=0)

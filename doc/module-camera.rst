@@ -7,6 +7,7 @@ fresnel.camera
     :nosignatures:
 
     fresnel.camera.Camera
+    fresnel.camera.fit
     fresnel.camera.orthographic
 
 .. rubric:: Details

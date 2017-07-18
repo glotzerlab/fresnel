@@ -14,8 +14,6 @@ if 'cpu' in fresnel.Device.available_modes:
 if 'gpu' in fresnel.Device.available_modes:
     devices.append( ('gpu', 1) );
 
-print(devices)
-
 def test_lights():
     lights = [];
     phi1 = 1*45*math.pi/180;

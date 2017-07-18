@@ -18,16 +18,15 @@ class Material(object):
           specified in the material, or a value in the range [0,1] to mix the two colors.
         roughness (float): Roughness of the material. Nominally in the range [0,1], though 0.1 is a realistic minimum.
         specular (float): Control the strength of the specular highlights. Nominally in the range [0,1].
+        spec_trans (float): Control the amount of specular light transmission. In the range [0,1].
         metal (float): Set to 0 for dielectric material, or 1 for metal. Intermediate values interpolate between
                        the two.
-        clearcoat (float): Set the strength of the clearcoat layer in [0,1]
-        clearcoat_gloss (float): Control how glossy the clearcoat layer is in [0,1]
 
     Colors are in the linearized sRGB color space. Use :py:func:`fresnel.color.linear` to convert standard sRGB colors
     into this space.
     """
 
-    def __init__(self, solid=0, color=(0,0,0), primitive_color_mix=0, roughness=0.3, specular=0.5, metal=0, clearcoat=0, clearcoat_gloss=0.8):
+    def __init__(self, solid=0, color=(0,0,0), primitive_color_mix=0, roughness=0.3, specular=0.5, spec_trans=0, metal=0):
         self._material = _common.Material();
 
         self.solid = solid;
@@ -35,9 +34,8 @@ class Material(object):
         self.roughness = roughness;
         self.specular = specular;
         self.metal = metal;
+        self.spec_trans = spec_trans;
         self.primitive_color_mix = primitive_color_mix;
-        self.clearcoat = clearcoat;
-        self.clearcoat_gloss = clearcoat_gloss;
 
     @property
     def solid(self):
@@ -82,28 +80,20 @@ class Material(object):
         self._material.specular = float(value);
 
     @property
+    def spec_trans(self):
+        return self._material.spec_trans;
+
+    @spec_trans.setter
+    def spec_trans(self, value):
+        self._material.spec_trans = float(value);
+
+    @property
     def metal(self):
         return self._material.metal;
 
     @metal.setter
     def metal(self, value):
         self._material.metal = float(value);
-
-    @property
-    def clearcoat(self):
-        return self._material.clearcoat;
-
-    @clearcoat.setter
-    def clearcoat(self, value):
-        self._material.clearcoat = float(value);
-
-    @property
-    def clearcoat_gloss(self):
-        return self._material.clearcoat_gloss;
-
-    @clearcoat_gloss.setter
-    def clearcoat_gloss(self, value):
-        self._material.clearcoat_gloss = float(value);
 
     def _get_cpp_material(self):
         return self._material;
@@ -173,6 +163,17 @@ class _material_proxy(object):
         self._geometry.setMaterial(m);
 
     @property
+    def spec_trans(self):
+        m = self._geometry.getMaterial();
+        return m.spec_trans;
+
+    @spec_trans.setter
+    def spec_trans(self, value):
+        m = self._geometry.getMaterial();
+        m.spec_trans = float(value);
+        self._geometry.setMaterial(m);
+
+    @property
     def metal(self):
         m = self._geometry.getMaterial();
         return m.metal;
@@ -181,28 +182,6 @@ class _material_proxy(object):
     def metal(self, value):
         m = self._geometry.getMaterial();
         m.metal = float(value);
-        self._geometry.setMaterial(m);
-
-    @property
-    def clearcoat(self):
-        m = self._geometry.getMaterial();
-        return m.clearcoat;
-
-    @clearcoat.setter
-    def clearcoat(self, value):
-        m = self._geometry.getMaterial();
-        m.clearcoat = float(value);
-        self._geometry.setMaterial(m);
-
-    @property
-    def clearcoat_gloss(self):
-        m = self._geometry.getMaterial();
-        return m.clearcoat_gloss;
-
-    @clearcoat_gloss.setter
-    def clearcoat_gloss(self, value):
-        m = self._geometry.getMaterial();
-        m.clearcoat_gloss = float(value);
         self._geometry.setMaterial(m);
 
     def _get_cpp_material(self):
@@ -273,6 +252,17 @@ class _outline_material_proxy(object):
         self._geometry.setOutlineMaterial(m);
 
     @property
+    def spec_trans(self):
+        m = self._geometry.getOutlineMaterial();
+        return m.spec_trans;
+
+    @spec_trans.setter
+    def spec_trans(self, value):
+        m = self._geometry.getOutlineMaterial();
+        m.spec_trans = float(value);
+        self._geometry.setOutlineMaterial(m);
+
+    @property
     def metal(self):
         m = self._geometry.getOutlineMaterial();
         return m.metal;
@@ -281,28 +271,6 @@ class _outline_material_proxy(object):
     def metal(self, value):
         m = self._geometry.getOutlineMaterial();
         m.metal = float(value);
-        self._geometry.setOutlineMaterial(m);
-
-    @property
-    def clearcoat(self):
-        m = self._geometry.getOutlineMaterial();
-        return m.clearcoat;
-
-    @clearcoat.setter
-    def clearcoat(self, value):
-        m = self._geometry.getOutlineMaterial();
-        m.clearcoat = float(value);
-        self._geometry.setOutlineMaterial(m);
-
-    @property
-    def clearcoat_gloss(self):
-        m = self._geometry.getOutlineMaterial();
-        return m.clearcoat_gloss;
-
-    @clearcoat_gloss.setter
-    def clearcoat_gloss(self, value):
-        m = self._geometry.getOutlineMaterial();
-        m.clearcoat_gloss = float(value);
         self._geometry.setOutlineMaterial(m);
 
     def _get_cpp_material(self):

@@ -9,6 +9,7 @@
 #include "GeometrySphere.h"
 #include "Tracer.h"
 #include "TracerDirect.h"
+#include "TracerPath.h"
 #include "common/Material.h"
 
 #include <sstream>
@@ -27,6 +28,7 @@ PYBIND11_PLUGIN(_cpu)
     export_GeometrySphere(m);
     export_Tracer(m);
     export_TracerDirect(m);
+    export_TracerPath(m);
     export_Array(m);
 
     return m.ptr();

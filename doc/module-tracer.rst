@@ -7,6 +7,7 @@ fresnel.tracer
     :nosignatures:
 
     fresnel.tracer.Direct
+    fresnel.tracer.Path
     fresnel.tracer.Tracer
 
 .. rubric:: Details

@@ -64,6 +64,7 @@ class Device(object):
 
         available_modes (list): List of the available execution modes (static member).
         available_gpus (list): List of the available gpus (static member).
+        mode (string): The active mode
 
     """
 
@@ -108,10 +109,11 @@ class Device(object):
         if selected_mode == 'gpu':
             self.module = _gpu;
             self._device = _gpu.Device(os.path.dirname(os.path.realpath(__file__)), thread_limit);
+            self.mode = 'gpu'
         elif selected_mode == 'cpu':
             self.module = _cpu;
-
             self._device = _cpu.Device(thread_limit);
+            self.mode = 'cpu'
         else:
             raise ValueError("Invalid mode");
 
@@ -270,7 +272,7 @@ class Scene(object):
             cam = camera.fit(self);
             self._scene.setCamera(cam._camera);
 
-def render(scene, w=600, h=370):
+def render(scene, w=600, h=370, samples=0):
     R""" Render a scene.
 
     Args:
@@ -278,7 +280,18 @@ def render(scene, w=600, h=370):
         scene (:py:class:`Scene`): Scene to render.
         w (int): Output image width.
         h (int): Output image height.
+        samples (int): Number of times to sample the scene.
+
+    Set samples to 0 to execute a very fast render with only direct lighting.
+
+    Set samples greater than 0 to execute a slower render with soft lighting, reflections, and other effects.
+    The resulting image will have noise, increase the sample count to make the image smoother.
     """
 
-    t = tracer.Direct(scene.device, w=w, h=h);
-    return t.render(scene);
+    if samples == 0:
+        t = tracer.Direct(scene.device, w=w, h=h);
+        return t.render(scene);
+    else:
+        t = tracer.Path(scene.device, w=w, h=h);
+        t.sample(scene, samples=1, light_samples=samples)
+        return t.output;

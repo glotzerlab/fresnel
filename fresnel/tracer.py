@@ -55,9 +55,6 @@ class Tracer(object):
             A reference to the current output buffer as a :py:class:`fresnel.util.image_array`.
 
         Render the given scene and write the resulting pixels into the output buffer.
-
-        Warning:
-            :py:meth:`render` clears any existing image in the output buffer.
         """
 
         scene._prepare();
@@ -143,3 +140,73 @@ class Direct(Tracer):
     def __init__(self, device, w, h):
         self.device = device;
         self._tracer = device.module.TracerDirect(device._device, w, h);
+
+class Path(Tracer):
+    R""" Path tracer.
+
+    Args:
+
+        device (:py:class:`Device <fresnel.Device>`): Device to use for rendering.
+        w (int): Output image width.
+        h (int): Output image height.
+
+    Attributes:
+
+        seed (int): Random number seed.
+
+    The path tracer applies advanced lighting effects, including soft shadows, reflections, etc....
+    It operates by Monte Carlo sampling. Each call to :py:meth:`render() <Tracer.render()>` performs one sample per pixel.
+    The output image is the mean of all the samples. Many samples are required to produce a smooth image.
+
+    :py:meth:`sample()` provides a convenience API to make many samples with a single call.
+    """
+
+    def __init__(self, device, w, h):
+        self.device = device;
+        self._tracer = device.module.TracerPath(device._device, w, h, 1);
+
+    def reset(self):
+        R"""
+        Clear the output buffer and start sampling a new image. Increment the random number seed so that the
+        new image is statistically independent from the previous.
+        """
+
+        self._tracer.reset();
+
+    def sample(self, scene, samples, reset=True, light_samples=1):
+        R"""
+        Args:
+
+            scene (:py:class:`Scene <fresnel.Scene>`): The scene to render.
+            samples (int): The number of samples to take per pixel.
+            reset (bool): When True, call :py:meth:`reset()` before sampling
+
+        Returns:
+            A reference to the current output buffer as a :py:class:`fresnel.util.image_array`.
+
+        Note:
+            When *reset* is False, subsequent calls to :py:meth:`sample()` will continue to add samples
+            to the current output image. Use the same number of light samples when sampling an image
+            in this way.
+        """
+
+        if reset:
+            self.reset()
+
+        self._tracer.setLightSamples(light_samples);
+
+        for i in range(samples):
+            out = self.render(scene);
+
+        # reset the number of light samples to 1 to avoid side effects with future calls to render() by the user
+        self._tracer.setLightSamples(1);
+
+        return out;
+
+    @property
+    def seed(self):
+        return self._tracer.getSeed()
+
+    @seed.setter
+    def seed(self, value):
+        self._tracer.setSeed(value);
