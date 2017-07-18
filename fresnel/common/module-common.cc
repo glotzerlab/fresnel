@@ -50,6 +50,7 @@ PYBIND11_PLUGIN(_common)
         .def_readwrite("primitive_color_mix", &Material::primitive_color_mix)
         .def_readwrite("roughness", &Material::roughness)
         .def_readwrite("specular", &Material::specular)
+        .def_readwrite("spec_trans", &Material::spec_trans)
         .def_readwrite("metal", &Material::metal)
         .def_readwrite("color", &Material::color)
         .def("__repr__",
@@ -62,6 +63,7 @@ PYBIND11_PLUGIN(_common)
                   << " primitive_color_mix=" << a.primitive_color_mix
                   << " roughness=" << a.roughness
                   << " specular=" << a.specular
+                  << " spec_trans=" << a.spec_trans
                   << " metal=" << a.metal
                   << ">";
 

@@ -124,7 +124,7 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                     for (unsigned int light_sample = 0; light_sample < m_light_samples; light_sample++)
                         {
                         RGB<float> attenuation(1.0f,1.0f,1.0f);
-                        for (unsigned int depth = 1; depth <= 6; depth++)
+                        for (unsigned int depth = 1; depth <= 10; depth++)
                             {
                             RTCRay ray(origin,  direction);
                             if (depth == 1)
@@ -185,35 +185,59 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
 
                                     // multiple importance sampling
                                     vec2<float> xi(r123::u01<float>(rng_u[0]), r123::u01<float>(rng_u[1]));
-                                    float choice = r123::u01<float>(rng_u[2]);
-                                    float factor;
+                                    float choice_mis = r123::u01<float>(rng_u[2]);
+                                    float choice_trans = r123::u01<float>(rng_u[3]);
+
+                                    float factor = 1.0f;
+
                                     vec3<float> l;
-                                    if (choice <= 0.5f)
+                                    if (choice_trans <= m.spec_trans)
                                         {
-                                        // diffuse sampling
-                                        l = m.importanceSampleDiffuse(xi, v, n);
-                                        float pdf_diffuse = m.pdfDiffuse(l, v, n);
-                                        float pdf_ggx = m.pdfGGX(l, v, n);
-                                        float w_diffuse = pdf_diffuse / (pdf_diffuse + pdf_ggx);
-                                        factor = w_diffuse / (0.5f * pdf_diffuse);
+                                        // hard code perfect transmission
+                                        l = ray.dir;
+                                        RGB<float> trans_color = m.getColor(ray.shading_color);
+                                        trans_color.r = sqrtf(trans_color.r);
+                                        trans_color.g = sqrtf(trans_color.g);
+                                        trans_color.b = sqrtf(trans_color.b);
+                                        attenuation *= trans_color;
                                         }
                                     else
                                         {
-                                        l = m.importanceSampleGGX(xi, v, n);
-                                        float pdf_diffuse = m.pdfDiffuse(l, v, n);
-                                        float pdf_ggx = m.pdfGGX(l, v, n);
-                                        float w_ggx = pdf_ggx / (pdf_diffuse + pdf_ggx);
-                                        factor = w_ggx / (0.5f * pdf_ggx);
-                                        }
+                                        // handle reflection with multiple importance sampling
+                                        if (choice_mis <= 0.5f)
+                                            {
+                                            // diffuse sampling
+                                            l = m.importanceSampleDiffuse(xi, v, n);
+                                            float pdf_diffuse = m.pdfDiffuse(l, v, n);
+                                            float pdf_ggx = m.pdfGGX(l, v, n);
+                                            float w_diffuse = pdf_diffuse / (pdf_diffuse + pdf_ggx);
+                                            factor *= w_diffuse / (0.5f * pdf_diffuse);
+                                            }
+                                        else
+                                            {
+                                            // specular reflection
+                                            l = m.importanceSampleGGX(xi, v, n);
+                                            float pdf_diffuse = m.pdfDiffuse(l, v, n);
+                                            float pdf_ggx = m.pdfGGX(l, v, n);
+                                            float w_ggx = pdf_ggx / (pdf_diffuse + pdf_ggx);
+                                            factor *= w_ggx / (0.5f * pdf_ggx);
+                                            }
 
-                                    float ndotl = dot(n, l);
+                                        float ndotl = dot(n, l);
 
-                                    if (ndotl > 0.0f)
-                                        attenuation *= m.brdf(l, v, n, ray.shading_color) * ndotl * factor;
-                                    else
-                                        {
-                                        attenuation = RGB<float>(0,0,0);
-                                        break;
+                                        // When n dot v is less than 0, this is coming through the back of the surface
+                                        // skip this sample
+                                        if (dot(n,v) > 0.0f && ndotl > 0.0f)
+                                            {
+                                            attenuation *= m.brdf(l, v, n, ray.shading_color) *
+                                                           ndotl *
+                                                           factor;
+                                            }
+                                        else
+                                            {
+                                            attenuation = RGB<float>(0,0,0);
+                                            break;
+                                            }
                                         }
 
                                     // set the origin and direction for the next ray in the path

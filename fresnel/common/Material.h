@@ -50,6 +50,7 @@ struct Material
     float roughness;                     //!< Set to 0 for a smooth material, non-zero for a rough material
     float specular;                      //!< Set to 0 for no specular highlights, 1 for strong highlights
     float metal;                         //!< Set to 0 for dielectric materials, set to 1 for metals
+    float spec_trans;                    //!< Set to 0 for solid materials, 1 for fully transmissive
 
     //! Default constructor gives uninitialized material
     DEVICE Material() {}
