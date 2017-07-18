@@ -64,6 +64,7 @@ class Device(object):
 
         available_modes (list): List of the available execution modes (static member).
         available_gpus (list): List of the available gpus (static member).
+        mode (string): The active mode
 
     """
 
@@ -108,10 +109,11 @@ class Device(object):
         if selected_mode == 'gpu':
             self.module = _gpu;
             self._device = _gpu.Device(os.path.dirname(os.path.realpath(__file__)), thread_limit);
+            self.mode = 'gpu'
         elif selected_mode == 'cpu':
             self.module = _cpu;
-
             self._device = _cpu.Device(thread_limit);
+            self.mode = 'cpu'
         else:
             raise ValueError("Invalid mode");
 
