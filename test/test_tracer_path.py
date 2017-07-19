@@ -10,7 +10,7 @@ def test_render(scene_hex_sphere, generate=False):
         return;
 
     tracer = fresnel.tracer.Path(device=scene_hex_sphere.device, w=100, h=100)
-    tracer.seed = 12
+    tracer.seed = 11
     buf = tracer.output[:]
     assert buf.shape == (100,100,4)
 
