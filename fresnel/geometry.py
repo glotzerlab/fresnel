@@ -267,6 +267,8 @@ class ConvexPolyhedron(Geometry):
         normals: Origins of the planes in particle local coordinates.
           **Type:** anything convertible by numpy to a Nx3 array of floats.
         r (float): Radius of the circumscribing sphere (centered at the origin) that encompasses the polyhedron.
+        face_colors: Colors of the polyhedron faces
+          **Type:** anything convertible by numpy to a Nx3 array of floats.
         position: Positions of the polyhedra, *optional*.
           **Type:** anything convertible by numpy to a Nx3 array of floats.
         orientation: Rotation quaternion of each polyhedron, *optional*.
@@ -290,6 +292,8 @@ class ConvexPolyhedron(Geometry):
         position (:py:class:`fresnel.util.array`): Read or modify the positions of the prisms.
         orientation (:py:class:`fresnel.util.array`): Read or modify the orientations of the prisms.
         color (:py:class:`fresnel.util.array`): Read or modify the color of the prisms.
+        color_by_face (float): Set to 0 to color particles by the per-particle color. Set to 1 to color faces by the
+                               per-face color.
 
     """
 
@@ -298,6 +302,7 @@ class ConvexPolyhedron(Geometry):
                  origins,
                  normals,
                  r,
+                 face_colors=None,
                  position=None,
                  orientation=None,
                  color=None,
@@ -308,7 +313,10 @@ class ConvexPolyhedron(Geometry):
         if N is None:
             N = len(position);
 
-        self._geometry = scene.device.module.GeometryConvexPolyhedron(scene._scene, origins, normals, N, r);
+        if face_colors is None:
+            face_colors = [[1,0,1]] * len(origins)
+
+        self._geometry = scene.device.module.GeometryConvexPolyhedron(scene._scene, origins, normals, face_colors, N, r);
         self.material = material;
         self.outline_material = outline_material;
         self.outline_width = outline_width;
@@ -351,3 +359,11 @@ class ConvexPolyhedron(Geometry):
     @property
     def color(self):
         return util.array(self._geometry.getColorBuffer(), geom=self)
+
+    @property
+    def color_by_face(self):
+        return self._geometry.getColorByFace();
+
+    @color_by_face.setter
+    def color_by_face(self, v):
+        self._geometry.setColorByFace(v);

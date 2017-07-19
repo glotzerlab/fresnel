@@ -17,6 +17,7 @@ namespace fresnel { namespace cpu {
 GeometryConvexPolyhedron::GeometryConvexPolyhedron(std::shared_ptr<Scene> scene,
                                                    pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast> plane_origins,
                                                    pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast> plane_normals,
+                                                   pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast> plane_colors,
                                                    unsigned int N,
                                                    float r)
     : Geometry(scene)
@@ -58,6 +59,19 @@ GeometryConvexPolyhedron::GeometryConvexPolyhedron(std::shared_ptr<Scene> scene,
 
     float *normal_f = (float *)info_normal.ptr;
 
+    pybind11::buffer_info info_color = plane_colors.request();
+
+    if (info_color.ndim != 2)
+        throw std::runtime_error("plane_colors must be a 2-dimensional array");
+
+    if (info_color.shape[1] != 3)
+        throw std::runtime_error("plane_colors must be a Nvert by 3 array");
+
+    if (info_color.shape[0] != info_origin.shape[0])
+        throw std::runtime_error("Number of vertices must match in origin and color arrays");
+
+    float *color_f = (float *)info_color.ptr;
+
     // construct planes in C++ data structures
     for (unsigned int i = 0; i < info_normal.shape[0]; i++)
         {
@@ -66,6 +80,7 @@ GeometryConvexPolyhedron::GeometryConvexPolyhedron(std::shared_ptr<Scene> scene,
 
         m_plane_origin.push_back(vec3<float>(origin_f[i*3], origin_f[i*3+1], origin_f[i*3+2]));
         m_plane_normal.push_back(vec3<float>(n.x, n.y, n.z));
+        m_plane_color.push_back(RGB<float>(color_f[i*3], color_f[i*3+1], color_f[i*3+2]));
         }
 
     // for now, take a user supplied radius
@@ -132,6 +147,7 @@ void GeometryConvexPolyhedron::intersect(void *ptr, RTCRay& ray, size_t item)
 
     vec3<float> t0_n_local(0,0,0), t0_p_local(0,0,0);
     vec3<float> t1_n_local(0,0,0), t1_p_local(0,0,0);
+    int t0_plane_hit = 0, t1_plane_hit = 0;
     for(int i = 0; i < n_planes && t0 < t1; ++i )
         {
         vec3<float> n = geom->m_plane_normal[i];
@@ -155,6 +171,7 @@ void GeometryConvexPolyhedron::intersect(void *ptr, RTCRay& ray, size_t item)
                 t0 = t;
                 t0_n_local = n;
                 t0_p_local = p;
+                t0_plane_hit = i;
                 }
             }
         else
@@ -165,6 +182,7 @@ void GeometryConvexPolyhedron::intersect(void *ptr, RTCRay& ray, size_t item)
                 t1 = t;
                 t1_n_local = n;
                 t1_p_local = p;
+                t1_plane_hit = i;
                 }
             }
         }
@@ -187,7 +205,7 @@ void GeometryConvexPolyhedron::intersect(void *ptr, RTCRay& ray, size_t item)
         ray.Ng = rotate(q_world, t0_n_local);
         n_hit = t0_n_local;
         p_hit = t0_p_local;
-        ray.shading_color = geom->m_color->get(item);
+        ray.shading_color = lerp(geom->m_color_by_face, geom->m_color->get(item), geom->m_plane_color[t0_plane_hit]);
         hit = true;
         }
     // if t1 is in (tnear,tfar), we hit the exit plane
@@ -199,7 +217,7 @@ void GeometryConvexPolyhedron::intersect(void *ptr, RTCRay& ray, size_t item)
         ray.Ng = rotate(q_world, t1_n_local);
         n_hit = t1_n_local;
         p_hit = t1_p_local;
-        ray.shading_color = geom->m_color->get(item);
+        ray.shading_color = lerp(geom->m_color_by_face, geom->m_color->get(item), geom->m_plane_color[t1_plane_hit]);
         hit = true;
         }
 
@@ -374,11 +392,14 @@ void export_GeometryConvexPolyhedron(pybind11::module& m)
         .def(pybind11::init<std::shared_ptr<Scene>,
              pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast>,
              pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast>,
+             pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast>,
              unsigned int,
              float>())
         .def("getPositionBuffer", &GeometryConvexPolyhedron::getPositionBuffer)
         .def("getOrientationBuffer", &GeometryConvexPolyhedron::getOrientationBuffer)
         .def("getColorBuffer", &GeometryConvexPolyhedron::getColorBuffer)
+        .def("setColorByFace", &GeometryConvexPolyhedron::setColorByFace)
+        .def("getColorByFace", &GeometryConvexPolyhedron::getColorByFace)
         ;
     }
 

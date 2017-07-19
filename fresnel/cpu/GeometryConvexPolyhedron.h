@@ -29,6 +29,7 @@ class GeometryConvexPolyhedron : public Geometry
         GeometryConvexPolyhedron(std::shared_ptr<Scene> scene,
                                  pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast> plane_origins,
                                  pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast> plane_normals,
+                                 pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast> plane_colors,
                                  unsigned int N,
                                  float r);
         //! Destructor
@@ -52,15 +53,30 @@ class GeometryConvexPolyhedron : public Geometry
             return m_color;
             }
 
+        //! Set the color by face option
+        void setColorByFace(float f)
+            {
+            m_color_by_face = f;
+            }
+
+        //! Get the color by face option
+        float getColorByFace() const
+            {
+            return m_color_by_face;
+            }
+
+
     protected:
         std::vector< vec3<float> > m_plane_origin;  //!< Origins of all the planes in the convex polyhedron
         std::vector< vec3<float> > m_plane_normal;  //!< Normals of all the planes in the convex polyhedron
+        std::vector< RGB<float> > m_plane_color;    //!< Colors assigned to the polyhedron planes
 
         std::shared_ptr< Array< vec3<float> > > m_position;   //!< Position of each polyhedron
         std::shared_ptr< Array< quat<float> > > m_orientation;//!< Orientation of each polyhedron
         std::shared_ptr< Array< RGB<float> > > m_color;       //!< Per-particle color
 
         float m_radius=0;                           //!< Precomputed radius
+        float m_color_by_face=0.0f;                 //!< Flag that mixes per particle color with per face color
 
         //! Embree bounding function
         static void bounds(void *ptr, size_t item, RTCBounds& bounds_o);
