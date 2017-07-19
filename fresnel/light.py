@@ -216,7 +216,7 @@ def cloudy():
     res.append(Light(direction=(0,1,0),
                color=(0.9,0.9,0.9),
                theta=math.pi/2));
-    res.append(Light(direction=(0,1,0),
+    res.append(Light(direction=(0,-1,0),
                color=(0.1,0.1,0.1),
                theta=math.pi/2));
     return res
