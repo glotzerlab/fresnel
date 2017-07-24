@@ -89,16 +89,40 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                 // initialize RNG
                 // seeding strategy: the key consists of the pixel number and a unique id for this usage
                 // different rngs used in different places in fresnel need different uids
+                r123::Philox4x32 rng;
+                r123::Philox4x32::ukey_type rng_uk_camera = {{pixel, 0x22ab5871}};
+                r123::Philox4x32::key_type rng_key_camera = rng_uk_camera;
+                r123::Philox4x32::ctr_type rng_counter_camera = {{0, 0, m_n_samples, m_seed}};
+
+                // generate 2 random numbers from 0 to 2
+                r123::Philox4x32::ctr_type rng_u = rng(rng_counter_camera, rng_key_camera);
+                float r1 = r123::u01<float>(rng_u[0]) * 2.0f;
+                float r2 = r123::u01<float>(rng_u[1]) * 2.0f;
+
+                // use important sampling to sample the tent filter (perhaps this should be moved to a class?)
+                float dx, dy;
+                if (r1 < 1.0f)
+                    dx = sqrtf(r1) - 1.0f;
+                else
+                    dx = 1.0f - sqrtf(2.0f - r1);
+
+                if (r2 < 1.0f)
+                    dy = sqrtf(r2) - 1.0f;
+                else
+                    dy = 1.0f - sqrtf(2.0f - r2);
+
+                float i_f = float(i) + 0.5f + dx * m_aa_w;
+                float j_f = float(j) + 0.5f + dy * m_aa_w;
+
                 // the counter entries consist of: a counter, the ray depth, the sample index, and a user seed
                 // the last 3 provide unique RNG streams for different rays and samples. The first allows
                 // multiple random numbers to be produced by incrementing the counter
-                r123::Philox4x32 rng;
-                r123::Philox4x32::ukey_type rng_uk={{pixel, 0x11ffabcd}};
-                r123::Philox4x32::key_type rng_key = rng_uk;
+                r123::Philox4x32::ukey_type rng_uk_rays = {{pixel, 0x11ffabcd}};
+                r123::Philox4x32::key_type rng_key_rays = rng_uk_rays;
 
                 // determine the viewing plane relative coordinates
-                float ys = -1.0f*(j/float(height-1)-0.5f);
-                float xs = i/float(height-1)-0.5f*float(width)/float(height);
+                float ys = -1.0f * (j_f / float(height - 1) -0.5f);
+                float xs = i_f / float(height-1) - 0.5f * float(width) / float(height);
 
                 vec3<float> origin = cam.origin(xs, ys);
                 vec3<float> direction = cam.direction(xs, ys);
@@ -164,8 +188,8 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
 
                                     // choose a random direction l to continue the path.
                                     // use gaussian RNGs and sphere point picking: http://mathworld.wolfram.com/SpherePointPicking.html
-                                    r123::Philox4x32::ctr_type rng_counter = {{0, depth, (m_n_samples-1)*m_light_samples + light_sample, m_seed}};
-                                    r123::Philox4x32::ctr_type rng_u = rng(rng_counter, rng_key);
+                                    r123::Philox4x32::ctr_type rng_counter_rays = {{0, depth, (m_n_samples-1)*m_light_samples + light_sample, m_seed}};
+                                    r123::Philox4x32::ctr_type rng_u = rng(rng_counter_rays, rng_key_rays);
 
                                     // // uniform sampling
                                     // r123::float2 rng_gauss1 = r123::boxmuller(rng_u[0], rng_u[1]);
