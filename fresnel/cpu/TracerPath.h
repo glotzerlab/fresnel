@@ -64,7 +64,6 @@ class TracerPath : public Tracer
         unsigned int m_n_samples;     //!< Number of samples taken since the last reset
         unsigned int m_seed;          //!< Random number seed
         unsigned int m_light_samples; //!< Number of light samples to take each render()
-        float m_aa_w = 0.707106781f;  //!< Width of the anti-aliasing filter (in pixels)
     };
 
 //! Export TracerDirect to python

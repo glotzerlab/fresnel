@@ -2,13 +2,11 @@
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include "TracerPath.h"
+#include "common/RayGen.h"
 #include <cmath>
 #include <stdexcept>
 
 #include "tbb/tbb.h"
-#include "Random123/philox.h"
-#include "boxmuller.hpp"
-#include "uniform.hpp"
 
 using namespace tbb;
 
@@ -84,35 +82,8 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
 
             for (unsigned int j=y0; j<y1; j++) for (unsigned int i=x0; i<x1; i++)
                 {
+                RayGen ray_gen(i, j, width, height, m_seed);
                 unsigned int pixel = j*width + i;
-
-                // initialize RNG
-                // seeding strategy: the key consists of the pixel number and a unique id for this usage
-                // different rngs used in different places in fresnel need different uids
-                r123::Philox4x32 rng;
-                r123::Philox4x32::ukey_type rng_uk_camera = {{pixel, 0x22ab5871}};
-                r123::Philox4x32::key_type rng_key_camera = rng_uk_camera;
-                r123::Philox4x32::ctr_type rng_counter_camera = {{0, 0, m_n_samples, m_seed}};
-
-                // generate 2 random numbers from 0 to 2
-                r123::Philox4x32::ctr_type rng_u = rng(rng_counter_camera, rng_key_camera);
-                float r1 = r123::u01<float>(rng_u[0]) * 2.0f;
-                float r2 = r123::u01<float>(rng_u[1]) * 2.0f;
-
-                // use important sampling to sample the tent filter (perhaps this should be moved to a class?)
-                float dx, dy;
-                if (r1 < 1.0f)
-                    dx = sqrtf(r1) - 1.0f;
-                else
-                    dx = 1.0f - sqrtf(2.0f - r1);
-
-                if (r2 < 1.0f)
-                    dy = sqrtf(r2) - 1.0f;
-                else
-                    dy = 1.0f - sqrtf(2.0f - r2);
-
-                float i_f = float(i) + 0.5f + dx * m_aa_w;
-                float j_f = float(j) + 0.5f + dy * m_aa_w;
 
                 // the counter entries consist of: a counter, the ray depth, the sample index, and a user seed
                 // the last 3 provide unique RNG streams for different rays and samples. The first allows
@@ -120,12 +91,11 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                 r123::Philox4x32::ukey_type rng_uk_rays = {{pixel, 0x11ffabcd}};
                 r123::Philox4x32::key_type rng_key_rays = rng_uk_rays;
 
-                // determine the viewing plane relative coordinates
-                float ys = -1.0f * (j_f / float(height - 1) -0.5f);
-                float xs = i_f / float(height-1) - 0.5f * float(width) / float(height);
+                // determine the viewing plane relative coordinates of this pixel
+                vec2<float> sample_loc = ray_gen.importanceSampleAA(m_n_samples);
 
-                vec3<float> origin = cam.origin(xs, ys);
-                vec3<float> direction = cam.direction(xs, ys);
+                vec3<float> origin = cam.origin(sample_loc.x, sample_loc.y);
+                vec3<float> direction = cam.direction(sample_loc.x, sample_loc.y);
 
                 // determine the output pixel color
                 RGB<float> c(0,0,0);
@@ -188,6 +158,7 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
 
                                     // choose a random direction l to continue the path.
                                     // use gaussian RNGs and sphere point picking: http://mathworld.wolfram.com/SpherePointPicking.html
+                                    r123::Philox4x32 rng;
                                     r123::Philox4x32::ctr_type rng_counter_rays = {{0, depth, (m_n_samples-1)*m_light_samples + light_sample, m_seed}};
                                     r123::Philox4x32::ctr_type rng_u = rng(rng_counter_rays, rng_key_rays);
 
