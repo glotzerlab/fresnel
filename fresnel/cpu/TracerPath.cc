@@ -94,8 +94,8 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                 // determine the viewing plane relative coordinates of this pixel
                 vec2<float> sample_loc = ray_gen.importanceSampleAA(m_n_samples);
 
-                vec3<float> origin = cam.origin(sample_loc.x, sample_loc.y);
-                vec3<float> direction = cam.direction(sample_loc.x, sample_loc.y);
+                vec3<float> origin = cam.origin(sample_loc);
+                vec3<float> direction = cam.direction(sample_loc);
 
                 // determine the output pixel color
                 RGB<float> c(0,0,0);

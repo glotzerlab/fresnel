@@ -66,9 +66,10 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
                 // determine the viewing plane relative coordinates
                 float ys = -1.0f*(j/float(height-1)-0.5f);
                 float xs = i/float(height-1)-0.5f*float(width)/float(height);
+                vec2<float> sample_loc(xs, ys);
 
                 // trace a ray into the scene
-                RTCRay ray(cam.origin(xs, ys), cam.direction(xs, ys));
+                RTCRay ray(cam.origin(sample_loc), cam.direction(sample_loc));
                 rtcIntersect(scene->getRTCScene(), ray);
 
                 // determine the output pixel color

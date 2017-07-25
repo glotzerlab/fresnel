@@ -73,9 +73,10 @@ RT_PROGRAM void direct_ray_gen()
     optix::size_t2 screen = linear_output_buffer.size();
     float ys = -1.0f*(launch_index.y/float(screen.y-1)-0.5f);
     float xs = launch_index.x/float(screen.y-1)-0.5f*float(screen.x)/float(screen.y);
+    vec2<float> sample_loc(xs, ys);
 
     // trace a ray into the scene
-    optix::Ray ray(cam.origin(xs, ys), cam.direction(xs, ys), 0, scene_epsilon);
+    optix::Ray ray(cam.origin(sample_loc), cam.direction(sample_loc), 0, scene_epsilon);
 
     PRDradiance prd;
     prd.hit = 0;
