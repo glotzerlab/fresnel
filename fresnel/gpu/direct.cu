@@ -82,11 +82,11 @@ RT_PROGRAM void direct_ray_gen()
     RGBA<float> output_avg(0,0,0,0);
     float aa_factor_total = 0.0f;
 
-    for (unsigned int si=0; si < m_aa_n; si++) for (unsigned int sj=0; sj < m_aa_n; sj++)
+    for (unsigned int si=0; si < aa_n; si++) for (unsigned int sj=0; sj < aa_n; sj++)
         {
         // determine the sample location
         float aa_factor = 1.0f;
-        vec2<float> sample_loc = ray_gen.jitterSampleAA(aa_factor, si, sj, m_aa_n);
+        vec2<float> sample_loc = ray_gen.jitterSampleAA(aa_factor, si, sj, aa_n);
 
         // trace a ray into the scene
         optix::Ray ray(cam.origin(sample_loc), cam.direction(sample_loc), 0, scene_epsilon);
