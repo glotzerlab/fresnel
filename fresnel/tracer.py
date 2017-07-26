@@ -130,8 +130,8 @@ class Tracer(object):
         self._tracer.setSeed(value);
 
 
-class Direct(Tracer):
-    R""" Direct ray tracer.
+class Preview(Tracer):
+    R""" Preview ray tracer.
 
     Args:
 
@@ -144,17 +144,29 @@ class Direct(Tracer):
 
         aa_level (int): Amount of anti-aliasing to perform
 
-    The Direct ray tracer a basic ray tracer. It traces a single ray per pixel. The color of the
-    pixel depends on the geometry the ray hits, its material, and the lights in the :py:class:`Scene <fresnel.Scene>`.
-    Because of its simplicity, the Direct tracer is extremely fast.
+    .. rubric:: Overview
 
-    :py:class:`Direct` supports:
+    The :py:class:`Preview` tracer produces a preview of the scene quickly. It approximates the effect of light
+    on materials. The output of the :py:class:`Preview` tracer will look very similar to that from the :py:class:`Path`
+    tracer, but will miss soft shadows, reflection, transmittance, and other lighting effects.
 
-    * Area lights with relatively small theta
-    * Materials
+    TODO: show examples
+
+    .. rubric:: Anti-aliasing
+
+    Set :py:attr:`aa_level` to control the amount of anti-aliasing performed. The default value of 0 performs
+    no anti-aliasing to enable the fastest possible preview renders. A value of 1 samples 2x2 subpixels, a value of 2
+    samples 4x4 subpixels, a value of 3 samples 8x8 subpixels, etc ... Samples are jittered with random numbers.
+    Different :py:attr:`seed <Tracer.seed>` values will result in different output images.
+
+    TODO: show examples
+
+    .. tip::
+
+        Use :py:attr:`aa_level` = 3 when using the :py:class:`Preview` tracer to render production quality output.
     """
 
-    def __init__(self, device, w, h, aa_level=3):
+    def __init__(self, device, w, h, aa_level=0):
         self.device = device;
         self._tracer = device.module.TracerDirect(device._device, w, h);
 

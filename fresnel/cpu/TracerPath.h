@@ -22,6 +22,8 @@ namespace fresnel { namespace cpu {
     sampling run. The Tracer does not know when the camera angle, materials, or other properties of the scene
     have changed, so the caller must call reset() whenever needed to start sampling a new view or changed
     scene (unless motion blur or other multiple exposure techniques are the desired output).
+
+    TODO: Automatically reset the sample count when resizing the output buffer
 */
 class TracerPath : public Tracer
     {
