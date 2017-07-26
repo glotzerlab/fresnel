@@ -272,7 +272,7 @@ class Scene(object):
             cam = camera.fit(self);
             self._scene.setCamera(cam._camera);
 
-def render(scene, w=600, h=370, samples=0):
+def render(scene, w=600, h=370, samples=0, aa_level=0):
     R""" Render a scene.
 
     Args:
@@ -281,6 +281,7 @@ def render(scene, w=600, h=370, samples=0):
         w (int): Output image width.
         h (int): Output image height.
         samples (int): Number of times to sample the scene.
+        aa_level (int): Amount of anti-aliasing to perform
 
     Set samples to 0 to execute a very fast render with only direct lighting.
 
@@ -289,7 +290,7 @@ def render(scene, w=600, h=370, samples=0):
     """
 
     if samples == 0:
-        t = tracer.Direct(scene.device, w=w, h=h);
+        t = tracer.Direct(scene.device, w=w, h=h, aa_level=aa_level);
         return t.render(scene);
     else:
         t = tracer.Path(scene.device, w=w, h=h);

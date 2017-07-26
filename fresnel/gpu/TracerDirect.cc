@@ -82,6 +82,8 @@ void export_TracerDirect(pybind11::module& m)
     {
     pybind11::class_<TracerDirect, std::shared_ptr<TracerDirect> >(m, "TracerDirect", pybind11::base<Tracer>())
         .def(pybind11::init<std::shared_ptr<Device>, unsigned int, unsigned int>())
+        .def("setAntialiasingN", &TracerDirect::setAntialiasingN)
+        .def("getAntialiasingN", &TracerDirect::getAntialiasingN)
         ;
     }
 

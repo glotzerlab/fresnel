@@ -27,6 +27,18 @@ class TracerDirect : public Tracer
         //! Render a scene
         virtual void render(std::shared_ptr<Scene> scene);
 
+        //! Set the number of AA samples in each direction
+        void setAntialiasingN(unsigned int n)
+            {
+            m_aa_n = n;
+            }
+
+        //! Get the number of AA samples in each direction
+        unsigned int getAntialiasingN() const
+            {
+            return m_aa_n;
+            }
+
     protected:
         //! Number of AA samples in each direction
         unsigned int m_aa_n = 8;

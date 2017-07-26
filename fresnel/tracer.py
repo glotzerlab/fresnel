@@ -6,6 +6,7 @@ Ray tracers.
 """
 
 import numpy
+import math
 from . import camera
 from . import util
 from . import _common
@@ -137,6 +138,11 @@ class Direct(Tracer):
         device (:py:class:`Device <fresnel.Device>`): Device to use for rendering.
         w (int): Output image width.
         h (int): Output image height.
+        aa_level (int): Amount of anti-aliasing to perform
+
+    Attributes:
+
+        aa_level (int): Amount of anti-aliasing to perform
 
     The Direct ray tracer a basic ray tracer. It traces a single ray per pixel. The color of the
     pixel depends on the geometry the ray hits, its material, and the lights in the :py:class:`Scene <fresnel.Scene>`.
@@ -144,13 +150,25 @@ class Direct(Tracer):
 
     :py:class:`Direct` supports:
 
-    * Directional lights
+    * Area lights with relatively small theta
     * Materials
     """
 
-    def __init__(self, device, w, h):
+    def __init__(self, device, w, h, aa_level=3):
         self.device = device;
         self._tracer = device.module.TracerDirect(device._device, w, h);
+
+        self.aa_level = aa_level;
+
+    @property
+    def aa_level(self):
+        aa_n = self._tracer.getAntialiasingN();
+        return int(math.log2(aa_n));
+
+    @aa_level.setter
+    def aa_level(self, value):
+        aa_n = 2**(int(value))
+        self._tracer.setAntialiasingN(aa_n);
 
 class Path(Tracer):
     R""" Path tracer.
