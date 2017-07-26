@@ -26,6 +26,10 @@ class TracerDirect : public Tracer
 
         //! Render a scene
         virtual void render(std::shared_ptr<Scene> scene);
+
+    protected:
+        //! Number of AA samples in each direction
+        unsigned int m_aa_n = 8;
     };
 
 //! Export TracerDirect to python

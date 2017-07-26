@@ -69,6 +69,10 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
     context["highlight_warning_color"]->setUserData(sizeof(m_highlight_warning_color), &m_highlight_warning_color);
     context["highlight_warning"]->setUint(m_highlight_warning);
 
+    // anti-aliasing settings
+    context["aa_n"]->setUint(m_aa_n);
+    context["seed"]->setUint(m_seed);
+
     context->launch(m_ray_gen_entry, m_w, m_h);
     }
 

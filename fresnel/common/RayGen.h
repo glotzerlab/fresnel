@@ -90,8 +90,54 @@ class RayGen
         float j_f = float(m_j) + 0.5f + dy * m_aa_w;
 
         // determine the viewing plane relative coordinates
-        float ys = -1.0f * (j_f / float(m_height) -0.5f);
+        float ys = -1.0f * (j_f / float(m_height) - 0.5f);
         float xs = i_f / float(m_height) - 0.5f * float(m_width) / float(m_height);
+        return vec2<float>(xs, ys);
+        }
+
+    //! Jitter sample pixel locations for anti-aliasing
+    /*! \param factor [output] Weight factor for this sample
+        \param si Sample index in the i direction
+        \param sj Sample index in the j direction
+        \param n  Number of samples to take in each direction
+
+        Given the sample index, importance sample the tent filter to produce anti-aliased output.
+    */
+    DEVICE vec2<float> jitterSampleAA(float& factor, unsigned int si, unsigned int sj, unsigned int n) const
+        {
+        vec2<float> p(float(m_i) + 0.5f, float(m_j) + 0.5f);
+        factor = 1.0f;
+
+        // base case: when s_w == 1, always sample the center of the pixel
+        if (n > 1)
+            {
+            // generate 2 random numbers from 0 to 1
+            r123::Philox4x32 rng;
+            r123::Philox4x32::ctr_type rng_counter = {{0, si, sj, rng_val_aa}};
+            r123::Philox4x32::ctr_type rng_u = rng(rng_counter, m_rng_key);
+            vec2<float> xi(r123::u01<float>(rng_u[2]), r123::u01<float>(rng_u[3]));
+
+            // compute the width of each sub pixel (note, m_aa_w is actually twice the "width" in the traditional sense)
+            float s_w = 2.0f * m_aa_w / (float)n;
+
+            // place the sample randomly in the selected sub pixel
+            vec2<float> d = vec2<float>(-1.0f, -1.0f) * m_aa_w +
+                            vec2<float>(si, sj) * s_w +
+                            xi * s_w;
+
+            // compute the weight factor
+            float aa_w_inv = 1.0f / m_aa_w;
+            float aa_w_inv2 = aa_w_inv*aa_w_inv;
+            factor = (aa_w_inv - fabsf(d.x) * aa_w_inv2) * (aa_w_inv - fabsf(d.y) * aa_w_inv2) * s_w * s_w;
+
+            // adjust the sample location by the displacement
+            p += d;
+            }
+
+
+        // determine the viewing plane relative coordinates
+        float ys = -1.0f * (p.y / float(m_height) - 0.5f);
+        float xs = p.x / float(m_height) - 0.5f * float(m_width) / float(m_height);
         return vec2<float>(xs, ys);
         }
 
