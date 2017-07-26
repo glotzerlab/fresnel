@@ -15,7 +15,7 @@ namespace fresnel { namespace cpu {
 /*! \param device Device to attach the raytracer to
 */
 TracerPath::TracerPath(std::shared_ptr<Device> device, unsigned int w, unsigned int h, unsigned int light_samples)
-    : Tracer(device, w, h), m_seed(0), m_light_samples(light_samples)
+    : Tracer(device, w, h), m_light_samples(light_samples)
     {
     reset();
     }
@@ -82,14 +82,8 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
 
             for (unsigned int j=y0; j<y1; j++) for (unsigned int i=x0; i<x1; i++)
                 {
+                // create the ray generator for this pixel
                 RayGen ray_gen(i, j, width, height, m_seed);
-                unsigned int pixel = j*width + i;
-
-                // the counter entries consist of: a counter, the ray depth, the sample index, and a user seed
-                // the last 3 provide unique RNG streams for different rays and samples. The first allows
-                // multiple random numbers to be produced by incrementing the counter
-                r123::Philox4x32::ukey_type rng_uk_rays = {{pixel, 0x11ffabcd}};
-                r123::Philox4x32::key_type rng_key_rays = rng_uk_rays;
 
                 // determine the viewing plane relative coordinates of this pixel
                 vec2<float> sample_loc = ray_gen.importanceSampleAA(m_n_samples);
@@ -155,42 +149,20 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                                 else
                                     {
                                     // when the ray hits an object with a normal material, update the attenuation using the BRDF
-
                                     // choose a random direction l to continue the path.
-                                    // use gaussian RNGs and sphere point picking: http://mathworld.wolfram.com/SpherePointPicking.html
-                                    r123::Philox4x32 rng;
-                                    r123::Philox4x32::ctr_type rng_counter_rays = {{0, depth, (m_n_samples-1)*m_light_samples + light_sample, m_seed}};
-                                    r123::Philox4x32::ctr_type rng_u = rng(rng_counter_rays, rng_key_rays);
+                                    float factor = 1.0;
+                                    bool transmit = false;
 
-                                    // // uniform sampling
-                                    // r123::float2 rng_gauss1 = r123::boxmuller(rng_u[0], rng_u[1]);
-                                    // r123::float2 rng_gauss2 = r123::boxmuller(rng_u[2], rng_u[3]);
-                                    // vec3<float> l(rng_gauss1.x, rng_gauss1.y, rng_gauss2.x);
-
-                                    // l = l / std::sqrt(dot(l, l));
-
-                                    // float ndotl = dot(n, l);
-                                    // // l is generated on the whole sphere, if it points down into the surface, make it point up
-                                    // if (ndotl < 0.0f)
-                                    //     {
-                                    //     l = -l;
-                                    //     ndotl = -ndotl;
-                                    //     }
-                                    // float pdf = 1.0f / (2.0f * float(M_PI));
-                                    // float factor = 1.0f / pdf;
-
-                                    // multiple importance sampling
-                                    vec2<float> xi(r123::u01<float>(rng_u[0]), r123::u01<float>(rng_u[1]));
-                                    float choice_mis = r123::u01<float>(rng_u[2]);
-                                    float choice_trans = r123::u01<float>(rng_u[3]);
-
-                                    float factor = 1.0f;
-
-                                    vec3<float> l;
-                                    if (choice_trans <= m.spec_trans)
+                                    vec3<float> l = ray_gen.MISReflectionTransmission(factor,
+                                                                                      transmit,
+                                                                                      v,
+                                                                                      n,
+                                                                                      depth,
+                                                                                      (m_n_samples-1)*m_light_samples + light_sample,
+                                                                                      m);
+                                    if (transmit)
                                         {
-                                        // hard code perfect transmission
-                                        l = ray.dir;
+                                        // perfect transmission
                                         RGB<float> trans_color = m.getColor(ray.shading_color);
                                         trans_color.r = sqrtf(trans_color.r);
                                         trans_color.g = sqrtf(trans_color.g);
@@ -199,26 +171,6 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                                         }
                                     else
                                         {
-                                        // handle reflection with multiple importance sampling
-                                        if (choice_mis <= 0.5f)
-                                            {
-                                            // diffuse sampling
-                                            l = m.importanceSampleDiffuse(xi, v, n);
-                                            float pdf_diffuse = m.pdfDiffuse(l, v, n);
-                                            float pdf_ggx = m.pdfGGX(l, v, n);
-                                            float w_diffuse = pdf_diffuse / (pdf_diffuse + pdf_ggx);
-                                            factor *= w_diffuse / (0.5f * pdf_diffuse);
-                                            }
-                                        else
-                                            {
-                                            // specular reflection
-                                            l = m.importanceSampleGGX(xi, v, n);
-                                            float pdf_diffuse = m.pdfDiffuse(l, v, n);
-                                            float pdf_ggx = m.pdfGGX(l, v, n);
-                                            float w_ggx = pdf_ggx / (pdf_diffuse + pdf_ggx);
-                                            factor *= w_ggx / (0.5f * pdf_ggx);
-                                            }
-
                                         float ndotl = dot(n, l);
 
                                         // When n dot v is less than 0, this is coming through the back of the surface
@@ -280,6 +232,7 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                 // running average using Welford's method. Variance is not particularly useful to users,
                 // so don't compute that.
                 // (http://jonisalonen.com/2013/deriving-welfords-method-for-computing-variance/)
+                unsigned int pixel = j*width + i;
                 RGBA<float> old_mean = linear_output[pixel];
                 linear_output[pixel] = old_mean + (output_sample-old_mean)/float(m_n_samples);
 
@@ -306,8 +259,6 @@ void export_TracerPath(pybind11::module& m)
         .def(pybind11::init<std::shared_ptr<Device>, unsigned int, unsigned int, unsigned int>())
         .def("getNumSamples", &TracerPath::getNumSamples)
         .def("reset", &TracerPath::reset)
-        .def("getSeed", &TracerPath::getSeed)
-        .def("setSeed", &TracerPath::setSeed)
         .def("setLightSamples", &TracerPath::setLightSamples)
         ;
     }

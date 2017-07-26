@@ -43,18 +43,6 @@ class TracerPath : public Tracer
             return m_n_samples;
             }
 
-        //! Set the random number seed
-        void setSeed(unsigned int seed)
-            {
-            m_seed=seed;
-            }
-
-        //! Get the random number seed
-        unsigned int getSeed() const
-            {
-            return m_seed;
-            }
-
         //! Set the number of light samples
         void setLightSamples(unsigned int light_samples)
             {
@@ -62,7 +50,6 @@ class TracerPath : public Tracer
             }
     protected:
         unsigned int m_n_samples;     //!< Number of samples taken since the last reset
-        unsigned int m_seed;          //!< Random number seed
         unsigned int m_light_samples; //!< Number of light samples to take each render()
     };
 

@@ -26,6 +26,8 @@ class Tracer(object):
 
         output (:py:class:`fresnel.util.image_array`): Reference to the current output buffer (modified by :py:meth:`render`)
         linear_output (:py:class:`fresnel.util.array`): Reference to the current output buffer in linear color space (modified by :py:meth:`render`)
+        seed (int): Random number seed.
+
     """
     def __init__(self):
         raise RuntimeError("Use a specific tracer class");
@@ -118,6 +120,15 @@ class Tracer(object):
     def linear_output(self):
         return util.array(self._tracer.getLinearOutputBuffer(), geom=None)
 
+    @property
+    def seed(self):
+        return self._tracer.getSeed()
+
+    @seed.setter
+    def seed(self, value):
+        self._tracer.setSeed(value);
+
+
 class Direct(Tracer):
     R""" Direct ray tracer.
 
@@ -149,10 +160,6 @@ class Path(Tracer):
         device (:py:class:`Device <fresnel.Device>`): Device to use for rendering.
         w (int): Output image width.
         h (int): Output image height.
-
-    Attributes:
-
-        seed (int): Random number seed.
 
     The path tracer applies advanced lighting effects, including soft shadows, reflections, etc....
     It operates by Monte Carlo sampling. Each call to :py:meth:`render() <Tracer.render()>` performs one sample per pixel.
@@ -202,11 +209,3 @@ class Path(Tracer):
         self._tracer.setLightSamples(1);
 
         return out;
-
-    @property
-    def seed(self):
-        return self._tracer.getSeed()
-
-    @seed.setter
-    def seed(self, value):
-        self._tracer.setSeed(value);
