@@ -2,6 +2,28 @@
 
 [TOC]
 
+## v0.5.0
+
+Released 2017/07/27
+
+* Add new lighting setups
+    * `lightbox`
+    * `cloudy`
+    * `ring`
+* Adjust brightness of lights in existing setups
+* Remove `clearcoat` material parameter
+* Add `spec_trans` material parameter
+* Add `Path` tracer to render scenes with indirect lighting, reflections, and transparency (*CPU-only*)
+* Add `ConvexPolyhedron` geometry (*CPU-only*, *beta API, subject to change*)
+* Add `fresnel.preview` function to easily generate `Preview` traced renders with one line
+* Add `fresnel.pathtrace` function to easily generate `Path` traced renders with one line
+* Add anti-aliasing (always on for the `Path` tracer, `set aa_level` > 0 to enable for `Preview`)
+* API breaking changes:
+    * `render` no longer exists. Use `preview` or `pathtrace`.
+    * `tracer.Direct` is now `tracer.Preview`.
+
+CPU-only features will be implemented on the GPU in a future release.
+
 ## v0.4.0
 
 Released 2017/04/03
