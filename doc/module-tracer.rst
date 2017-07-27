@@ -6,8 +6,8 @@ fresnel.tracer
 .. autosummary::
     :nosignatures:
 
-    fresnel.tracer.Direct
     fresnel.tracer.Path
+    fresnel.tracer.Preview
     fresnel.tracer.Tracer
 
 .. rubric:: Details

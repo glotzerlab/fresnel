@@ -69,6 +69,10 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
     context["highlight_warning_color"]->setUserData(sizeof(m_highlight_warning_color), &m_highlight_warning_color);
     context["highlight_warning"]->setUint(m_highlight_warning);
 
+    // anti-aliasing settings
+    context["aa_n"]->setUint(m_aa_n);
+    context["seed"]->setUint(m_seed);
+
     context->launch(m_ray_gen_entry, m_w, m_h);
     }
 
@@ -78,6 +82,8 @@ void export_TracerDirect(pybind11::module& m)
     {
     pybind11::class_<TracerDirect, std::shared_ptr<TracerDirect> >(m, "TracerDirect", pybind11::base<Tracer>())
         .def(pybind11::init<std::shared_ptr<Device>, unsigned int, unsigned int>())
+        .def("setAntialiasingN", &TracerDirect::setAntialiasingN)
+        .def("getAntialiasingN", &TracerDirect::getAntialiasingN)
         ;
     }
 

@@ -272,26 +272,38 @@ class Scene(object):
             cam = camera.fit(self);
             self._scene.setCamera(cam._camera);
 
-def render(scene, w=600, h=370, samples=0):
-    R""" Render a scene.
+def preview(scene, w=600, h=370, aa_level=0):
+    R""" Preview a scene.
 
     Args:
 
         scene (:py:class:`Scene`): Scene to render.
         w (int): Output image width.
         h (int): Output image height.
-        samples (int): Number of times to sample the scene.
+        aa_level (int): Amount of anti-aliasing to perform
 
-    Set samples to 0 to execute a very fast render with only direct lighting.
-
-    Set samples greater than 0 to execute a slower render with soft lighting, reflections, and other effects.
-    The resulting image will have noise, increase the sample count to make the image smoother.
+    :py:func:`preview` is a shortcut to rendering output with the :py:class:`Preview <tracer.Preview>` tracer.
+    See the :py:class:`Preview <tracer.Preview>` tracer for a complete description.
     """
 
-    if samples == 0:
-        t = tracer.Direct(scene.device, w=w, h=h);
-        return t.render(scene);
-    else:
-        t = tracer.Path(scene.device, w=w, h=h);
-        t.sample(scene, samples=1, light_samples=samples)
-        return t.output;
+    t = tracer.Preview(scene.device, w=w, h=h, aa_level=aa_level);
+    return t.render(scene);
+
+def pathtrace(scene, w=600, h=370, samples=64, light_samples=1):
+    R""" Path trace a scene.
+
+    Args:
+
+        scene (:py:class:`Scene`): Scene to render.
+        w (int): Output image width.
+        h (int): Output image height.
+        samples (int): Number of times to sample the pixels of the scene.
+        light_samples (int): Number of light samples to take for each pixel sample.
+
+    :py:func:`pathtrace` is a shortcut to rendering output with the :py:class:`Path <tracer.Path>` tracer.
+    See the :py:class:`Path <tracer.Path>` tracer for a complete description.
+    """
+
+    t = tracer.Path(scene.device, w=w, h=h);
+    t.sample(scene, samples=samples, light_samples=light_samples)
+    return t.output;

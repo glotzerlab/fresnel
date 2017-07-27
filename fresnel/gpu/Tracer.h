@@ -62,6 +62,18 @@ class Tracer
             m_highlight_warning = false;
             }
 
+        //! Set the random number seed
+        void setSeed(unsigned int seed)
+            {
+            m_seed=seed;
+            }
+
+        //! Get the random number seed
+        unsigned int getSeed() const
+            {
+            return m_seed;
+            }
+
     protected:
         std::shared_ptr<Device> m_device;  //!< The device the Scene is attached to
         unsigned int m_w;                  //!< Width of the output buffer
@@ -78,6 +90,7 @@ class Tracer
 
         bool m_highlight_warning;                                   //!< Set to true to enable highlight warnings in sRGB output
         RGB<float> m_highlight_warning_color;                       //!< The highlight warning color
+        unsigned int m_seed=0;                                      //!< Random number seed
     };
 
 //! Export Tracer to python

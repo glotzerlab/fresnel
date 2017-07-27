@@ -69,6 +69,8 @@ void export_Tracer(pybind11::module& m)
         .def("getLinearOutputBuffer", &Tracer::getLinearOutputBuffer)
         .def("enableHighlightWarning", &Tracer::enableHighlightWarning)
         .def("disableHighlightWarning", &Tracer::disableHighlightWarning)
+        .def("getSeed", &Tracer::getSeed)
+        .def("setSeed", &Tracer::setSeed)
         ;
     }
 

@@ -2,6 +2,7 @@
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include "TracerDirect.h"
+#include "common/RayGen.h"
 #include <cmath>
 #include <stdexcept>
 
@@ -63,98 +64,113 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
 
             for (unsigned int j=y0; j<y1; j++) for (unsigned int i=x0; i<x1; i++)
                 {
-                // determine the viewing plane relative coordinates
-                float ys = -1.0f*(j/float(height-1)-0.5f);
-                float xs = i/float(height-1)-0.5f*float(width)/float(height);
+                // create the ray generator for this pixel
+                RayGen ray_gen(i, j, width, height, m_seed);
 
-                // trace a ray into the scene
-                RTCRay ray(cam.origin(xs, ys), cam.direction(xs, ys));
-                rtcIntersect(scene->getRTCScene(), ray);
+                // loop over AA samples
+                RGBA<float> output_avg(0,0,0,0);
+                float aa_factor_total = 0.0f;
 
-                // determine the output pixel color
-                RGB<float> c = background_color;
-                float a = background_alpha;
-
-                if (ray.hit())
+                for (unsigned int si=0; si < m_aa_n; si++) for (unsigned int sj=0; sj < m_aa_n; sj++)
                     {
-                    vec3<float> n = ray.Ng / std::sqrt(dot(ray.Ng, ray.Ng));
-                    vec3<float> v = -ray.dir / std::sqrt(dot(ray.dir, ray.dir));
-                    Material m;
+                    // determine the sample location
+                    float aa_factor = 1.0f;
+                    vec2<float> sample_loc = ray_gen.jitterSampleAA(aa_factor, si, sj, m_aa_n);
 
-                    // apply the material color or outline color depending on the distance to the edge
-                    if (ray.d > scene->getOutlineWidth(ray.geomID))
-                        m = scene->getMaterial(ray.geomID);
-                    else
-                        m = scene->getOutlineMaterial(ray.geomID);
+                    // trace a ray into the scene
+                    RTCRay ray(cam.origin(sample_loc), cam.direction(sample_loc));
+                    rtcIntersect(scene->getRTCScene(), ray);
 
-                    if (m.isSolid())
+                    // determine the output pixel color
+                    RGB<float> c = background_color;
+                    float a = background_alpha;
+
+                    if (ray.hit())
                         {
-                        c = m.getColor(ray.shading_color);
-                        }
-                    else
-                        {
-                        c = RGB<float>(0,0,0);
-                        for (unsigned int light_id = 0; light_id < lights.N; light_id++)
+                        vec3<float> n = ray.Ng / std::sqrt(dot(ray.Ng, ray.Ng));
+                        vec3<float> v = -ray.dir / std::sqrt(dot(ray.dir, ray.dir));
+                        Material m;
+
+                        // apply the material color or outline color depending on the distance to the edge
+                        if (ray.d > scene->getOutlineWidth(ray.geomID))
+                            m = scene->getMaterial(ray.geomID);
+                        else
+                            m = scene->getOutlineMaterial(ray.geomID);
+
+                        if (m.isSolid())
                             {
-                            vec3<float> l = lights.direction[light_id];
-
-                            // find the representative point, a vector pointing to the a point on the area light
-                            // with a smallest angle to the reflection vector
-                            vec3<float> r = -v + (2.0f * n * dot(n,v));
-
-                            // find the closest point on the area light
-                            float half_angle = lights.theta[light_id];
-                            float cos_half_angle = cosf(half_angle);
-                            float ldotr = dot(l,r);
-                            if (ldotr < cos_half_angle)
-                                {
-                                vec3<float> a = cross(l,r);
-                                a = a / sqrtf(dot(a,a));
-
-                                // miss the light, need to rotate r by the difference in the angles about l cross r
-                                quat<float> q = quat<float>::fromAxisAngle(a, -acosf(ldotr) + half_angle);
-                                r = rotate(q, r);
-                                }
-                            else
-                                {
-                                // hit the light, no modification necessary to r
-                                }
-
-                            // only apply brdf when the light faces the surface
-                            RGB<float> f_d;
-                            float ndotl = dot(n, l);
-                            if (ndotl >= 0.0f)
-                                f_d = m.brdf_diffuse(l, v, n, ray.shading_color) * ndotl;
-                            else
-                                f_d = RGB<float>(0.0f,0.0f,0.0f);
-
-                            RGB<float> f_s;
-                            if (dot(n, r) >= 0.0f)
-                                {
-                                f_s = m.brdf_specular(r, v, n, ray.shading_color, half_angle) * dot(n, r);
-                                }
-                            else
-                                f_s = RGB<float>(0.0f,0.0f,0.0f);
-
-                            c += (f_d + f_s) * float(M_PI) * lights.color[light_id];
+                            c = m.getColor(ray.shading_color);
                             }
+                        else
+                            {
+                            c = RGB<float>(0,0,0);
+                            for (unsigned int light_id = 0; light_id < lights.N; light_id++)
+                                {
+                                vec3<float> l = lights.direction[light_id];
+
+                                // find the representative point, a vector pointing to the a point on the area light
+                                // with a smallest angle to the reflection vector
+                                vec3<float> r = -v + (2.0f * n * dot(n,v));
+
+                                // find the closest point on the area light
+                                float half_angle = lights.theta[light_id];
+                                float cos_half_angle = cosf(half_angle);
+                                float ldotr = dot(l,r);
+                                if (ldotr < cos_half_angle)
+                                    {
+                                    vec3<float> a = cross(l,r);
+                                    a = a / sqrtf(dot(a,a));
+
+                                    // miss the light, need to rotate r by the difference in the angles about l cross r
+                                    quat<float> q = quat<float>::fromAxisAngle(a, -acosf(ldotr) + half_angle);
+                                    r = rotate(q, r);
+                                    }
+                                else
+                                    {
+                                    // hit the light, no modification necessary to r
+                                    }
+
+                                // only apply brdf when the light faces the surface
+                                RGB<float> f_d;
+                                float ndotl = dot(n, l);
+                                if (ndotl >= 0.0f)
+                                    f_d = m.brdf_diffuse(l, v, n, ray.shading_color) * ndotl;
+                                else
+                                    f_d = RGB<float>(0.0f,0.0f,0.0f);
+
+                                RGB<float> f_s;
+                                if (dot(n, r) >= 0.0f)
+                                    {
+                                    f_s = m.brdf_specular(r, v, n, ray.shading_color, half_angle) * dot(n, r);
+                                    }
+                                else
+                                    f_s = RGB<float>(0.0f,0.0f,0.0f);
+
+                                c += (f_d + f_s) * float(M_PI) * lights.color[light_id];
+                                }
+                            }
+
+                        a = 1.0;
                         }
 
-                    a = 1.0;
-                    }
+                    // accumulate filtered average
+                    output_avg += RGBA<float>(c, a) * aa_factor;
+                    aa_factor_total += aa_factor;
+                    } // end loop over AA samples
 
                 // write the output pixel
                 unsigned int pixel = j*width + i;
-                RGBA<float> output_pixel(c, a);
+                RGBA<float> output_pixel = output_avg / aa_factor_total;
+
                 linear_output[pixel] = output_pixel;
-                if (!m_highlight_warning || (c.r <= 1.0f && c.g <= 1.0f && c.b <= 1.0f))
+                if (!m_highlight_warning || (output_pixel.r <= 1.0f && output_pixel.g <= 1.0f && output_pixel.b <= 1.0f))
                     srgb_output[pixel] = sRGB(output_pixel);
                 else
-                    srgb_output[pixel] = sRGB(RGBA<float>(m_highlight_warning_color, a));
-                }
-            }
-        });
-    });
+                    srgb_output[pixel] = sRGB(RGBA<float>(m_highlight_warning_color, output_pixel.a));
+                } // end loop over pixels in the tile
+            } // loop over tiles in this region
+        }); // end parallel loop over tiles
+    }); // end parallel arena
 
     m_linear_out->unmap();
     m_srgb_out->unmap();
@@ -166,6 +182,8 @@ void export_TracerDirect(pybind11::module& m)
     {
     pybind11::class_<TracerDirect, std::shared_ptr<TracerDirect> >(m, "TracerDirect", pybind11::base<Tracer>())
         .def(pybind11::init<std::shared_ptr<Device>, unsigned int, unsigned int>())
+        .def("setAntialiasingN", &TracerDirect::setAntialiasingN)
+        .def("getAntialiasingN", &TracerDirect::getAntialiasingN)
         ;
     }
 
