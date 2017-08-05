@@ -1,0 +1,59 @@
+version: 2
+jobs:
+  gcc-python2:
+    docker:
+      - image: joaander/ci:20170804-2
+    environment:
+      CC: /usr/bin/gcc
+      CXX: /usr/bin/g++
+      PYTHONPATH: /root/project/build
+    steps:
+      - checkout:
+          path: code
+      - run: cd code && git submodule update --init
+      - run: mkdir build && mkdir test-results
+      - run: cd build && cmake ../code -DPYTHON_EXECUTABLE=`which python2` -DENABLE_EMBREE=ON -DENABLE_TBB=ON -DENABLE_CUDA=OFF -DENABLE_OPTIX=OFF -GNinja
+      - run: cd build && ninja
+      - run: cd code/test && py.test --junit-xml=/root/project/test-results/test.xml
+      - store_artifacts:
+          path: test-results
+          destination: gcc-python2
+      - store_test_results:
+          path: test-results
+
+  sphinx-docs:
+    docker:
+      - image: joaander/ci:20170804-2
+    steps:
+      - checkout:
+          path: code
+      - run: cd code/doc && sphinx-build -b html -d _build/doctrees -W -n . build/html
+
+  clang-python3:
+    docker:
+      - image: joaander/ci:20170804-2
+    environment:
+      CC: /usr/bin/clang
+      CXX: /usr/bin/clang++
+      PYTHONPATH: /root/project/build
+    steps:
+      - checkout:
+          path: code
+      - run: cd code && git submodule update --init
+      - run: mkdir build && mkdir test-results
+      - run: cd build && cmake ../code -DPYTHON_EXECUTABLE=`which python3` -DENABLE_EMBREE=ON -DENABLE_TBB=ON -DENABLE_CUDA=OFF -DENABLE_OPTIX=OFF -GNinja
+      - run: cd build && ninja
+      - run: cd code/test && py.test-3 --junit-xml=/root/project/test-results/test.xml
+      - store_artifacts:
+          path: test-results
+          destination: clang-python3
+      - store_test_results:
+          path: test-results
+
+workflows:
+  version: 2
+  workflow:
+    jobs:
+      - gcc-python2
+      - clang-python3
+      - sphinx-docs
