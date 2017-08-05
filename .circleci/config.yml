@@ -10,7 +10,7 @@ jobs:
     steps:
       - checkout:
           path: code
-      - runc: echo ${EMBREE_LINK}
+      - run: echo ${EMBREE_LINK}
       - run: cd code && git submodule update --init
       - run: mkdir build && mkdir test-results
       - run: cd build && cmake ../code -DPYTHON_EXECUTABLE=`which python2` -DENABLE_EMBREE=ON -DENABLE_TBB=ON -DENABLE_CUDA=OFF -DENABLE_OPTIX=OFF -GNinja
