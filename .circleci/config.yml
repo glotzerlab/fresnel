@@ -20,7 +20,7 @@ references:
           command: cd code && git submodule update --init
       - run:
           name: Configure
-          command: mkdir build && cd build && echo ${CMAKE} && ${CMAKE} ../code -DPYTHON_EXECUTABLE=/usr/bin/python${PYVER} -DENABLE_EMBREE=ON -DENABLE_TBB=ON -DENABLE_CUDA=OFF -DENABLE_OPTIX=OFF -GNinja
+          command: mkdir build && cd build && echo "cmake=${CMAKE}\npyver=${PYVER}\n$cc=${CC}\ncxx=${CXX}" && ${CMAKE} ../code -DPYTHON_EXECUTABLE=/usr/bin/python${PYVER} -DENABLE_EMBREE=ON -DENABLE_TBB=ON -DENABLE_CUDA=OFF -DENABLE_OPTIX=OFF -GNinja
       - run:
           name: Compile
           command: cd build && ninja
@@ -39,7 +39,7 @@ jobs:
     environment:
       CC: /usr/bin/gcc-4.8
       CXX: /usr/bin/g++-4.8
-      PYVER: 2.7
+      PYVER: "2.7"
       CMAKE: /opt/cmake-2.8.12/bin/cmake
     <<: *build_and_test
 
@@ -48,7 +48,7 @@ jobs:
     environment:
       CC: /usr/bin/gcc-4.9
       CXX: /usr/bin/g++-4.9
-      PYVER: 3.5
+      PYVER: "3.5"
     <<: *build_and_test
 
   gcc54-python35:
@@ -56,7 +56,7 @@ jobs:
     environment:
       CC: /usr/bin/gcc
       CXX: /usr/bin/g++
-      PYVER: 3.5
+      PYVER: "3.5"
       CMAKE: /usr/bin/cmake
     <<: *build_and_test
 
@@ -71,7 +71,7 @@ jobs:
     environment:
       CC: /usr/bin/clang
       CXX: /usr/bin/clang++
-      PYVER: 3.5
+      PYVER: "3.5"
       CMAKE: /usr/bin/cmake
     <<: *build_and_test
 
