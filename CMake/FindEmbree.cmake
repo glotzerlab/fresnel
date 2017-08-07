@@ -31,7 +31,3 @@ include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Embree
                                   REQUIRED_VARS Embree_LIBRARY Embree_INCLUDE_DIR
                                   VERSION_VAR Embree_VERSION_STRING)
-
-if(Embree_FOUND)
-  set(Embree_LIBRARIES ${Embree_LIBRARY})
-endif()

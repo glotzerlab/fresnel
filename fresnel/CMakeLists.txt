@@ -48,7 +48,7 @@ set(_cpu_sources
    )
 
 add_python_module(_cpu "${_cpu_sources}")
-target_link_libraries(_cpu ${Embree_LIBRARIES} ${TBB_LIBRARIES})
+target_link_libraries(_cpu ${Embree_LIBRARY} ${TBB_LIBRARIES})
 
 endif()
 
