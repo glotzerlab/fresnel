@@ -20,13 +20,13 @@ references:
           command: cd code && git submodule update --init
       - run:
           name: Configure
-          command: mkdir build && cd build && ${CMAKE} ../code -DPYTHON_EXECUTABLE=$PYTHON -DENABLE_EMBREE=ON -DENABLE_TBB=ON -DENABLE_CUDA=OFF -DENABLE_OPTIX=OFF -GNinja
+          command: mkdir build && cd build && ${CMAKE} ../code -DPYTHON_EXECUTABLE=/usr/bin/python${PYVER} -DENABLE_EMBREE=ON -DENABLE_TBB=ON -DENABLE_CUDA=OFF -DENABLE_OPTIX=OFF -GNinja
       - run:
           name: Compile
           command: cd build && ninja
       - run:
           name: Unit test
-          command: mkdir test-results && cd code/test && ${PYTEST} --junit-xml=/root/project/test-results/test.xml
+          command: mkdir test-results && cd code/test && py.test-${PYVER} --junit-xml=/root/project/test-results/test.xml
       - store_artifacts:
           path: test-results
           destination: test-results
@@ -39,8 +39,7 @@ jobs:
     environment:
       CC: /usr/bin/gcc-4.8
       CXX: /usr/bin/g++-4.8
-      PYTHON: /usr/bin/python
-      PYTEST: /usr/bin/pytest
+      PYVER: 2.7
       CMAKE: /opt/cmake-2.8.12/bin/cmake
     <<: *build_and_test
 
@@ -50,8 +49,7 @@ jobs:
       CC: /usr/bin/gcc-4.9
       CXX: /usr/bin/g++-4.9
       PYTHON: /usr/bin/python3
-      PYTEST: /usr/bin/pytest-3
-      CMAKE: /usr/bin/cmake
+      PYVER: 3.5
     <<: *build_and_test
 
   gcc54-python35:
@@ -60,8 +58,7 @@ jobs:
       CC: /usr/bin/gcc
       CXX: /usr/bin/g++
       PYTHON: /usr/bin/python3
-      PYTEST: /usr/bin/pytest-3
-      CMAKE: /usr/bin/cmake
+      PYVER: 3.5
     <<: *build_and_test
 
   sphinx-docs:
@@ -76,8 +73,7 @@ jobs:
       CC: /usr/bin/clang
       CXX: /usr/bin/clang++
       PYTHON: /usr/bin/python3
-      PYTEST: /usr/bin/pytest-3
-      CMAKE: /usr/bin/cmake
+      PYVER: 3.5
     <<: *build_and_test
 
 workflows:
