@@ -48,7 +48,6 @@ jobs:
     environment:
       CC: /usr/bin/gcc-4.9
       CXX: /usr/bin/g++-4.9
-      PYTHON: /usr/bin/python3
       PYVER: 3.5
     <<: *build_and_test
 
@@ -57,8 +56,8 @@ jobs:
     environment:
       CC: /usr/bin/gcc
       CXX: /usr/bin/g++
-      PYTHON: /usr/bin/python3
       PYVER: 3.5
+      CMAKE: /usr/bin/cmake
     <<: *build_and_test
 
   sphinx-docs:
@@ -72,8 +71,8 @@ jobs:
     environment:
       CC: /usr/bin/clang
       CXX: /usr/bin/clang++
-      PYTHON: /usr/bin/python3
       PYVER: 3.5
+      CMAKE: /usr/bin/cmake
     <<: *build_and_test
 
 workflows:
