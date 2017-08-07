@@ -20,7 +20,7 @@ references:
           command: cd code && git submodule update --init
       - run:
           name: Configure
-          command: mkdir build && cd build && ${CMAKE} ../code -DPYTHON_EXECUTABLE=/usr/bin/python${PYVER} -DENABLE_EMBREE=ON -DENABLE_TBB=ON -DENABLE_CUDA=OFF -DENABLE_OPTIX=OFF -GNinja
+          command: mkdir build && cd build && echo ${CMAKE} && ${CMAKE} ../code -DPYTHON_EXECUTABLE=/usr/bin/python${PYVER} -DENABLE_EMBREE=ON -DENABLE_TBB=ON -DENABLE_CUDA=OFF -DENABLE_OPTIX=OFF -GNinja
       - run:
           name: Compile
           command: cd build && ninja
