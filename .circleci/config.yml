@@ -17,13 +17,24 @@ references:
       - *load_code
       - run:
           name: Update submodules
-          command: cd code && git submodule update --init
+          command: |
+            cd code
+            git submodule update --init
       - run:
           name: Configure
-          command: mkdir build && cd build && echo "cmake=${CMAKE}\npyver=${PYVER}\n$cc=${CC}\ncxx=${CXX}" && ${CMAKE} ../code -DPYTHON_EXECUTABLE=/usr/bin/python${PYVER} -DENABLE_EMBREE=ON -DENABLE_TBB=ON -DENABLE_CUDA=OFF -DENABLE_OPTIX=OFF -GNinja
+          command: |
+            mkdir build
+            cd build
+            echo cmake=${CMAKE}
+            echo pyver=${PYVER}
+            echo cc=${CC}
+            echo cxx=${CXX}
+            ${CMAKE} ../code -DPYTHON_EXECUTABLE=/usr/bin/python${PYVER} -DENABLE_EMBREE=ON -DENABLE_TBB=ON -DENABLE_CUDA=OFF -DENABLE_OPTIX=OFF -GNinja
       - run:
           name: Compile
-          command: cd build && ninja
+          command: |
+            cd build
+            ninja
       - run:
           name: Unit test
           command: mkdir test-results && cd code/test && py.test-${PYVER} --junit-xml=/root/project/test-results/test.xml
@@ -49,6 +60,7 @@ jobs:
       CC: /usr/bin/gcc-4.9
       CXX: /usr/bin/g++-4.9
       PYVER: "3.5"
+      CMAKE: /usr/bin/cmake
     <<: *build_and_test
 
   gcc54-python35:
