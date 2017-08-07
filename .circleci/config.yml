@@ -1,61 +1,92 @@
 version: 2
-jobs:
-  gcc-python2:
+
+references:
+  test_container_config: &test_container_config
     docker:
-      - image: joaander/ci:20170804-2
+      - image: joaander/ci:20170807
+        environment:
+          PYTHONPATH: /root/project/build
+    working_directory: /root/project
+
+  load_code: &load_code
+    checkout:
+      path: code
+
+  build_and_test: &build_and_test
+    steps:
+      - *load_code
+      - run:
+          name: Update submodules
+          command: cd code && git submodule update --init
+      - run:
+          name: Configure
+          command: mkdir build && cd build && ${CMAKE} ../code -DPYTHON_EXECUTABLE=$PYTHON -DENABLE_EMBREE=ON -DENABLE_TBB=ON -DENABLE_CUDA=OFF -DENABLE_OPTIX=OFF -GNinja
+      - run:
+          name: Compile
+          command: cd build && ninja
+      - run:
+          name: Unit test
+          command: mkdir test-results && cd code/test && ${PYTEST} --junit-xml=/root/project/test-results/test.xml
+      - store_artifacts:
+          path: test-results
+          destination: test-results
+      - store_test_results:
+          path: test-results
+
+jobs:
+  gcc48-python27-cmake28:
+    <<: *test_container_config
+    environment:
+      CC: /usr/bin/gcc-4.8
+      CXX: /usr/bin/g++-4.8
+      PYTHON: /usr/bin/python
+      PYTEST: /usr/bin/pytest
+      CMAKE: /opt/cmake-2.8.12/bin/cmake
+    <<: *build_and_test
+
+  gcc49-python35:
+    <<: *test_container_config
+    environment:
+      CC: /usr/bin/gcc-4.9
+      CXX: /usr/bin/g++-4.9
+      PYTHON: /usr/bin/python3
+      PYTEST: /usr/bin/pytest-3
+      CMAKE: /usr/bin/cmake
+    <<: *build_and_test
+
+  gcc54-python35:
+    <<: *test_container_config
     environment:
       CC: /usr/bin/gcc
       CXX: /usr/bin/g++
-      PYTHONPATH: /root/project/build
-    steps:
-      - checkout:
-          path: code
-      - run: echo ${EMBREE_LINK}
-      - run: cd code && git submodule update --init
-      - run: mkdir build && mkdir test-results
-      - run: cd build && cmake ../code -DPYTHON_EXECUTABLE=`which python2` -DENABLE_EMBREE=ON -DENABLE_TBB=ON -DENABLE_CUDA=OFF -DENABLE_OPTIX=OFF -GNinja
-      - run: cd build && ninja
-      - run: cd code/test && py.test --junit-xml=/root/project/test-results/test.xml
-      - store_artifacts:
-          path: test-results
-          destination: gcc-python2
-      - store_test_results:
-          path: test-results
+      PYTHON: /usr/bin/python3
+      PYTEST: /usr/bin/pytest-3
+      CMAKE: /usr/bin/cmake
+    <<: *build_and_test
 
   sphinx-docs:
-    docker:
-      - image: joaander/ci:20170804-2
+    <<: *test_container_config
     steps:
-      - checkout:
-          path: code
+      - *load_code
       - run: cd code/doc && sphinx-build -b html -d _build/doctrees -W -n . build/html
 
-  clang-python3:
-    docker:
-      - image: joaander/ci:20170804-2
+  clang38-python35:
+    <<: *test_container_config
     environment:
       CC: /usr/bin/clang
       CXX: /usr/bin/clang++
-      PYTHONPATH: /root/project/build
-    steps:
-      - checkout:
-          path: code
-      - run: cd code && git submodule update --init
-      - run: mkdir build && mkdir test-results
-      - run: cd build && cmake ../code -DPYTHON_EXECUTABLE=`which python3` -DENABLE_EMBREE=ON -DENABLE_TBB=ON -DENABLE_CUDA=OFF -DENABLE_OPTIX=OFF -GNinja
-      - run: cd build && ninja
-      - run: cd code/test && py.test-3 --junit-xml=/root/project/test-results/test.xml
-      - store_artifacts:
-          path: test-results
-          destination: clang-python3
-      - store_test_results:
-          path: test-results
+      PYTHON: /usr/bin/python3
+      PYTEST: /usr/bin/pytest-3
+      CMAKE: /usr/bin/cmake
+    <<: *build_and_test
 
 workflows:
   version: 2
   workflow:
     jobs:
-      - gcc-python2
-      - clang-python3
+      - gcc48-python27-cmake28
+      - gcc49-python35
+      - gcc54-python35
+      - clang38-python35
       - sphinx-docs
 
