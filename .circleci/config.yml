@@ -3,7 +3,7 @@ version: 2
 references:
   test_container_config: &test_container_config
     docker:
-      - image: joaander/ci:20170807
+      - image: joaander/ci:20170807-1
         environment:
           PYTHONPATH: /root/project/build
     working_directory: /root/project
