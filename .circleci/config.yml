@@ -53,6 +53,11 @@ references:
     steps:
       - *load_code
       - run:
+          name: Update submodules
+          command: |
+            cd code
+            git submodule update --init
+      - run:
           name: Compile
           working_directory: code
           command: conda build --python ${PYVER} conda-recipe
