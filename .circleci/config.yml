@@ -8,6 +8,11 @@ references:
           PYTHONPATH: /root/project/build
     working_directory: /root/project
 
+  conda_container_config: &conda_container_config
+    docker:
+      - image: joaander/conda-build:20170808-1
+    working_directory: /root/project
+
   load_code: &load_code
     checkout:
       path: code
@@ -43,6 +48,19 @@ references:
           destination: test-results
       - store_test_results:
           path: test-results
+
+  conda_build: &conda_build
+    steps:
+      - *load_code
+      - run:
+          name: Compile
+          working_directory: code
+          command: conda build --python ${PYVER} conda-recipe
+      - run: mv /opt/conda/conda-bld .
+      - persist_to_workspace:
+          root: .
+          paths:
+            - conda-bld/linux-64/fresnel-*.tar.bz2
 
 jobs:
   gcc48-python27-cmake28:
@@ -87,6 +105,39 @@ jobs:
       CMAKE: /usr/bin/cmake
     <<: *build_and_test
 
+  conda-build-python36:
+    <<: *conda_container_config
+    environment:
+      PYVER: "3.6"
+    <<: *conda_build
+
+  conda-build-python35:
+    <<: *conda_container_config
+    environment:
+      PYVER: "3.5"
+    <<: *conda_build
+
+  conda-build-python34:
+    <<: *conda_container_config
+    environment:
+      PYVER: "3.4"
+    <<: *conda_build
+
+  conda-build-python27:
+    <<: *conda_container_config
+    environment:
+      PYVER: "2.7"
+    <<: *conda_build
+
+  conda-upload:
+    <<: *conda_container_config
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Upload
+          command: anaconda -t ${ANACONDA_TOKEN} upload conda-bld/linux-64/*.tar.bz2
+
 workflows:
   version: 2
   workflow:
@@ -96,4 +147,32 @@ workflows:
       - gcc54-python35
       - clang38-python35
       - sphinx-docs
+      - conda-build-python36:
+          filters:
+            tags:
+              only: /.*/
+      - conda-build-python35:
+          filters:
+            tags:
+              only: /.*/
+      - conda-build-python34:
+          filters:
+            tags:
+              only: /.*/
+      - conda-build-python27:
+          filters:
+            tags:
+              only: /.*/
+      - conda-upload:
+          context: org-global
+          requires:
+            - conda-build-python36
+            - conda-build-python35
+            - conda-build-python34
+            - conda-build-python27
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore: /.*/
 
