@@ -1,0 +1,35 @@
+{% set name = "fresnel" %}
+{% set version = "0.4.0" %}
+
+package:
+  name: {{ name }}
+  version: {{ version }}
+
+source:
+    path: ../
+
+build:
+  number: 0
+
+requirements:
+  build:
+    - gcc                         # [linux]
+    - python
+    - numpy
+    - cmake
+    - embree >=2.10.0
+    - tbb
+    - nomkl
+
+  run:
+    - python
+    - numpy
+    - libgcc                      # [linux]
+    - embree >=2.10.0
+    - tbb
+    - pillow
+
+about:
+  home: http://glotzerlab.engin.umich.edu/{{ name }}
+  license: BSD 3-clause
+
