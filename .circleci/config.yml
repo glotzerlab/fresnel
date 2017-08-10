@@ -168,13 +168,22 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - conda-upload:
-          context: org-global
+      - hold:
+          type: approval
           requires:
             - conda-build-python36
             - conda-build-python35
             - conda-build-python34
             - conda-build-python27
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore: /.*/
+      - conda-upload:
+          context: org-global
+          requires:
+            - hold
           filters:
             tags:
               only: /.*/
