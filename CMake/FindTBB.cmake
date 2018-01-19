@@ -1,10 +1,10 @@
 find_library(TBB_LIBRARY tbb
-             PATHS ENV TBB_LINK)
+             HINTS ENV TBB_LINK)
 
 get_filename_component(_tbb_lib_dir ${TBB_LIBRARY} DIRECTORY)
 
 find_path(TBB_INCLUDE_DIR tbb/tbb.h
-          PATHS ENV TBB_INC
+          HINTS ENV TBB_INC
           HINTS ${_tbb_lib_dir}/../include)
 
 if(TBB_INCLUDE_DIR AND EXISTS "${TBB_INCLUDE_DIR}/tbb/tbb_stddef.h")
