@@ -126,7 +126,7 @@ jobs:
       CMAKE: /usr/bin/cmake
     <<: *build_and_test
 
-  conda_build:
+  conda-build:
     <<: *conda_container_config
     steps:
       - *load_code
