@@ -3,28 +3,37 @@ version: 2
 references:
   test_container_config: &test_container_config
     docker:
-      - image: joaander/ci:20170807-1
+      - image: joaander/ci:20171130
         environment:
-          PYTHONPATH: /root/project/build
-    working_directory: /root/project
+          PYTHONPATH: /home/ci/project/build
+    working_directory: /home/ci/project
+
+  test_container_config-arch: &test_container_config-arch
+    docker:
+      - image: joaander/ci:20171206-arch-2
+        environment:
+          PYTHONPATH: /home/ci/project/build
+    working_directory: /home/ci/project
 
   conda_container_config: &conda_container_config
     docker:
-      - image: joaander/conda-build:20170808-1
+      - image: joaander/conda-build:20180207
     working_directory: /root/project
 
   load_code: &load_code
     checkout:
       path: code
 
+  update_submodules: &update_submodules
+    run:
+      name: Update submodules
+      working_directory: code
+      command: git submodule update --init
+
   build_and_test: &build_and_test
     steps:
       - *load_code
-      - run:
-          name: Update submodules
-          command: |
-            cd code
-            git submodule update --init
+      - *update_submodules
       - run:
           name: Configure
           command: |
@@ -39,33 +48,16 @@ references:
           name: Compile
           command: |
             cd build
-            ninja
+            ninja -j3
       - run:
           name: Unit test
-          command: mkdir test-results && cd code/test && py.test-${PYVER} --junit-xml=/root/project/test-results/test.xml
+          no_output_timeout: 1h
+          command: mkdir test-results && cd code/test && ${PYTEST} --junit-xml=/home/ci/project/test-results/test.xml
       - store_artifacts:
           path: test-results
           destination: test-results
       - store_test_results:
           path: test-results
-
-  conda_build: &conda_build
-    steps:
-      - *load_code
-      - run:
-          name: Update submodules
-          command: |
-            cd code
-            git submodule update --init
-      - run:
-          name: Compile
-          working_directory: code
-          command: conda build --python ${PYVER} conda-recipe
-      - run: mv /opt/conda/conda-bld .
-      - persist_to_workspace:
-          root: .
-          paths:
-            - conda-bld/linux-64/fresnel-*.tar.bz2
 
 jobs:
   gcc48-python27-cmake28:
@@ -74,6 +66,7 @@ jobs:
       CC: /usr/bin/gcc-4.8
       CXX: /usr/bin/g++-4.8
       PYVER: "2.7"
+      PYTEST: "py.test-2.7"
       CMAKE: /opt/cmake-2.8.12/bin/cmake
     <<: *build_and_test
 
@@ -83,6 +76,7 @@ jobs:
       CC: /usr/bin/gcc-4.9
       CXX: /usr/bin/g++-4.9
       PYVER: "3.5"
+      PYTEST: "py.test-3.5"
       CMAKE: /usr/bin/cmake
     <<: *build_and_test
 
@@ -92,6 +86,7 @@ jobs:
       CC: /usr/bin/gcc
       CXX: /usr/bin/g++
       PYVER: "3.5"
+      PYTEST: "py.test-3.5"
       CMAKE: /usr/bin/cmake
     <<: *build_and_test
 
@@ -107,32 +102,45 @@ jobs:
       CC: /usr/bin/clang
       CXX: /usr/bin/clang++
       PYVER: "3.5"
+      PYTEST: "py.test-3.5"
       CMAKE: /usr/bin/cmake
     <<: *build_and_test
 
-  conda-build-python36:
-    <<: *conda_container_config
+  gcc72-py36:
+    <<: *test_container_config-arch
     environment:
+      CC: /usr/bin/gcc
+      CXX: /usr/bin/g++
       PYVER: "3.6"
-    <<: *conda_build
+      PYTEST: "py.test"
+      CMAKE: /usr/bin/cmake
+    <<: *build_and_test
 
-  conda-build-python35:
-    <<: *conda_container_config
+  clang50-py36:
+    <<: *test_container_config-arch
     environment:
-      PYVER: "3.5"
-    <<: *conda_build
+      CC: /usr/bin/clang
+      CXX: /usr/bin/clang++
+      PYVER: "3.6"
+      PYTEST: "py.test"
+      CMAKE: /usr/bin/cmake
+    <<: *build_and_test
 
-  conda-build-python34:
+  conda-build:
     <<: *conda_container_config
-    environment:
-      PYVER: "3.4"
-    <<: *conda_build
-
-  conda-build-python27:
-    <<: *conda_container_config
-    environment:
-      PYVER: "2.7"
-    <<: *conda_build
+    steps:
+      - *load_code
+      - *update_submodules
+      - run:
+          name: Compile
+          working_directory: code
+          no_output_timeout: 1h
+          command: conda build conda-recipe
+      - run: mv /opt/conda/conda-bld .
+      - persist_to_workspace:
+          root: .
+          paths:
+            - conda-bld/linux-64/fresnel-*.tar.bz2
 
   conda-upload:
     <<: *conda_container_config
@@ -141,52 +149,45 @@ jobs:
           at: .
       - run:
           name: Upload
-          command: anaconda -t ${ANACONDA_TOKEN} upload conda-bld/linux-64/*.tar.bz2
+          command: anaconda -t ${ANACONDA_TOKEN} upload --no-progress --force conda-bld/**/*.tar.bz2
 
 workflows:
   version: 2
   workflow:
     jobs:
-      - gcc48-python27-cmake28
-      - gcc49-python35
-      - gcc54-python35
-      - clang38-python35
-      - sphinx-docs
-      - conda-build-python36:
+      - gcc48-python27-cmake28:
           filters:
-            tags:
-              only: /.*/
-      - conda-build-python35:
-          filters:
-            tags:
-              only: /.*/
-      - conda-build-python34:
-          filters:
-            tags:
-              only: /.*/
-      - conda-build-python27:
-          filters:
-            tags:
-              only: /.*/
-      - hold:
-          type: approval
-          requires:
-            - conda-build-python36
-            - conda-build-python35
-            - conda-build-python34
-            - conda-build-python27
-          filters:
-            tags:
-              only: /.*/
             branches:
-              ignore: /.*/
+              ignore: release
+      - gcc49-python35:
+          filters:
+            branches:
+              ignore: release
+      - gcc54-python35:
+          filters:
+            branches:
+              ignore: release
+      - clang38-python35:
+          filters:
+            branches:
+              ignore: release
+      - sphinx-docs:
+          filters:
+            branches:
+              ignore: release
+      - gcc72-py36:
+          filters:
+            branches:
+              ignore: release
+      - clang50-py36:
+          filters:
+            branches:
+              ignore: release
+      - conda-build
       - conda-upload:
           context: org-global
           requires:
-            - hold
+            - conda-build
           filters:
-            tags:
-              only: /.*/
             branches:
-              ignore: /.*/
-
+              only: release
