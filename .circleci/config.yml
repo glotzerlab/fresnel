@@ -108,7 +108,7 @@ jobs:
       CC: /usr/bin/gcc
       CXX: /usr/bin/g++
       PYVER: "3.6"
-      CMAKE: /usr/bin
+      CMAKE: /usr/bin/cmake
     <<: *build_and_test
 
   clang50-py36:
@@ -117,7 +117,7 @@ jobs:
       CC: /usr/bin/clang
       CXX: /usr/bin/clang++
       PYVER: "3.6"
-      CMAKE: /usr/bin
+      CMAKE: /usr/bin/cmake
     <<: *build_and_test
 
   conda_build:
