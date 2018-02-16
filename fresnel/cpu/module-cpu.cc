@@ -18,10 +18,8 @@
 using namespace fresnel::cpu;
 using namespace std;
 
-PYBIND11_PLUGIN(_cpu)
+PYBIND11_MODULE(_cpu, m)
     {
-    pybind11::module m("_cpu");
-
     export_Device(m);
     export_Scene(m);
     export_Geometry(m);
@@ -32,6 +30,4 @@ PYBIND11_PLUGIN(_cpu)
     export_TracerDirect(m);
     export_TracerPath(m);
     export_Array(m);
-
-    return m.ptr();
     }

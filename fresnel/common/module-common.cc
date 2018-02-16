@@ -31,10 +31,8 @@ bool cpu_built()
     #endif
     }
 
-PYBIND11_PLUGIN(_common)
+PYBIND11_MODULE(_common, m)
     {
-    pybind11::module m("_common");
-
     m.def("gpu_built", &gpu_built);
     m.def("cpu_built", &cpu_built);
 
@@ -105,6 +103,4 @@ PYBIND11_PLUGIN(_common)
         .def("getTheta", &Lights::getTheta)
         .def("setTheta", &Lights::setTheta)
         ;
-
-    return m.ptr();
     }
