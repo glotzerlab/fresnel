@@ -5,6 +5,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # _common
 pybind11_add_module(_common "common/module-common.cc")
+install(TARGETS _common LIBRARY DESTINATION ${PYTHON_MODULE_BASE_DIR})
 
 # _cpu
 if (ENABLE_EMBREE AND ENABLE_TBB)
@@ -27,6 +28,7 @@ set(_cpu_sources
 
 pybind11_add_module(_cpu "${_cpu_sources}")
 target_link_libraries(_cpu PRIVATE ${Embree_LIBRARY} ${TBB_LIBRARIES})
+install(TARGETS _cpu LIBRARY DESTINATION ${PYTHON_MODULE_BASE_DIR})
 
 endif()
 
@@ -66,6 +68,7 @@ set(_gpu_sources
 
 pybind11_add_module(_gpu "${_gpu_sources}")
 target_link_libraries(_gpu PRIVATE ${optix_LIBRARY})
+install(TARGETS _gpu LIBRARY DESTINATION ${PYTHON_MODULE_BASE_DIR})
 endif()
 
 #####################################################
