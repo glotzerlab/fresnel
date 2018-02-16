@@ -24,6 +24,7 @@ pipeline
                         CMAKE_BIN = '{{ test.CMAKE_BIN }}'
                         ENABLE_OPTIX = '{{ test.ENABLE_OPTIX }}'
                         CONTAINER = '/nfs/glotzer/containers/{{ test.CONTAINER }}'
+                        PYTHONPATH = '${WORKSPACE}/build'
                         }
 
                     steps
