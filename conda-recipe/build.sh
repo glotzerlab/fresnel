@@ -20,9 +20,6 @@ make install -j 2
 
 else
 # Linux build
-export CC=gcc-6
-export CXX=g++-6
-
 cmake ../ \
       -DCMAKE_INSTALL_PREFIX=${SP_DIR} \
       -DPYTHON_EXECUTABLE=${PYTHON} \
