@@ -26,7 +26,7 @@ set(_cpu_sources
    )
 
 pybind11_add_module(_cpu "${_cpu_sources}")
-target_link_libraries(_cpu ${Embree_LIBRARY} ${TBB_LIBRARIES})
+target_link_libraries(_cpu PRIVATE ${Embree_LIBRARY} ${TBB_LIBRARIES})
 
 endif()
 
@@ -65,7 +65,7 @@ set(_gpu_sources
    )
 
 pybind11_add_module(_gpu "${_gpu_sources}")
-target_link_libraries(_gpu ${optix_LIBRARY})
+target_link_libraries(_gpu PRIVATE ${optix_LIBRARY})
 endif()
 
 #####################################################
