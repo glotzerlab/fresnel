@@ -53,7 +53,7 @@ pipeline
                             timeout(time: 2, unit: 'HOURS')
                                 {
                                 sh '''
-                                    export PYTHONPATH='${WORKSPACE}/build'
+                                    export PYTHONPATH=${WORKSPACE}/build
                                     singularity exec --nv ${CONTAINER} ${PYTEST} --junit-xml=${WORKSPACE}/test.xml
                                    '''
                                 }
