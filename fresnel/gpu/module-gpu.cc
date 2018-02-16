@@ -20,10 +20,8 @@ unsigned int get_num_available_devices()
     return optix::Context::getDeviceCount();
     }
 
-PYBIND11_PLUGIN(_gpu)
+PYBIND11_MODULE(_gpu, m)
     {
-    pybind11::module m("_gpu");
-
     m.def("get_num_available_devices", &get_num_available_devices);
 
     export_Device(m);
@@ -34,6 +32,4 @@ PYBIND11_PLUGIN(_gpu)
     export_Tracer(m);
     export_TracerDirect(m);
     export_Array(m);
-
-    return m.ptr();
     }

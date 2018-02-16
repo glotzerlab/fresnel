@@ -1,32 +1,11 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 #####################################################
-### Macro for building python module
-
-macro(add_python_module target sources)
-# build the shared library
-add_library (${target} SHARED ${sources})
-# change the name of the library to be a valid python module
-set_target_properties(${target} PROPERTIES PREFIX "" OUTPUT_NAME "${target}")
-
-# fixup the library to be a working python module on macOS
-if(APPLE)
-    set_target_properties(${target} PROPERTIES SUFFIX ".so")
-    target_link_libraries(${target} ${PYTHON_LIBRARY})
-    fix_conda_python(${target})
-endif(APPLE)
-
-# install the library
-install(TARGETS ${target}
-        LIBRARY DESTINATION ${PYTHON_MODULE_BASE_DIR}
-        )
-endmacro()
-
-#####################################################
 ## C++ libraries
 
 # _common
-add_python_module(_common "common/module-common.cc")
+pybind11_add_module(_common "common/module-common.cc")
+install(TARGETS _common LIBRARY DESTINATION ${PYTHON_MODULE_BASE_DIR})
 
 # _cpu
 if (ENABLE_EMBREE AND ENABLE_TBB)
@@ -47,8 +26,9 @@ set(_cpu_sources
      cpu/Array.cc
    )
 
-add_python_module(_cpu "${_cpu_sources}")
-target_link_libraries(_cpu ${Embree_LIBRARY} ${TBB_LIBRARIES})
+pybind11_add_module(_cpu "${_cpu_sources}")
+target_link_libraries(_cpu PRIVATE ${Embree_LIBRARY} ${TBB_LIBRARIES})
+install(TARGETS _cpu LIBRARY DESTINATION ${PYTHON_MODULE_BASE_DIR})
 
 endif()
 
@@ -86,8 +66,9 @@ set(_gpu_sources
      gpu/Array.cc
    )
 
-add_python_module(_gpu "${_gpu_sources}")
-target_link_libraries(_gpu ${optix_LIBRARY})
+pybind11_add_module(_gpu "${_gpu_sources}")
+target_link_libraries(_gpu PRIVATE ${optix_LIBRARY})
+install(TARGETS _gpu LIBRARY DESTINATION ${PYTHON_MODULE_BASE_DIR})
 endif()
 
 #####################################################

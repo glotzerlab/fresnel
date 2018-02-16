@@ -43,12 +43,6 @@ endif()
 
 #############################################################################################
 # Setup install location
-
-if (INSTALL_SITE)
-    SET(CMAKE_INSTALL_PREFIX ${PYTHON_SYSTEM_SITE} CACHE PATH "Python site installation directory" FORCE)
-    message(STATUS "Setting installation site dir: ${CMAKE_INSTALL_PREFIX}")
-ENDIF()
-
 set(PYTHON_MODULE_BASE_DIR fresnel)
 
 #############################################################################################

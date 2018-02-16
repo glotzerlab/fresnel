@@ -9,12 +9,9 @@
 
 #include <pybind11/pybind11.h>
 
-#if (PYBIND11_VERSION_MAJOR) != 1 || (PYBIND11_VERSION_MINOR) != 8
-#error Fresnel requires pybind11 1.8.x
+#if (PYBIND11_VERSION_MAJOR) != 2 || (PYBIND11_VERSION_MINOR) < 2
+#error Fresnel requires pybind11 >= 2.2
 #endif
-
-// setup pybind11 to use std::shared_ptr
-PYBIND11_DECLARE_HOLDER_TYPE(T_shared_ptr_bind, std::shared_ptr<T_shared_ptr_bind>);
 
 namespace fresnel { namespace cpu {
 
