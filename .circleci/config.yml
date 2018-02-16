@@ -52,7 +52,7 @@ references:
       - run:
           name: Unit test
           no_output_timeout: 1h
-          command: mkdir test-results && cd code/test && py.test-${PYVER} --junit-xml=/root/project/test-results/test.xml
+          command: mkdir test-results && cd code/test && py.test-${PYVER} --junit-xml=/home/ci/project/test-results/test.xml
       - store_artifacts:
           path: test-results
           destination: test-results
