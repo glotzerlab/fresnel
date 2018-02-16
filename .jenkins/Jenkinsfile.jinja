@@ -24,7 +24,6 @@ pipeline
                         CMAKE_BIN = '{{ test.CMAKE_BIN }}'
                         ENABLE_OPTIX = '{{ test.ENABLE_OPTIX }}'
                         CONTAINER = '/nfs/glotzer/containers/{{ test.CONTAINER }}'
-                        PYTHONPATH = '${WORKSPACE}/build'
                         }
 
                     steps
@@ -54,6 +53,7 @@ pipeline
                             timeout(time: {{ test.timeout }}, unit: 'HOURS')
                                 {
                                 sh '''
+                                    export PYTHONPATH='${WORKSPACE}/build'
                                     singularity exec --nv ${CONTAINER} ${PYTEST} --junit-xml=${WORKSPACE}/test.xml
                                    '''
                                 }

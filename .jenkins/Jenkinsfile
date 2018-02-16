@@ -24,7 +24,6 @@ pipeline
                         CMAKE_BIN = '/usr/sbin'
                         ENABLE_OPTIX = 'ON'
                         CONTAINER = '/nfs/glotzer/containers/ci-optix-2018.02.simg'
-                        PYTHONPATH = '${WORKSPACE}/build'
                         }
 
                     steps
@@ -54,6 +53,7 @@ pipeline
                             timeout(time: 2, unit: 'HOURS')
                                 {
                                 sh '''
+                                    export PYTHONPATH='${WORKSPACE}/build'
                                     singularity exec --nv ${CONTAINER} ${PYTEST} --junit-xml=${WORKSPACE}/test.xml
                                    '''
                                 }
