@@ -1,0 +1,124 @@
+pipeline
+    {
+    options { skipDefaultCheckout() }
+    agent none
+
+    stages
+        {
+        stage('Unit and validation tests')
+            {
+            when { not { branch 'release' } }
+            failFast true
+            parallel
+                {
+                {% for test in tests %}stage('{{ test.name }}')
+                    {
+                    agent { label '{{ test.agent }}' }
+
+                    environment
+                        {
+                        CC = '{{ test.CC }}'
+                        CXX = '{{ test.CXX }}'
+                        PYVER = '{{ test.PYVER }}'
+                        PYTEST = '{{ test.PYTEST }}'
+                        CMAKE_BIN = '{{ test.CMAKE_BIN }}'
+                        ENABLE_OPTIX = '{{ test.ENABLE_OPTIX }}'
+                        CONTAINER = '/nfs/glotzer/containers/{{ test.CONTAINER }}'
+                        }
+
+                    steps
+                        {
+                        sh 'echo ${NODE_NAME}'
+
+                        dir('code')
+                            {
+                            checkout scm
+                            sh 'git submodule update --init'
+                            }
+
+                        dir('build')
+                            {
+                            timeout(time: 1, unit: 'HOURS')
+                                {
+                                sh '''
+                                    singularity exec --nv ${CONTAINER} ${CMAKE_BIN}/cmake ../code -DPYTHON_EXECUTABLE=/usr/bin/python${PYVER} -DENABLE_CUDA=${ENABLE_OPTIX} -DENABLE_OPTIX=${ENABLE_OPTIX} -GNinja
+                                   '''
+
+                                sh 'singularity exec --nv ${CONTAINER} ninja -j 3'
+                                }
+                            }
+
+                        dir('code/test')
+                            {
+                            timeout(time: {{ test.timeout }}, unit: 'HOURS')
+                                {
+                                sh '''
+                                    singularity exec --nv ${CONTAINER} ${PYTEST} --junit-xml=${WORKSPACE}/test.xml
+                                   '''
+                                }
+                            }
+
+                        junit 'test.xml'
+                        }
+                    post
+                        {
+                        always
+                            {
+                            archive 'test.xml'
+                            deleteDir()
+                            }
+                        }
+                    }
+                {% endfor %}
+                }
+            }
+
+        stage('conda-build-mac')
+            {
+            agent { label 'mac' }
+
+            environment
+                {
+                CONDA_BLD_PATH = "${WORKSPACE}/conda-bld"
+                ANACONDA_TOKEN = credentials('glotzer-anaconda-token')
+                }
+
+            steps
+                {
+                sh 'echo ${CONDA_BLD_PATH}'
+
+                retry(5)
+                    {
+                    dir('code')
+                        {
+                        checkout scm
+
+                        timeout(time: 2, unit: 'HOURS')
+                            {
+                            sh 'git submodule update --init'
+
+                            sh '''
+                               conda build conda-recipe
+                               '''
+                            }
+                        }
+                    }
+
+                script
+                    {
+                    if (env.BRANCH_NAME == 'release')
+                        {
+                        sh 'anaconda -t ${ANACONDA_TOKEN} upload --force --no-progress ${WORKSPACE}/conda-bld/**/*.tar.bz2'
+                        }
+                    }
+                }
+            post
+                {
+                always
+                    {
+                    deleteDir()
+                    }
+                }
+            }
+        }
+    }
