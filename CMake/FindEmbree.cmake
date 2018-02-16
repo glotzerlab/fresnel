@@ -1,10 +1,9 @@
 find_library(Embree_LIBRARY embree
-             PATHS ENV EMBREE_LINK)
+             HINTS ENV EMBREE_LINK)
 
 get_filename_component(_embree_lib_dir ${Embree_LIBRARY} DIRECTORY)
 
 find_path(Embree_INCLUDE_DIR embree2/rtcore.h
-          PATHS ENV EMBREE_INC
           HINTS ${_embree_lib_dir}/../include)
 
 if(Embree_INCLUDE_DIR AND EXISTS "${Embree_INCLUDE_DIR}/embree2/rtcore.h")

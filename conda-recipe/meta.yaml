@@ -13,8 +13,7 @@ build:
 
 requirements:
   build:
-    - gcc                         # [linux]
-    - python
+    - python {{ python }}
     - numpy
     - cmake
     - embree >=2.10.0
@@ -22,9 +21,10 @@ requirements:
     - nomkl
 
   run:
+    - libgcc-ng        # [linux]
+    - libstdcxx-ng     # [linux]
     - python
     - numpy
-    - libgcc                      # [linux]
     - embree >=2.10.0
     - tbb
     - pillow
