@@ -130,7 +130,7 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                             if (ray.hit())
                                 {
                                 vec3<float> n = ray.Ng / std::sqrt(dot(ray.Ng, ray.Ng));
-                                vec3<float> v = -ray.dir / std::sqrt(dot(ray.dir, ray.dir));
+                                vec3<float> v = -ray.dir;
                                 Material m;
 
                                 // apply the material color or outline color depending on the distance to the edge
@@ -205,8 +205,8 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                                     if (half_angle > float(M_PI)/2.0f)
                                         half_angle = float(M_PI)/2.0f;
                                     float ldotd = dot(l,ray.dir);
-                                    // TODO: this assumes the ray direction is normalized. Either we normalize here or ensure that
-                                    // is always the case
+
+                                    // NB: we can do this because ray directions are always normalized
                                     if (ldotd >= cos_half_angle)
                                         {
                                         // hit the light
