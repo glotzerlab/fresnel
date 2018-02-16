@@ -213,7 +213,6 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                                         // the division bin sin(light half angle) normalizes the lights so that
                                         // a light of color 1 of any non-zero size results in an output of 1
                                         // when that light is straight over the surface
-                                        // TODO: move these out into a precomputation per light in the light config
                                         c += attenuation * lights.color[light_id] / sinf(half_angle);
                                         }
                                     } // end loop over lights
