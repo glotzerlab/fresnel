@@ -8,6 +8,7 @@
 
 #include "Device.h"
 #include "TracerDirect.h"
+#include "TracerPath.h"
 
 using namespace std;
 
@@ -37,11 +38,12 @@ Device::Device(const std::string& ptx_root, int n) : m_ptx_root(ptx_root)
     m_context = optix::Context::create();
     m_context->setDevices(devices.begin(), devices.end());
 
-    m_context->setRayTypeCount(1);
+    m_context->setRayTypeCount(2);
 
     // initialize materials
-    m_direct_mat = m_context->createMaterial();
-    TracerDirect::setupMaterial(m_direct_mat, this);
+    m_material = m_context->createMaterial();
+    TracerDirect::setupMaterial(m_material, this);
+    TracerPath::setupMaterial(m_material, this);
     }
 
 /*! Destroy the underlying context
@@ -53,8 +55,7 @@ Device::~Device()
         {
         elem.second->destroy();
         }
-    m_direct_mat->destroy();
-    m_context->destroy();
+    m_material->destroy();
     }
 
 static std::string _formatOptiXDeviceList(const std::vector<int>& devices)

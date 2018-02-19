@@ -40,6 +40,7 @@ target_compile_definitions(_common PUBLIC FRESNEL_BUILD_GPU)
 # Build the PTX files for the OptiX programs
 set(_ptx_sources
 	gpu/direct.cu
+    gpu/path.cu
 	gpu/GeometrySphere.cu
     gpu/GeometryPrism.cu)
 
@@ -63,6 +64,7 @@ set(_gpu_sources
      gpu/GeometrySphere.cc
      gpu/Tracer.cc
      gpu/TracerDirect.cc
+     gpu/TracerPath.cc
      gpu/Array.cc
    )
 

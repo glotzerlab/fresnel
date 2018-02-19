@@ -11,6 +11,7 @@
 #include <pybind11/numpy.h>
 
 #include "Geometry.h"
+#include "Array.h"
 
 namespace fresnel { namespace cpu {
 

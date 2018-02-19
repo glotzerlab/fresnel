@@ -78,7 +78,7 @@ void Geometry::setupInstance()
     m_instance = m_device->getContext()->createGeometryInstance();
     m_instance->setGeometry(m_geometry);
     m_instance->setMaterialCount(1);
-    m_instance->setMaterial(0, m_device->getDirectMaterial());
+    m_instance->setMaterial(0, m_device->getMaterial());
 
     setMaterial(Material(RGB<float>(1,0,1)));
     setOutlineMaterial(Material(RGB<float>(0,0,0), 1.0f));

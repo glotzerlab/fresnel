@@ -225,7 +225,6 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                     } // end else block of if initial ray did not hit
 
                 // take the current sample and compute the average with the previous samples
-                // from the uniform hemisphere sampling (the phi term)
                 RGBA<float> output_sample(c / float(m_light_samples), a);
 
                 // running average using Welford's method. Variance is not particularly useful to users,

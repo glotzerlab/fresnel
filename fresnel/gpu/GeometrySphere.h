@@ -9,6 +9,7 @@
 #include <pybind11/pybind11.h>
 
 #include "Geometry.h"
+#include "Array.h"
 
 namespace fresnel { namespace gpu {
 
