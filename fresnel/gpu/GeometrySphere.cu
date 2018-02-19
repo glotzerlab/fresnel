@@ -17,6 +17,8 @@ rtDeclareVariable(float, shading_distance, attribute shading_distance, );
 rtDeclareVariable(RGB<float>, shading_color, attribute shading_color, );
 rtDeclareVariable(optix::Ray, ray, rtCurrentRay, );
 
+// TODO: There is a simpler ray-sphere intersection test in the minimal line of code path tracer
+
 RT_PROGRAM void intersect(int primIdx)
     {
     const vec3<float> position(sphere_position[primIdx]);
@@ -24,29 +26,50 @@ RT_PROGRAM void intersect(int primIdx)
     const float rsq = (radius)*(radius);
     const vec3<float> ray_origin(ray.origin);
     const vec3<float> ray_direction(ray.direction);
-    const vec3<float> v = ray_origin-position;
-    const vec3<float> w = cross(ray_direction,v);
+    const vec3<float> v = position-ray_origin;
+    const float vsq = dot(v,v);
+    const vec3<float> w = cross(v,ray_direction);
 
     // Closest point-line distance, taken from
     // http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
     const float Dsq = dot(w,w)/dot(ray_direction,ray_direction);
     if (Dsq > rsq) return; // a miss
-    const float Rp = sqrt(dot(v,v) - Dsq); //Distance to closest point
+    const float Rp = sqrt(vsq - Dsq); //Distance to closest point
     //Distance from clostest point to point on sphere
     const float Ri = sqrt(rsq - Dsq);
-    const float t0 = Rp-Ri;
-    const float t1 = Rp+Ri;
-
-    if (rtPotentialIntersection(t0))
+    float t;
+    if (dot(v, ray_direction) > 0.0f)
         {
-        shading_normal = ray_origin+t0*ray_direction-position;
-        shading_distance = radius - sqrt(Dsq);
-        shading_color = RGB<float>(sphere_color[primIdx]);
-        rtReportIntersection(0);
+        if (vsq > rsq)
+            {
+            // ray origin is outside the sphere, compute the distance back from the closest point
+            t = Rp-Ri;
+            }
+        else
+            {
+            // ray origin is inside the sphere, compute the distance to the outgoing intersection point
+            t = Rp+Ri;
+            }
         }
-    else if (rtPotentialIntersection(t1))
+    else
         {
-        shading_normal = ray_origin+t1*ray_direction-position;
+        // origin is behind the sphere (use tolerance to exclude origins directly on the sphere)
+        if (vsq - rsq > -3e-6f*rsq)
+            {
+            // origin is outside the sphere, no intersection
+            return;
+            }
+        else
+            {
+            // origin is inside the sphere, compute the distance to the outgoing intersection point
+            t = Ri-Rp;
+            }
+        }
+
+    if (rtPotentialIntersection(t))
+        {
+        shading_normal = ray_origin+t*ray_direction-position;
+        shading_distance = radius - sqrt(Dsq);
         shading_color = RGB<float>(sphere_color[primIdx]);
         rtReportIntersection(0);
         }
