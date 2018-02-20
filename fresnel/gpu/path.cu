@@ -6,24 +6,12 @@
 #include "common/Camera.h"
 #include "common/Light.h"
 #include "common/RayGen.h"
+#include "common/TracerPathMethods.h"
 
 using namespace fresnel;
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // scene wide variables
-
-//! Per ray data for radiance rays
-struct PRDpath
-    {
-    RGB<float> result;
-    float a;
-    RGB<float> attenuation;
-    vec3<float> origin;
-    vec3<float> direction;
-    unsigned int light_sample;
-    unsigned int depth;
-    bool done;
-    };
 
 rtDeclareVariable(uint2, launch_index, rtLaunchIndex, );
 rtDeclareVariable(rtObject, top_object, , );
@@ -93,7 +81,7 @@ RT_PROGRAM void path_ray_gen()
     prd.result = RGB<float>(0,0,0);
     prd.a = 1.0f;
 
-    // trace a path from the hit point into the scene light_samples times
+    // trace a path from the camera into the scene light_samples times
     for (prd.light_sample = 0; prd.light_sample < light_samples; prd.light_sample++)
         {
         prd.attenuation = RGB<float>(1.0f,1.0f,1.0f);
@@ -110,14 +98,6 @@ RT_PROGRAM void path_ray_gen()
             // break out of the loop when done
             if (prd.done)
                 break;
-
-            // break out of the loop when attenuation is small (TODO: Russian roulette)
-            if (prd.attenuation.r < 1e-6 &&
-                prd.attenuation.g < 1e-6 &&
-                prd.attenuation.b < 1e-6)
-                {
-                break;
-                }
             } // end depth loop
         } // end light samples loop
 
@@ -158,109 +138,32 @@ RT_PROGRAM void path_closest_hit()
     optix::size_t2 screen = linear_output_buffer.size();
     RayGen ray_gen(launch_index.x, launch_index.y, screen.x, screen.y, seed);
 
-    Material m;
+    vec3<float> ray_origin(ray.origin);
+    vec3<float> ray_direction(ray.direction);
 
-    // apply the material color or outline color depending on the distance to the edge
-    if (shading_distance > outline_width)
-        {
-        m = material;
-        }
-    else
-        {
-        m = outline_material;
-        }
-
-    vec3<float> n = shading_normal * rsqrtf(dot(shading_normal, shading_normal));
-    vec3<float> v = -vec3<float>(ray.direction);
-
-    if (m.isSolid())
-        {
-        // testing: treat solid colors as emitters
-        // when the ray hits an emitter, terminate the path and evaluate the final color
-        prd_path.result += prd_path.attenuation * m.getColor(shading_color);
-        prd_path.done = true;
-        }
-    else
-        {
-        // when the ray hits an object with a normal material, update the attenuation using the BRDF
-        // choose a random direction l to continue the path.
-        float factor = 1.0;
-        bool transmit = false;
-
-        vec3<float> l = ray_gen.MISReflectionTransmission(factor,
-                                                          transmit,
-                                                          v,
-                                                          n,
-                                                          prd_path.depth,
-                                                          (n_samples-1)*light_samples + prd_path.light_sample,
-                                                          m);
-        if (transmit)
-            {
-            // perfect transmission
-            RGB<float> trans_color = m.getColor(shading_color);
-            trans_color.r = sqrtf(trans_color.r);
-            trans_color.g = sqrtf(trans_color.g);
-            trans_color.b = sqrtf(trans_color.b);
-            prd_path.attenuation *= trans_color;
-            }
-        else
-            {
-            float ndotl = dot(n, l);
-
-            // When n dot v is less than 0, this is coming through the back of the surface
-            // skip this sample
-            if (dot(n,v) > 0.0f && ndotl > 0.0f)
-                {
-                prd_path.attenuation *= m.brdf(l, v, n, shading_color) *
-                                               ndotl *
-                                               factor;
-                }
-            else
-                {
-                prd_path.attenuation = RGB<float>(0,0,0);
-                prd_path.done = true;
-                }
-            }
-
-        // set the origin and direction for the next ray in the path
-        prd_path.origin = vec3<float>(ray.origin) + vec3<float>(ray.direction) * t_hit;
-        prd_path.direction = l;
-        }
+    path_tracer_hit(prd_path,
+                    material,
+                    outline_material,
+                    shading_distance,
+                    outline_width,
+                    shading_color,
+                    shading_normal,
+                    ray_origin,
+                    ray_direction,
+                    t_hit,
+                    ray_gen,
+                    n_samples,
+                    light_samples);
     }
 
 RT_PROGRAM void path_miss()
     {
-    if (prd_path.depth == 0)
-        {
-        // a miss at depth 0 implies we hit the background on the primary ray
-        // no need to resample the background N times
-        prd_path.result = background_color * float(light_samples);
-        prd_path.a = background_alpha;
-        }
-    else
-        {
-        // on subsequent rays, process the area lights
-        // see if it hit any lights and compute the output color accordingly
-        for (unsigned int light_id = 0; light_id < lights.N; light_id++)
-            {
-            vec3<float> l = lights.direction[light_id];
-            float half_angle = lights.theta[light_id];
-            float cos_half_angle = cosf(half_angle);
-            if (half_angle > float(M_PI)/2.0f)
-                half_angle = float(M_PI)/2.0f;
-            float ldotd = dot(l, vec3<float>(ray.direction));
+    vec3<float> dir(ray.direction);
 
-            // NB: we can do this because ray directions are always normalized
-            if (ldotd >= cos_half_angle)
-                {
-                // hit the light
-                // the division bin sin(light half angle) normalizes the lights so that
-                // a light of color 1 of any non-zero size results in an output of 1
-                // when that light is straight over the surface
-                prd_path.result += prd_path.attenuation * lights.color[light_id] / sinf(half_angle);
-                }
-            } // end loop over lights
-        }
-
-    prd_path.done = true;
+    path_tracer_miss(prd_path,
+                     background_color,
+                     background_alpha,
+                     light_samples,
+                     lights,
+                     dir);
     }
