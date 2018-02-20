@@ -99,7 +99,7 @@ DEVICE void path_tracer_hit(PRDpath& prd,
         m = _outline_material;
         }
 
-    vec3<float> n = _shading_normal * rsqrtf(dot(_shading_normal, _shading_normal));
+    vec3<float> n = _shading_normal * fast::rsqrt(dot(_shading_normal, _shading_normal));
     vec3<float> v = -vec3<float>(ray_direction);
 
     if (m.isSolid())
