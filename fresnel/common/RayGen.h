@@ -6,6 +6,7 @@
 #include "boxmuller.hpp"
 
 #include "VectorMath.h"
+#include "ColorMath.h"
 #include "Material.h"
 
 #ifndef __RAYGEN_H__
@@ -34,6 +35,8 @@ const unsigned int rng_val_uniform = 0x11ffabcd;
 //! Counter for ray path tracing samples (multiple importance sampling)
 const unsigned int rng_val_mis = 0x8754abcd;
 
+//! Counter for ray termination (Russian roulette)
+const unsigned int rng_val_rr = 0x54abf853;
 
 //! Ray generation methods
 /*! Common code to generate rays on the host and device.
@@ -238,6 +241,37 @@ class RayGen
                 }
             }
         return l;
+        }
+
+    //! Test for Russian roulette ray termination
+    /*! \returns True when the path should terminate
+        \param attenuation [input/output] Current attenuation
+        \param v Vector pointing back toward the viewing direction
+        \param depth Depth of the ray in the trace
+        \param sample Sample index
+
+         When the path is not terminated, the attenuation is amplified by the appropriate amount.
+    */
+    DEVICE bool shouldTerminatePath(RGB<float>& attenuation,
+                                    unsigned int depth,
+                                    unsigned int sample
+                                    ) const
+        {
+        r123::Philox4x32 rng;
+        r123::Philox4x32::ctr_type rng_counter = {{0, depth, sample, rng_val_rr}};
+        r123::Philox4x32::ctr_type rng_u = rng(rng_counter, m_rng_key);
+
+        float p_continue = fmaxf(attenuation.r, fmaxf(attenuation.g, attenuation.b));
+        p_continue = fminf(p_continue, 1.0f);
+        if(r123::u01<float>(rng_u[0]) > p_continue)
+            {
+            return true;
+            }
+        else
+            {
+            attenuation /=  p_continue;
+            return false;
+            }
         }
 
     protected:

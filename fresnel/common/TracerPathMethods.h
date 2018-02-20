@@ -155,10 +155,10 @@ DEVICE void path_tracer_hit(PRDpath& prd,
         prd.origin = ray_origin + ray_direction * _t_hit;
         prd.direction = l;
 
-        // break out of the loop when attenuation is small (TODO: Russian roulette)
-        if (prd.attenuation.r < 1e-6 &&
-            prd.attenuation.g < 1e-6 &&
-            prd.attenuation.b < 1e-6)
+        // break out of the loop when attenuation is small (Russian roulette termination )
+        if (ray_gen.shouldTerminatePath(prd.attenuation,
+                                        prd.depth,
+                                        (_n_samples-1)*_light_samples + prd.light_sample))
             {
             prd.done = true;
             }

@@ -105,7 +105,7 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                     prd.attenuation = RGB<float>(1.0f,1.0f,1.0f);
                     prd.done = false;
 
-                    for (prd.depth = 0; prd.depth <= 10000; prd.depth++)
+                    for (prd.depth = 0; ; prd.depth++)
                         {
                         RTCRay ray(prd.origin,  prd.direction);
                         if (prd.depth == 0)

@@ -89,7 +89,7 @@ RT_PROGRAM void path_ray_gen()
         prd.origin = cam.origin(sample_loc);
         prd.direction = cam.direction(sample_loc);
 
-        for (prd.depth = 0; prd.depth <= 10000; prd.depth++)
+        for (prd.depth = 0; ; prd.depth++)
             {
             // (1 is for the path tracer ray id)
             optix::Ray ray(prd.origin, prd.direction, 1, scene_epsilon);
