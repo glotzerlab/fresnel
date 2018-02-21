@@ -2,6 +2,17 @@
 
 [TOC]
 
+## v0.6.0
+
+Not yet released
+
+* Implement `tracer.Path` on the GPU.
+* Improve path tracer performance with Russian roulette termination.
+* Compile warning-free.
+* Fix sphere intersection test bugs on the GPU.
+* `tracer.Path` now correctly starts sampling over when resized.
+* Wrap C++ code with pybind 2.2
+
 ## v0.5.0
 
 Released 2017/07/27
