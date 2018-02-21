@@ -3,6 +3,7 @@
 
 #include "TracerPath.h"
 #include "common/RayGen.h"
+#include "common/TracerPathMethods.h"
 #include <cmath>
 #include <stdexcept>
 
@@ -88,146 +89,73 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                 // determine the viewing plane relative coordinates of this pixel
                 vec2<float> sample_loc = ray_gen.importanceSampleAA(m_n_samples);
 
-                vec3<float> origin = cam.origin(sample_loc);
-                vec3<float> direction = cam.direction(sample_loc);
-
-                // determine the output pixel color
-                RGB<float> c(0,0,0);
-                float a = 1.0f;
+                // per ray data
+                PRDpath prd;
+                prd.result = RGB<float>(0,0,0);
+                prd.a = 1.0f;
 
                 // trace the first ray into the scene
-                RTCRay ray_initial(origin,  direction);
+                RTCRay ray_initial(cam.origin(sample_loc), cam.direction(sample_loc));
                 ray_initial.tnear = 1e-3f;
                 rtcIntersect(scene->getRTCScene(), ray_initial);
 
-                if (!ray_initial.hit())
+                // trace a path from the hit point into the scene m_light_samples times
+                for (prd.light_sample = 0; prd.light_sample < m_light_samples; prd.light_sample++)
                     {
-                    // no need to resample the backround N times
-                    c = background_color * float(m_light_samples);
-                    a = background_alpha;
-                    }
-                else
-                    {
-                    // trace a path from the hit point into the scene m_light_samples times
-                    for (unsigned int light_sample = 0; light_sample < m_light_samples; light_sample++)
+                    prd.attenuation = RGB<float>(1.0f,1.0f,1.0f);
+                    prd.done = false;
+
+                    for (prd.depth = 0; ; prd.depth++)
                         {
-                        RGB<float> attenuation(1.0f,1.0f,1.0f);
-                        for (unsigned int depth = 1; depth <= 10000; depth++)
+                        RTCRay ray(prd.origin,  prd.direction);
+                        if (prd.depth == 0)
                             {
-                            RTCRay ray(origin,  direction);
-                            if (depth == 1)
-                                {
-                                // the first hit is cached above
-                                ray = ray_initial;
-                                }
-                            else
-                                {
-                                // subsequent depth steps need to trace
-                                ray.tnear = 1e-3f;
-                                rtcIntersect(scene->getRTCScene(), ray);
-                                }
+                            // the first hit is cached above
+                            ray = ray_initial;
+                            }
+                        else
+                            {
+                            // subsequent depth steps need to trace
+                            ray.tnear = 1e-3f;
+                            rtcIntersect(scene->getRTCScene(), ray);
+                            }
 
-                            if (ray.hit())
-                                {
-                                vec3<float> n = ray.Ng / std::sqrt(dot(ray.Ng, ray.Ng));
-                                vec3<float> v = -ray.dir / std::sqrt(dot(ray.dir, ray.dir));
-                                Material m;
+                        if (ray.hit())
+                            {
+                            // call hit program
+                            path_tracer_hit(prd,
+                                            scene->getMaterial(ray.geomID),
+                                            scene->getOutlineMaterial(ray.geomID),
+                                            ray.d,
+                                            scene->getOutlineWidth(ray.geomID),
+                                            ray.shading_color,
+                                            ray.Ng,
+                                            ray.org,
+                                            ray.dir,
+                                            ray.tfar,
+                                            ray_gen,
+                                            m_n_samples,
+                                            m_light_samples);
+                            }
+                        else
+                            {
+                            // call miss program
+                            path_tracer_miss(prd,
+                                             background_color,
+                                             background_alpha,
+                                             m_light_samples,
+                                             lights,
+                                             ray.dir);
+                            }
 
-                                // apply the material color or outline color depending on the distance to the edge
-                                if (ray.d > scene->getOutlineWidth(ray.geomID))
-                                    m = scene->getMaterial(ray.geomID);
-                                else
-                                    m = scene->getOutlineMaterial(ray.geomID);
-
-                                if (m.isSolid())
-                                    {
-                                    // testing: treat solid colors as emitters
-                                    // when the ray hits an emitter, terminate the path and evaluate the final color
-                                    c += attenuation * m.getColor(ray.shading_color);
-                                    break;
-                                    }
-                                else
-                                    {
-                                    // when the ray hits an object with a normal material, update the attenuation using the BRDF
-                                    // choose a random direction l to continue the path.
-                                    float factor = 1.0;
-                                    bool transmit = false;
-
-                                    vec3<float> l = ray_gen.MISReflectionTransmission(factor,
-                                                                                      transmit,
-                                                                                      v,
-                                                                                      n,
-                                                                                      depth,
-                                                                                      (m_n_samples-1)*m_light_samples + light_sample,
-                                                                                      m);
-                                    if (transmit)
-                                        {
-                                        // perfect transmission
-                                        RGB<float> trans_color = m.getColor(ray.shading_color);
-                                        trans_color.r = sqrtf(trans_color.r);
-                                        trans_color.g = sqrtf(trans_color.g);
-                                        trans_color.b = sqrtf(trans_color.b);
-                                        attenuation *= trans_color;
-                                        }
-                                    else
-                                        {
-                                        float ndotl = dot(n, l);
-
-                                        // When n dot v is less than 0, this is coming through the back of the surface
-                                        // skip this sample
-                                        if (dot(n,v) > 0.0f && ndotl > 0.0f)
-                                            {
-                                            attenuation *= m.brdf(l, v, n, ray.shading_color) *
-                                                           ndotl *
-                                                           factor;
-                                            }
-                                        else
-                                            {
-                                            attenuation = RGB<float>(0,0,0);
-                                            break;
-                                            }
-                                        }
-
-                                    // set the origin and direction for the next ray in the path
-                                    origin = ray.org + ray.dir * ray.tfar;
-                                    direction = l;
-                                    }
-                                }
-                            else
-                                {
-                                // ray missed geometry entirely (and depth > 1)
-                                // see if it hit any lights and compute the output color accordingly
-                                for (unsigned int light_id = 0; light_id < lights.N; light_id++)
-                                    {
-                                    vec3<float> l = lights.direction[light_id];
-                                    float half_angle = lights.theta[light_id];
-                                    float cos_half_angle = cosf(half_angle);
-                                    if (half_angle > float(M_PI)/2.0f)
-                                        half_angle = float(M_PI)/2.0f;
-                                    float ldotd = dot(l,ray.dir);
-                                    // TODO: this assumes the ray direction is normalized. Either we normalize here or ensure that
-                                    // is always the case
-                                    if (ldotd >= cos_half_angle)
-                                        {
-                                        // hit the light
-                                        // the division bin sin(light half angle) normalizes the lights so that
-                                        // a light of color 1 of any non-zero size results in an output of 1
-                                        // when that light is straight over the surface
-                                        // TODO: move these out into a precomputation per light in the light config
-                                        c += attenuation * lights.color[light_id] / sinf(half_angle);
-                                        }
-                                    } // end loop over lights
-
-                                // the ray missed geometry, no more tracing to do
-                                break;
-                                }
-                            } // end depth loop
-                        } // end light samples loop
-                    } // end else block of if initial ray did not hit
+                        // break out of the loop when done
+                        if (prd.done)
+                            break;
+                        } // end depth loop
+                    } // end light samples loop
 
                 // take the current sample and compute the average with the previous samples
-                // from the uniform hemisphere sampling (the phi term)
-                RGBA<float> output_sample(c / float(m_light_samples), a);
+                RGBA<float> output_sample(prd.result / float(m_light_samples), prd.a);
 
                 // running average using Welford's method. Variance is not particularly useful to users,
                 // so don't compute that.
@@ -241,7 +169,7 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                 if (!m_highlight_warning || (output_pixel.r <= 1.0f && output_pixel.g <= 1.0f && output_pixel.b <= 1.0f))
                     srgb_output[pixel] = sRGB(output_pixel);
                 else
-                    srgb_output[pixel] = sRGB(RGBA<float>(m_highlight_warning_color, a));
+                    srgb_output[pixel] = sRGB(RGBA<float>(m_highlight_warning_color, output_pixel.a));
                 } // end loop over pixels in a tile
             } // end loop over tiles in this work unit
         }); // end parallel loop over all tiles

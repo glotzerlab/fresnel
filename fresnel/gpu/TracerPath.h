@@ -4,24 +4,17 @@
 #ifndef TRACER_PATH_H_
 #define TRACER_PATH_H_
 
-#include "embree_platform.h"
-#include <embree2/rtcore.h>
-#include <embree2/rtcore_ray.h>
+#include <optixu/optixpp_namespace.h>
 #include <pybind11/pybind11.h>
 
 #include "Tracer.h"
 
-namespace fresnel { namespace cpu {
+namespace fresnel { namespace gpu {
 
 //! Path tracer
-/*! The path tracer randomly samples light paths in the scene to obtain soft lighting from area light sources
-    and other global illumination techniques (reflection, refraction, anti-aliasing, etc...).
+/*! GPU code for the tracer is in path.cu
 
-    Every time render() is called, a sample is taken and the output updated to match the current average. Many
-    samples may be needed to obtain a converged image. Call reset() to clear the current image and start a new
-    sampling run. The Tracer does not know when the camera angle, materials, or other properties of the scene
-    have changed, so the caller must call reset() whenever needed to start sampling a new view or changed
-    scene (unless motion blur or other multiple exposure techniques are the desired output).
+    See cpu::TracerPath for API documentation
 */
 class TracerPath : public Tracer
     {
@@ -31,8 +24,11 @@ class TracerPath : public Tracer
         //! Destructor
         virtual ~TracerPath();
 
+        //! Initialize the Material for use in tracing
+        static void setupMaterial(optix::Material mat, Device* dev);
+
         //! Render a scene
-        virtual void render(std::shared_ptr<Scene> scene);
+        void render(std::shared_ptr<Scene> scene);
 
         //! Reset the sampling
         virtual void reset();
@@ -59,11 +55,12 @@ class TracerPath : public Tracer
     protected:
         unsigned int m_n_samples;     //!< Number of samples taken since the last reset
         unsigned int m_light_samples; //!< Number of light samples to take each render()
+
     };
 
-//! Export TracerDirect to python
+//! Export TracerPath to python
 void export_TracerPath(pybind11::module& m);
 
-} } // end namespace fresnel::cpu
+} } // end namespace fresnel::gpu
 
 #endif

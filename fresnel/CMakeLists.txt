@@ -40,10 +40,12 @@ target_compile_definitions(_common PUBLIC FRESNEL_BUILD_GPU)
 # Build the PTX files for the OptiX programs
 set(_ptx_sources
 	gpu/direct.cu
+    gpu/path.cu
 	gpu/GeometrySphere.cu
     gpu/GeometryPrism.cu)
 
-set(CUDA_NVCC_FLAGS "-arch compute_30 --std c++11 --use_fast_math")
+list(APPEND CUDA_NVCC_FLAGS "-Xcudafe;--diag_suppress=code_is_unreachable")
+list(APPEND CUDA_NVCC_FLAGS "-arch;compute_30;--use_fast_math")
 CUDA_WRAP_SRCS(_ptx PTX generated_ptx_files ${_ptx_sources})
 add_custom_target(_ptx ALL
     DEPENDS ${generated_ptx_files} ${_ptx_sources}
@@ -63,6 +65,7 @@ set(_gpu_sources
      gpu/GeometrySphere.cc
      gpu/Tracer.cc
      gpu/TracerDirect.cc
+     gpu/TracerPath.cc
      gpu/Array.cc
    )
 

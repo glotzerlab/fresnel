@@ -10,6 +10,7 @@
 #include "common/ColorMath.h"
 #include "common/Camera.h"
 #include "Scene.h"
+#include "Array.h"
 
 namespace fresnel { namespace gpu {
 

@@ -137,7 +137,7 @@ def scene_eight_polyhedra(device):
 
     return scene
 
-def assert_image_approx_equal(a, ref_file):
+def assert_image_approx_equal(a, ref_file, tolerance=1.0):
     im = PIL.Image.open(ref_file)
     im_arr = numpy.fromstring(im.tobytes(), dtype=numpy.uint8)
     im_arr = im_arr.reshape((im.size[1], im.size[0], 4))
@@ -158,5 +158,5 @@ def assert_image_approx_equal(a, ref_file):
     diff = numpy.array((a_float - im_float))
     msd = numpy.mean(diff[selection]**2)
 
-    assert msd < 1.0
+    assert msd < tolerance
 
