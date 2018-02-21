@@ -2,6 +2,7 @@
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include <optix.h>
+#include "TracerIDs.h"
 #include "common/Material.h"
 #include "common/Camera.h"
 #include "common/Light.h"
@@ -92,7 +93,7 @@ RT_PROGRAM void path_ray_gen()
         for (prd.depth = 0; ; prd.depth++)
             {
             // (1 is for the path tracer ray id)
-            optix::Ray ray(prd.origin, prd.direction, 1, scene_epsilon);
+            optix::Ray ray(prd.origin, prd.direction, TRACER_PATH_RAY_ID, scene_epsilon);
             rtTrace(top_object, ray, prd);
 
             // break out of the loop when done

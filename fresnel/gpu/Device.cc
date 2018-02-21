@@ -9,6 +9,7 @@
 #include "Device.h"
 #include "TracerDirect.h"
 #include "TracerPath.h"
+#include "TracerIDs.h"
 
 using namespace std;
 
@@ -42,7 +43,7 @@ Device::Device(const std::string& ptx_root, int n) : m_ptx_root(ptx_root)
 
     // miss programs
     optix::Program p2 = getProgram("_ptx_generated_path.cu.ptx", "path_miss");
-    m_context->setMissProgram(1, p2);
+    m_context->setMissProgram(TRACER_PATH_RAY_ID, p2);
 
     // initialize materials
     m_material = m_context->createMaterial();

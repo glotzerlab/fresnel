@@ -2,6 +2,7 @@
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include <optix.h>
+#include "TracerIDs.h"
 #include "common/Material.h"
 #include "common/Camera.h"
 #include "common/Light.h"
@@ -89,7 +90,7 @@ RT_PROGRAM void direct_ray_gen()
         vec2<float> sample_loc = ray_gen.jitterSampleAA(aa_factor, si, sj, aa_n);
 
         // trace a ray into the scene
-        optix::Ray ray(cam.origin(sample_loc), cam.direction(sample_loc), 0, scene_epsilon);
+        optix::Ray ray(cam.origin(sample_loc), cam.direction(sample_loc), TRACER_PREVIEW_RAY_ID, scene_epsilon);
 
         PRDradiance prd;
         prd.hit = 0;

@@ -4,6 +4,7 @@
 #include <string>
 
 #include "TracerDirect.h"
+#include "TracerIDs.h"
 
 using namespace std;
 
@@ -32,7 +33,7 @@ TracerDirect::~TracerDirect()
 void TracerDirect::setupMaterial(optix::Material mat, Device *dev)
     {
     optix::Program p = dev->getProgram("_ptx_generated_direct.cu.ptx", "direct_closest_hit");
-    mat->setClosestHitProgram(0, p);
+    mat->setClosestHitProgram(TRACER_PREVIEW_RAY_ID, p);
     }
 
 /*! \param scene The Scene to render

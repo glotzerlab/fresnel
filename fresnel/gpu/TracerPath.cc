@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "TracerPath.h"
+#include "TracerIDs.h"
 
 using namespace std;
 
@@ -48,7 +49,7 @@ void TracerPath::reset()
 void TracerPath::setupMaterial(optix::Material mat, Device *dev)
     {
     optix::Program p = dev->getProgram("_ptx_generated_path.cu.ptx", "path_closest_hit");
-    mat->setClosestHitProgram(1, p);
+    mat->setClosestHitProgram(TRACER_PATH_RAY_ID, p);
     }
 
 /*! \param scene The Scene to render

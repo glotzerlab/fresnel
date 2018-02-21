@@ -33,14 +33,13 @@ namespace fresnel { namespace gpu {
     To keep things simple, there will be only one material. The Tracer classes will use different ray id's to select
     the appropriate ray programs.
 
-    These are the ID's assigned to the tracers:
+    These are the ID's assigned to the tracers (in TracerIDs.h):
 
       * TracerDirect: 0
       * TracerPath: 1
 
     Hopefully it is not too much of a performance degradation to have multiple ray id's loaded and only use one.
     TODO: test the performance impact of this.
-    TODO: Use global constants to set these
 */
 class Device
     {
