@@ -2,13 +2,33 @@
 
 Fresnel is a python library that ray traces publication quality images in real time.
 
-Fresnel is in an early stage of development. User documentation is not yet posted online, and conda builds are not
-yet available.
+Fresnel is in an early stage of development. User documentation is not yet posted online, and the API is not yet stable.
+
+## Install binaries
+
+Official binaries of fresnel are available via [conda](http://conda.pydata.org/docs/) through
+the [glotzer channel](https://anaconda.org/glotzer).
+To install fresnel, first download and install
+[miniconda](http://conda.pydata.org/miniconda.html) following [conda's instructions](http://conda.pydata.org/docs/install/quick.html).
+Then add the `glotzer` channel and install fresnel:
+
+```bash
+$ conda config --add channels glotzer
+$ conda install fresnel
+```
 
 ## Get the source
 
+Download the source directly from the web: https://glotzerlab.engin.umich.edu/Downloads/
+
+```bash
+$ curl -O https://glotzerlab.engin.umich.edu/Downloads/fresnel/fresnel-v0.5.0.tar.gz
 ```
-git clone --recursive  https://bitbucket.org/glotzer/fresnel.git
+
+Or, clone using git:
+
+```bash
+$ git clone --recursive  https://bitbucket.org/glotzer/fresnel.git
 ```
 
 Fresnel uses git submodules. Either clone with the ``--recursive`` option, or execute ``git submodule update --init``
@@ -18,20 +38,20 @@ to fetch the submodules.
 
 Compile and build with cmake.
 
-```
-mkdir build
-cd build
-cmake /path/to/fresnel
-make -j4
+```bash
+$ mkdir build
+$ cd build
+$ cmake /path/to/fresnel
+$ make -j4
 ```
 
 ## Running tests
 
-```
-export PYTHONPATH=/path/to/build
-cd /path/to/fresnel
-cd test
-pytest
+```bash
+$ export PYTHONPATH=/path/to/build
+$ cd /path/to/fresnel
+$ cd test
+$ pytest
 ```
 
 ## User documentation
@@ -39,20 +59,20 @@ pytest
 [fresnel-examples](https://bitbucket.org/glotzer/fresnel-examples/overview) provides a tutorial introduction to fresnel
 with jupyter notebooks. View [static fresnel-examples](http://nbviewer.jupyter.org/github/joaander/fresnel-examples/blob/master/index.ipynb) with nbviewer, or clone the examples and execute them locally:
 
-```
-export PYTHONPATH=/path/to/fresnel/build
-git clone https://bitbucket.org/glotzer/fresnel-examples.git
-cd fresnel-examples
-jupyter notebook index.ipynb
+```bash
+$ export PYTHONPATH=/path/to/fresnel/build
+$ git clone https://bitbucket.org/glotzer/fresnel-examples.git
+$ cd fresnel-examples
+$ jupyter notebook index.ipynb
 ```
 
 Build the user reference documentation with sphinx:
 
-```
-cd /path/to/fresnel
-cd doc
-make html
-open build/html/index.html
+```bash
+$ cd /path/to/fresnel
+$ cd doc
+$ make html
+$ open build/html/index.html
 ```
 
 ## Prerequisites
