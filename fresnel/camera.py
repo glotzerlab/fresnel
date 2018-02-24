@@ -26,6 +26,7 @@ class Camera(object):
         look_at (tuple): the point the camera looks at (the center of the focal plane).
         up (tuple): a vector pointing up.
         height: the height of the image plane.
+        basis: three orthonormal vectors defining the camera coordinate basis in the right-handed order right, look direction, up (read only)
 
     :py:class:`Camera <fresnel.camera.Camera>` space is a coordinate system centered on the camera's position.
     Positive *x* points to the right in the image, positive *y* points up, and positive *z* points out of the screen.
@@ -76,6 +77,13 @@ class Camera(object):
     @height.setter
     def height(self, value):
         self._camera.h = float(value);
+
+    @property
+    def basis(self):
+        b = _common.CameraBasis(self._camera)
+        return ( (b.r.x, b.r.y, b.r.z),
+                 (b.d.x, b.d.y, b.d.z),
+                 (b.u.x, b.u.y, b.u.z) )
 
     def __repr__(self):
         return "fresnel.camera.orthographic(position={0}, look_at={1}, up={2}, height={3})".format(self.position, self.look_at, self.up, self.height)

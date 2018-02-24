@@ -42,6 +42,12 @@ class array(object):
         # set to None if this buffer is not associated with a geometry
         self.geom = geom
 
+        self.buf.map();
+        a = numpy.array(self.buf, copy=False);
+        self.shape = a.shape;
+        self.dtype = a.dtype;
+        self.buf.unmap();
+
     def __setitem__(self, slice, data):
         self.buf.map();
         a = numpy.array(self.buf, copy=False);
@@ -57,20 +63,6 @@ class array(object):
         data = numpy.array(a[slice], copy=True);
         self.buf.unmap();
         return data;
-
-    @property
-    def shape(self):
-        self.buf.map();
-        a = numpy.array(self.buf, copy=False);
-        self.buf.unmap();
-        return a.shape;
-
-    @property
-    def dtype(self):
-        self.buf.map();
-        a = numpy.array(self.buf, copy=False);
-        self.buf.unmap();
-        return a.dtype;
 
 class image_array(array):
     R""" Map internal fresnel image buffers as numpy arrays.
