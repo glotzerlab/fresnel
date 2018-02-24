@@ -97,6 +97,8 @@ set(files __init__.py
           util.py
           color.py
           light.py
+          interact/__init__.py
+          interact/qt5.py
     )
 
 install(FILES ${files}
