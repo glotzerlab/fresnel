@@ -5,8 +5,8 @@
 #define GEOMETRY_PRISM_H_
 
 #include "embree_platform.h"
-#include <embree2/rtcore.h>
-#include <embree2/rtcore_ray.h>
+#include <embree3/rtcore.h>
+#include <embree3/rtcore_ray.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 
@@ -79,13 +79,13 @@ class GeometryPrism : public Geometry
         float m_radius=0;                           //!< Precomputed radius in the xy plane
 
         //! Embree bounding function
-        static void bounds(void *ptr, size_t item, RTCBounds& bounds_o);
+        static void bounds(const struct RTCBoundsFunctionArguments *args);
 
         //! Embree ray intersection function
-        static void intersect(void *ptr, RTCRay& ray, size_t item);
+        static void intersect(const struct RTCIntersectFunctionNArguments *args);
 
         //! Embree ray occlusion function
-        static void occlude(void *ptr, RTCRay& ray, size_t item);
+        static void occlude(const struct RTCOccludedFunctionNArguments *args);
     };
 
 //! Export GeometryPrism to python

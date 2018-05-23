@@ -21,7 +21,8 @@ GeometryPrism::GeometryPrism(std::shared_ptr<Scene> scene,
     : Geometry(scene)
     {
     // create the geometry
-    m_geom_id = rtcNewUserGeometry(m_scene->getRTCScene(), N);
+    RTCGeometry geometry = rtcNewGeometry(m_device->getRTCDevice(), RTC_GEOMETRY_TYPE_USER);
+    m_geom_id = rtcAttachGeometry(m_scene->getRTCScene(), geometry);
     m_device->checkError();
 
     // set default material
@@ -76,13 +77,13 @@ GeometryPrism::GeometryPrism(std::shared_ptr<Scene> scene,
         }
 
     // register functions for embree
-    rtcSetUserData(m_scene->getRTCScene(), m_geom_id, this);
+    rtcSetGeometryUserData(geometry, this);
     m_device->checkError();
-    rtcSetBoundsFunction(m_scene->getRTCScene(), m_geom_id, &GeometryPrism::bounds);
+    rtcSetGeometryBoundsFunction(geometry, &GeometryPrism::bounds, NULL);
     m_device->checkError();
-    rtcSetIntersectFunction(m_scene->getRTCScene(), m_geom_id, &GeometryPrism::intersect);
+    rtcSetGeometryIntersectFunction(geometry, &GeometryPrism::intersect);
     m_device->checkError();
-    rtcSetOccludedFunction(m_scene->getRTCScene(), m_geom_id, &GeometryPrism::occlude);
+    rtcSetGeometryOccludedFunction(geometry, &GeometryPrism::occlude);
     m_device->checkError();
 
     m_valid = true;
@@ -98,13 +99,14 @@ GeometryPrism::~GeometryPrism()
     \param item Index of the primitive to compute the bounding box of
     \param bounds_o Output bounding box
 */
-void GeometryPrism::bounds(void *ptr, size_t item, RTCBounds& bounds_o)
+void GeometryPrism::bounds(const struct RTCBoundsFunctionArguments *args)
     {
-    GeometryPrism *geom = (GeometryPrism*)ptr;
-    vec2<float> p2 = geom->m_position->get(item);
-    float height = geom->m_height->get(item);
+    GeometryPrism *geom = (GeometryPrism*)args->geometryUserPtr;
+    vec2<float> p2 = geom->m_position->get(args->primID);
+    float height = geom->m_height->get(args->primID);
     vec3<float> p(p2.x, p2.y, 0.0f);
 
+    RTCBounds& bounds_o = *args->bounds_o;
     bounds_o.lower_x = p.x - geom->m_radius;
     bounds_o.lower_y = p.y - geom->m_radius;
     bounds_o.lower_z = p.z;
@@ -120,24 +122,25 @@ void GeometryPrism::bounds(void *ptr, size_t item, RTCBounds& bounds_o)
     \param ray The ray to intersect
     \param item Index of the primitive to compute the bounding box of
 */
-void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
+void GeometryPrism::intersect(const struct RTCIntersectFunctionNArguments *args)
     {
-    GeometryPrism *geom = (GeometryPrism*)ptr;
+    GeometryPrism *geom = (GeometryPrism*)args->geometryUserPtr;
 
     // adapted from OptiX quick start tutorial and Embree user_geometry tutorial files
     int n_planes = geom->m_plane_normal.size();
     float t0 = -std::numeric_limits<float>::max();
     float t1 = std::numeric_limits<float>::max();
 
-    const vec2<float> p2 = geom->m_position->get(item);
+    const vec2<float> p2 = geom->m_position->get(args->primID);
     const vec3<float> pos_world(p2.x, p2.y, 0.0f);
-    const float angle = geom->m_angle->get(item);
-    const float height = geom->m_height->get(item);
+    const float angle = geom->m_angle->get(args->primID);
+    const float height = geom->m_height->get(args->primID);
     const quat<float> q_world = quat<float>::fromAxisAngle(vec3<float>(0,0,1), angle);
 
     // transform the ray into the primitive coordinate system
-    vec3<float> ray_dir_local = rotate(conj(q_world), ray.dir);
-    vec3<float> ray_org_local = rotate(conj(q_world), ray.org - pos_world);
+    RTCRay& ray = ((RTCRayHit *)args->rayhit)->ray;
+    vec3<float> ray_dir_local = rotate(conj(q_world), vec3<float>(ray.dir_x,ray.dir_y,ray.dir_z));
+    vec3<float> ray_org_local = rotate(conj(q_world), vec3<float>(ray.org_x,ray.org_y,ray.org_z) - pos_world);
 
     vec3<float> t0_n_local(0,0,0), t0_p_local(0,0,0);
     vec3<float> t1_n_local(0,0,0), t1_p_local(0,0,0);
@@ -192,27 +195,35 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
     vec3<float> n_hit, p_hit;
 
     // if the t0 is in (tnear,tfar), we hit the entry plane
+    RTCRayHit& rh = *(RTCRayHit *)args->rayhit;
+    FresnelRTCIntersectContext & context = *(FresnelRTCIntersectContext *)args->context;
     if ((ray.tnear < t0) & (t0 < ray.tfar))
         {
         t_hit = ray.tfar = t0;
-        ray.geomID = geom->m_geom_id;
-        ray.primID = item;
-        ray.Ng = rotate(q_world, t0_n_local);
+        rh.hit.geomID = geom->m_geom_id;
+        rh.hit.primID = args->primID;
+        vec3<float> Ng = rotate(q_world, t0_n_local);
+        rh.hit.Ng_x = Ng.x;
+        rh.hit.Ng_y = Ng.y;
+        rh.hit.Ng_z = Ng.z;
         n_hit = t0_n_local;
         p_hit = t0_p_local;
-        ray.shading_color = geom->m_color->get(item);
+        context.shading_color = geom->m_color->get(args->primID);
         hit = true;
         }
     // if t1 is in (tnear,tfar), we hit the exit plane
     if ((ray.tnear < t1) & (t1 < ray.tfar))
         {
         t_hit = ray.tfar = t1;
-        ray.geomID = geom->m_geom_id;
-        ray.primID = item;
-        ray.Ng = rotate(q_world, t1_n_local);
+        rh.hit.geomID = geom->m_geom_id;
+        rh.hit.primID = args->primID;
+        vec3<float> Ng = rotate(q_world, t1_n_local);
+        rh.hit.Ng_x = Ng.x;
+        rh.hit.Ng_y = Ng.y;
+        rh.hit.Ng_z = Ng.z;
         n_hit = t1_n_local;
         p_hit = t1_p_local;
-        ray.shading_color = geom->m_color->get(item);
+        context.shading_color = geom->m_color->get(args->primID);
         hit = true;
         }
 
@@ -230,7 +241,7 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
 
             // correct the top plane positions
             if (i == 0)
-                p.z = geom->m_height->get(item);
+                p.z = geom->m_height->get(args->primID);
 
             // ********
             // find the line of intersection between the two planes
@@ -300,7 +311,7 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
                     min_d = d;
                 }
             }
-        ray.d = min_d;
+        context.d = min_d;
         }
     }
 
@@ -310,26 +321,27 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
     \param ray The ray to intersect
     \param item Index of the primitive to compute the bounding box of
 */
-void GeometryPrism::occlude(void *ptr, RTCRay& ray, size_t item)
+void GeometryPrism::occlude(const struct RTCOccludedFunctionNArguments *args)
     {
     // this method is a copy and pasted version of intersect with a different behavior on hit, to
     // meet Embree API standards. When intersect is updated, it should be copied and pasted back here.
-    GeometryPrism *geom = (GeometryPrism*)ptr;
+    GeometryPrism *geom = (GeometryPrism*)args->geometryUserPtr;
 
     // adapted from OptiX quick start tutorial and Embree user_geometry tutorial files
     int n_planes = geom->m_plane_normal.size();
     float t0 = -std::numeric_limits<float>::max();
     float t1 = std::numeric_limits<float>::max();
 
-    const vec2<float> p2 = geom->m_position->get(item);
+    const vec2<float> p2 = geom->m_position->get(args->primID);
     const vec3<float> pos_world(p2.x, p2.y, 0.0f);
-    const float angle = geom->m_angle->get(item);
-    const float height = geom->m_height->get(item);
+    const float angle = geom->m_angle->get(args->primID);
+    const float height = geom->m_height->get(args->primID);
     const quat<float> q_world = quat<float>::fromAxisAngle(vec3<float>(0,0,1), angle);
 
     // transform the ray into the primitive coordinate system
-    vec3<float> ray_dir_local = rotate(conj(q_world), ray.dir);
-    vec3<float> ray_org_local = rotate(conj(q_world), ray.org - pos_world);
+    RTCRay& ray = *(RTCRay *)args->ray;
+    vec3<float> ray_dir_local = rotate(conj(q_world), vec3<float>(ray.dir_x,ray.dir_y,ray.dir_z));
+    vec3<float> ray_org_local = rotate(conj(q_world), vec3<float>(ray.org_x,ray.org_y,ray.org_z) - pos_world);
 
     vec3<float> t0_n_local, t0_p_local;
     vec3<float> t1_n_local, t1_p_local;
@@ -381,12 +393,12 @@ void GeometryPrism::occlude(void *ptr, RTCRay& ray, size_t item)
     // if the t0 is in (tnear,tfar), we hit the entry plane
     if ((ray.tnear < t0) & (t0 < ray.tfar))
         {
-        ray.geomID = 0;
+        ray.tfar = -std::numeric_limits<float>::infinity();
         }
     // if t1 is in (tnear,tfar), we hit the exit plane
     if ((ray.tnear < t1) & (t1 < ray.tfar))
         {
-        ray.geomID = 0;
+        ray.tfar = -std::numeric_limits<float>::infinity();
         }
     }
 

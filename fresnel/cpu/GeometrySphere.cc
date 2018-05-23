@@ -17,7 +17,8 @@ GeometrySphere::GeometrySphere(std::shared_ptr<Scene> scene, unsigned int N)
     : Geometry(scene)
     {
     // create the geometry
-    m_geom_id = rtcNewUserGeometry(m_scene->getRTCScene(), N);
+    RTCGeometry geometry = rtcNewGeometry(m_device->getRTCDevice(), RTC_GEOMETRY_TYPE_USER);
+    m_geom_id = rtcAttachGeometry(m_scene->getRTCScene(), geometry);
     m_device->checkError();
 
     // set default material
@@ -30,13 +31,13 @@ GeometrySphere::GeometrySphere(std::shared_ptr<Scene> scene, unsigned int N)
     m_color = std::shared_ptr< Array< RGB<float> > >(new Array< RGB<float> >(N));
 
     // register functions for embree
-    rtcSetUserData(m_scene->getRTCScene(), m_geom_id, this);
+    rtcSetGeometryUserData(geometry, this);
     m_device->checkError();
-    rtcSetBoundsFunction(m_scene->getRTCScene(), m_geom_id, &GeometrySphere::bounds);
+    rtcSetGeometryBoundsFunction(geometry, &GeometrySphere::bounds, NULL);
     m_device->checkError();
-    rtcSetIntersectFunction(m_scene->getRTCScene(), m_geom_id, &GeometrySphere::intersect);
+    rtcSetGeometryIntersectFunction(geometry, &GeometrySphere::intersect);
     m_device->checkError();
-    rtcSetOccludedFunction(m_scene->getRTCScene(), m_geom_id, &GeometrySphere::occlude);
+    rtcSetGeometryOccludedFunction(geometry, &GeometrySphere::occlude);
     m_device->checkError();
 
     m_valid = true;
@@ -52,11 +53,12 @@ GeometrySphere::~GeometrySphere()
     \param item Index of the primitive to compute the bounding box of
     \param bounds_o Output bounding box
 */
-void GeometrySphere::bounds(void *ptr, size_t item, RTCBounds& bounds_o)
+void GeometrySphere::bounds(const struct RTCBoundsFunctionArguments *args)
     {
-    GeometrySphere *geom = (GeometrySphere*)ptr;
-    vec3<float> p = geom->m_position->get(item);
-    float radius = geom->m_radius->get(item);
+    GeometrySphere *geom = (GeometrySphere*)args->geometryUserPtr;
+    vec3<float> p = geom->m_position->get(args->primID);
+    float radius = geom->m_radius->get(args->primID);
+    RTCBounds& bounds_o = *args->bounds_o;
     bounds_o.lower_x = p.x - radius;
     bounds_o.lower_y = p.y - radius;
     bounds_o.lower_z = p.z - radius;
@@ -72,24 +74,27 @@ void GeometrySphere::bounds(void *ptr, size_t item, RTCBounds& bounds_o)
     \param ray The ray to intersect
     \param item Index of the primitive to compute the bounding box of
 */
-void GeometrySphere::intersect(void *ptr, RTCRay& ray, size_t item)
+void GeometrySphere::intersect(const struct RTCIntersectFunctionNArguments *args)
    {
-    GeometrySphere *geom = (GeometrySphere*)ptr;
-    const vec3<float> position = geom->m_position->get(item);
-    const vec3<float> v = position-ray.org;
+    GeometrySphere *geom = (GeometrySphere*)args->geometryUserPtr;
+    const vec3<float> position = geom->m_position->get(args->primID);
+    RTCRayHit& rayhit = *(RTCRayHit *)args->rayhit;
+    RTCRay& ray = rayhit.ray;
+    const vec3<float> v = position-vec3<float>(ray.org_x, ray.org_y, ray.org_z);
     const float vsq = dot(v,v);
-    const float radius = geom->m_radius->get(item);
+    const float radius = geom->m_radius->get(args->primID);
     const float rsq = (radius)*(radius);
-    const vec3<float> w = cross(v,ray.dir);
+    vec3<float> dir = vec3<float>(ray.dir_x,ray.dir_y, ray.dir_z);
+    const vec3<float> w = cross(v,dir);
     // Closest point-line distance, taken from
     // http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
-    const float Dsq = dot(w,w)/dot(ray.dir,ray.dir);
+    const float Dsq = dot(w,w)/dot(dir,dir);
     if (Dsq > rsq) return; // a miss
     const float Rp = sqrt(vsq - Dsq); //Distance to closest point
     //Distance from clostest point to point on sphere
     const float Ri = sqrt(rsq - Dsq);
     float t;
-    if (dot(v, ray.dir) > 0.0f)
+    if (dot(v, dir) > 0.0f)
         {
         if (vsq > rsq)
             {
@@ -119,41 +124,46 @@ void GeometrySphere::intersect(void *ptr, RTCRay& ray, size_t item)
 
     if ((ray.tnear < t) & (t < ray.tfar))
         {
-        ray.u = 0.0f;
-        ray.v = 0.0f;
+        rayhit.hit.u = 0.0f;
+        rayhit.hit.v = 0.0f;
         ray.tfar = t;
-        ray.geomID = geom->m_geom_id;
-        ray.primID = (unsigned int) item;
-        ray.Ng = ray.org+t*ray.dir-position;
-        ray.shading_color = geom->m_color->get(item);
+        rayhit.hit.geomID = geom->m_geom_id;
+        rayhit.hit.primID = (unsigned int) args->primID;
+        rayhit.hit.Ng_x = ray.org_x+t*ray.dir_x-position.x;
+        rayhit.hit.Ng_y = ray.org_y+t*ray.dir_y-position.y;
+        rayhit.hit.Ng_z = ray.org_z+t*ray.dir_z-position.z;
+        FresnelRTCIntersectContext & context = *(FresnelRTCIntersectContext *)args->context;
+        context.shading_color = geom->m_color->get(args->primID);
 
         // The distance of the hit position from the edge of the sphere,
         // projected into the plane which has the ray as it's normal
         const float d = radius - sqrt(Dsq);
-        ray.d = d;
+        context.d = d;
         }
     }
 
 /* Occlusion function, taken mostly from the embree user_geometry tutorial
  */
-void GeometrySphere::occlude(void *ptr, RTCRay& ray, size_t item)
+void GeometrySphere::occlude(const struct RTCOccludedFunctionNArguments *args)
     {
-    GeometrySphere *geom = (GeometrySphere*)ptr;
-    const vec3<float> position = geom->m_position->get(item);
-    const vec3<float> v = position-ray.org;
+    GeometrySphere *geom = (GeometrySphere*)args->geometryUserPtr;
+    const vec3<float> position = geom->m_position->get(args->primID);
+    RTCRay& ray = *(RTCRay *)args->ray;
+    const vec3<float> v = position-vec3<float>(ray.org_x,ray.org_y,ray.org_z);
     const float vsq = dot(v,v);
-    const float radius = geom->m_radius->get(item);
+    const float radius = geom->m_radius->get(args->primID);
     const float rsq = (radius)*(radius);
-    const vec3<float> w = cross(v,ray.dir);
+    vec3<float> dir(ray.dir_x,ray.dir_y,ray.dir_z);
+    const vec3<float> w = cross(v,dir);
     // Closest point-line distance, taken from
     // http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
-    const float Dsq = dot(w,w)/dot(ray.dir,ray.dir);
+    const float Dsq = dot(w,w)/dot(dir,dir);
     if (Dsq > rsq) return; // a miss
     const float Rp = sqrt(vsq - Dsq); //Distance to closest point
     //Distance from clostest point to point on sphere
     const float Ri = sqrt(rsq - Dsq);
     float t;
-    if (dot(v, ray.dir) > 0.0f)
+    if (dot(v, dir) > 0.0f)
         {
         if (vsq > rsq)
             {
@@ -183,7 +193,7 @@ void GeometrySphere::occlude(void *ptr, RTCRay& ray, size_t item)
 
     if ((ray.tnear < t) & (t < ray.tfar))
         {
-        ray.geomID = 0;
+        ray.tfar = -std::numeric_limits<float>::infinity();
         }
     }
 

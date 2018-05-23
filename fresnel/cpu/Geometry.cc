@@ -4,6 +4,7 @@
 #include <stdexcept>
 
 #include "Geometry.h"
+#include <embree3/rtcore.h>
 
 namespace fresnel { namespace cpu {
 
@@ -26,7 +27,8 @@ void Geometry::enable()
     {
     if (m_valid)
         {
-        rtcEnable(m_scene->getRTCScene(), m_geom_id);
+        RTCGeometry geometry = rtcGetGeometry(m_scene->getRTCScene(), m_geom_id);
+        rtcEnableGeometry(geometry);
         m_device->checkError();
         }
     else
@@ -41,7 +43,8 @@ void Geometry::disable()
     {
     if (m_valid)
         {
-        rtcDisable(m_scene->getRTCScene(), m_geom_id);
+        RTCGeometry geometry = rtcGetGeometry(m_scene->getRTCScene(), m_geom_id);
+        rtcDisableGeometry(geometry);
         m_device->checkError();
         }
     else
@@ -57,7 +60,7 @@ void Geometry::remove()
     {
     if (m_valid)
         {
-        rtcDeleteGeometry(m_scene->getRTCScene(), m_geom_id);
+        rtcDetachGeometry(m_scene->getRTCScene(), m_geom_id);
         m_valid = false;
         m_device->checkError();
         }

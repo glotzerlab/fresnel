@@ -30,7 +30,7 @@ Device::Device(int limit) : m_limit(limit)
 */
 Device::~Device()
     {
-    rtcDeleteDevice(m_device);
+    rtcReleaseDevice(m_device);
     }
 
 /*! \param m Python module to export in
