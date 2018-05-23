@@ -18,6 +18,10 @@
 
 struct FresnelRTCIntersectContext
     {
+    FresnelRTCIntersectContext()
+        : d(std::numeric_limits<float>::max())
+        { }
+
     RTCIntersectContext context;
 
     // ray extensions go here

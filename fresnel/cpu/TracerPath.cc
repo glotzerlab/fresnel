@@ -130,23 +130,6 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                     for (prd.depth = 0; ; prd.depth++)
                         {
                         RTCRayHit ray_hit;
-                        RTCRay& ray = ray_hit.ray;
-                        ray.org_x = prd.origin.x;
-                        ray.org_y = prd.origin.y;
-                        ray.org_z = prd.origin.z;
-
-                        ray.dir_x = prd.direction.x;
-                        ray.dir_y = prd.direction.y;
-                        ray.dir_z = prd.direction.z;
-
-                        ray.tnear = 0.0f;
-                        ray.tfar = std::numeric_limits<float>::infinity();
-                        ray.time = 0.0f;
-                        ray.mask = -1;
-                        ray.flags = 0;
-                        ray_hit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
-                        ray_hit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
-
                         if (prd.depth == 0)
                             {
                             // the first hit is cached above
@@ -154,10 +137,27 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                             }
                         else
                             {
+                            RTCRay& ray = ray_hit.ray;
+                            ray.org_x = prd.origin.x;
+                            ray.org_y = prd.origin.y;
+                            ray.org_z = prd.origin.z;
+
+                            ray.dir_x = prd.direction.x;
+                            ray.dir_y = prd.direction.y;
+                            ray.dir_z = prd.direction.z;
+
+                            ray.tnear = 1e-3f;
+                            ray.tfar = std::numeric_limits<float>::infinity();
+                            ray.time = 0.0f;
+                            ray.mask = -1;
+                            ray.flags = 0;
+                            ray_hit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
+                            ray_hit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
+
                             // subsequent depth steps need to trace
+                            context = FresnelRTCIntersectContext();
                             rtcInitIntersectContext(&context.context);
 
-                            ray_hit.ray.tnear = 1e-3f;
                             rtcIntersect1(scene->getRTCScene(), &context.context, &ray_hit);
                             }
 
@@ -171,9 +171,9 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                                             scene->getOutlineWidth(ray_hit.hit.geomID),
                                             context.shading_color,
                                             vec3<float>(ray_hit.hit.Ng_x, ray_hit.hit.Ng_y, ray_hit.hit.Ng_z),
-                                            vec3<float>(ray.org_x, ray.org_y, ray.org_z),
-                                            dir,
-                                            ray.tfar,
+                                            vec3<float>(ray_hit.ray.org_x, ray_hit.ray.org_y, ray_hit.ray.org_z),
+                                            vec3<float>(ray_hit.ray.dir_x, ray_hit.ray.dir_y, ray_hit.ray.dir_z),
+                                            ray_hit.ray.tfar,
                                             ray_gen,
                                             m_n_samples,
                                             m_light_samples);
@@ -186,7 +186,8 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                                              background_alpha,
                                              m_light_samples,
                                              lights,
-                                             dir);
+                                             vec3<float>(ray_hit.ray.dir_x, ray_hit.ray.dir_y, ray_hit.ray.dir_z)
+                                             );
                             }
 
                         // break out of the loop when done

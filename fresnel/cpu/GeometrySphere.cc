@@ -74,7 +74,6 @@ void GeometrySphere::bounds(const struct RTCBoundsFunctionArguments *args)
     bounds_o.upper_z = p.z + radius;
     }
 
-#include <iostream>
 /*! Compute the intersection of a ray with the given primitive
 
     \param ptr Pointer to a GeometrySphere instance

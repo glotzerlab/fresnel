@@ -23,8 +23,6 @@ TracerDirect::~TracerDirect()
     {
     }
 
-#include <iostream>
-
 void TracerDirect::render(std::shared_ptr<Scene> scene)
     {
     std::shared_ptr<tbb::task_arena> arena = scene->getDevice()->getTBBArena();
@@ -125,7 +123,6 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
                         if (m.isSolid())
                             {
                             c = m.getColor(context.shading_color);
-                            //std::cout << c.r << " " << c.g << " " << c.b << std::endl;
                             }
                         else
                             {
