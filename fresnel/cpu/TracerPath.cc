@@ -112,6 +112,9 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                 ray_initial.tfar = std::numeric_limits<float>::infinity();
                 ray_initial.time = 0.0f;
                 ray_initial.mask = -1;
+                ray_initial.flags = 0;
+                ray_hit_initial.hit.geomID = RTC_INVALID_GEOMETRY_ID;
+                ray_hit_initial.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
 
                 FresnelRTCIntersectContext context;
                 rtcInitIntersectContext(&context.context);
@@ -140,6 +143,9 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                         ray.tfar = std::numeric_limits<float>::infinity();
                         ray.time = 0.0f;
                         ray.mask = -1;
+                        ray.flags = 0;
+                        ray_hit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
+                        ray_hit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
 
                         if (prd.depth == 0)
                             {

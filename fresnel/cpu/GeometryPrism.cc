@@ -22,6 +22,9 @@ GeometryPrism::GeometryPrism(std::shared_ptr<Scene> scene,
     {
     // create the geometry
     RTCGeometry geometry = rtcNewGeometry(m_device->getRTCDevice(), RTC_GEOMETRY_TYPE_USER);
+    m_device->checkError();
+    rtcSetGeometryUserPrimitiveCount(geometry,N);
+    m_device->checkError();
     m_geom_id = rtcAttachGeometry(m_scene->getRTCScene(), geometry);
     m_device->checkError();
 
@@ -84,6 +87,9 @@ GeometryPrism::GeometryPrism(std::shared_ptr<Scene> scene,
     rtcSetGeometryIntersectFunction(geometry, &GeometryPrism::intersect);
     m_device->checkError();
     rtcSetGeometryOccludedFunction(geometry, &GeometryPrism::occlude);
+    m_device->checkError();
+
+    rtcCommitGeometry(geometry);
     m_device->checkError();
 
     m_valid = true;

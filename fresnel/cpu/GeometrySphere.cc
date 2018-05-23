@@ -18,6 +18,9 @@ GeometrySphere::GeometrySphere(std::shared_ptr<Scene> scene, unsigned int N)
     {
     // create the geometry
     RTCGeometry geometry = rtcNewGeometry(m_device->getRTCDevice(), RTC_GEOMETRY_TYPE_USER);
+    m_device->checkError();
+    rtcSetGeometryUserPrimitiveCount(geometry,N);
+    m_device->checkError();
     m_geom_id = rtcAttachGeometry(m_scene->getRTCScene(), geometry);
     m_device->checkError();
 
@@ -38,6 +41,9 @@ GeometrySphere::GeometrySphere(std::shared_ptr<Scene> scene, unsigned int N)
     rtcSetGeometryIntersectFunction(geometry, &GeometrySphere::intersect);
     m_device->checkError();
     rtcSetGeometryOccludedFunction(geometry, &GeometrySphere::occlude);
+    m_device->checkError();
+
+    rtcCommitGeometry(geometry);
     m_device->checkError();
 
     m_valid = true;
@@ -68,6 +74,7 @@ void GeometrySphere::bounds(const struct RTCBoundsFunctionArguments *args)
     bounds_o.upper_z = p.z + radius;
     }
 
+#include <iostream>
 /*! Compute the intersection of a ray with the given primitive
 
     \param ptr Pointer to a GeometrySphere instance
@@ -75,12 +82,13 @@ void GeometrySphere::bounds(const struct RTCBoundsFunctionArguments *args)
     \param item Index of the primitive to compute the bounding box of
 */
 void GeometrySphere::intersect(const struct RTCIntersectFunctionNArguments *args)
-   {
+    {
     GeometrySphere *geom = (GeometrySphere*)args->geometryUserPtr;
     const vec3<float> position = geom->m_position->get(args->primID);
     RTCRayHit& rayhit = *(RTCRayHit *)args->rayhit;
     RTCRay& ray = rayhit.ray;
     const vec3<float> v = position-vec3<float>(ray.org_x, ray.org_y, ray.org_z);
+
     const float vsq = dot(v,v);
     const float radius = geom->m_radius->get(args->primID);
     const float rsq = (radius)*(radius);
@@ -133,6 +141,7 @@ void GeometrySphere::intersect(const struct RTCIntersectFunctionNArguments *args
         rayhit.hit.Ng_y = ray.org_y+t*ray.dir_y-position.y;
         rayhit.hit.Ng_z = ray.org_z+t*ray.dir_z-position.z;
         FresnelRTCIntersectContext & context = *(FresnelRTCIntersectContext *)args->context;
+        rayhit.hit.instID[0] = context.context.instID[0];
         context.shading_color = geom->m_color->get(args->primID);
 
         // The distance of the hit position from the edge of the sphere,

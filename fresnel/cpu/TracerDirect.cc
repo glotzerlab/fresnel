@@ -23,6 +23,8 @@ TracerDirect::~TracerDirect()
     {
     }
 
+#include <iostream>
+
 void TracerDirect::render(std::shared_ptr<Scene> scene)
     {
     std::shared_ptr<tbb::task_arena> arena = scene->getDevice()->getTBBArena();
@@ -93,7 +95,10 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
                     ray.tnear = 0.0f;
                     ray.tfar = std::numeric_limits<float>::infinity();
                     ray.time = 0.0f;
+                    ray.flags = 0;
                     ray.mask = -1;
+                    ray_hit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
+                    ray_hit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
 
                     FresnelRTCIntersectContext context;
                     rtcInitIntersectContext(&context.context);
@@ -106,7 +111,7 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
 
                     if (ray_hit.hit.geomID != RTC_INVALID_GEOMETRY_ID)
                         {
-                        vec3<float> n(ray_hit.hit.Ng_x, ray_hit.hit.Ng_y, ray_hit.hit.Ng_y);
+                        vec3<float> n(ray_hit.hit.Ng_x, ray_hit.hit.Ng_y, ray_hit.hit.Ng_z);
                         n /= std::sqrt(dot(n,n));
                         vec3<float> v = -dir / std::sqrt(dot(dir, dir));
                         Material m;
@@ -120,6 +125,7 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
                         if (m.isSolid())
                             {
                             c = m.getColor(context.shading_color);
+                            //std::cout << c.r << " " << c.g << " " << c.b << std::endl;
                             }
                         else
                             {
