@@ -1,24 +1,19 @@
 version: 2
 
 references:
-  test_container_config: &test_container_config
+  ubuntu16: &ubuntu16
     docker:
-      - image: joaander/ci:20171130
+      - image: glotzerlab/ci:2018.05-ubuntu16.04
         environment:
           PYTHONPATH: /home/ci/project/build
     working_directory: /home/ci/project
 
-  test_container_config-arch: &test_container_config-arch
+  ubuntu18: &ubuntu18
     docker:
-      - image: joaander/ci:20171206-arch-2
+      - image: glotzerlab/ci:2018.05-ubuntu18.04
         environment:
           PYTHONPATH: /home/ci/project/build
     working_directory: /home/ci/project
-
-  conda_container_config: &conda_container_config
-    docker:
-      - image: joaander/conda-build:20180207
-    working_directory: /root/project
 
   load_code: &load_code
     checkout:
@@ -60,8 +55,8 @@ references:
           path: test-results
 
 jobs:
-  gcc48-python27-cmake28:
-    <<: *test_container_config
+  gcc48-py27-cm28:
+    <<: *ubuntu16
     environment:
       CC: /usr/bin/gcc-4.8
       CXX: /usr/bin/g++-4.8
@@ -70,18 +65,8 @@ jobs:
       CMAKE: /opt/cmake-2.8.12/bin/cmake
     <<: *build_and_test
 
-  gcc49-python35:
-    <<: *test_container_config
-    environment:
-      CC: /usr/bin/gcc-4.9
-      CXX: /usr/bin/g++-4.9
-      PYVER: "3.5"
-      PYTEST: "py.test-3.5"
-      CMAKE: /usr/bin/cmake
-    <<: *build_and_test
-
-  gcc54-python35:
-    <<: *test_container_config
+  gcc54-py35:
+    <<: *ubuntu16
     environment:
       CC: /usr/bin/gcc
       CXX: /usr/bin/g++
@@ -91,13 +76,13 @@ jobs:
     <<: *build_and_test
 
   sphinx-docs:
-    <<: *test_container_config
+    <<: *ubuntu18
     steps:
       - *load_code
       - run: cd code/doc && sphinx-build -b html -d _build/doctrees -W -n . build/html
 
-  clang38-python35:
-    <<: *test_container_config
+  clang38-py35:
+    <<: *ubuntu16
     environment:
       CC: /usr/bin/clang
       CXX: /usr/bin/clang++
@@ -106,88 +91,77 @@ jobs:
       CMAKE: /usr/bin/cmake
     <<: *build_and_test
 
-  gcc72-py36:
-    <<: *test_container_config-arch
+  gcc6-py36:
+    <<: *ubuntu18
     environment:
-      CC: /usr/bin/gcc
-      CXX: /usr/bin/g++
+      CC: /usr/bin/gcc-6
+      CXX: /usr/bin/g++-6
       PYVER: "3.6"
-      PYTEST: "py.test"
+      PYTEST: "py.test-3"
       CMAKE: /usr/bin/cmake
     <<: *build_and_test
 
-  clang50-py36:
-    <<: *test_container_config-arch
+  gcc7-py36:
+    <<: *ubuntu18
     environment:
-      CC: /usr/bin/clang
-      CXX: /usr/bin/clang++
+      CC: /usr/bin/gcc-7
+      CXX: /usr/bin/g++-7
       PYVER: "3.6"
-      PYTEST: "py.test"
+      PYTEST: "py.test-3"
       CMAKE: /usr/bin/cmake
     <<: *build_and_test
 
-  conda-build:
-    <<: *conda_container_config
-    steps:
-      - *load_code
-      - *update_submodules
-      - run:
-          name: Compile
-          working_directory: code
-          no_output_timeout: 1h
-          command: conda build conda-recipe
-      - run: mv /opt/conda/conda-bld .
-      - persist_to_workspace:
-          root: .
-          paths:
-            - conda-bld/linux-64/fresnel-*.tar.bz2
+  gcc8-py36:
+    <<: *ubuntu18
+    environment:
+      CC: /usr/bin/gcc-8
+      CXX: /usr/bin/g++-8
+      PYVER: "3.6"
+      PYTEST: "py.test-3"
+      CMAKE: /usr/bin/cmake
+    <<: *build_and_test
 
-  conda-upload:
-    <<: *conda_container_config
-    steps:
-      - attach_workspace:
-          at: .
-      - run:
-          name: Upload
-          command: anaconda -t ${ANACONDA_TOKEN} upload --no-progress --force conda-bld/**/*.tar.bz2
+  clang4-py36:
+    <<: *ubuntu18
+    environment:
+      CC: /usr/bin/clang-4.0
+      CXX: /usr/bin/clang++-4.0
+      PYVER: "3.6"
+      PYTEST: "py.test-3"
+      CMAKE: /usr/bin/cmake
+    <<: *build_and_test
+
+  clang5-py36:
+    <<: *ubuntu18
+    environment:
+      CC: /usr/bin/clang-5.0
+      CXX: /usr/bin/clang++-5.0
+      PYVER: "3.6"
+      PYTEST: "py.test-3"
+      CMAKE: /usr/bin/cmake
+    <<: *build_and_test
+
+  clang6-py36:
+    <<: *ubuntu18
+    environment:
+      CC: /usr/bin/clang-5.0
+      CXX: /usr/bin/clang++-5.0
+      PYVER: "3.6"
+      PYTEST: "py.test-3"
+      CMAKE: /usr/bin/cmake
+    <<: *build_and_test
 
 workflows:
   version: 2
   workflow:
     jobs:
-      - gcc48-python27-cmake28:
-          filters:
-            branches:
-              ignore: release
-      - gcc49-python35:
-          filters:
-            branches:
-              ignore: release
-      - gcc54-python35:
-          filters:
-            branches:
-              ignore: release
-      - clang38-python35:
-          filters:
-            branches:
-              ignore: release
-      - sphinx-docs:
-          filters:
-            branches:
-              ignore: release
-      - gcc72-py36:
-          filters:
-            branches:
-              ignore: release
-      - clang50-py36:
-          filters:
-            branches:
-              ignore: release
-      - conda-build
-      - conda-upload:
-          context: org-global
-          requires:
-            - conda-build
-          filters:
-            branches:
-              only: release
+      - sphinx-docs
+      - gcc48-py27-cm28
+      - gcc54-py35
+      - gcc6-py36
+      - gcc7-py36
+      - gcc8-py36
+      - clang38-py35
+      - clang4-py36
+      - clang5-py36
+      - clang6-py36
