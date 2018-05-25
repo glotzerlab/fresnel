@@ -84,7 +84,7 @@ $ open build/html/index.html
     * CUDA >= 7.5
 * For CPU raytracing (requires `ENABLE_TBB=ON` and `ENABLE_EMBREE=ON`):
     * Intel TBB >= 4.3.20150611
-    * Intel Embree >= 2.10.0
+    * Intel Embree >= 3.0.0
 * To execute tests:
     * pytest
     * pillow
@@ -104,7 +104,7 @@ $ open build/html/index.html
 | ------- | ------------------- | ------------------ |
 | OptiX   | `/opt/optix`        | `-DOptiX_INSTALL_DIR=/path/to/optix` |
 | TBB     | *system*            | `TBB_LINK=/path/to/tbb/lib` (env var) |
-| Embree  | *system*            | `EMBREE_LINK=/path/to/embree/lib` (env var) |
+| Embree  | *system*            | `EMBREE3_LINK=/path/to/embree/lib` (env var) |
 | Python  | $PATH               | `-DPYTHON_EXECUTABLE=/path/to/bin/python` |
 
 On the first run of cmake, libraries that are found will automatically set the corresponding `ENABLE_library` **ON**.

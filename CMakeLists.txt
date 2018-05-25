@@ -9,7 +9,7 @@ include_directories(${PYTHON_INCLUDE_DIR})
 #############################################################################################
 # Find libraries
 
-find_package(Embree 2.10.0)
+find_package(Embree 3.0.0)
 option(ENABLE_EMBREE "Use Embree for ray tracing on the CPU" ${Embree_FOUND})
 
 if (ENABLE_EMBREE)
