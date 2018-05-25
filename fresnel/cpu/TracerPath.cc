@@ -121,6 +121,8 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
 
                 rtcIntersect1(scene->getRTCScene(), &context.context, &ray_hit_initial);
 
+                FresnelRTCIntersectContext context_initial = context;
+
                 // trace a path from the hit point into the scene m_light_samples times
                 for (prd.light_sample = 0; prd.light_sample < m_light_samples; prd.light_sample++)
                     {
@@ -134,6 +136,7 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                             {
                             // the first hit is cached above
                             ray_hit = ray_hit_initial;
+                            context = context_initial;
                             }
                         else
                             {
