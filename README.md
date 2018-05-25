@@ -19,7 +19,7 @@ $ conda install fresnel
 
 ## Get the source
 
-Download the source directly from the web: https://glotzerlab.engin.umich.edu/Downloads/
+Download source releases directly from the web: https://glotzerlab.engin.umich.edu/Downloads/
 
 ```bash
 $ curl -O https://glotzerlab.engin.umich.edu/Downloads/fresnel/fresnel-v0.5.0.tar.gz
