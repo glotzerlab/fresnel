@@ -22,6 +22,7 @@ const float sphere_epsilon = 1e-4f;
 //! Ray-sphere intersection test
 /*! \param t [out] Intersection t value along ray
     \param d_edge [out] Distance from shape edge in the view plane
+    \param N [out] Normal vector
     \param o Ray origin
     \param d Ray direction (normalized)
     \param p Sphere position
@@ -34,6 +35,7 @@ const float sphere_epsilon = 1e-4f;
 */
 DEVICE inline bool intersect_ray_sphere(float& t,
                                         float& d_edge,
+                                        vec3<float>& N,
                                         const vec3<float>& o,
                                         const vec3<float>& d,
                                         const vec3<float>& p,
@@ -63,12 +65,18 @@ DEVICE inline bool intersect_ray_sphere(float& t,
     // first case
     t = b - det;
     if (t > sphere_epsilon)
+        {
+        N = o+t*d-p;
         return true;
+        }
 
     // second case (origin is inside the sphere)
     t = b + det;
     if (t > sphere_epsilon)
+        {
+        N = -(o+t*d-p);
         return true;
+        }
 
     // both cases intersect the sphere behind the origin
     return false;

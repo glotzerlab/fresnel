@@ -78,7 +78,8 @@ void GeometrySphere::intersect(void *ptr, RTCRay& ray, size_t item)
     const float radius = geom->m_radius->get(item);
 
     float t=0, d=0;
-    bool hit = intersect_ray_sphere(t, d, ray.org, ray.dir, position, radius);
+    vec3<float> N;
+    bool hit = intersect_ray_sphere(t, d, N, ray.org, ray.dir, position, radius);
 
     if (hit && (ray.tnear < t) && (t < ray.tfar))
         {
@@ -87,7 +88,7 @@ void GeometrySphere::intersect(void *ptr, RTCRay& ray, size_t item)
         ray.tfar = t;
         ray.geomID = geom->m_geom_id;
         ray.primID = (unsigned int) item;
-        ray.Ng = ray.org+t*ray.dir-position;
+        ray.Ng = N;
         ray.shading_color = geom->m_color->get(item);
         ray.d = d;
         }
