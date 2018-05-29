@@ -29,7 +29,8 @@ const float sphere_epsilon = 1e-4f;
 
     \returns True if the ray intersects the sphere, False if it does not.
 
-    Output arguments \a t and \a d are set when the intersection routine returns true.
+    Output arguments \a d and \a N are set when the intersection routine returns true.
+    \a t may be set even if there is no intersection.
 */
 DEVICE inline bool intersect_ray_sphere(float& t,
                                         float& d_edge,
@@ -57,15 +58,15 @@ DEVICE inline bool intersect_ray_sphere(float& t,
     d_edge = r - fast::sqrt(Dsq);
 
     // solve the quadratic equation
-    det=sqrt(det);
+    det=fast::sqrt(det);
 
     // first case
-    t = b-det;
+    t = b - det;
     if (t > sphere_epsilon)
         return true;
 
     // second case (origin is inside the sphere)
-    t = b+det;
+    t = b + det;
     if (t > sphere_epsilon)
         return true;
 

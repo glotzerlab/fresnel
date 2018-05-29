@@ -5,6 +5,7 @@
 #include "Device.h"
 #include "Scene.h"
 #include "Geometry.h"
+#include "GeometryCylinder.h"
 #include "GeometryPrism.h"
 #include "GeometryConvexPolyhedron.h"
 #include "GeometrySphere.h"
@@ -23,6 +24,7 @@ PYBIND11_MODULE(_cpu, m)
     export_Device(m);
     export_Scene(m);
     export_Geometry(m);
+    export_GeometryCylinder(m);
     export_GeometryPrism(m);
     export_GeometryConvexPolyhedron(m);
     export_GeometrySphere(m);

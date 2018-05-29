@@ -76,6 +76,106 @@ class Geometry(object):
     def outline_width(self, width):
         self._geometry.setOutlineWidth(width);
 
+class Cylinder(Geometry):
+    R""" Cylinder geometry.
+
+    Define a set of cylinder primitives with start and end positions, radii, and individual colors.
+
+    Args:
+        scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
+        A: cylinder start points, *optional*.
+          **Type:** anything convertible by numpy to a Nx3 array of floats.
+        B: cylinder start points, *optional*.
+          **Type:** anything convertible by numpy to a Nx3 array of floats.
+        radius: Radius of each cylinder, *optional*.
+          **Type:** anything convertible by numpy to a N length array of floats.
+        color: (r,g,b) color of each particle, *optional*.
+          **Type:** anything convertible by numpy to a Nx3 array of floats.
+        N (int): Number of cylinders in the geometry. If ``None``, determine ``N`` from ``position``.
+
+    Note:
+        The constructor arguments ``A``, ``B``, ``radius``, and ``color`` are optional, and just short-hand
+        for assigning the properties after construction.
+
+    Colors are in the linearized sRGB color space. Use :py:func:`fresnel.color.linear` to convert standard sRGB colors
+    into this space.
+
+    .. hint::
+        Avoid costly memory allocations and type conversions by specifying primitive properties in the appropriate
+        numpy array type.
+
+    Attributes:
+        A (:py:class:`fresnel.util.array`): Read or modify the start positions of the cylinders.
+        B (:py:class:`fresnel.util.array`): Read or modify the end positions of the cylinders.
+        radius (:py:class:`fresnel.util.array`): Read or modify the radii of the cylinders.
+        color (:py:class:`fresnel.util.array`): Read or modify the color of the cylinders.
+    """
+
+    def __init__(self,
+                 scene,
+                 A=None,
+                 B=None,
+                 radius=None,
+                 color=None,
+                 N=None,
+                 material=material.Material(solid=1.0, color=(1,0,1)),
+                 outline_material=material.Material(solid=1.0, color=(0,0,0)),
+                 outline_width=0.0):
+        if N is None:
+            N = len(position);
+
+        self._geometry = scene.device.module.GeometryCylinder(scene._scene, N);
+        self.material = material;
+        self.outline_material = outline_material;
+        self.outline_width = outline_width;
+
+        if A is not None:
+            self.A[:] = A;
+
+        if B is not None:
+            self.B[:] = B;
+
+        if radius is not None:
+            self.radius[:] = radius;
+
+        if color is not None:
+            self.color[:] = color;
+
+        self.scene = scene;
+        self.scene.geometry.append(self);
+
+    def get_extents(self):
+        R""" Get the extents of the geometry
+
+        Returns:
+            [[minimum x, minimum y, minimum z],
+             [maximum x, maximum y, maximum z]]
+        """
+        A = self.A[:];
+        B = self.B[:];
+        r = self.radius[:];
+        r = r.reshape(len(r),1);
+        res = numpy.array([numpy.min([numpy.min(A - r, axis=0), numpy.min(B - r, axis=0)], axis=0),
+                           numpy.max([numpy.max(A + r, axis=0), numpy.max(B + r, axis=0)], axis=0)])
+        return res;
+
+
+    @property
+    def A(self):
+        return util.array(self._geometry.getABuffer(), geom=self)
+
+    @property
+    def B(self):
+        return util.array(self._geometry.getBBuffer(), geom=self)
+
+    @property
+    def radius(self):
+        return util.array(self._geometry.getRadiusBuffer(), geom=self)
+
+    @property
+    def color(self):
+        return util.array(self._geometry.getColorBuffer(), geom=self)
+
 class Prism(Geometry):
     R""" Prism geometry.
 
