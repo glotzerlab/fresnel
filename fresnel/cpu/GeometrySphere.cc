@@ -36,8 +36,6 @@ GeometrySphere::GeometrySphere(std::shared_ptr<Scene> scene, unsigned int N)
     m_device->checkError();
     rtcSetIntersectFunction(m_scene->getRTCScene(), m_geom_id, &GeometrySphere::intersect);
     m_device->checkError();
-    rtcSetOccludedFunction(m_scene->getRTCScene(), m_geom_id, &GeometrySphere::occlude);
-    m_device->checkError();
 
     m_valid = true;
     }
@@ -131,59 +129,6 @@ void GeometrySphere::intersect(void *ptr, RTCRay& ray, size_t item)
         // projected into the plane which has the ray as it's normal
         const float d = radius - sqrt(Dsq);
         ray.d = d;
-        }
-    }
-
-/* Occlusion function, taken mostly from the embree user_geometry tutorial
- */
-void GeometrySphere::occlude(void *ptr, RTCRay& ray, size_t item)
-    {
-    GeometrySphere *geom = (GeometrySphere*)ptr;
-    const vec3<float> position = geom->m_position->get(item);
-    const vec3<float> v = position-ray.org;
-    const float vsq = dot(v,v);
-    const float radius = geom->m_radius->get(item);
-    const float rsq = (radius)*(radius);
-    const vec3<float> w = cross(v,ray.dir);
-    // Closest point-line distance, taken from
-    // http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
-    const float Dsq = dot(w,w)/dot(ray.dir,ray.dir);
-    if (Dsq > rsq) return; // a miss
-    const float Rp = sqrt(vsq - Dsq); //Distance to closest point
-    //Distance from clostest point to point on sphere
-    const float Ri = sqrt(rsq - Dsq);
-    float t;
-    if (dot(v, ray.dir) > 0.0f)
-        {
-        if (vsq > rsq)
-            {
-            // ray origin is outside the sphere, compute the distance back from the closest point
-            t = Rp-Ri;
-            }
-        else
-            {
-            // ray origin is inside the sphere, compute the distance to the outgoing intersection point
-            t = Rp+Ri;
-            }
-        }
-    else
-        {
-        // origin is behind the sphere
-        if (vsq > rsq)
-            {
-            // origin is outside the sphere, no intersection
-            return;
-            }
-        else
-            {
-            // origin is inside the sphere, compute the distance to the outgoing intersection point
-            t = Ri-Rp;
-            }
-        }
-
-    if ((ray.tnear < t) & (t < ray.tfar))
-        {
-        ray.geomID = 0;
         }
     }
 

@@ -83,9 +83,6 @@ class GeometryConvexPolyhedron : public Geometry
 
         //! Embree ray intersection function
         static void intersect(void *ptr, RTCRay& ray, size_t item);
-
-        //! Embree ray occlusion function
-        static void occlude(void *ptr, RTCRay& ray, size_t item);
     };
 
 //! Export GeometryPrism to python
