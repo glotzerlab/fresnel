@@ -5,6 +5,7 @@
 #include <pybind11/stl.h>
 
 #include "GeometrySphere.h"
+#include "common/IntersectSphere.h"
 
 namespace fresnel { namespace cpu {
 
@@ -74,48 +75,12 @@ void GeometrySphere::intersect(void *ptr, RTCRay& ray, size_t item)
    {
     GeometrySphere *geom = (GeometrySphere*)ptr;
     const vec3<float> position = geom->m_position->get(item);
-    const vec3<float> v = position-ray.org;
-    const float vsq = dot(v,v);
     const float radius = geom->m_radius->get(item);
-    const float rsq = (radius)*(radius);
-    const vec3<float> w = cross(v,ray.dir);
-    // Closest point-line distance, taken from
-    // http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
-    const float Dsq = dot(w,w)/dot(ray.dir,ray.dir);
-    if (Dsq > rsq) return; // a miss
-    const float Rp = sqrt(vsq - Dsq); //Distance to closest point
-    //Distance from clostest point to point on sphere
-    const float Ri = sqrt(rsq - Dsq);
-    float t;
-    if (dot(v, ray.dir) > 0.0f)
-        {
-        if (vsq > rsq)
-            {
-            // ray origin is outside the sphere, compute the distance back from the closest point
-            t = Rp-Ri;
-            }
-        else
-            {
-            // ray origin is inside the sphere, compute the distance to the outgoing intersection point
-            t = Rp+Ri;
-            }
-        }
-    else
-        {
-        // origin is behind the sphere (use tolerance to exclude origins directly on the sphere)
-        if (vsq - rsq > -3e-6f*rsq)
-            {
-            // origin is outside the sphere, no intersection
-            return;
-            }
-        else
-            {
-            // origin is inside the sphere, compute the distance to the outgoing intersection point
-            t = Ri-Rp;
-            }
-        }
 
-    if ((ray.tnear < t) & (t < ray.tfar))
+    float t=0, d=0;
+    bool hit = intersect_ray_sphere(t, d, ray.org, ray.dir, position, radius);
+
+    if (hit && (ray.tnear < t) && (t < ray.tfar))
         {
         ray.u = 0.0f;
         ray.v = 0.0f;
@@ -124,10 +89,6 @@ void GeometrySphere::intersect(void *ptr, RTCRay& ray, size_t item)
         ray.primID = (unsigned int) item;
         ray.Ng = ray.org+t*ray.dir-position;
         ray.shading_color = geom->m_color->get(item);
-
-        // The distance of the hit position from the edge of the sphere,
-        // projected into the plane which has the ray as it's normal
-        const float d = radius - sqrt(Dsq);
         ray.d = d;
         }
     }
