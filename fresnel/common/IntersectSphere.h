@@ -13,7 +13,7 @@
 #define DEVICE
 #endif
 
-#include <math.h>
+#include <cmath>
 
 namespace fresnel {
 

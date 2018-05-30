@@ -50,17 +50,25 @@ class GeometryCylinder : public Geometry
             }
 
         //! Get the color buffer
-        std::shared_ptr< Array< RGB<float> > > getColorBuffer()
+        std::shared_ptr< Array< RGB<float> > > getColorABuffer()
             {
-            return m_color;
+            return m_color_A;
             }
+
+        //! Get the color buffer
+        std::shared_ptr< Array< RGB<float> > > getColorBBuffer()
+            {
+            return m_color_B;
+            }
+
 
     protected:
 
         std::shared_ptr< Array< vec3<float> > > m_A;         //!< Position the start of each cylinder
         std::shared_ptr< Array< vec3<float> > > m_B;         //!< Position the end of each cylinder
         std::shared_ptr< Array< float> > m_radius;           //!< Per-particle radii
-        std::shared_ptr< Array< RGB<float> > > m_color;      //!< Per-particle color
+        std::shared_ptr< Array< RGB<float> > > m_color_A;    //!< Per-end color
+        std::shared_ptr< Array< RGB<float> > > m_color_B;    //!< Per-end color
 
         //! Embree bounding function
         static void bounds(void *ptr, size_t item, RTCBounds& bounds_o);

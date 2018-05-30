@@ -29,7 +29,8 @@ GeometryCylinder::GeometryCylinder(std::shared_ptr<Scene> scene, unsigned int N)
     m_A = std::shared_ptr< Array< vec3<float> > >(new Array< vec3<float> >(N));
     m_B = std::shared_ptr< Array< vec3<float> > >(new Array< vec3<float> >(N));
     m_radius = std::shared_ptr< Array< float > >(new Array< float >(N));
-    m_color = std::shared_ptr< Array< RGB<float> > >(new Array< RGB<float> >(N));
+    m_color_A = std::shared_ptr< Array< RGB<float> > >(new Array< RGB<float> >(N));
+    m_color_B = std::shared_ptr< Array< RGB<float> > >(new Array< RGB<float> >(N));
 
     // register functions for embree
     rtcSetUserData(m_scene->getRTCScene(), m_geom_id, this);
@@ -80,9 +81,10 @@ void GeometryCylinder::intersect(void *ptr, RTCRay& ray, size_t item)
     const vec3<float> B = geom->m_B->get(item);
     const float radius = geom->m_radius->get(item);
 
-    float t=0, d=1000;
+    float t=HUGE_VALF, d=HUGE_VALF;
     vec3<float> N;
-    bool hit = intersect_ray_cylinder(t, d, N, ray.org, ray.dir, A, B, radius);
+    unsigned int color_index;
+    bool hit = intersect_ray_spherocylinder(t, d, N, color_index, ray.org, ray.dir, A, B, radius);
 
     if (hit && (ray.tnear < t) && (t < ray.tfar))
         {
@@ -92,8 +94,11 @@ void GeometryCylinder::intersect(void *ptr, RTCRay& ray, size_t item)
         ray.geomID = geom->m_geom_id;
         ray.primID = (unsigned int) item;
         ray.Ng = N;
-        ray.shading_color = geom->m_color->get(item);
-        ray.d = 1000;
+        if (color_index == 0)
+            ray.shading_color = geom->m_color_A->get(item);
+        else
+            ray.shading_color = geom->m_color_B->get(item);
+        ray.d = d;
         }
     }
 
@@ -106,7 +111,8 @@ void export_GeometryCylinder(pybind11::module& m)
         .def("getABuffer", &GeometryCylinder::getABuffer)
         .def("getBBuffer", &GeometryCylinder::getBBuffer)
         .def("getRadiusBuffer", &GeometryCylinder::getRadiusBuffer)
-        .def("getColorBuffer", &GeometryCylinder::getColorBuffer)
+        .def("getColorABuffer", &GeometryCylinder::getColorABuffer)
+        .def("getColorBBuffer", &GeometryCylinder::getColorBBuffer)
         ;
     }
 

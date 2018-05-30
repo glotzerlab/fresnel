@@ -173,8 +173,12 @@ class Cylinder(Geometry):
         return util.array(self._geometry.getRadiusBuffer(), geom=self)
 
     @property
-    def color(self):
-        return util.array(self._geometry.getColorBuffer(), geom=self)
+    def color_A(self):
+        return util.array(self._geometry.getColorABuffer(), geom=self)
+
+    @property
+    def color_B(self):
+        return util.array(self._geometry.getColorBBuffer(), geom=self)
 
 class Prism(Geometry):
     R""" Prism geometry.
