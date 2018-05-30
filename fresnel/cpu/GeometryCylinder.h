@@ -22,6 +22,8 @@ namespace fresnel { namespace cpu {
     At the python level, there are convenience methods to specify data fields at the time of construction.
 
     GeometryCylinder represents N spherocylinders, each defined by start and end positions, a radius, and a color.
+
+    The start and end points (and colors) are stored in Nx2 arrays.
 */
 class GeometryCylinder : public Geometry
     {
@@ -31,16 +33,10 @@ class GeometryCylinder : public Geometry
         //! Destructor
         virtual ~GeometryCylinder();
 
-        //! Get the A buffer
-        std::shared_ptr< Array< vec3<float> > > getABuffer()
+        //! Get the end points buffer
+        std::shared_ptr< Array< vec3<float> > > getPointsBuffer()
             {
-            return m_A;
-            }
-
-        //! Get the B buffer
-        std::shared_ptr< Array< vec3<float> > > getBBuffer()
-            {
-            return m_B;
+            return m_points;
             }
 
         //! Get the radius buffer
@@ -50,25 +46,17 @@ class GeometryCylinder : public Geometry
             }
 
         //! Get the color buffer
-        std::shared_ptr< Array< RGB<float> > > getColorABuffer()
+        std::shared_ptr< Array< RGB<float> > > getColorBuffer()
             {
-            return m_color_A;
-            }
-
-        //! Get the color buffer
-        std::shared_ptr< Array< RGB<float> > > getColorBBuffer()
-            {
-            return m_color_B;
+            return m_color;
             }
 
 
     protected:
 
-        std::shared_ptr< Array< vec3<float> > > m_A;         //!< Position the start of each cylinder
-        std::shared_ptr< Array< vec3<float> > > m_B;         //!< Position the end of each cylinder
+        std::shared_ptr< Array< vec3<float> > > m_points;    //!< Position the start and end of each cylinder
         std::shared_ptr< Array< float> > m_radius;           //!< Per-particle radii
-        std::shared_ptr< Array< RGB<float> > > m_color_A;    //!< Per-end color
-        std::shared_ptr< Array< RGB<float> > > m_color_B;    //!< Per-end color
+        std::shared_ptr< Array< RGB<float> > > m_color;      //!< Color for each start and end point
 
         //! Embree bounding function
         static void bounds(void *ptr, size_t item, RTCBounds& bounds_o);

@@ -83,18 +83,16 @@ class Cylinder(Geometry):
 
     Args:
         scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
-        A: cylinder start points, *optional*.
-          **Type:** anything convertible by numpy to a Nx3 array of floats.
-        B: cylinder start points, *optional*.
-          **Type:** anything convertible by numpy to a Nx3 array of floats.
+        points: cylinder start and end points, *optional*.
+          **Type:** anything convertible by numpy to a Nx2x3 array of floats.
         radius: Radius of each cylinder, *optional*.
           **Type:** anything convertible by numpy to a N length array of floats.
         color: (r,g,b) color of each particle, *optional*.
-          **Type:** anything convertible by numpy to a Nx3 array of floats.
+          **Type:** anything convertible by numpy to a Nx2x3 array of floats.
         N (int): Number of cylinders in the geometry. If ``None``, determine ``N`` from ``position``.
 
     Note:
-        The constructor arguments ``A``, ``B``, ``radius``, and ``color`` are optional, and just short-hand
+        The constructor arguments ``points``, ``radius``, and ``color`` are optional, and just short-hand
         for assigning the properties after construction.
 
     Colors are in the linearized sRGB color space. Use :py:func:`fresnel.color.linear` to convert standard sRGB colors
@@ -105,16 +103,14 @@ class Cylinder(Geometry):
         numpy array type.
 
     Attributes:
-        A (:py:class:`fresnel.util.array`): Read or modify the start positions of the cylinders.
-        B (:py:class:`fresnel.util.array`): Read or modify the end positions of the cylinders.
+        points (:py:class:`fresnel.util.array`): Read or modify the start and end points of the cylinders.
         radius (:py:class:`fresnel.util.array`): Read or modify the radii of the cylinders.
-        color (:py:class:`fresnel.util.array`): Read or modify the color of the cylinders.
+        color (:py:class:`fresnel.util.array`): Read or modify the colors of the start and end points of the cylinders.
     """
 
     def __init__(self,
                  scene,
-                 A=None,
-                 B=None,
+                 points=None,
                  radius=None,
                  color=None,
                  N=None,
@@ -129,11 +125,8 @@ class Cylinder(Geometry):
         self.outline_material = outline_material;
         self.outline_width = outline_width;
 
-        if A is not None:
-            self.A[:] = A;
-
-        if B is not None:
-            self.B[:] = B;
+        if points is not None:
+            self.points[:] = points;
 
         if radius is not None:
             self.radius[:] = radius;
@@ -151,8 +144,8 @@ class Cylinder(Geometry):
             [[minimum x, minimum y, minimum z],
              [maximum x, maximum y, maximum z]]
         """
-        A = self.A[:];
-        B = self.B[:];
+        A = self.points[:,0];
+        B = self.points[:,1];
         r = self.radius[:];
         r = r.reshape(len(r),1);
         res = numpy.array([numpy.min([numpy.min(A - r, axis=0), numpy.min(B - r, axis=0)], axis=0),
@@ -161,24 +154,16 @@ class Cylinder(Geometry):
 
 
     @property
-    def A(self):
-        return util.array(self._geometry.getABuffer(), geom=self)
-
-    @property
-    def B(self):
-        return util.array(self._geometry.getBBuffer(), geom=self)
+    def points(self):
+        return util.array(self._geometry.getPointsBuffer(), geom=self)
 
     @property
     def radius(self):
         return util.array(self._geometry.getRadiusBuffer(), geom=self)
 
     @property
-    def color_A(self):
-        return util.array(self._geometry.getColorABuffer(), geom=self)
-
-    @property
-    def color_B(self):
-        return util.array(self._geometry.getColorBBuffer(), geom=self)
+    def color(self):
+        return util.array(self._geometry.getColorBuffer(), geom=self)
 
 class Prism(Geometry):
     R""" Prism geometry.
