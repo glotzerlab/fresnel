@@ -22,7 +22,6 @@ const float cylinder_epsilon = 1e-4f;
 
 //! Ray-cylinder intersection test
 /*! \param t [out] Intersection t value along ray
-    \param d_edge [out] Distance from shape edge in the view plane
     \param N [out] Normal vector
     \param o Ray origin
     \param d Ray direction (normalized)
@@ -36,7 +35,6 @@ const float cylinder_epsilon = 1e-4f;
     \a t may be set even if there is no intersection.
 */
 DEVICE inline bool intersect_ray_cylinder(float& t,
-                                          float& d_edge,
                                           vec3<float>& N,
                                           const vec3<float>& o,
                                           const vec3<float>& d,
@@ -103,9 +101,6 @@ DEVICE inline bool intersect_ray_cylinder(float& t,
 
     if (hit)
         {
-        // TODO: determine d_edge.
-        d_edge = HUGE_VALF;
-
         // determine normal.
         N = (P - pdotc * cdotc_inv * C);
 
@@ -151,11 +146,10 @@ DEVICE inline bool intersect_ray_spherocylinder(float& t,
 
     bool hit_A = false, hit_B = false, hit_cyl = false;
 
-    hit_cyl = intersect_ray_cylinder(t_sc, d_edge_sc, N_sc, o, d, A, B, r);
+    hit_cyl = intersect_ray_cylinder(t_sc, N_sc, o, d, A, B, r);
     if (hit_cyl && t_sc < t)
         {
         t = t_sc;
-        d_edge = d_edge_sc;
         N = N_sc;
         }
 
@@ -163,7 +157,6 @@ DEVICE inline bool intersect_ray_spherocylinder(float& t,
     if (hit_A && (t_sc < t))
         {
         t = t_sc;
-        d_edge = d_edge_sc;
         N = N_sc;
         }
 
@@ -171,7 +164,6 @@ DEVICE inline bool intersect_ray_spherocylinder(float& t,
     if (hit_B && (t_sc < t))
         {
         t = t_sc;
-        d_edge = d_edge_sc;
         N = N_sc;
         }
 
@@ -185,6 +177,31 @@ DEVICE inline bool intersect_ray_spherocylinder(float& t,
         color_index = 0;
     else
         color_index = 1;
+
+    // determine d_edge
+    // project C and Oa into the view plane perpendicular to the view direction
+    const vec3<float> C_vp = C - dot(C,d) * d;     // vector rejection assuming view is normalized
+    const vec3<float> Oa_vp = Oa - dot(Oa, d) * d; // vector rejection assuming view is normalized
+
+    // d_edge is the distance from Oa_vp to the line segment (0,0,0) - Oa_vp
+    const float oavpdotcvp = dot(Oa_vp, C_vp);
+    const float cvpdotcvp = dot(C_vp, C_vp);
+    if (oavpdotcvp < 0)
+        {
+        // case 1: point is below the origin
+        d_edge = r - fast::sqrt(dot(Oa_vp, Oa_vp));
+        }
+    else if (oavpdotcvp > cvpdotcvp)
+        {
+        // case 2: point is above the point C_vp
+        d_edge = r - fast::sqrt(dot(Oa_vp-C_vp, Oa_vp-C_vp));
+        }
+    else
+        {
+        // case 3: point is along the segment
+        const vec3<float> n_vp = Oa_vp - oavpdotcvp / cvpdotcvp * C_vp;
+        d_edge = r - fast::sqrt(dot(n_vp, n_vp));
+        }
 
     return hit_A || hit_B || hit_cyl;
     }
