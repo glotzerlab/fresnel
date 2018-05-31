@@ -118,7 +118,7 @@ class Cylinder(Geometry):
                  outline_material=material.Material(solid=1.0, color=(0,0,0)),
                  outline_width=0.0):
         if N is None:
-            N = len(position);
+            N = len(points);
 
         self._geometry = scene.device.module.GeometryCylinder(scene._scene, N);
         self.material = material;
