@@ -168,7 +168,7 @@ class RayGen
         r123::float2 rng_gauss2 = r123::boxmuller(rng_u[2], rng_u[3]);
         vec3<float> l(rng_gauss1.x, rng_gauss1.y, rng_gauss2.x);
 
-        l = l / std::sqrt(dot(l, l));
+        l = l * fast::rsqrt(dot(l, l));
 
         float ndotl = dot(n, l);
         // l is generated on the whole sphere, if it points down into the surface, make it point up
