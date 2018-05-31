@@ -144,6 +144,10 @@ DEVICE inline bool intersect_ray_spherocylinder(float& t,
     float d_edge_sc = HUGE_VALF;
     vec3<float> N_sc;
 
+    const vec3<float> Oa = o-A;
+    const vec3<float> C = B-A;
+    const float cdotc = dot(C,C);
+
     bool hit_A = false, hit_B = false, hit_cyl = false;
 
     hit_cyl = intersect_ray_cylinder(t_sc, N_sc, o, d, A, B, r);
@@ -156,24 +160,40 @@ DEVICE inline bool intersect_ray_spherocylinder(float& t,
     hit_A = intersect_ray_sphere(t_sc, d_edge_sc, N_sc, o, d, A, r);
     if (hit_A && (t_sc < t))
         {
-        t = t_sc;
-        N = N_sc;
+        // limit hits to the hemisphere below A
+        const vec3<float> P_A = Oa + t_sc * d;
+        if (dot(P_A, C) <= 0)
+            {
+            t = t_sc;
+            N = N_sc;
+            }
+        else
+            {
+            hit_A = false;
+            }
         }
 
     hit_B = intersect_ray_sphere(t_sc, d_edge_sc, N_sc, o, d, B, r);
     if (hit_B && (t_sc < t))
         {
-        t = t_sc;
-        N = N_sc;
+        // limit hits to the hemisphere above B
+        const vec3<float> P_A = Oa + t_sc * d;
+        if (dot(P_A, C) >= cdotc)
+            {
+            t = t_sc;
+            N = N_sc;
+            }
+        else
+            {
+            hit_B = false;
+            }
         }
 
     // determine color index
-    const vec3<float> Oa = o-A;
-    const vec3<float> C = B-A;
     const vec3<float> P = Oa + t * d;
     const float pdotc = dot(P, C);
 
-    if (pdotc < dot(C,C) / 2.0f)
+    if (pdotc < cdotc / 2.0f)
         color_index = 0;
     else
         color_index = 1;
@@ -183,7 +203,7 @@ DEVICE inline bool intersect_ray_spherocylinder(float& t,
     const vec3<float> C_vp = C - dot(C,d) * d;     // vector rejection assuming view is normalized
     const vec3<float> Oa_vp = Oa - dot(Oa, d) * d; // vector rejection assuming view is normalized
 
-    // d_edge is the distance from Oa_vp to the line segment (0,0,0) - Oa_vp
+    // d_edge is r - (the distance from Oa_vp to the line segment (0,0,0) - Oa_vp)
     const float oavpdotcvp = dot(Oa_vp, C_vp);
     const float cvpdotcvp = dot(C_vp, C_vp);
     if (oavpdotcvp < 0)
