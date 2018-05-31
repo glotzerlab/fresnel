@@ -18,8 +18,6 @@ rtDeclareVariable(float, shading_distance, attribute shading_distance, );
 rtDeclareVariable(RGB<float>, shading_color, attribute shading_color, );
 rtDeclareVariable(optix::Ray, ray, rtCurrentRay, );
 
-// TODO: There is a simpler ray-sphere intersection test in the minimal line of code path tracer
-
 RT_PROGRAM void intersect(int primIdx)
     {
     const vec3<float> position(sphere_position[primIdx]);

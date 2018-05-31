@@ -5,6 +5,7 @@
 #include "Device.h"
 #include "Scene.h"
 #include "Geometry.h"
+#include "GeometryCylinder.h"
 #include "GeometryPrism.h"
 #include "GeometrySphere.h"
 #include "Tracer.h"
@@ -28,6 +29,7 @@ PYBIND11_MODULE(_gpu, m)
     export_Device(m);
     export_Scene(m);
     export_Geometry(m);
+    export_GeometryCylinder(m);
     export_GeometryPrism(m);
     export_GeometrySphere(m);
     export_Tracer(m);
