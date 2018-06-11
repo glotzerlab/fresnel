@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 The Regents of the University of Michigan
+// Copyright (c) 2016-2018 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include <stdexcept>
@@ -85,8 +85,6 @@ GeometryPrism::GeometryPrism(std::shared_ptr<Scene> scene,
     rtcSetGeometryBoundsFunction(geometry, &GeometryPrism::bounds, NULL);
     m_device->checkError();
     rtcSetGeometryIntersectFunction(geometry, &GeometryPrism::intersect);
-    m_device->checkError();
-    rtcSetGeometryOccludedFunction(geometry, &GeometryPrism::occlude);
     m_device->checkError();
 
     rtcCommitGeometry(geometry);
@@ -318,93 +316,6 @@ void GeometryPrism::intersect(const struct RTCIntersectFunctionNArguments *args)
                 }
             }
         context.d = min_d;
-        }
-    }
-
-/*! Test if a ray intersects with the given primitive
-
-    \param ptr Pointer to a GeometryPrism instance
-    \param ray The ray to intersect
-    \param item Index of the primitive to compute the bounding box of
-*/
-void GeometryPrism::occlude(const struct RTCOccludedFunctionNArguments *args)
-    {
-    // this method is a copy and pasted version of intersect with a different behavior on hit, to
-    // meet Embree API standards. When intersect is updated, it should be copied and pasted back here.
-    GeometryPrism *geom = (GeometryPrism*)args->geometryUserPtr;
-
-    // adapted from OptiX quick start tutorial and Embree user_geometry tutorial files
-    int n_planes = geom->m_plane_normal.size();
-    float t0 = -std::numeric_limits<float>::max();
-    float t1 = std::numeric_limits<float>::max();
-
-    const vec2<float> p2 = geom->m_position->get(args->primID);
-    const vec3<float> pos_world(p2.x, p2.y, 0.0f);
-    const float angle = geom->m_angle->get(args->primID);
-    const float height = geom->m_height->get(args->primID);
-    const quat<float> q_world = quat<float>::fromAxisAngle(vec3<float>(0,0,1), angle);
-
-    // transform the ray into the primitive coordinate system
-    RTCRay& ray = *(RTCRay *)args->ray;
-    vec3<float> ray_dir_local = rotate(conj(q_world), vec3<float>(ray.dir_x,ray.dir_y,ray.dir_z));
-    vec3<float> ray_org_local = rotate(conj(q_world), vec3<float>(ray.org_x,ray.org_y,ray.org_z) - pos_world);
-
-    vec3<float> t0_n_local, t0_p_local;
-    vec3<float> t1_n_local, t1_p_local;
-    for(int i = 0; i < n_planes && t0 < t1; ++i )
-        {
-        vec3<float> n = geom->m_plane_normal[i];
-        vec3<float> p = geom->m_plane_origin[i];
-
-        // correct the top plane positions
-        if (i == 0)
-            p.z = height;
-
-        float d = -dot(n, p);
-        float denom = dot(n, ray_dir_local);
-        float t = -(d + dot(n, ray_org_local))/denom;
-
-        // if the ray is parallel to the plane, there is no intersection when the ray is outside the shape
-        if (fabs(denom) < 1e-5)
-            {
-            if (dot(ray_org_local - p, n) > 0)
-                return;
-            }
-        else if (denom < 0)
-            {
-            // find the last plane this ray enters
-            if(t > t0)
-                {
-                t0 = t;
-                t0_n_local = n;
-                }
-            }
-        else
-            {
-            // find the first plane this ray exits
-            if(t < t1)
-                {
-                t1 = t;
-                t1_n_local = n;
-                }
-            }
-        }
-
-    // if the ray enters after it exits, it missed the polyhedron
-    if(t0 > t1)
-        return;
-
-    // otherwise, it hit: fill out the hit structure
-
-    // if the t0 is in (tnear,tfar), we hit the entry plane
-    if ((ray.tnear < t0) & (t0 < ray.tfar))
-        {
-        ray.tfar = -std::numeric_limits<float>::infinity();
-        }
-    // if t1 is in (tnear,tfar), we hit the exit plane
-    if ((ray.tnear < t1) & (t1 < ray.tfar))
-        {
-        ray.tfar = -std::numeric_limits<float>::infinity();
         }
     }
 

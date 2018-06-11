@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 The Regents of the University of Michigan
+// Copyright (c) 2016-2018 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #ifndef GEOMETRY_CONVEX_POLYHEDRON_H_
@@ -83,9 +83,6 @@ class GeometryConvexPolyhedron : public Geometry
 
         //! Embree ray intersection function
         static void intersect(const struct RTCIntersectFunctionNArguments *args);
-
-        //! Embree ray occlusion function
-        static void occlude(const struct RTCOccludedFunctionNArguments *args);
     };
 
 //! Export GeometryPrism to python

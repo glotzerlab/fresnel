@@ -1,10 +1,11 @@
-// Copyright (c) 2016-2017 The Regents of the University of Michigan
+// Copyright (c) 2016-2018 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include <stdexcept>
 #include <pybind11/stl.h>
 
 #include "GeometrySphere.h"
+#include "common/IntersectSphere.h"
 
 namespace fresnel { namespace cpu {
 
@@ -39,8 +40,6 @@ GeometrySphere::GeometrySphere(std::shared_ptr<Scene> scene, unsigned int N)
     rtcSetGeometryBoundsFunction(geometry, &GeometrySphere::bounds, NULL);
     m_device->checkError();
     rtcSetGeometryIntersectFunction(geometry, &GeometrySphere::intersect);
-    m_device->checkError();
-    rtcSetGeometryOccludedFunction(geometry, &GeometrySphere::occlude);
     m_device->checkError();
 
     rtcCommitGeometry(geometry);
@@ -84,52 +83,21 @@ void GeometrySphere::intersect(const struct RTCIntersectFunctionNArguments *args
     {
     GeometrySphere *geom = (GeometrySphere*)args->geometryUserPtr;
     const vec3<float> position = geom->m_position->get(args->primID);
+    const float radius = geom->m_radius->get(args->primID);
     RTCRayHit& rayhit = *(RTCRayHit *)args->rayhit;
     RTCRay& ray = rayhit.ray;
-    const vec3<float> v = position-vec3<float>(ray.org_x, ray.org_y, ray.org_z);
 
-    const float vsq = dot(v,v);
-    const float radius = geom->m_radius->get(args->primID);
-    const float rsq = (radius)*(radius);
-    vec3<float> dir = vec3<float>(ray.dir_x,ray.dir_y, ray.dir_z);
-    const vec3<float> w = cross(v,dir);
-    // Closest point-line distance, taken from
-    // http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
-    const float Dsq = dot(w,w)/dot(dir,dir);
-    if (Dsq > rsq) return; // a miss
-    const float Rp = sqrt(vsq - Dsq); //Distance to closest point
-    //Distance from clostest point to point on sphere
-    const float Ri = sqrt(rsq - Dsq);
-    float t;
-    if (dot(v, dir) > 0.0f)
-        {
-        if (vsq > rsq)
-            {
-            // ray origin is outside the sphere, compute the distance back from the closest point
-            t = Rp-Ri;
-            }
-        else
-            {
-            // ray origin is inside the sphere, compute the distance to the outgoing intersection point
-            t = Rp+Ri;
-            }
-        }
-    else
-        {
-        // origin is behind the sphere (use tolerance to exclude origins directly on the sphere)
-        if (vsq - rsq > -3e-6f*rsq)
-            {
-            // origin is outside the sphere, no intersection
-            return;
-            }
-        else
-            {
-            // origin is inside the sphere, compute the distance to the outgoing intersection point
-            t = Ri-Rp;
-            }
-        }
+    float t=0, d=0;
+    vec3<float> N;
+    bool hit = intersect_ray_sphere(t,
+                                    d,
+                                    N,
+                                    vec3<float>(ray.org_x,ray.org_y,ray.org_z),
+                                    vec3<float>(ray.dir_x,ray.dir_y,ray.dir_z),
+                                    position,
+                                    radius);
 
-    if ((ray.tnear < t) & (t < ray.tfar))
+    if (hit && (ray.tnear < t) && (t < ray.tfar))
         {
         rayhit.hit.u = 0.0f;
         rayhit.hit.v = 0.0f;
@@ -142,66 +110,7 @@ void GeometrySphere::intersect(const struct RTCIntersectFunctionNArguments *args
         FresnelRTCIntersectContext & context = *(FresnelRTCIntersectContext *)args->context;
         rayhit.hit.instID[0] = context.context.instID[0];
         context.shading_color = geom->m_color->get(args->primID);
-
-        // The distance of the hit position from the edge of the sphere,
-        // projected into the plane which has the ray as it's normal
-        const float d = radius - sqrt(Dsq);
         context.d = d;
-        }
-    }
-
-/* Occlusion function, taken mostly from the embree user_geometry tutorial
- */
-void GeometrySphere::occlude(const struct RTCOccludedFunctionNArguments *args)
-    {
-    GeometrySphere *geom = (GeometrySphere*)args->geometryUserPtr;
-    const vec3<float> position = geom->m_position->get(args->primID);
-    RTCRay& ray = *(RTCRay *)args->ray;
-    const vec3<float> v = position-vec3<float>(ray.org_x,ray.org_y,ray.org_z);
-    const float vsq = dot(v,v);
-    const float radius = geom->m_radius->get(args->primID);
-    const float rsq = (radius)*(radius);
-    vec3<float> dir(ray.dir_x,ray.dir_y,ray.dir_z);
-    const vec3<float> w = cross(v,dir);
-    // Closest point-line distance, taken from
-    // http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
-    const float Dsq = dot(w,w)/dot(dir,dir);
-    if (Dsq > rsq) return; // a miss
-    const float Rp = sqrt(vsq - Dsq); //Distance to closest point
-    //Distance from clostest point to point on sphere
-    const float Ri = sqrt(rsq - Dsq);
-    float t;
-    if (dot(v, dir) > 0.0f)
-        {
-        if (vsq > rsq)
-            {
-            // ray origin is outside the sphere, compute the distance back from the closest point
-            t = Rp-Ri;
-            }
-        else
-            {
-            // ray origin is inside the sphere, compute the distance to the outgoing intersection point
-            t = Rp+Ri;
-            }
-        }
-    else
-        {
-        // origin is behind the sphere
-        if (vsq > rsq)
-            {
-            // origin is outside the sphere, no intersection
-            return;
-            }
-        else
-            {
-            // origin is inside the sphere, compute the distance to the outgoing intersection point
-            t = Ri-Rp;
-            }
-        }
-
-    if ((ray.tnear < t) & (t < ray.tfar))
-        {
-        ray.tfar = -std::numeric_limits<float>::infinity();
         }
     }
 

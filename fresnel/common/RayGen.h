@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 The Regents of the University of Michigan
+// Copyright (c) 2016-2018 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include "Random123/philox.h"
@@ -168,7 +168,7 @@ class RayGen
         r123::float2 rng_gauss2 = r123::boxmuller(rng_u[2], rng_u[3]);
         vec3<float> l(rng_gauss1.x, rng_gauss1.y, rng_gauss2.x);
 
-        l = l / std::sqrt(dot(l, l));
+        l = l * fast::rsqrt(dot(l, l));
 
         float ndotl = dot(n, l);
         // l is generated on the whole sphere, if it points down into the surface, make it point up

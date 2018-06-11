@@ -1,8 +1,8 @@
 // Copyright (c) 2016-2018 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
-#ifndef GEOMETRY_SPHERE_H_
-#define GEOMETRY_SPHERE_H_
+#ifndef GEOMETRY_CYLINDER_H_
+#define GEOMETRY_CYLINDER_H_
 
 #include <optixu/optixpp_namespace.h>
 
@@ -15,25 +15,25 @@ namespace fresnel { namespace gpu {
 
 
 
-//! Sphere geometry
-/*! Define a sphere geometry.
+//! Cylinder geometry
+/*! Define a cylinder geometry
 
-    See fresnel::cpu::GeometrySphere for full API and description. This class re-implements that using OptiX.
+    See fresnel::cpu::GeometryCylinder for full API and description. This class re-implements that using OptiX.
 */
 
-class GeometrySphere : public Geometry
+class GeometryCylinder : public Geometry
     {
     public:
         //! Constructor
-        GeometrySphere(std::shared_ptr<Scene> scene, unsigned int N);
+        GeometryCylinder(std::shared_ptr<Scene> scene, unsigned int N);
 
         //! Destructor
-        virtual ~GeometrySphere();
+        virtual ~GeometryCylinder();
 
-        //! Get the position buffer
-        std::shared_ptr< Array< vec3<float> > > getPositionBuffer()
+        //! Get the end points buffer
+        std::shared_ptr< Array< vec3<float> > > getPointsBuffer()
             {
-            return m_position;
+            return m_points;
             }
 
         //! Get the radius buffer
@@ -49,13 +49,14 @@ class GeometrySphere : public Geometry
             }
 
     protected:
-        std::shared_ptr< Array< vec3<float> > > m_position;  //!< Position for each sphere
+        std::shared_ptr< Array< vec3<float> > > m_points;    //!< Position the start and end of each cylinder
         std::shared_ptr< Array< float> > m_radius;           //!< Per-particle radii
-        std::shared_ptr< Array< RGB<float> > > m_color;      //!< Per-particle color
+        std::shared_ptr< Array< RGB<float> > > m_color;      //!< Color for each start and end point
+
     };
 
-//! Export GeometrySphere to python
-void export_GeometrySphere(pybind11::module& m);
+//! Export GeometryCylinder to python
+void export_GeometryCylinder(pybind11::module& m);
 
 } } // end namespace fresnel::gpu
 
