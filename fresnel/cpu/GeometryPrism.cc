@@ -82,8 +82,6 @@ GeometryPrism::GeometryPrism(std::shared_ptr<Scene> scene,
     m_device->checkError();
     rtcSetIntersectFunction(m_scene->getRTCScene(), m_geom_id, &GeometryPrism::intersect);
     m_device->checkError();
-    rtcSetOccludedFunction(m_scene->getRTCScene(), m_geom_id, &GeometryPrism::occlude);
-    m_device->checkError();
 
     m_valid = true;
     }
@@ -301,92 +299,6 @@ void GeometryPrism::intersect(void *ptr, RTCRay& ray, size_t item)
                 }
             }
         ray.d = min_d;
-        }
-    }
-
-/*! Test if a ray intersects with the given primitive
-
-    \param ptr Pointer to a GeometryPrism instance
-    \param ray The ray to intersect
-    \param item Index of the primitive to compute the bounding box of
-*/
-void GeometryPrism::occlude(void *ptr, RTCRay& ray, size_t item)
-    {
-    // this method is a copy and pasted version of intersect with a different behavior on hit, to
-    // meet Embree API standards. When intersect is updated, it should be copied and pasted back here.
-    GeometryPrism *geom = (GeometryPrism*)ptr;
-
-    // adapted from OptiX quick start tutorial and Embree user_geometry tutorial files
-    int n_planes = geom->m_plane_normal.size();
-    float t0 = -std::numeric_limits<float>::max();
-    float t1 = std::numeric_limits<float>::max();
-
-    const vec2<float> p2 = geom->m_position->get(item);
-    const vec3<float> pos_world(p2.x, p2.y, 0.0f);
-    const float angle = geom->m_angle->get(item);
-    const float height = geom->m_height->get(item);
-    const quat<float> q_world = quat<float>::fromAxisAngle(vec3<float>(0,0,1), angle);
-
-    // transform the ray into the primitive coordinate system
-    vec3<float> ray_dir_local = rotate(conj(q_world), ray.dir);
-    vec3<float> ray_org_local = rotate(conj(q_world), ray.org - pos_world);
-
-    vec3<float> t0_n_local, t0_p_local;
-    vec3<float> t1_n_local, t1_p_local;
-    for(int i = 0; i < n_planes && t0 < t1; ++i )
-        {
-        vec3<float> n = geom->m_plane_normal[i];
-        vec3<float> p = geom->m_plane_origin[i];
-
-        // correct the top plane positions
-        if (i == 0)
-            p.z = height;
-
-        float d = -dot(n, p);
-        float denom = dot(n, ray_dir_local);
-        float t = -(d + dot(n, ray_org_local))/denom;
-
-        // if the ray is parallel to the plane, there is no intersection when the ray is outside the shape
-        if (fabs(denom) < 1e-5)
-            {
-            if (dot(ray_org_local - p, n) > 0)
-                return;
-            }
-        else if (denom < 0)
-            {
-            // find the last plane this ray enters
-            if(t > t0)
-                {
-                t0 = t;
-                t0_n_local = n;
-                }
-            }
-        else
-            {
-            // find the first plane this ray exits
-            if(t < t1)
-                {
-                t1 = t;
-                t1_n_local = n;
-                }
-            }
-        }
-
-    // if the ray enters after it exits, it missed the polyhedron
-    if(t0 > t1)
-        return;
-
-    // otherwise, it hit: fill out the hit structure
-
-    // if the t0 is in (tnear,tfar), we hit the entry plane
-    if ((ray.tnear < t0) & (t0 < ray.tfar))
-        {
-        ray.geomID = 0;
-        }
-    // if t1 is in (tnear,tfar), we hit the exit plane
-    if ((ray.tnear < t1) & (t1 < ray.tfar))
-        {
-        ray.geomID = 0;
         }
     }
 

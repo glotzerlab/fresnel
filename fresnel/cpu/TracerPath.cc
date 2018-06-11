@@ -31,11 +31,11 @@ void TracerPath::reset()
     m_seed++;
 
     RGBA<float>* linear_output = m_linear_out->map();
-    memset(linear_output, 0, sizeof(RGBA<float>)*m_linear_out->getW()*m_linear_out->getH());
+    memset((void *)linear_output, 0, sizeof(RGBA<float>)*m_linear_out->getW()*m_linear_out->getH());
     m_linear_out->unmap();
 
     RGBA<unsigned char>* srgb_output = m_srgb_out->map();
-    memset(srgb_output, 0, sizeof(RGBA<unsigned char>)*m_linear_out->getW()*m_linear_out->getH());
+    memset((void *)srgb_output, 0, sizeof(RGBA<unsigned char>)*m_linear_out->getW()*m_linear_out->getH());
     m_srgb_out->unmap();
     }
 

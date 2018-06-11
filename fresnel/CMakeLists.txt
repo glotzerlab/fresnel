@@ -17,6 +17,7 @@ set(_cpu_sources
      cpu/Device.cc
      cpu/Scene.cc
      cpu/Geometry.cc
+     cpu/GeometryCylinder.cc
      cpu/GeometryPrism.cc
      cpu/GeometryConvexPolyhedron.cc
      cpu/GeometrySphere.cc
@@ -41,6 +42,7 @@ target_compile_definitions(_common PUBLIC FRESNEL_BUILD_GPU)
 set(_ptx_sources
 	gpu/direct.cu
     gpu/path.cu
+    gpu/GeometryCylinder.cu
 	gpu/GeometrySphere.cu
     gpu/GeometryPrism.cu)
 
@@ -61,6 +63,7 @@ set(_gpu_sources
      gpu/Device.cc
      gpu/Scene.cc
      gpu/Geometry.cc
+     gpu/GeometryCylinder.cc
      gpu/GeometryPrism.cc
      gpu/GeometrySphere.cc
      gpu/Tracer.cc
