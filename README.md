@@ -104,7 +104,7 @@ $ open build/html/index.html
 | ------- | ------------------- | ------------------ |
 | OptiX   | `/opt/optix`        | `-DOptiX_INSTALL_DIR=/path/to/optix` |
 | TBB     | *system*            | `TBB_LINK=/path/to/tbb/lib` (env var) |
-| Embree  | *system*            | `-Dembree_DIR=/path/to/lib/cmake/embree-3.x.y` |
+| Embree  | *system*            | `-Dembree_DIR=/path/to/embree-3.x.y` (the directory containing embree-config.cmake) |
 | Python  | $PATH               | `-DPYTHON_EXECUTABLE=/path/to/bin/python` |
 
 On the first run of cmake, libraries that are found will automatically set the corresponding `ENABLE_library` **ON**.
