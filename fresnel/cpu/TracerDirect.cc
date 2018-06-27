@@ -35,7 +35,7 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
     Tracer::render(scene);
 
     // update Embree data structures
-    arena->execute([&]{ rtcCommitScene(scene->getRTCScene()); });
+    rtcCommitScene(scene->getRTCScene());
     m_device->checkError();
 
     RGBA<float>* linear_output = m_linear_out->map();
