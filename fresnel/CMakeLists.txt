@@ -28,7 +28,7 @@ set(_cpu_sources
    )
 
 pybind11_add_module(_cpu "${_cpu_sources}")
-target_link_libraries(_cpu PRIVATE ${Embree_LIBRARY} ${TBB_LIBRARIES})
+target_link_libraries(_cpu PRIVATE ${EMBREE_LIBRARY} ${TBB_LIBRARIES})
 install(TARGETS _cpu LIBRARY DESTINATION ${PYTHON_MODULE_BASE_DIR})
 
 endif()
