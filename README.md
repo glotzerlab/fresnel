@@ -2,7 +2,8 @@
 
 Fresnel is a python library that ray traces publication quality images in real time.
 
-Fresnel is in an early stage of development. User documentation is not yet posted online, and the API is not yet stable.
+* [Tutorial](http://nbviewer.jupyter.org/github/joaander/fresnel-examples/blob/master/index.ipynb)
+* [Reference documentation](https://fresnel.readthedocs.io/)
 
 ## Installing Fresnel
 
@@ -18,7 +19,7 @@ support.
 
 See full usage information on the [glotzerlab/software docker hub page](https://hub.docker.com/r/glotzerlab/software/).
 
-+Singularity:
+Singularity:
 
 ```bash
 $ umask 002

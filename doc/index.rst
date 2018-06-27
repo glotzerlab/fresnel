@@ -10,7 +10,7 @@ Welcome to the user documentation for Fresnel!
    package-fresnel
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
    :caption: Reference
 
    license
