@@ -9,40 +9,32 @@ include_directories(${PYTHON_INCLUDE_DIR})
 #############################################################################################
 # Find libraries
 
-find_package(embree 3.0 CONFIG)
-if (embree_FOUND)
-    find_package_message(embree "Found embree: ${embree_DIR} ${EMBREE_LIBRARY} ${EMBREE_INCLUDE_DIRS}" "[${EMBREE_LIBRARY}][${EMBREE_INCLUDE_DIRS}]")
-endif()
-
-option(ENABLE_EMBREE "Use Embree for ray tracing on the CPU" ${embree_FOUND})
+option(ENABLE_EMBREE "Use Embree for ray tracing on the CPU" ON)
 
 if (ENABLE_EMBREE)
+    find_package(embree 3.0 CONFIG REQUIRED)
+    if (embree_FOUND)
+        find_package_message(embree "Found embree: ${embree_DIR} ${EMBREE_LIBRARY} ${EMBREE_INCLUDE_DIRS}" "[${EMBREE_LIBRARY}][${EMBREE_INCLUDE_DIRS}]")
+    endif()
+
+    find_package(TBB 4.3 REQUIRED)
+
     include_directories(${EMBREE_INCLUDE_DIRS})
-endif()
-
-find_package(TBB 4.3)
-option(ENABLE_TBB "Use TBB for threaded execution on the CPU" ${TBB_FOUND})
-
-if (ENABLE_TBB)
     include_directories(${TBB_INCLUDE_DIR})
 endif()
 
-find_package(OptiX)
-option(ENABLE_OPTIX "Use OptiX for ray tracing on the GPU" ${OptiX_FOUND})
+option(ENABLE_OPTIX "Use OptiX for ray tracing on the GPU" OFF)
 
 if (ENABLE_OPTIX)
+    find_package(OptiX REQUIRED)
+    find_package(CUDA 7.5 REQUIRED)
+
     include_directories(${OptiX_INCLUDE})
-endif()
-
-find_package(CUDA 7.5)
-option(ENABLE_CUDA "Use CUDA for GPU code execution" ${CUDA_FOUND})
-
-if (ENABLE_CUDA)
     include_directories(${CUDA_INCLUDE_DIRS})
 endif()
 
-if (NOT (ENABLE_CUDA AND ENABLE_OPTIX) AND NOT (ENABLE_EMBREE AND ENABLE_TBB))
-    message(SEND_ERROR "No libraries will be built. Enable at least one of (embree and TBB) or (CUDA and OptiX).")
+if (NOT (ENABLE_OPTIX) AND NOT (ENABLE_EMBREE))
+    message(SEND_ERROR "No libraries will be built. Enable at least one of embree or OptiX.")
 endif()
 
 #############################################################################################

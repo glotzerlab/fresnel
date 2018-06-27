@@ -4,20 +4,45 @@ Fresnel is a python library that ray traces publication quality images in real t
 
 Fresnel is in an early stage of development. User documentation is not yet posted online, and the API is not yet stable.
 
-## Install binaries
+## Installing Fresnel
 
-Official binaries of fresnel are available via [conda](http://conda.pydata.org/docs/) through
-the [glotzer channel](https://anaconda.org/glotzer).
-To install fresnel, first download and install
-[miniconda](http://conda.pydata.org/miniconda.html) following [conda's instructions](http://conda.pydata.org/docs/install/quick.html).
-Then add the `glotzer` channel and install fresnel:
+Fresnel binary packages are available via [conda-forge](https://conda-forge.org/) and images via the
+[Docker Hub](https://hub.docker.com/). You can also compile fresnel from source.
+
+### Docker images
+
+Pull the [glotzerlab/software](https://hub.docker.com/r/glotzerlab/software/) to get fresnel along with
+many other tools commonly used in simulation/analysis workflows. Use these images to execute fresnel in
+Docker/Singularity containers on Mac, Linux, and cloud systems you control and on HPC clusters with Singularity
+support.
+
+See full usage information on the [glotzerlab/software docker hub page](https://hub.docker.com/r/glotzerlab/software/).
+
++Singularity:
 
 ```bash
-$ conda config --add channels glotzer
+$ umask 002
+$ singularity pull docker://glotzerlab/software
+```
+
+Docker:
+
+```bash
+$ docker pull glotzerlab/software
+```
+
+## Anaconda package
+
+Fresnel is available on [conda-forge](https://conda-forge.org/). To install, first download and install
+[miniconda](http://conda.pydata.org/miniconda.html) following [conda's instructions](http://conda.pydata.org/docs/install/quick.html).
+Then add the `conda-forge` channel and install fresnel:
+
+```bash
+$ conda config --add channels conda-forge
 $ conda install fresnel
 ```
 
-## Get the source
+## Compile from source
 
 Download source releases directly from the web: https://glotzerlab.engin.umich.edu/Downloads/
 
@@ -44,6 +69,9 @@ $ cd build
 $ cmake /path/to/fresnel
 $ make -j4
 ```
+
+By default, fresnel builds the Embree (CPU) backend. Enable the GPU accelerated OptiX backend by passing
+``-DENABLE_OPTIX=ON`` to cmake.
 
 ## Running tests
 
@@ -79,15 +107,17 @@ $ open build/html/index.html
 
 * C++11 capable compiler
 * Python >= 2.7
-* For GPU raytracing (requires `ENABLE_CUDA=ON` and `ENABLE_OPTIX=ON`):
-    * OptiX >= 4.0
-    * CUDA >= 7.5
-* For CPU raytracing (requires `ENABLE_TBB=ON` and `ENABLE_EMBREE=ON`):
+* For CPU execution (required when `ENABLE_EMBREE=ON`):
     * Intel TBB >= 4.3.20150611
     * Intel Embree >= 3.0.0
+* For GPU execution (required when `ENABLE_OPTIX=ON`):
+    * OptiX >= 4.0
+    * CUDA >= 7.5
 * To execute tests:
     * pytest
     * pillow
+
+``ENABLE_EMBREE`` and ``ENABLE_OPTIX`` are orthogonal settings, either or both may be enabled.
 
 ## Optional dependencies
 
@@ -100,16 +130,15 @@ $ open build/html/index.html
 
 ## Search paths
 
+OptiX, TBB, Embree, and Python may be installed in a variety of locations. Use these methods to specify
+a specific library for fresnel to use the *first* time you invoke ``cmake`` in a clean build directory.
+
 | Library | Default search path | CMake Custom search path |
 | ------- | ------------------- | ------------------ |
 | OptiX   | `/opt/optix`        | `-DOptiX_INSTALL_DIR=/path/to/optix` |
 | TBB     | *system*            | `TBB_LINK=/path/to/tbb/lib` (env var) |
 | Embree  | *system*            | `-Dembree_DIR=/path/to/embree-3.x.y` (the directory containing embree-config.cmake) |
 | Python  | $PATH               | `-DPYTHON_EXECUTABLE=/path/to/bin/python` |
-
-On the first run of cmake, libraries that are found will automatically set the corresponding `ENABLE_library` **ON**.
-Libraries are that not found will set ``ENABLE_library`` **OFF**. You can force off the use of a given library
-on the cmake command line: e.g. `cmake -DENABLE_EMBREE=off`, or by changing these options in `ccmake`.
 
 ## C++ Documentation
 
