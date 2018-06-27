@@ -18,11 +18,11 @@ GeometryCylinder::GeometryCylinder(std::shared_ptr<Scene> scene, unsigned int N)
     : Geometry(scene)
     {
     // create the geometry
-    RTCGeometry geometry = rtcNewGeometry(m_device->getRTCDevice(), RTC_GEOMETRY_TYPE_USER);
+    m_geometry = rtcNewGeometry(m_device->getRTCDevice(), RTC_GEOMETRY_TYPE_USER);
     m_device->checkError();
-    rtcSetGeometryUserPrimitiveCount(geometry,N);
+    rtcSetGeometryUserPrimitiveCount(m_geometry,N);
     m_device->checkError();
-    m_geom_id = rtcAttachGeometry(m_scene->getRTCScene(), geometry);
+    m_geom_id = rtcAttachGeometry(m_scene->getRTCScene(), m_geometry);
     m_device->checkError();
 
     // set default material
@@ -35,11 +35,11 @@ GeometryCylinder::GeometryCylinder(std::shared_ptr<Scene> scene, unsigned int N)
     m_color = std::shared_ptr< Array< RGB<float> > >(new Array< RGB<float> >(2,N));
 
     // register functions for embree
-    rtcSetGeometryUserData(geometry, this);
+    rtcSetGeometryUserData(m_geometry, this);
     m_device->checkError();
-    rtcSetGeometryBoundsFunction(geometry, &GeometryCylinder::bounds, NULL);
+    rtcSetGeometryBoundsFunction(m_geometry, &GeometryCylinder::bounds, NULL);
     m_device->checkError();
-    rtcSetGeometryIntersectFunction(geometry, &GeometryCylinder::intersect);
+    rtcSetGeometryIntersectFunction(m_geometry, &GeometryCylinder::intersect);
     m_device->checkError();
 
     m_valid = true;

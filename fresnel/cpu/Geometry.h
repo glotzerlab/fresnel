@@ -86,13 +86,14 @@ class Geometry
         //! Notify the geometry that changes have been made to the buffers
         void update()
             {
-            rtcCommitGeometry(rtcGetGeometry(m_scene->getRTCScene(),m_geom_id));
+            rtcCommitGeometry(m_geometry);
             }
     protected:
         unsigned int m_geom_id;            //!< Associated geometry id
         bool m_valid=false;                //!< true when the geometry is valid and attached to the Scene
         std::shared_ptr<Scene> m_scene;    //!< The scene the geometry is attached to
         std::shared_ptr<Device> m_device;  //!< The device the Scene is attached to
+        RTCGeometry m_geometry;            //!< The embree geometry object
     };
 
 //! Export Geometry to python

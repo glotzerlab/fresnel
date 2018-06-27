@@ -23,11 +23,11 @@ GeometryConvexPolyhedron::GeometryConvexPolyhedron(std::shared_ptr<Scene> scene,
     : Geometry(scene)
     {
     // create the geometry
-    RTCGeometry geometry = rtcNewGeometry(m_device->getRTCDevice(), RTC_GEOMETRY_TYPE_USER);
+    m_geometry = rtcNewGeometry(m_device->getRTCDevice(), RTC_GEOMETRY_TYPE_USER);
     m_device->checkError();
-    rtcSetGeometryUserPrimitiveCount(geometry,N);
+    rtcSetGeometryUserPrimitiveCount(m_geometry,N);
     m_device->checkError();
-    m_geom_id = rtcAttachGeometry(m_scene->getRTCScene(), geometry);
+    m_geom_id = rtcAttachGeometry(m_scene->getRTCScene(), m_geometry);
     m_device->checkError();
 
     // set default material
@@ -91,14 +91,14 @@ GeometryConvexPolyhedron::GeometryConvexPolyhedron(std::shared_ptr<Scene> scene,
     m_radius = r;
 
     // register functions for embree
-    rtcSetGeometryUserData(geometry, this);
+    rtcSetGeometryUserData(m_geometry, this);
     m_device->checkError();
-    rtcSetGeometryBoundsFunction(geometry, &GeometryConvexPolyhedron::bounds, NULL);
+    rtcSetGeometryBoundsFunction(m_geometry, &GeometryConvexPolyhedron::bounds, NULL);
     m_device->checkError();
-    rtcSetGeometryIntersectFunction(geometry, &GeometryConvexPolyhedron::intersect);
+    rtcSetGeometryIntersectFunction(m_geometry, &GeometryConvexPolyhedron::intersect);
     m_device->checkError();
 
-    rtcCommitGeometry(geometry);
+    rtcCommitGeometry(m_geometry);
     m_device->checkError();
 
     m_valid = true;

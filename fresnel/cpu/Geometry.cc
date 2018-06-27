@@ -27,8 +27,7 @@ void Geometry::enable()
     {
     if (m_valid)
         {
-        RTCGeometry geometry = rtcGetGeometry(m_scene->getRTCScene(), m_geom_id);
-        rtcEnableGeometry(geometry);
+        rtcEnableGeometry(m_geometry);
         m_device->checkError();
         }
     else
@@ -43,8 +42,7 @@ void Geometry::disable()
     {
     if (m_valid)
         {
-        RTCGeometry geometry = rtcGetGeometry(m_scene->getRTCScene(), m_geom_id);
-        rtcDisableGeometry(geometry);
+        rtcDisableGeometry(m_geometry);
         m_device->checkError();
         }
     else
@@ -61,6 +59,7 @@ void Geometry::remove()
     if (m_valid)
         {
         rtcDetachGeometry(m_scene->getRTCScene(), m_geom_id);
+        rtcReleaseGeometry(m_geometry);
         m_valid = false;
         m_device->checkError();
         }
