@@ -55,7 +55,7 @@ class Device(object):
     corresponding module must be enabled at compile time. Additionally, there must be at least one GPU present
     for the ``gpu`` mode to be available.
 
-    .. code::
+    .. code-block:: python
 
         >>> fresnel.Device.available_modes
         ['gpu', 'cpu', 'auto']

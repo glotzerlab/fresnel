@@ -1,7 +1,7 @@
 Installation
 ============
 
-**Fresnel** binary images available on `Docker Hub <https://hub.docker.com/>`_ and packages on
+**Fresnel** binary images are available on `Docker Hub <https://hub.docker.com/>`_ and packages on
 `conda-forge <https://conda-forge.org/>`_. You can also compile **fresnel** from source.
 
 Docker images
@@ -45,7 +45,7 @@ You can update **fresnel** with:
 Compile from source
 -------------------
 
-Download source releases directly from the web: https://glotzerlab.engin.umich.edu/Downloads/
+Download source releases directly from the web: https://glotzerlab.engin.umich.edu/Downloads/fresnel
 
 .. code-block:: bash
 
@@ -111,7 +111,7 @@ Configure with **cmake** and compile with **make**. Replace ``${PREFIX}`` your d
 
    $ mkdir build
    $ cd build
-   $ cmake /path/to/fresnel -DCMAKE_INSTALL_PREFIX=${PREFIX}/lib/python
+   $ cmake ../ -DCMAKE_INSTALL_PREFIX=${PREFIX}/lib/python
    $ make install -j10
 
 By default, **fresnel** builds the Embree (CPU) backend. Pass ``-DENABLE_OPTIX=ON`` to **cmake** to enable the GPU
