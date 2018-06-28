@@ -4,15 +4,23 @@ Fresnel
 Welcome to the user documentation for Fresnel!
 
 .. toctree::
-   :maxdepth: 3
-   :caption: Python packages
+    :maxdepth: 1
+    :caption: Getting started
 
-   package-fresnel
+    installation
+    changes
 
 .. toctree::
-   :maxdepth: 1
-   :caption: Reference
+    :maxdepth: 3
+    :caption: Reference
 
-   license
-   credits
-   indices
+    package-fresnel
+
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Additional information
+
+    license
+    credits
+    indices

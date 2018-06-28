@@ -17,6 +17,7 @@ sys.path.insert(0, os.path.abspath('..'))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'nbsphinx',
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.napoleon',
@@ -31,7 +32,7 @@ autodoc_mock_imports = ['numpy'];
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
-exclude_patterns = ['build', '_templates']
+exclude_patterns = ['build', '_templates' '**.ipynb_checkpoints']
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:

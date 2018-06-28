@@ -1,43 +1,51 @@
-# Fresnel Change Log
+Change log
+==========
 
-[TOC]
-
-## v0.6.0
+v0.6.0
+------
 
 Not yet released
 
-* Implement `tracer.Path` on the GPU.
+
+* Implement ``tracer.Path`` on the GPU.
 * Improve path tracer performance with Russian roulette termination.
 * Compile warning-free.
 * Fix sphere intersection test bugs on the GPU.
-* `tracer.Path` now correctly starts sampling over when resized.
+* ``tracer.Path`` now correctly starts sampling over when resized.
 * Wrap C++ code with pybind 2.2
 
-## v0.5.0
+v0.5.0
+------
 
 Released 2017/07/27
 
+
 * Add new lighting setups
-    * `lightbox`
-    * `cloudy`
-    * `ring`
+
+  * ``lightbox``
+  * ``cloudy``
+  * ``ring``
+
 * Adjust brightness of lights in existing setups
-* Remove `clearcoat` material parameter
-* Add `spec_trans` material parameter
-* Add `Path` tracer to render scenes with indirect lighting, reflections, and transparency (*CPU-only*)
-* Add `ConvexPolyhedron` geometry (*CPU-only*, *beta API, subject to change*)
-* Add `fresnel.preview` function to easily generate `Preview` traced renders with one line
-* Add `fresnel.pathtrace` function to easily generate `Path` traced renders with one line
-* Add anti-aliasing (always on for the `Path` tracer, `set aa_level` > 0 to enable for `Preview`)
+* Remove ``clearcoat`` material parameter
+* Add ``spec_trans`` material parameter
+* Add ``Path`` tracer to render scenes with indirect lighting, reflections, and transparency (\ *CPU-only*\ )
+* Add ``ConvexPolyhedron`` geometry (\ *CPU-only*\ , *beta API, subject to change*\ )
+* Add ``fresnel.preview`` function to easily generate ``Preview`` traced renders with one line
+* Add ``fresnel.pathtrace`` function to easily generate ``Path`` traced renders with one line
+* Add anti-aliasing (always on for the ``Path`` tracer, ``set aa_level`` > 0 to enable for ``Preview``\ )
 * API breaking changes:
-    * `render` no longer exists. Use `preview` or `pathtrace`.
-    * `tracer.Direct` is now `tracer.Preview`.
+
+  * ``render`` no longer exists. Use ``preview`` or ``pathtrace``.
+  * ``tracer.Direct`` is now ``tracer.Preview``.
 
 CPU-only features will be implemented on the GPU in a future release.
 
-## v0.4.0
+v0.4.0
+------
 
 Released 2017/04/03
+
 
 * Enforce requirement: Embree >= 2.10.0
 * Enforce requirement Pybind =1.8.1
@@ -53,18 +61,23 @@ Released 2017/04/03
 * ``Device.available_gpus`` lists the available GPUs
 * ``Device`` can now be limited to *n* GPUs
 * API breaking changes:
-    * ``camera.Orthographic`` is now ``camera.orthographic``
-    * ``Device`` now takes the argument *n* instead of *limit*
-    * ``Scene`` no longer has a ``light_direction`` member
 
-## v0.3.0
+  * ``camera.Orthographic`` is now ``camera.orthographic``
+  * ``Device`` now takes the argument *n* instead of *limit*
+  * ``Scene`` no longer has a ``light_direction`` member
+
+v0.3.0
+------
 
 Released 2017/03/09
+
 
 * Suppress "cannot import name" messages
 * Support Nx3 and Nx4 inputs to ``color.linear``
 
-## v0.2.0
+v0.2.0
+------
+
 
 * Parallel rendering on the CPU
 * Fix PTX file installation
@@ -72,7 +85,9 @@ Released 2017/03/09
 * Unit tests
 * Fix bug in sphere rendering on GPU
 
-## v0.1.0
+v0.1.0
+------
+
 
 * Prototype API
 * Sphere geometry
