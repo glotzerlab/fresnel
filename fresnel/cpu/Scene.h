@@ -5,8 +5,8 @@
 #define SCENE_H_
 
 #include "embree_platform.h"
-#include <embree2/rtcore.h>
-#include <embree2/rtcore_ray.h>
+#include <embree3/rtcore.h>
+#include <embree3/rtcore_ray.h>
 #include <pybind11/pybind11.h>
 
 #include "Device.h"

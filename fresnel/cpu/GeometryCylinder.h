@@ -5,8 +5,8 @@
 #define GEOMETRY_CYLINDER_H_
 
 #include "embree_platform.h"
-#include <embree2/rtcore.h>
-#include <embree2/rtcore_ray.h>
+#include <embree3/rtcore.h>
+#include <embree3/rtcore_ray.h>
 
 #include <pybind11/pybind11.h>
 
@@ -59,10 +59,10 @@ class GeometryCylinder : public Geometry
         std::shared_ptr< Array< RGB<float> > > m_color;      //!< Color for each start and end point
 
         //! Embree bounding function
-        static void bounds(void *ptr, size_t item, RTCBounds& bounds_o);
+        static void bounds(const struct RTCBoundsFunctionArguments *args);
 
         //! Embree ray intersection function
-        static void intersect(void *ptr, RTCRay& ray, size_t item);
+        static void intersect(const struct RTCIntersectFunctionNArguments *args);
     };
 
 //! Export Cylinder to python

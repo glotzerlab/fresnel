@@ -18,7 +18,11 @@ GeometrySphere::GeometrySphere(std::shared_ptr<Scene> scene, unsigned int N)
     : Geometry(scene)
     {
     // create the geometry
-    m_geom_id = rtcNewUserGeometry(m_scene->getRTCScene(), N);
+    m_geometry = rtcNewGeometry(m_device->getRTCDevice(), RTC_GEOMETRY_TYPE_USER);
+    m_device->checkError();
+    rtcSetGeometryUserPrimitiveCount(m_geometry,N);
+    m_device->checkError();
+    m_geom_id = rtcAttachGeometry(m_scene->getRTCScene(), m_geometry);
     m_device->checkError();
 
     // set default material
@@ -31,11 +35,14 @@ GeometrySphere::GeometrySphere(std::shared_ptr<Scene> scene, unsigned int N)
     m_color = std::shared_ptr< Array< RGB<float> > >(new Array< RGB<float> >(N));
 
     // register functions for embree
-    rtcSetUserData(m_scene->getRTCScene(), m_geom_id, this);
+    rtcSetGeometryUserData(m_geometry, this);
     m_device->checkError();
-    rtcSetBoundsFunction(m_scene->getRTCScene(), m_geom_id, &GeometrySphere::bounds);
+    rtcSetGeometryBoundsFunction(m_geometry, &GeometrySphere::bounds, NULL);
     m_device->checkError();
-    rtcSetIntersectFunction(m_scene->getRTCScene(), m_geom_id, &GeometrySphere::intersect);
+    rtcSetGeometryIntersectFunction(m_geometry, &GeometrySphere::intersect);
+    m_device->checkError();
+
+    rtcCommitGeometry(m_geometry);
     m_device->checkError();
 
     m_valid = true;
@@ -51,11 +58,12 @@ GeometrySphere::~GeometrySphere()
     \param item Index of the primitive to compute the bounding box of
     \param bounds_o Output bounding box
 */
-void GeometrySphere::bounds(void *ptr, size_t item, RTCBounds& bounds_o)
+void GeometrySphere::bounds(const struct RTCBoundsFunctionArguments *args)
     {
-    GeometrySphere *geom = (GeometrySphere*)ptr;
-    vec3<float> p = geom->m_position->get(item);
-    float radius = geom->m_radius->get(item);
+    GeometrySphere *geom = (GeometrySphere*)args->geometryUserPtr;
+    vec3<float> p = geom->m_position->get(args->primID);
+    float radius = geom->m_radius->get(args->primID);
+    RTCBounds& bounds_o = *args->bounds_o;
     bounds_o.lower_x = p.x - radius;
     bounds_o.lower_y = p.y - radius;
     bounds_o.lower_z = p.z - radius;
@@ -71,26 +79,38 @@ void GeometrySphere::bounds(void *ptr, size_t item, RTCBounds& bounds_o)
     \param ray The ray to intersect
     \param item Index of the primitive to compute the bounding box of
 */
-void GeometrySphere::intersect(void *ptr, RTCRay& ray, size_t item)
-   {
-    GeometrySphere *geom = (GeometrySphere*)ptr;
-    const vec3<float> position = geom->m_position->get(item);
-    const float radius = geom->m_radius->get(item);
+void GeometrySphere::intersect(const struct RTCIntersectFunctionNArguments *args)
+    {
+    GeometrySphere *geom = (GeometrySphere*)args->geometryUserPtr;
+    const vec3<float> position = geom->m_position->get(args->primID);
+    const float radius = geom->m_radius->get(args->primID);
+    RTCRayHit& rayhit = *(RTCRayHit *)args->rayhit;
+    RTCRay& ray = rayhit.ray;
 
     float t=0, d=0;
     vec3<float> N;
-    bool hit = intersect_ray_sphere(t, d, N, ray.org, ray.dir, position, radius);
+    bool hit = intersect_ray_sphere(t,
+                                    d,
+                                    N,
+                                    vec3<float>(ray.org_x,ray.org_y,ray.org_z),
+                                    vec3<float>(ray.dir_x,ray.dir_y,ray.dir_z),
+                                    position,
+                                    radius);
 
     if (hit && (ray.tnear < t) && (t < ray.tfar))
         {
-        ray.u = 0.0f;
-        ray.v = 0.0f;
+        rayhit.hit.u = 0.0f;
+        rayhit.hit.v = 0.0f;
         ray.tfar = t;
-        ray.geomID = geom->m_geom_id;
-        ray.primID = (unsigned int) item;
-        ray.Ng = N;
-        ray.shading_color = geom->m_color->get(item);
-        ray.d = d;
+        rayhit.hit.geomID = geom->m_geom_id;
+        rayhit.hit.primID = (unsigned int) args->primID;
+        rayhit.hit.Ng_x = ray.org_x+t*ray.dir_x-position.x;
+        rayhit.hit.Ng_y = ray.org_y+t*ray.dir_y-position.y;
+        rayhit.hit.Ng_z = ray.org_z+t*ray.dir_z-position.z;
+        FresnelRTCIntersectContext & context = *(FresnelRTCIntersectContext *)args->context;
+        rayhit.hit.instID[0] = context.context.instID[0];
+        context.shading_color = geom->m_color->get(args->primID);
+        context.d = d;
         }
     }
 

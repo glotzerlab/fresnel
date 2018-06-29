@@ -23,7 +23,11 @@ GeometryConvexPolyhedron::GeometryConvexPolyhedron(std::shared_ptr<Scene> scene,
     : Geometry(scene)
     {
     // create the geometry
-    m_geom_id = rtcNewUserGeometry(m_scene->getRTCScene(), N);
+    m_geometry = rtcNewGeometry(m_device->getRTCDevice(), RTC_GEOMETRY_TYPE_USER);
+    m_device->checkError();
+    rtcSetGeometryUserPrimitiveCount(m_geometry,N);
+    m_device->checkError();
+    m_geom_id = rtcAttachGeometry(m_scene->getRTCScene(), m_geometry);
     m_device->checkError();
 
     // set default material
@@ -87,11 +91,14 @@ GeometryConvexPolyhedron::GeometryConvexPolyhedron(std::shared_ptr<Scene> scene,
     m_radius = r;
 
     // register functions for embree
-    rtcSetUserData(m_scene->getRTCScene(), m_geom_id, this);
+    rtcSetGeometryUserData(m_geometry, this);
     m_device->checkError();
-    rtcSetBoundsFunction(m_scene->getRTCScene(), m_geom_id, &GeometryConvexPolyhedron::bounds);
+    rtcSetGeometryBoundsFunction(m_geometry, &GeometryConvexPolyhedron::bounds, NULL);
     m_device->checkError();
-    rtcSetIntersectFunction(m_scene->getRTCScene(), m_geom_id, &GeometryConvexPolyhedron::intersect);
+    rtcSetGeometryIntersectFunction(m_geometry, &GeometryConvexPolyhedron::intersect);
+    m_device->checkError();
+
+    rtcCommitGeometry(m_geometry);
     m_device->checkError();
 
     m_valid = true;
@@ -107,11 +114,12 @@ GeometryConvexPolyhedron::~GeometryConvexPolyhedron()
     \param item Index of the primitive to compute the bounding box of
     \param bounds_o Output bounding box
 */
-void GeometryConvexPolyhedron::bounds(void *ptr, size_t item, RTCBounds& bounds_o)
+void GeometryConvexPolyhedron::bounds(const struct RTCBoundsFunctionArguments *args)
     {
-    GeometryConvexPolyhedron *geom = (GeometryConvexPolyhedron*)ptr;
-    vec3<float> p = geom->m_position->get(item);
+    GeometryConvexPolyhedron *geom = (GeometryConvexPolyhedron*)args->geometryUserPtr;
+    vec3<float> p = geom->m_position->get(args->primID);
 
+    RTCBounds& bounds_o = *args->bounds_o;
     bounds_o.lower_x = p.x - geom->m_radius;
     bounds_o.lower_y = p.y - geom->m_radius;
     bounds_o.lower_z = p.z - geom->m_radius;
@@ -127,21 +135,25 @@ void GeometryConvexPolyhedron::bounds(void *ptr, size_t item, RTCBounds& bounds_
     \param ray The ray to intersect
     \param item Index of the primitive to compute the bounding box of
 */
-void GeometryConvexPolyhedron::intersect(void *ptr, RTCRay& ray, size_t item)
+void GeometryConvexPolyhedron::intersect(const struct RTCIntersectFunctionNArguments *args)
     {
-    GeometryConvexPolyhedron *geom = (GeometryConvexPolyhedron*)ptr;
+    GeometryConvexPolyhedron *geom = (GeometryConvexPolyhedron*)args->geometryUserPtr;
 
     // adapted from OptiX quick start tutorial and Embree user_geometry tutorial files
     int n_planes = geom->m_plane_normal.size();
     float t0 = -std::numeric_limits<float>::max();
     float t1 = std::numeric_limits<float>::max();
 
-    const vec3<float> pos_world = geom->m_position->get(item);
-    const quat<float> q_world = geom->m_orientation->get(item);
+    const vec3<float> pos_world = geom->m_position->get(args->primID);
+    const quat<float> q_world = geom->m_orientation->get(args->primID);
+
+    RTCRayHit& rayhit = *(RTCRayHit *)args->rayhit;
+    RTCRay& ray = rayhit.ray;
+    vec3<float> dir = vec3<float>(ray.dir_x,ray.dir_y, ray.dir_z);
 
     // transform the ray into the primitive coordinate system
-    vec3<float> ray_dir_local = rotate(conj(q_world), ray.dir);
-    vec3<float> ray_org_local = rotate(conj(q_world), ray.org - pos_world);
+    vec3<float> ray_dir_local = rotate(conj(q_world), dir);
+    vec3<float> ray_org_local = rotate(conj(q_world), vec3<float>(ray.org_x,ray.org_y,ray.org_z) - pos_world);
 
     vec3<float> t0_n_local(0,0,0), t0_p_local(0,0,0);
     vec3<float> t1_n_local(0,0,0), t1_p_local(0,0,0);
@@ -195,27 +207,34 @@ void GeometryConvexPolyhedron::intersect(void *ptr, RTCRay& ray, size_t item)
     vec3<float> n_hit, p_hit;
 
     // if the t0 is in (tnear,tfar), we hit the entry plane
+    FresnelRTCIntersectContext & context = *(FresnelRTCIntersectContext *)args->context;
     if ((ray.tnear < t0) & (t0 < ray.tfar))
         {
         t_hit = ray.tfar = t0;
-        ray.geomID = geom->m_geom_id;
-        ray.primID = item;
-        ray.Ng = rotate(q_world, t0_n_local);
+        rayhit.hit.geomID = geom->m_geom_id;
+        rayhit.hit.primID = args->primID;
+        vec3<float> Ng = rotate(q_world, t0_n_local);
+        rayhit.hit.Ng_x = Ng.x;
+        rayhit.hit.Ng_y = Ng.y;
+        rayhit.hit.Ng_z = Ng.z;
         n_hit = t0_n_local;
         p_hit = t0_p_local;
-        ray.shading_color = lerp(geom->m_color_by_face, geom->m_color->get(item), geom->m_plane_color[t0_plane_hit]);
+        context.shading_color = lerp(geom->m_color_by_face, geom->m_color->get(args->primID), geom->m_plane_color[t0_plane_hit]);
         hit = true;
         }
     // if t1 is in (tnear,tfar), we hit the exit plane
     if ((ray.tnear < t1) & (t1 < ray.tfar))
         {
         t_hit = ray.tfar = t1;
-        ray.geomID = geom->m_geom_id;
-        ray.primID = item;
-        ray.Ng = rotate(q_world, t1_n_local);
+        rayhit.hit.geomID = geom->m_geom_id;
+        rayhit.hit.primID = args->primID;
+        vec3<float> Ng = rotate(q_world, t1_n_local);
+        rayhit.hit.Ng_x = Ng.x;
+        rayhit.hit.Ng_y = Ng.y;
+        rayhit.hit.Ng_z = Ng.z;
         n_hit = t1_n_local;
         p_hit = t1_p_local;
-        ray.shading_color = lerp(geom->m_color_by_face, geom->m_color->get(item), geom->m_plane_color[t1_plane_hit]);
+        context.shading_color = lerp(geom->m_color_by_face, geom->m_color->get(args->primID), geom->m_plane_color[t1_plane_hit]);
         hit = true;
         }
 
@@ -299,7 +318,7 @@ void GeometryConvexPolyhedron::intersect(void *ptr, RTCRay& ray, size_t item)
                     min_d = d;
                 }
             }
-        ray.d = min_d;
+        context.d = min_d;
         }
     }
 

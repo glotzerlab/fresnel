@@ -37,7 +37,7 @@ pipeline
                             timeout(time: 1, unit: 'HOURS')
                                 {
                                 sh '''
-                                    singularity exec --nv ${CONTAINER} cmake ../code -DPYTHON_EXECUTABLE=/usr/bin/python3.6 -DENABLE_CUDA=ON -DENABLE_EMBREE=OFF -DENABLE_TBB=OFF -DENABLE_OPTIX=ON -GNinja
+                                    singularity exec --nv ${CONTAINER} cmake ../code -DPYTHON_EXECUTABLE=/usr/bin/python3.6 -DENABLE_EMBREE=OFF -DENABLE_OPTIX=ON -GNinja
                                    '''
 
                                 sh 'singularity exec --nv ${CONTAINER} ninja -j 3'

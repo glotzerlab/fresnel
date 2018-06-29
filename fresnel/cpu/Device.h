@@ -5,8 +5,8 @@
 #define DEVICE_H_
 
 #include "embree_platform.h"
-#include <embree2/rtcore.h>
-#include <embree2/rtcore_ray.h>
+#include <embree3/rtcore.h>
+#include <embree3/rtcore_ray.h>
 #include <pybind11/pybind11.h>
 #include <stdexcept>
 #include "tbb/task_arena.h"
@@ -44,28 +44,28 @@ class Device
         */
         void checkError()
             {
-            RTCError err = rtcDeviceGetError(m_device);
+            RTCError err = rtcGetDeviceError (m_device);
 
             switch (err)
                 {
-                case RTC_NO_ERROR:
+                case RTC_ERROR_NONE:
                     break;
-                case RTC_UNKNOWN_ERROR:
+                case RTC_ERROR_UNKNOWN:
                     throw std::runtime_error("Embree: An unknown error has occurred.");
                     break;
-                case RTC_INVALID_ARGUMENT:
+                case RTC_ERROR_INVALID_ARGUMENT:
                     throw std::runtime_error("Embree: An invalid argument was specified.");
                     break;
-                case RTC_INVALID_OPERATION:
+                case RTC_ERROR_INVALID_OPERATION:
                     throw std::runtime_error("Embree: The operation is not allowed for the specified object.");
                     break;
-                case RTC_OUT_OF_MEMORY:
+                case RTC_ERROR_OUT_OF_MEMORY:
                     throw std::runtime_error("Embree: There is not enough memory left to complete the operation.");
                     break;
-                case RTC_UNSUPPORTED_CPU:
+                case RTC_ERROR_UNSUPPORTED_CPU:
                     throw std::runtime_error("Embree: The CPU is not supported as it does not support SSE2.");
                     break;
-                case RTC_CANCELLED:
+                case RTC_ERROR_CANCELLED:
                     throw std::runtime_error("Embree: The operation got cancelled by an Memory Monitor Callback or Progress Monitor Callback function.");
                     break;
                 default:

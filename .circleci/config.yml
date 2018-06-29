@@ -38,7 +38,7 @@ references:
             echo pyver=${PYVER}
             echo cc=${CC}
             echo cxx=${CXX}
-            ${CMAKE} ../code -DPYTHON_EXECUTABLE=/usr/bin/python${PYVER} -DENABLE_EMBREE=ON -DENABLE_TBB=ON -DENABLE_CUDA=OFF -DENABLE_OPTIX=OFF -GNinja
+            ${CMAKE} ../code -DPYTHON_EXECUTABLE=/usr/bin/python${PYVER} -DENABLE_EMBREE=ON -DENABLE_OPTIX=OFF -Dembree_DIR=/opt/embree-${EMBREE3_VERSION}.x86_64.linux -GNinja
       - run:
           name: Compile
           command: |

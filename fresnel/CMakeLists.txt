@@ -8,7 +8,7 @@ pybind11_add_module(_common "common/module-common.cc")
 install(TARGETS _common LIBRARY DESTINATION ${PYTHON_MODULE_BASE_DIR})
 
 # _cpu
-if (ENABLE_EMBREE AND ENABLE_TBB)
+if (ENABLE_EMBREE)
 
 target_compile_definitions(_common PUBLIC FRESNEL_BUILD_CPU)
 
@@ -28,13 +28,13 @@ set(_cpu_sources
    )
 
 pybind11_add_module(_cpu "${_cpu_sources}")
-target_link_libraries(_cpu PRIVATE ${Embree_LIBRARY} ${TBB_LIBRARIES})
+target_link_libraries(_cpu PRIVATE ${EMBREE_LIBRARY} ${TBB_LIBRARIES})
 install(TARGETS _cpu LIBRARY DESTINATION ${PYTHON_MODULE_BASE_DIR})
 
 endif()
 
 # _gpu
-if (ENABLE_CUDA AND ENABLE_OPTIX)
+if (ENABLE_OPTIX)
 
 target_compile_definitions(_common PUBLIC FRESNEL_BUILD_GPU)
 

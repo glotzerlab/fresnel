@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include <memory>
+#include <sstream>
 
 #include "Device.h"
 
@@ -13,10 +14,17 @@ namespace fresnel { namespace cpu {
 */
 Device::Device(int limit) : m_limit(limit)
     {
-    m_device = rtcNewDevice(nullptr);
-
     if (limit == -1)
+        {
+        m_device = rtcNewDevice(nullptr);
         limit = tbb::task_arena::automatic;
+        }
+    else
+        {
+        std::ostringstream config;
+        config << "threads=" << limit;
+        m_device = rtcNewDevice(config.str().c_str());
+        }
 
     m_arena = std::make_shared<tbb::task_arena>(limit);
 
@@ -30,7 +38,7 @@ Device::Device(int limit) : m_limit(limit)
 */
 Device::~Device()
     {
-    rtcDeleteDevice(m_device);
+    rtcReleaseDevice(m_device);
     }
 
 /*! \param m Python module to export in

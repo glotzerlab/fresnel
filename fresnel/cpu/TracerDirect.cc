@@ -35,7 +35,7 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
     Tracer::render(scene);
 
     // update Embree data structures
-    arena->execute([&]{ rtcCommit(scene->getRTCScene()); });
+    rtcCommitScene(scene->getRTCScene());
     m_device->checkError();
 
     RGBA<float>* linear_output = m_linear_out->map();
@@ -78,28 +78,51 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
                     vec2<float> sample_loc = ray_gen.jitterSampleAA(aa_factor, si, sj, m_aa_n);
 
                     // trace a ray into the scene
-                    RTCRay ray(cam.origin(sample_loc), cam.direction(sample_loc));
-                    rtcIntersect(scene->getRTCScene(), ray);
+                    RTCRayHit ray_hit;
+                    RTCRay &ray = ray_hit.ray;
+                    const vec3<float>& org = cam.origin(sample_loc);
+                    ray.org_x = org.x;
+                    ray.org_y = org.y;
+                    ray.org_z = org.z;
+
+                    const vec3<float>& dir = cam.direction(sample_loc);
+                    ray.dir_x = dir.x;
+                    ray.dir_y = dir.y;
+                    ray.dir_z = dir.z;
+
+                    ray.tnear = 0.0f;
+                    ray.tfar = std::numeric_limits<float>::infinity();
+                    ray.time = 0.0f;
+                    ray.flags = 0;
+                    ray.mask = -1;
+                    ray_hit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
+                    ray_hit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
+
+                    FresnelRTCIntersectContext context;
+                    rtcInitIntersectContext(&context.context);
+
+                    rtcIntersect1(scene->getRTCScene(), &context.context, &ray_hit);
 
                     // determine the output pixel color
                     RGB<float> c = background_color;
                     float a = background_alpha;
 
-                    if (ray.hit())
+                    if (ray_hit.hit.geomID != RTC_INVALID_GEOMETRY_ID)
                         {
-                        vec3<float> n = ray.Ng / std::sqrt(dot(ray.Ng, ray.Ng));
-                        vec3<float> v = -ray.dir / std::sqrt(dot(ray.dir, ray.dir));
+                        vec3<float> n(ray_hit.hit.Ng_x, ray_hit.hit.Ng_y, ray_hit.hit.Ng_z);
+                        n /= std::sqrt(dot(n,n));
+                        vec3<float> v = -dir / std::sqrt(dot(dir, dir));
                         Material m;
 
                         // apply the material color or outline color depending on the distance to the edge
-                        if (ray.d > scene->getOutlineWidth(ray.geomID))
-                            m = scene->getMaterial(ray.geomID);
+                        if (context.d > scene->getOutlineWidth(ray_hit.hit.geomID))
+                            m = scene->getMaterial(ray_hit.hit.geomID);
                         else
-                            m = scene->getOutlineMaterial(ray.geomID);
+                            m = scene->getOutlineMaterial(ray_hit.hit.geomID);
 
                         if (m.isSolid())
                             {
-                            c = m.getColor(ray.shading_color);
+                            c = m.getColor(context.shading_color);
                             }
                         else
                             {
@@ -134,14 +157,14 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
                                 RGB<float> f_d;
                                 float ndotl = dot(n, l);
                                 if (ndotl >= 0.0f)
-                                    f_d = m.brdf_diffuse(l, v, n, ray.shading_color) * ndotl;
+                                    f_d = m.brdf_diffuse(l, v, n, context.shading_color) * ndotl;
                                 else
                                     f_d = RGB<float>(0.0f,0.0f,0.0f);
 
                                 RGB<float> f_s;
                                 if (dot(n, r) >= 0.0f)
                                     {
-                                    f_s = m.brdf_specular(r, v, n, ray.shading_color, half_angle) * dot(n, r);
+                                    f_s = m.brdf_specular(r, v, n, context.shading_color, half_angle) * dot(n, r);
                                     }
                                 else
                                     f_s = RGB<float>(0.0f,0.0f,0.0f);
