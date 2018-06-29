@@ -3,14 +3,14 @@ version: 2
 references:
   ubuntu16: &ubuntu16
     docker:
-      - image: glotzerlab/ci:2018.05-ubuntu16.04
+      - image: glotzerlab/ci:2018.06-ubuntu16.04
         environment:
           PYTHONPATH: /home/ci/project/build
     working_directory: /home/ci/project
 
   ubuntu18: &ubuntu18
     docker:
-      - image: glotzerlab/ci:2018.05-ubuntu18.04
+      - image: glotzerlab/ci:2018.06-ubuntu18.04
         environment:
           PYTHONPATH: /home/ci/project/build
     working_directory: /home/ci/project

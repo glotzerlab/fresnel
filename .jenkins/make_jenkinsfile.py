@@ -14,7 +14,7 @@ tests.append(dict(name='cuda9-optix50',
                   CMAKE = 'cmake',
                   ENABLE_OPTIX = 'ON',
                   ENABLE_EMBREE = 'OFF',
-                  CONTAINER = 'ci-optix-2018.05.simg',
+                  CONTAINER = 'ci-optix-2018.06.simg',
                   timeout=2))
 
 print(template.render(tests=tests))
