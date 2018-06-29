@@ -79,6 +79,7 @@ jobs:
     <<: *ubuntu18
     steps:
       - *load_code
+      - *update_submodules
       - run: cd code/doc && sphinx-build -b html -d _build/doctrees -W -n . build/html
 
   clang38-py35:
