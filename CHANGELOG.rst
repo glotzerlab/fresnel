@@ -1,11 +1,10 @@
 Change log
 ==========
 
-v0.6.0
-------
+`fresnel <https://bitbucket.org/glotzer/fresnel>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
-Not yet released
-
+v0.6.0 (Not yet released)
+-------------------------
 
 * Implement ``tracer.Path`` on the GPU.
 * Improve path tracer performance with Russian roulette termination.
@@ -14,11 +13,8 @@ Not yet released
 * ``tracer.Path`` now correctly starts sampling over when resized.
 * Wrap C++ code with pybind 2.2
 
-v0.5.0
-------
-
-Released 2017/07/27
-
+v0.5.0 (2017-07-27)
+-------------------
 
 * Add new lighting setups
 
@@ -41,11 +37,8 @@ Released 2017/07/27
 
 CPU-only features will be implemented on the GPU in a future release.
 
-v0.4.0
-------
-
-Released 2017/04/03
-
+v0.4.0 (2017-04-03)
+-------------------
 
 * Enforce requirement: Embree >= 2.10.0
 * Enforce requirement Pybind =1.8.1
@@ -66,18 +59,14 @@ Released 2017/04/03
   * ``Device`` now takes the argument *n* instead of *limit*
   * ``Scene`` no longer has a ``light_direction`` member
 
-v0.3.0
-------
-
-Released 2017/03/09
-
+v0.3.0 (2017-03-09)
+-------------------
 
 * Suppress "cannot import name" messages
 * Support Nx3 and Nx4 inputs to ``color.linear``
 
-v0.2.0
-------
-
+v0.2.0 (2017-03-03)
+-------------------
 
 * Parallel rendering on the CPU
 * Fix PTX file installation
@@ -85,9 +74,8 @@ v0.2.0
 * Unit tests
 * Fix bug in sphere rendering on GPU
 
-v0.1.0
-------
-
+v0.1.0 (2017-02-02)
+-------------------
 
 * Prototype API
 * Sphere geometry
