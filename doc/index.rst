@@ -15,7 +15,6 @@ Welcome to the user documentation for Fresnel!
     :caption: Basic tutorials
     :glob:
 
-    examples/README
     examples/0*
 
 .. toctree::
