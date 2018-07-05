@@ -4,6 +4,31 @@ Installation
 **Fresnel** binary images are available on `Docker Hub <https://hub.docker.com/>`_ and packages on
 `conda-forge <https://conda-forge.org/>`_. You can also compile **fresnel** from source.
 
+Anaconda package
+----------------
+
+**Fresnel** is available on `conda-forge <https://conda-forge.org/>`_. To install, first download and install
+`miniconda <http://conda.pydata.org/miniconda.html>`_.
+Then add the ``conda-forge`` channel and install **fresnel**:
+
+.. code-block:: bash
+
+   $ conda config --add channels conda-forge
+   $ conda install fresnel
+
+**jupyter** and **matplotlib** are required to execute the
+`fresnel example notebooks <https://bitbucket.org/glotzer/fresnel-examples>`_, install
+
+.. code-block:: bash
+
+   $ conda install jupyter matplotlib
+
+You can update **fresnel** with:
+
+.. code-block:: bash
+
+   $ conda update fresnel
+
 Docker images
 -------------
 
@@ -23,24 +48,6 @@ Docker:
 .. code-block:: bash
 
    $ docker pull glotzerlab/software
-
-Anaconda package
-----------------
-
-**Fresnel** is available on `conda-forge <https://conda-forge.org/>`_. To install, first download and install
-`miniconda <http://conda.pydata.org/miniconda.html>`_.
-Then add the ``conda-forge`` channel and install **fresnel**:
-
-.. code-block:: bash
-
-   $ conda config --add channels conda-forge
-   $ conda install fresnel
-
-You can update **fresnel** with:
-
-.. code-block:: bash
-
-   $ conda update fresnel
 
 Compile from source
 -------------------
@@ -81,7 +88,8 @@ Prerequisites
   * pytest
   * pillow
 
-``ENABLE_EMBREE`` and ``ENABLE_OPTIX`` are orthogonal settings, either or both may be enabled.
+``ENABLE_EMBREE`` (*defaults ON*) and ``ENABLE_OPTIX`` (*defaults OFF*) are orthogonal settings, either or both may be
+enabled.
 
 Optional dependencies
 ^^^^^^^^^^^^^^^^^^^^^
