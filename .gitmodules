@@ -4,3 +4,6 @@
 [submodule "extern/random123"]
 	path = extern/random123
 	url = https://bitbucket.org/joaander/random123
+[submodule "doc/examples"]
+	path = doc/examples
+	url = https://bitbucket.org/glotzer/fresnel-examples

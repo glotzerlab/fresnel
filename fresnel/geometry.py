@@ -345,19 +345,20 @@ class Sphere(Geometry):
 class ConvexPolyhedron(Geometry):
     R""" Convex polyhedron geometry.
 
-    Define a set of convex polyhedron primitives. A convex polyhedron is defined by a set of outward facing planes
-    (origin and normal vector) and a radius that encompass the shape. This is a beta interface to a beta code.
-    Future versions may (or may not) provide a more user friendly interface, and/or may perform faster or slower.
+    Define a set of convex polyhedron primitives. A convex polyhedron is defined by *P* outward facing planes
+    (origin and normal vector) and a radius that encompass the shape.
+
+    Note: Future versions may (or may not) provide a more user friendly interface.
 
     Args:
         scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
         origins: Origins of the planes in particle local coordinates.
-          **Type:** anything convertible by numpy to a Nx3 array of floats.
+          **Type:** anything convertible by numpy to a Px3 array of floats.
         normals: Origins of the planes in particle local coordinates.
-          **Type:** anything convertible by numpy to a Nx3 array of floats.
+          **Type:** anything convertible by numpy to a Px3 array of floats.
         r (float): Radius of the circumscribing sphere (centered at the origin) that encompasses the polyhedron.
         face_colors: Colors of the polyhedron faces
-          **Type:** anything convertible by numpy to a Nx3 array of floats.
+          **Type:** anything convertible by numpy to a Px3 array of floats.
         position: Positions of the polyhedra, *optional*.
           **Type:** anything convertible by numpy to a Nx3 array of floats.
         orientation: Rotation quaternion of each polyhedron, *optional*.

@@ -3,14 +3,14 @@ version: 2
 references:
   ubuntu16: &ubuntu16
     docker:
-      - image: glotzerlab/ci:2018.05-ubuntu16.04
+      - image: glotzerlab/ci:2018.06-ubuntu16.04
         environment:
           PYTHONPATH: /home/ci/project/build
     working_directory: /home/ci/project
 
   ubuntu18: &ubuntu18
     docker:
-      - image: glotzerlab/ci:2018.05-ubuntu18.04
+      - image: glotzerlab/ci:2018.06-ubuntu18.04
         environment:
           PYTHONPATH: /home/ci/project/build
     working_directory: /home/ci/project
@@ -79,6 +79,7 @@ jobs:
     <<: *ubuntu18
     steps:
       - *load_code
+      - *update_submodules
       - run: cd code/doc && sphinx-build -b html -d _build/doctrees -W -n . build/html
 
   clang38-py35:
