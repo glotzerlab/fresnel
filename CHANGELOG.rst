@@ -3,8 +3,8 @@ Change log
 
 `fresnel <https://bitbucket.org/glotzer/fresnel>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
-v0.6.0 (Not yet released)
--------------------------
+v0.6.0 (2018-07-06)
+-------------------
 
 * Implement ``tracer.Path`` on the GPU.
 * Implement ``ConvexPolyhedron`` geometry on the GPU.

@@ -24,7 +24,7 @@ if _common.cpu_built():
 if _common.gpu_built():
     from .import _gpu
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 
 class Device(object):
     R""" Hardware device to use for ray tracing.
