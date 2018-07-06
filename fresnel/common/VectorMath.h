@@ -951,6 +951,13 @@ struct quat
         {
         }
 
+    #ifdef NVCC
+    //! Convenience function to get a quat from a float4 in device code
+    DEVICE explicit quat(const float4& a) : s(a.x), v(vec3<float>(a.y, a.z, a.w))
+        {
+        }
+    #endif
+
     //! Construct a quat from an axis and an angle.
     /*! \param axis angle to represent
         \param theta angle to represent

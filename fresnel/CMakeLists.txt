@@ -44,7 +44,8 @@ set(_ptx_sources
     gpu/path.cu
     gpu/GeometryCylinder.cu
 	gpu/GeometrySphere.cu
-    gpu/GeometryPrism.cu)
+    gpu/GeometryPrism.cu
+    gpu/GeometryConvexPolyhedron.cu)
 
 list(APPEND CUDA_NVCC_FLAGS "-Xcudafe;--diag_suppress=code_is_unreachable")
 list(APPEND CUDA_NVCC_FLAGS "-arch;compute_30;--use_fast_math")
@@ -65,6 +66,7 @@ set(_gpu_sources
      gpu/Geometry.cc
      gpu/GeometryCylinder.cc
      gpu/GeometryPrism.cc
+     gpu/GeometryConvexPolyhedron.cc
      gpu/GeometrySphere.cc
      gpu/Tracer.cc
      gpu/TracerDirect.cc

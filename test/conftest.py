@@ -115,11 +115,6 @@ def scene_eight_polyhedra(device):
                 origins.append([x*0.75, y*0.75, z*0.75])
                 colors.append([166/255,206/255,227/255])
 
-
-    # TODO: Remove this when ConvexPolyhedron is implemented on the GPU
-    if device.mode != 'cpu':
-        return scene;
-
     geometry = fresnel.geometry.ConvexPolyhedron(scene,
                                                  origins=origins,
                                                  normals=normals,
