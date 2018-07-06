@@ -4,7 +4,7 @@ User community
 fresnel-users mailing list
 --------------------------
 
-Subscribe to the `fresnel-users <https://groups.google.com/d/forum/fresnel-users>`_ mailing list to recieve release annoucments,
+Subscribe to the `fresnel-users <https://groups.google.com/d/forum/fresnel-users>`_ mailing list to recieve release announcements,
 post questions for advice on using the software, and discuss potential new features.
 
 Issue tracker
