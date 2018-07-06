@@ -28,6 +28,7 @@ Here are a few quick samples of what **fresnel** can do:
 
     installation
     changes
+    community
 
 .. toctree::
     :maxdepth: 1
