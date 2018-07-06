@@ -7,11 +7,16 @@ v0.6.0 (Not yet released)
 -------------------------
 
 * Implement ``tracer.Path`` on the GPU.
+* Implement ``ConvexPolyhedron`` geometry on the GPU.
 * Improve path tracer performance with Russian roulette termination.
 * Compile warning-free.
 * Fix sphere intersection test bugs on the GPU.
 * ``tracer.Path`` now correctly starts sampling over when resized.
 * Wrap C++ code with pybind 2.2
+* Make documentation available on readthedocs: http://fresnel.readthedocs.io
+* Fresnel is now available on conda-forge: https://anaconda.org/conda-forge/fresnel
+* embree >= 3.0 is now required for CPU support
+* Improve documentation
 
 v0.5.0 (2017-07-27)
 -------------------
