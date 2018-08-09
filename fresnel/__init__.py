@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2017 The Regents of the University of Michigan
+# Copyright (c) 2016-2018 The Regents of the University of Michigan
 # This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 R"""
@@ -24,7 +24,7 @@ if _common.cpu_built():
 if _common.gpu_built():
     from .import _gpu
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 
 class Device(object):
     R""" Hardware device to use for ray tracing.
@@ -55,7 +55,7 @@ class Device(object):
     corresponding module must be enabled at compile time. Additionally, there must be at least one GPU present
     for the ``gpu`` mode to be available.
 
-    .. code::
+    .. code-block:: python
 
         >>> fresnel.Device.available_modes
         ['gpu', 'cpu', 'auto']

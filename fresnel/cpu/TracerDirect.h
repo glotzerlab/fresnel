@@ -1,12 +1,12 @@
-// Copyright (c) 2016-2017 The Regents of the University of Michigan
+// Copyright (c) 2016-2018 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #ifndef TRACER_WHITTED_H_
 #define TRACER_WHITTED_H_
 
 #include "embree_platform.h"
-#include <embree2/rtcore.h>
-#include <embree2/rtcore_ray.h>
+#include <embree3/rtcore.h>
+#include <embree3/rtcore_ray.h>
 #include <pybind11/pybind11.h>
 
 #include "Tracer.h"

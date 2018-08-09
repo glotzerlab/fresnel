@@ -1,8 +1,9 @@
-// Copyright (c) 2016-2017 The Regents of the University of Michigan
+// Copyright (c) 2016-2018 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include <stdexcept>
 #include <memory>
+#include <sstream>
 
 #include "Device.h"
 
@@ -13,10 +14,17 @@ namespace fresnel { namespace cpu {
 */
 Device::Device(int limit) : m_limit(limit)
     {
-    m_device = rtcNewDevice(nullptr);
-
     if (limit == -1)
+        {
+        m_device = rtcNewDevice(nullptr);
         limit = tbb::task_arena::automatic;
+        }
+    else
+        {
+        std::ostringstream config;
+        config << "threads=" << limit;
+        m_device = rtcNewDevice(config.str().c_str());
+        }
 
     m_arena = std::make_shared<tbb::task_arena>(limit);
 
@@ -30,7 +38,7 @@ Device::Device(int limit) : m_limit(limit)
 */
 Device::~Device()
     {
-    rtcDeleteDevice(m_device);
+    rtcReleaseDevice(m_device);
     }
 
 /*! \param m Python module to export in

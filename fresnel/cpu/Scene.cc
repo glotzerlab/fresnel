@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 The Regents of the University of Michigan
+// Copyright (c) 2016-2018 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include <stdexcept>
@@ -12,7 +12,8 @@ namespace fresnel { namespace cpu {
 */
 Scene::Scene(std::shared_ptr<Device> device) : m_device(device), m_background_color(RGB<float>(0,0,0)), m_background_alpha(0.0)
     {
-    m_scene = rtcDeviceNewScene(device->getRTCDevice(), RTC_SCENE_DYNAMIC, RTC_INTERSECT1);
+    m_scene = rtcNewScene(device->getRTCDevice());
+    rtcSetSceneBuildQuality(m_scene, RTC_BUILD_QUALITY_LOW);
     m_device->checkError();
 
     m_lights.N = 2;
@@ -27,7 +28,7 @@ Scene::Scene(std::shared_ptr<Device> device) : m_device(device), m_background_co
  */
 Scene::~Scene()
     {
-    rtcDeleteScene(m_scene);
+    rtcReleaseScene(m_scene);
     m_device->checkError();
     }
 

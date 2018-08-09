@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 The Regents of the University of Michigan
+// Copyright (c) 2016-2018 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include "TracerPath.h"
@@ -31,11 +31,11 @@ void TracerPath::reset()
     m_seed++;
 
     RGBA<float>* linear_output = m_linear_out->map();
-    memset(linear_output, 0, sizeof(RGBA<float>)*m_linear_out->getW()*m_linear_out->getH());
+    memset((void *)linear_output, 0, sizeof(RGBA<float>)*m_linear_out->getW()*m_linear_out->getH());
     m_linear_out->unmap();
 
     RGBA<unsigned char>* srgb_output = m_srgb_out->map();
-    memset(srgb_output, 0, sizeof(RGBA<unsigned char>)*m_linear_out->getW()*m_linear_out->getH());
+    memset((void *)srgb_output, 0, sizeof(RGBA<unsigned char>)*m_linear_out->getW()*m_linear_out->getH());
     m_srgb_out->unmap();
     }
 
@@ -51,7 +51,7 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
     Tracer::render(scene);
 
     // update Embree data structures
-    arena->execute([&]{ rtcCommit(scene->getRTCScene()); });
+    rtcCommitScene(scene->getRTCScene());
     m_device->checkError();
 
     RGBA<float>* linear_output = m_linear_out->map();
@@ -95,9 +95,33 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                 prd.a = 1.0f;
 
                 // trace the first ray into the scene
-                RTCRay ray_initial(cam.origin(sample_loc), cam.direction(sample_loc));
+                RTCRayHit ray_hit_initial;
+                RTCRay& ray_initial = ray_hit_initial.ray;
+
+                const vec3<float>& org = cam.origin(sample_loc);
+                ray_initial.org_x = org.x;
+                ray_initial.org_y = org.y;
+                ray_initial.org_z = org.z;
+
+                const vec3<float>& dir = cam.direction(sample_loc);
+                ray_initial.dir_x = dir.x;
+                ray_initial.dir_y = dir.y;
+                ray_initial.dir_z = dir.z;
+
                 ray_initial.tnear = 1e-3f;
-                rtcIntersect(scene->getRTCScene(), ray_initial);
+                ray_initial.tfar = std::numeric_limits<float>::infinity();
+                ray_initial.time = 0.0f;
+                ray_initial.mask = -1;
+                ray_initial.flags = 0;
+                ray_hit_initial.hit.geomID = RTC_INVALID_GEOMETRY_ID;
+                ray_hit_initial.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
+
+                FresnelRTCIntersectContext context;
+                rtcInitIntersectContext(&context.context);
+
+                rtcIntersect1(scene->getRTCScene(), &context.context, &ray_hit_initial);
+
+                FresnelRTCIntersectContext context_initial = context;
 
                 // trace a path from the hit point into the scene m_light_samples times
                 for (prd.light_sample = 0; prd.light_sample < m_light_samples; prd.light_sample++)
@@ -107,32 +131,52 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
 
                     for (prd.depth = 0; ; prd.depth++)
                         {
-                        RTCRay ray(prd.origin,  prd.direction);
+                        RTCRayHit ray_hit;
                         if (prd.depth == 0)
                             {
                             // the first hit is cached above
-                            ray = ray_initial;
+                            ray_hit = ray_hit_initial;
+                            context = context_initial;
                             }
                         else
                             {
-                            // subsequent depth steps need to trace
+                            RTCRay& ray = ray_hit.ray;
+                            ray.org_x = prd.origin.x;
+                            ray.org_y = prd.origin.y;
+                            ray.org_z = prd.origin.z;
+
+                            ray.dir_x = prd.direction.x;
+                            ray.dir_y = prd.direction.y;
+                            ray.dir_z = prd.direction.z;
+
                             ray.tnear = 1e-3f;
-                            rtcIntersect(scene->getRTCScene(), ray);
+                            ray.tfar = std::numeric_limits<float>::infinity();
+                            ray.time = 0.0f;
+                            ray.mask = -1;
+                            ray.flags = 0;
+                            ray_hit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
+                            ray_hit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
+
+                            // subsequent depth steps need to trace
+                            context = FresnelRTCIntersectContext();
+                            rtcInitIntersectContext(&context.context);
+
+                            rtcIntersect1(scene->getRTCScene(), &context.context, &ray_hit);
                             }
 
-                        if (ray.hit())
+                        if (ray_hit.hit.geomID != RTC_INVALID_GEOMETRY_ID)
                             {
                             // call hit program
                             path_tracer_hit(prd,
-                                            scene->getMaterial(ray.geomID),
-                                            scene->getOutlineMaterial(ray.geomID),
-                                            ray.d,
-                                            scene->getOutlineWidth(ray.geomID),
-                                            ray.shading_color,
-                                            ray.Ng,
-                                            ray.org,
-                                            ray.dir,
-                                            ray.tfar,
+                                            scene->getMaterial(ray_hit.hit.geomID),
+                                            scene->getOutlineMaterial(ray_hit.hit.geomID),
+                                            context.d,
+                                            scene->getOutlineWidth(ray_hit.hit.geomID),
+                                            context.shading_color,
+                                            vec3<float>(ray_hit.hit.Ng_x, ray_hit.hit.Ng_y, ray_hit.hit.Ng_z),
+                                            vec3<float>(ray_hit.ray.org_x, ray_hit.ray.org_y, ray_hit.ray.org_z),
+                                            vec3<float>(ray_hit.ray.dir_x, ray_hit.ray.dir_y, ray_hit.ray.dir_z),
+                                            ray_hit.ray.tfar,
                                             ray_gen,
                                             m_n_samples,
                                             m_light_samples);
@@ -145,7 +189,8 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                                              background_alpha,
                                              m_light_samples,
                                              lights,
-                                             ray.dir);
+                                             vec3<float>(ray_hit.ray.dir_x, ray_hit.ray.dir_y, ray_hit.ray.dir_z)
+                                             );
                             }
 
                         // break out of the loop when done

@@ -11,19 +11,15 @@ pipeline
             failFast true
             parallel
                 {
-                stage('gcc6-py36-cd90-optx50')
+                stage('cuda9-optix50')
                     {
                     agent { label 'gpu' }
 
                     environment
                         {
-                        CC = '/usr/sbin/gcc-6'
-                        CXX = '/usr/sbin/g++-6'
-                        PYVER = '3.6'
-                        PYTEST = '/usr/bin/pytest'
-                        CMAKE_BIN = '/usr/sbin'
-                        ENABLE_OPTIX = 'ON'
-                        CONTAINER = '/nfs/glotzer/containers/ci-optix-2018.02.simg'
+                        CC = 'gcc'
+                        CXX = 'g++'
+                        CONTAINER = '/nfs/glotzer/containers/ci-optix-2018.06.simg'
                         }
 
                     steps
@@ -41,7 +37,7 @@ pipeline
                             timeout(time: 1, unit: 'HOURS')
                                 {
                                 sh '''
-                                    singularity exec --nv ${CONTAINER} ${CMAKE_BIN}/cmake ../code -DPYTHON_EXECUTABLE=/usr/bin/python${PYVER} -DENABLE_CUDA=${ENABLE_OPTIX} -DENABLE_OPTIX=${ENABLE_OPTIX} -GNinja
+                                    singularity exec --nv ${CONTAINER} cmake ../code -DPYTHON_EXECUTABLE=/usr/bin/python3.6 -DENABLE_EMBREE=OFF -DENABLE_OPTIX=ON -GNinja
                                    '''
 
                                 sh 'singularity exec --nv ${CONTAINER} ninja -j 3'
@@ -54,7 +50,7 @@ pipeline
                                 {
                                 sh '''
                                     export PYTHONPATH=${WORKSPACE}/build
-                                    singularity exec --nv ${CONTAINER} ${PYTEST} --junit-xml=${WORKSPACE}/test.xml
+                                    singularity exec --nv ${CONTAINER} py.test-3 --junit-xml=${WORKSPACE}/test.xml
                                    '''
                                 }
                             }
@@ -71,54 +67,6 @@ pipeline
                         }
                     }
                 
-                }
-            }
-
-        stage('conda-build-mac')
-            {
-            agent { label 'mac' }
-
-            environment
-                {
-                CONDA_BLD_PATH = "${WORKSPACE}/conda-bld"
-                ANACONDA_TOKEN = credentials('glotzer-anaconda-token')
-                }
-
-            steps
-                {
-                sh 'echo ${CONDA_BLD_PATH}'
-
-                retry(5)
-                    {
-                    dir('code')
-                        {
-                        checkout scm
-
-                        timeout(time: 2, unit: 'HOURS')
-                            {
-                            sh 'git submodule update --init'
-
-                            sh '''
-                               conda build conda-recipe
-                               '''
-                            }
-                        }
-                    }
-
-                script
-                    {
-                    if (env.BRANCH_NAME == 'release')
-                        {
-                        sh 'anaconda -t ${ANACONDA_TOKEN} upload --force --no-progress ${WORKSPACE}/conda-bld/**/*.tar.bz2'
-                        }
-                    }
-                }
-            post
-                {
-                always
-                    {
-                    deleteDir()
-                    }
                 }
             }
         }

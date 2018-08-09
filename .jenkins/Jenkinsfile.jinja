@@ -19,10 +19,6 @@ pipeline
                         {
                         CC = '{{ test.CC }}'
                         CXX = '{{ test.CXX }}'
-                        PYVER = '{{ test.PYVER }}'
-                        PYTEST = '{{ test.PYTEST }}'
-                        CMAKE_BIN = '{{ test.CMAKE_BIN }}'
-                        ENABLE_OPTIX = '{{ test.ENABLE_OPTIX }}'
                         CONTAINER = '/nfs/glotzer/containers/{{ test.CONTAINER }}'
                         }
 
@@ -41,7 +37,7 @@ pipeline
                             timeout(time: 1, unit: 'HOURS')
                                 {
                                 sh '''
-                                    singularity exec --nv ${CONTAINER} ${CMAKE_BIN}/cmake ../code -DPYTHON_EXECUTABLE=/usr/bin/python${PYVER} -DENABLE_CUDA=${ENABLE_OPTIX} -DENABLE_OPTIX=${ENABLE_OPTIX} -GNinja
+                                    singularity exec --nv ${CONTAINER} {{ test.CMAKE }} ../code -DPYTHON_EXECUTABLE=/usr/bin/python{{ test.PYVER }} -DENABLE_EMBREE={{ test.ENABLE_EMBREE }} -DENABLE_OPTIX={{ test.ENABLE_OPTIX }} -GNinja
                                    '''
 
                                 sh 'singularity exec --nv ${CONTAINER} ninja -j 3'
@@ -54,7 +50,7 @@ pipeline
                                 {
                                 sh '''
                                     export PYTHONPATH=${WORKSPACE}/build
-                                    singularity exec --nv ${CONTAINER} ${PYTEST} --junit-xml=${WORKSPACE}/test.xml
+                                    singularity exec --nv ${CONTAINER} {{ test.PYTEST }} --junit-xml=${WORKSPACE}/test.xml
                                    '''
                                 }
                             }
@@ -71,54 +67,6 @@ pipeline
                         }
                     }
                 {% endfor %}
-                }
-            }
-
-        stage('conda-build-mac')
-            {
-            agent { label 'mac' }
-
-            environment
-                {
-                CONDA_BLD_PATH = "${WORKSPACE}/conda-bld"
-                ANACONDA_TOKEN = credentials('glotzer-anaconda-token')
-                }
-
-            steps
-                {
-                sh 'echo ${CONDA_BLD_PATH}'
-
-                retry(5)
-                    {
-                    dir('code')
-                        {
-                        checkout scm
-
-                        timeout(time: 2, unit: 'HOURS')
-                            {
-                            sh 'git submodule update --init'
-
-                            sh '''
-                               conda build conda-recipe
-                               '''
-                            }
-                        }
-                    }
-
-                script
-                    {
-                    if (env.BRANCH_NAME == 'release')
-                        {
-                        sh 'anaconda -t ${ANACONDA_TOKEN} upload --force --no-progress ${WORKSPACE}/conda-bld/**/*.tar.bz2'
-                        }
-                    }
-                }
-            post
-                {
-                always
-                    {
-                    deleteDir()
-                    }
                 }
             }
         }

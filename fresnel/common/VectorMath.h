@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 The Regents of the University of Michigan
+// Copyright (c) 2016-2018 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #ifndef __VECTOR_MATH_H__
@@ -950,6 +950,13 @@ struct quat
     DEVICE quat()
         {
         }
+
+    #ifdef NVCC
+    //! Convenience function to get a quat from a float4 in device code
+    DEVICE explicit quat(const float4& a) : s(a.x), v(vec3<float>(a.y, a.z, a.w))
+        {
+        }
+    #endif
 
     //! Construct a quat from an axis and an angle.
     /*! \param axis angle to represent

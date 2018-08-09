@@ -8,7 +8,7 @@ pybind11_add_module(_common "common/module-common.cc")
 install(TARGETS _common LIBRARY DESTINATION ${PYTHON_MODULE_BASE_DIR})
 
 # _cpu
-if (ENABLE_EMBREE AND ENABLE_TBB)
+if (ENABLE_EMBREE)
 
 target_compile_definitions(_common PUBLIC FRESNEL_BUILD_CPU)
 
@@ -17,6 +17,7 @@ set(_cpu_sources
      cpu/Device.cc
      cpu/Scene.cc
      cpu/Geometry.cc
+     cpu/GeometryCylinder.cc
      cpu/GeometryPrism.cc
      cpu/GeometryConvexPolyhedron.cc
      cpu/GeometrySphere.cc
@@ -27,13 +28,13 @@ set(_cpu_sources
    )
 
 pybind11_add_module(_cpu "${_cpu_sources}")
-target_link_libraries(_cpu PRIVATE ${Embree_LIBRARY} ${TBB_LIBRARIES})
+target_link_libraries(_cpu PRIVATE ${EMBREE_LIBRARY} ${TBB_LIBRARIES})
 install(TARGETS _cpu LIBRARY DESTINATION ${PYTHON_MODULE_BASE_DIR})
 
 endif()
 
 # _gpu
-if (ENABLE_CUDA AND ENABLE_OPTIX)
+if (ENABLE_OPTIX)
 
 target_compile_definitions(_common PUBLIC FRESNEL_BUILD_GPU)
 
@@ -41,8 +42,10 @@ target_compile_definitions(_common PUBLIC FRESNEL_BUILD_GPU)
 set(_ptx_sources
 	gpu/direct.cu
     gpu/path.cu
+    gpu/GeometryCylinder.cu
 	gpu/GeometrySphere.cu
-    gpu/GeometryPrism.cu)
+    gpu/GeometryPrism.cu
+    gpu/GeometryConvexPolyhedron.cu)
 
 list(APPEND CUDA_NVCC_FLAGS "-Xcudafe;--diag_suppress=code_is_unreachable")
 list(APPEND CUDA_NVCC_FLAGS "-arch;compute_30;--use_fast_math")
@@ -61,7 +64,9 @@ set(_gpu_sources
      gpu/Device.cc
      gpu/Scene.cc
      gpu/Geometry.cc
+     gpu/GeometryCylinder.cc
      gpu/GeometryPrism.cc
+     gpu/GeometryConvexPolyhedron.cc
      gpu/GeometrySphere.cc
      gpu/Tracer.cc
      gpu/TracerDirect.cc

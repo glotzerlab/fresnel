@@ -1,9 +1,10 @@
-// Copyright (c) 2016-2017 The Regents of the University of Michigan
+// Copyright (c) 2016-2018 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include <stdexcept>
 
 #include "Geometry.h"
+#include <embree3/rtcore.h>
 
 namespace fresnel { namespace cpu {
 
@@ -26,7 +27,7 @@ void Geometry::enable()
     {
     if (m_valid)
         {
-        rtcEnable(m_scene->getRTCScene(), m_geom_id);
+        rtcEnableGeometry(m_geometry);
         m_device->checkError();
         }
     else
@@ -41,7 +42,7 @@ void Geometry::disable()
     {
     if (m_valid)
         {
-        rtcDisable(m_scene->getRTCScene(), m_geom_id);
+        rtcDisableGeometry(m_geometry);
         m_device->checkError();
         }
     else
@@ -57,7 +58,8 @@ void Geometry::remove()
     {
     if (m_valid)
         {
-        rtcDeleteGeometry(m_scene->getRTCScene(), m_geom_id);
+        rtcDetachGeometry(m_scene->getRTCScene(), m_geom_id);
+        rtcReleaseGeometry(m_geometry);
         m_valid = false;
         m_device->checkError();
         }

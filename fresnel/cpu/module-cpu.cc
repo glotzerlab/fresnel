@@ -1,10 +1,11 @@
-// Copyright (c) 2016-2017 The Regents of the University of Michigan
+// Copyright (c) 2016-2018 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include <pybind11/pybind11.h>
 #include "Device.h"
 #include "Scene.h"
 #include "Geometry.h"
+#include "GeometryCylinder.h"
 #include "GeometryPrism.h"
 #include "GeometryConvexPolyhedron.h"
 #include "GeometrySphere.h"
@@ -23,6 +24,7 @@ PYBIND11_MODULE(_cpu, m)
     export_Device(m);
     export_Scene(m);
     export_Geometry(m);
+    export_GeometryCylinder(m);
     export_GeometryPrism(m);
     export_GeometryConvexPolyhedron(m);
     export_GeometrySphere(m);
