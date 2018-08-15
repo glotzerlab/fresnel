@@ -14,8 +14,6 @@ if 'cpu' in fresnel.Device.available_modes:
 if 'gpu' in fresnel.Device.available_modes:
     devices.append( ('gpu', 1) );
 
-print(devices)
-
 def test_lights():
     lights = [];
     phi1 = 1*45*math.pi/180;
@@ -82,7 +80,59 @@ def scene_four_spheres(device):
 
     return scene
 
-def assert_image_approx_equal(a, ref_file):
+@pytest.fixture(scope='function')
+def scene_eight_polyhedra(device):
+    scene = fresnel.Scene(device, lights = test_lights())
+
+    # place eight polyhedra
+    position = []
+    for k in range(2):
+        for i in range(2):
+            for j in range(2):
+                position.append([2.5*i, 2.5*j, 2.5*k])
+
+
+    # create the polyhedron faces
+    origins=[];
+    normals=[];
+    colors=[];
+
+    for v in [-1, 1]:
+        origins.append([v, 0, 0])
+        normals.append([v, 0, 0])
+        origins.append([0, v, 0])
+        normals.append([0, v, 0])
+        origins.append([0, 0, v])
+        normals.append([0, 0, v])
+        colors.append([178/255,223/255,138/255])
+        colors.append([178/255,223/255,138/255])
+        colors.append([178/255,223/255,138/255])
+
+    for x in [-1,1]:
+        for y in [-1,1]:
+            for z in [-1,1]:
+                normals.append([x,y,z])
+                origins.append([x*0.75, y*0.75, z*0.75])
+                colors.append([166/255,206/255,227/255])
+
+    geometry = fresnel.geometry.ConvexPolyhedron(scene,
+                                                 origins=origins,
+                                                 normals=normals,
+                                                 face_colors = fresnel.color.linear(colors),
+                                                 r=math.sqrt(3),
+                                                 position=position)
+
+    geometry.material = fresnel.material.Material(color=fresnel.color.linear([1.0,0, 0]),
+                                                 roughness=0.8,
+                                                 specular=0.5,
+                                                 primitive_color_mix = 0.0)
+    geometry.orientation[:] = [1,0,0,0]
+
+    scene.camera = fresnel.camera.orthographic(position=(20, 20, 20), look_at=(0,0,0), up=(0,1,0), height=7)
+
+    return scene
+
+def assert_image_approx_equal(a, ref_file, tolerance=1.0):
     im = PIL.Image.open(ref_file)
     im_arr = numpy.fromstring(im.tobytes(), dtype=numpy.uint8)
     im_arr = im_arr.reshape((im.size[1], im.size[0], 4))
@@ -103,5 +153,5 @@ def assert_image_approx_equal(a, ref_file):
     diff = numpy.array((a_float - im_float))
     msd = numpy.mean(diff[selection]**2)
 
-    assert msd < 1.0
+    assert msd < tolerance
 

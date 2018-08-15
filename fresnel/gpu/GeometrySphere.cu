@@ -1,9 +1,10 @@
-// Copyright (c) 2016-2017 The Regents of the University of Michigan
+// Copyright (c) 2016-2018 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include <optix_world.h>
 #include "common/VectorMath.h"
 #include "common/ColorMath.h"
+#include "common/IntersectSphere.h"
 
 using namespace optix;
 using namespace fresnel;
@@ -21,32 +22,17 @@ RT_PROGRAM void intersect(int primIdx)
     {
     const vec3<float> position(sphere_position[primIdx]);
     const float radius = sphere_radius[primIdx];
-    const float rsq = (radius)*(radius);
     const vec3<float> ray_origin(ray.origin);
     const vec3<float> ray_direction(ray.direction);
-    const vec3<float> v = ray_origin-position;
-    const vec3<float> w = cross(ray_direction,v);
 
-    // Closest point-line distance, taken from
-    // http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
-    const float Dsq = dot(w,w)/dot(ray_direction,ray_direction);
-    if (Dsq > rsq) return; // a miss
-    const float Rp = sqrt(dot(v,v) - Dsq); //Distance to closest point
-    //Distance from clostest point to point on sphere
-    const float Ri = sqrt(rsq - Dsq);
-    const float t0 = Rp-Ri;
-    const float t1 = Rp+Ri;
+    float t=0, d=0;
+    vec3<float> N;
+    bool hit = intersect_ray_sphere(t, d, N, ray_origin, ray_direction, position, radius);
 
-    if (rtPotentialIntersection(t0))
+    if (rtPotentialIntersection(t))
         {
-        shading_normal = ray_origin+t0*ray_direction-position;
-        shading_distance = radius - sqrt(Dsq);
-        shading_color = RGB<float>(sphere_color[primIdx]);
-        rtReportIntersection(0);
-        }
-    else if (rtPotentialIntersection(t1))
-        {
-        shading_normal = ray_origin+t1*ray_direction-position;
+        shading_normal = N;
+        shading_distance = d;
         shading_color = RGB<float>(sphere_color[primIdx]);
         rtReportIntersection(0);
         }

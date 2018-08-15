@@ -5,7 +5,7 @@ import PIL
 import conftest
 
 def test_render(scene_hex_sphere, generate=False):
-    tracer = fresnel.tracer.Direct(device=scene_hex_sphere.device, w=100, h=100)
+    tracer = fresnel.tracer.Preview(device=scene_hex_sphere.device, w=100, h=100)
     buf = tracer.output[:]
     assert buf.shape == (100,100,4)
 
@@ -16,8 +16,20 @@ def test_render(scene_hex_sphere, generate=False):
     else:
         conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_tracer_direct.test_render.png')
 
+def test_render_aa(scene_hex_sphere, generate=False):
+    tracer = fresnel.tracer.Preview(device=scene_hex_sphere.device, w=100, h=100, aa_level=3)
+    buf = tracer.output[:]
+    assert buf.shape == (100,100,4)
+
+    buf_proxy = tracer.render(scene_hex_sphere)
+
+    if generate:
+        PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_tracer_direct.test_render_aa.png', 'wb'), 'png');
+    else:
+        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_tracer_direct.test_render_aa.png')
+
 def test_resize(scene_hex_sphere, generate=False):
-    tracer = fresnel.tracer.Direct(device=scene_hex_sphere.device, w=100, h=100)
+    tracer = fresnel.tracer.Preview(device=scene_hex_sphere.device, w=100, h=100)
     buf = tracer.output[:]
     assert buf.shape == (100,100,4)
 
@@ -31,3 +43,6 @@ if __name__ == '__main__':
 
     scene_hex_sphere = conftest.scene_hex_sphere(device)
     test_render(scene_hex_sphere, generate=True)
+
+    scene_hex_sphere = conftest.scene_hex_sphere(device)
+    test_render_aa(scene_hex_sphere, generate=True)

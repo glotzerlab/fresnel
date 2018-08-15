@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 The Regents of the University of Michigan
+// Copyright (c) 2016-2018 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #ifndef DEVICE_H_
@@ -8,8 +8,6 @@
 #include <pybind11/pybind11.h>
 #include <stdexcept>
 #include <map>
-
-#include "Array.h" // not used here, but need to get the first defn of the shared pointer holder type for pybind11
 
 namespace fresnel { namespace gpu {
 
@@ -32,13 +30,16 @@ namespace fresnel { namespace gpu {
     between classes, Device will hold on to the optix::Material objects for the various Tracer classes. Those objects
     will be initialized by static members of the Tracer so that as much code as possible related to the Tracer is in
     the Tracer class. When Geometry instances are created, the optix::Material is available from Device for assignment.
-    When a new Tracer is added, the additional optix::Material for that tracer needs to be added only in two central
-    locations: Device and the base class Geometry.
+    To keep things simple, there will be only one material. The Tracer classes will use different ray id's to select
+    the appropriate ray programs.
 
-    When we have more than one Tracer, there will need to be some agreement on what material ID each material is
-    assigned to in the GeometryInstance, and some global OptiX variable for the intersection test programs to report
-    which material to use. Hopefully it is not too much of a performance degradation to have two materials loaded and
-    only use one.
+    These are the ID's assigned to the tracers (in TracerIDs.h):
+
+      * TracerDirect: 0
+      * TracerPath: 1
+
+    Hopefully it is not too much of a performance degradation to have multiple ray id's loaded and only use one.
+    TODO: test the performance impact of this.
 */
 class Device
     {
@@ -67,16 +68,16 @@ class Device
         //! Get the entry point id of a given program
         unsigned int getEntryPoint(const std::string& filename, const std::string& funcname);
 
-        //! Get the Direct tracer material
-        optix::Material getDirectMaterial()
+        //! Get the tracer material
+        optix::Material getMaterial()
             {
-            return m_direct_mat;
+            return m_material;
             }
 
     private:
         optix::Context m_context;       //!< Store the context
         std::string m_ptx_root;         //!< Directory where PTX files are stored
-        optix::Material m_direct_mat;  //!< Material for Direct ray tracer
+        optix::Material m_material;     //!< Material for Direct ray tracer
 
         std::map< std::tuple<std::string, std::string>, optix::Program> m_program_cache;    //!< The program cache
         std::map< std::tuple<std::string, std::string>, unsigned int> m_entrypoint_cache;   //!< The entry point cache

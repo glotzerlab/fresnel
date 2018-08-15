@@ -1,12 +1,12 @@
-// Copyright (c) 2016-2017 The Regents of the University of Michigan
+// Copyright (c) 2016-2018 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #ifndef TRACER_PATH_H_
 #define TRACER_PATH_H_
 
 #include "embree_platform.h"
-#include <embree2/rtcore.h>
-#include <embree2/rtcore_ray.h>
+#include <embree3/rtcore.h>
+#include <embree3/rtcore_ray.h>
 #include <pybind11/pybind11.h>
 
 #include "Tracer.h"
@@ -37,22 +37,18 @@ class TracerPath : public Tracer
         //! Reset the sampling
         virtual void reset();
 
+        //! Resize the output buffer
+        virtual void resize(unsigned int w, unsigned int h)
+            {
+            Tracer::resize(w, h);
+            m_n_samples = 0;
+            m_seed++;
+            }
+
         //! Get the number of samples taken
         unsigned int getNumSamples() const
             {
             return m_n_samples;
-            }
-
-        //! Set the random number seed
-        void setSeed(unsigned int seed)
-            {
-            m_seed=seed;
-            }
-
-        //! Get the random number seed
-        unsigned int getSeed() const
-            {
-            return m_seed;
             }
 
         //! Set the number of light samples
@@ -61,8 +57,7 @@ class TracerPath : public Tracer
             m_light_samples = light_samples;
             }
     protected:
-        unsigned int m_n_samples;   //!< Number of samples taken since the last reset
-        unsigned int m_seed;        //!< Random number seed
+        unsigned int m_n_samples;     //!< Number of samples taken since the last reset
         unsigned int m_light_samples; //!< Number of light samples to take each render()
     };
 

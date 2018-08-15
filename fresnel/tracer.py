@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2017 The Regents of the University of Michigan
+# Copyright (c) 2016-2018 The Regents of the University of Michigan
 # This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 R"""
@@ -6,6 +6,7 @@ Ray tracers.
 """
 
 import numpy
+import math
 from . import camera
 from . import util
 from . import _common
@@ -26,6 +27,8 @@ class Tracer(object):
 
         output (:py:class:`fresnel.util.image_array`): Reference to the current output buffer (modified by :py:meth:`render`)
         linear_output (:py:class:`fresnel.util.array`): Reference to the current output buffer in linear color space (modified by :py:meth:`render`)
+        seed (int): Random number seed.
+
     """
     def __init__(self):
         raise RuntimeError("Use a specific tracer class");
@@ -55,9 +58,6 @@ class Tracer(object):
             A reference to the current output buffer as a :py:class:`fresnel.util.image_array`.
 
         Render the given scene and write the resulting pixels into the output buffer.
-
-        Warning:
-            :py:meth:`render` clears any existing image in the output buffer.
         """
 
         scene._prepare();
@@ -121,28 +121,66 @@ class Tracer(object):
     def linear_output(self):
         return util.array(self._tracer.getLinearOutputBuffer(), geom=None)
 
-class Direct(Tracer):
-    R""" Direct ray tracer.
+    @property
+    def seed(self):
+        return self._tracer.getSeed()
+
+    @seed.setter
+    def seed(self, value):
+        self._tracer.setSeed(value);
+
+
+class Preview(Tracer):
+    R""" Preview ray tracer.
 
     Args:
 
         device (:py:class:`Device <fresnel.Device>`): Device to use for rendering.
         w (int): Output image width.
         h (int): Output image height.
+        aa_level (int): Amount of anti-aliasing to perform
 
-    The Direct ray tracer a basic ray tracer. It traces a single ray per pixel. The color of the
-    pixel depends on the geometry the ray hits, its material, and the lights in the :py:class:`Scene <fresnel.Scene>`.
-    Because of its simplicity, the Direct tracer is extremely fast.
+    Attributes:
 
-    :py:class:`Direct` supports:
+        aa_level (int): Amount of anti-aliasing to perform
 
-    * Directional lights
-    * Materials
+    .. rubric:: Overview
+
+    The :py:class:`Preview` tracer produces a preview of the scene quickly. It approximates the effect of light
+    on materials. The output of the :py:class:`Preview` tracer will look very similar to that from the :py:class:`Path`
+    tracer, but will miss soft shadows, reflection, transmittance, and other lighting effects.
+
+    TODO: show examples
+
+    .. rubric:: Anti-aliasing
+
+    Set :py:attr:`aa_level` to control the amount of anti-aliasing performed. The default value of 0 performs
+    no anti-aliasing to enable the fastest possible preview renders. A value of 1 samples 2x2 subpixels, a value of 2
+    samples 4x4 subpixels, a value of 3 samples 8x8 subpixels, etc ... Samples are jittered with random numbers.
+    Different :py:attr:`seed <Tracer.seed>` values will result in different output images.
+
+    TODO: show examples
+
+    .. tip::
+
+        Use :py:attr:`aa_level` = 3 when using the :py:class:`Preview` tracer to render production quality output.
     """
 
-    def __init__(self, device, w, h):
+    def __init__(self, device, w, h, aa_level=0):
         self.device = device;
         self._tracer = device.module.TracerDirect(device._device, w, h);
+
+        self.aa_level = aa_level;
+
+    @property
+    def aa_level(self):
+        aa_n = self._tracer.getAntialiasingN();
+        return int(math.log2(aa_n));
+
+    @aa_level.setter
+    def aa_level(self, value):
+        aa_n = 2**(int(value))
+        self._tracer.setAntialiasingN(aa_n);
 
 class Path(Tracer):
     R""" Path tracer.
@@ -153,12 +191,8 @@ class Path(Tracer):
         w (int): Output image width.
         h (int): Output image height.
 
-    Attributes:
-
-        seed (int): Random number seed.
-
     The path tracer applies advanced lighting effects, including soft shadows, reflections, etc....
-    It operates by Monte Carlo sampling. Each call to `:py:meth:render()` performs one sample per pixel.
+    It operates by Monte Carlo sampling. Each call to :py:meth:`render() <Tracer.render()>` performs one sample per pixel.
     The output image is the mean of all the samples. Many samples are required to produce a smooth image.
 
     :py:meth:`sample()` provides a convenience API to make many samples with a single call.
@@ -205,11 +239,3 @@ class Path(Tracer):
         self._tracer.setLightSamples(1);
 
         return out;
-
-    @property
-    def seed(self):
-        return self._tracer.getSeed()
-
-    @seed.setter
-    def seed(self, value):
-        self._tracer.setSeed(value);

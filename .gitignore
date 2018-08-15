@@ -4,3 +4,4 @@ devdoc
 build
 .cache
 *.pyc
+.pytest_cache

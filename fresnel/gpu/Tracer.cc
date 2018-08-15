@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 The Regents of the University of Michigan
+// Copyright (c) 2016-2018 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include "Tracer.h"
@@ -69,6 +69,8 @@ void export_Tracer(pybind11::module& m)
         .def("getLinearOutputBuffer", &Tracer::getLinearOutputBuffer)
         .def("enableHighlightWarning", &Tracer::enableHighlightWarning)
         .def("disableHighlightWarning", &Tracer::disableHighlightWarning)
+        .def("getSeed", &Tracer::getSeed)
+        .def("setSeed", &Tracer::setSeed)
         ;
     }
 

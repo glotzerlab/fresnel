@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2017 The Regents of the University of Michigan
+# Copyright (c) 2016-2018 The Regents of the University of Michigan
 # This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 R"""
@@ -216,7 +216,7 @@ def cloudy():
     res.append(Light(direction=(0,1,0),
                color=(0.9,0.9,0.9),
                theta=math.pi/2));
-    res.append(Light(direction=(0,1,0),
+    res.append(Light(direction=(0,-1,0),
                color=(0.1,0.1,0.1),
                theta=math.pi/2));
     return res

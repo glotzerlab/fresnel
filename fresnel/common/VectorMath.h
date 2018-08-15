@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 The Regents of the University of Michigan
+// Copyright (c) 2016-2018 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #ifndef __VECTOR_MATH_H__
@@ -16,6 +16,268 @@
 #endif
 
 namespace fresnel {
+
+/////////////////////////////// fast/slow math //////////////////////////////////
+
+//! Fastmath routines
+/*! Routines in the fast namespace map to fast math routines on the CPU and GPU. Where possible, these use the
+    less accurate intrinsics on the GPU (i.e. __sinf). The routines are provide overloads for both single and double
+    so that macro tricks aren't needed to handle single and double precision code.
+*/
+namespace fast
+{
+
+//! Compute the reciprocal square root of x
+inline DEVICE float rsqrt(float x)
+    {
+    #ifdef __CUDA_ARCH__
+    return ::rsqrtf(x);
+    #else
+    return 1.0f / ::sqrtf(x);
+    #endif
+    }
+
+//! Compute the reciprocal square root of x
+inline DEVICE double rsqrt(double x)
+    {
+    #ifdef __CUDA_ARCH__
+    return ::rsqrt(x);
+    #else
+    return 1.0 / ::sqrt(x);
+    #endif
+    }
+
+//! Compute the sin of x
+inline DEVICE float sin(float x)
+    {
+    #ifdef __CUDA_ARCH__
+    return __sinf(x);
+    #else
+    return ::sinf(x);
+    #endif
+    }
+
+//! Compute the sin of x
+inline DEVICE double sin(double x)
+    {
+    return ::sin(x);
+    }
+
+//! Compute the cos of x
+inline DEVICE float cos(float x)
+    {
+    #ifdef __CUDA_ARCH__
+    return __cosf(x);
+    #else
+    return ::cosf(x);
+    #endif
+    }
+
+//! Compute the cos of x
+inline DEVICE double cos(double x)
+    {
+    return ::cos(x);
+    }
+
+//! Compute the pow of x,y
+inline DEVICE float pow(float x, float y)
+    {
+    #ifdef __CUDA_ARCH__
+    return __powf(x, y);
+    #else
+    return ::powf(x, y);
+    #endif
+    }
+
+//! Compute the sin of x
+inline DEVICE double pow(double x, double y)
+    {
+    return ::pow(x, y);
+    }
+
+//! Compute the exp of x
+inline DEVICE float exp(float x)
+    {
+    #ifdef __CUDA_ARCH__
+    return __expf(x);
+    #else
+    return ::expf(x);
+    #endif
+    }
+
+//! Compute the exp of x
+inline DEVICE double exp(double x)
+    {
+    return ::exp(x);
+    }
+
+//! Compute the sqrt of x
+inline DEVICE float sqrt(float x)
+    {
+    return ::sqrtf(x);
+    }
+
+//! Compute the sqrt of x
+inline DEVICE double sqrt(double x)
+    {
+    return ::sqrt(x);
+    }
+
+//! Compute the erfc of x
+inline DEVICE float erfc(float x)
+    {
+    return ::erfcf(x);
+    }
+
+//! Compute the erfc of x
+inline DEVICE double erfc(double x)
+    {
+    return ::erfc(x);
+    }
+
+//! Compute the acos of x
+inline DEVICE float acos(float x)
+    {
+    return ::acosf(x);
+    }
+
+//! Compute the acos of x
+inline DEVICE double acos(double x)
+    {
+    return ::acos(x);
+    }
+}
+
+//! Maximum accuracy math routines
+/*! Routines in the slow namespace map to the most accurate version of the math routines on the CPU and GPU.
+    The routines are provide overloads for both single and double
+    so that macro tricks aren't needed to handle single and double precision code.
+
+    These routines are intended to be used e.g. in integrators, where numerical stability is most important.
+*/
+namespace slow
+{
+
+//! Compute the reciprocal square root of x
+inline DEVICE float rsqrt(float x)
+    {
+    #ifdef __CUDA_ARCH__
+    return ::rsqrtf(x);
+    #else
+    return 1.0f / ::sqrtf(x);
+    #endif
+    }
+
+//! Compute the reciprocal square root of x
+inline DEVICE double rsqrt(double x)
+    {
+    #ifdef __CUDA_ARCH__
+    return ::rsqrt(x);
+    #else
+    return 1.0 / ::sqrt(x);
+    #endif
+    }
+
+//! Compute the sin of x
+inline DEVICE float sin(float x)
+    {
+    #ifdef __CUDA_ARCH__
+    return sinf(x);
+    #else
+    return ::sinf(x);
+    #endif
+    }
+
+//! Compute the sin of x
+inline DEVICE double sin(double x)
+    {
+    return ::sin(x);
+    }
+
+//! Compute the cos of x
+inline DEVICE float cos(float x)
+    {
+    #ifdef __CUDA_ARCH__
+    return cosf(x);
+    #else
+    return ::cosf(x);
+    #endif
+    }
+
+//! Compute the cos of x
+inline DEVICE double cos(double x)
+    {
+    return ::cos(x);
+    }
+
+//! Compute the pow of x,y
+inline DEVICE float pow(float x, float y)
+    {
+    #ifdef __CUDA_ARCH__
+    return powf(x, y);
+    #else
+    return ::powf(x, y);
+    #endif
+    }
+
+//! Compute the sin of x
+inline DEVICE double pow(double x, double y)
+    {
+    return ::pow(x, y);
+    }
+
+//! Compute the exp of x
+inline DEVICE float exp(float x)
+    {
+    #ifdef __CUDA_ARCH__
+    return expf(x);
+    #else
+    return ::expf(x);
+    #endif
+    }
+
+//! Compute the exp of x
+inline DEVICE double exp(double x)
+    {
+    return ::exp(x);
+    }
+
+//! Compute the sqrt of x
+inline DEVICE float sqrt(float x)
+    {
+    return ::sqrtf(x);
+    }
+
+//! Compute the sqrt of x
+inline DEVICE double sqrt(double x)
+    {
+    return ::sqrt(x);
+    }
+
+//! Compute the erfc of x
+inline DEVICE float erfc(float x)
+    {
+    return ::erfcf(x);
+    }
+
+//! Compute the erfc of x
+inline DEVICE double erfc(double x)
+    {
+    return ::erfc(x);
+    }
+
+//! Compute the acos of x
+inline DEVICE float acos(float x)
+    {
+    return ::acosf(x);
+    }
+
+//! Compute the acos of x
+inline DEVICE double acos(double x)
+    {
+    return ::acos(x);
+    }
+}
 
 /////////////////////////////// vec3 ///////////////////////////////////
 
@@ -689,18 +951,23 @@ struct quat
         {
         }
 
+    #ifdef NVCC
+    //! Convenience function to get a quat from a float4 in device code
+    DEVICE explicit quat(const float4& a) : s(a.x), v(vec3<float>(a.y, a.z, a.w))
+        {
+        }
+    #endif
+
     //! Construct a quat from an axis and an angle.
     /*! \param axis angle to represent
         \param theta angle to represent
 
         This is a convenience function for easy initialization of rotmat3s from an axis and an angle.
         The rotmat3 will initialize to the same rotation as the angle around the specified axis.
-
-        TODO: Implement fast and slow math lib in fresnel
     */
     DEVICE static quat fromAxisAngle(const vec3<Real>& axis, const Real& theta)
         {
-        quat<Real> q(cos(theta/2.0), (Real)sin(theta/2.0) * axis);
+        quat<Real> q(fast::cos(theta/2.0), (Real)fast::sin(theta/2.0) * axis);
         return q;
         }
 
@@ -979,10 +1246,8 @@ struct rotmat2
 
         This is a convenience function for easy initialization of rotmat2s from angles. The rotmat2 will initialize to
         the same rotation as the angle.
-
-        TODO: Implement fast and slow math lib in fresnel and uncomment this
     */
-    /*DEVICE static rotmat2 fromAngle(const Real& theta)
+    DEVICE static rotmat2 fromAngle(const Real& theta)
         {
         vec2<Real> row0;
         vec2<Real> row1;
@@ -991,7 +1256,7 @@ struct rotmat2
         row1.x = fast::sin(theta);
         row1.y = fast::cos(theta);
         return rotmat2<Real>(row0, row1);
-        }*/
+        }
 
     vec2<Real> row0;   //!< First row
     vec2<Real> row1;   //!< Second row

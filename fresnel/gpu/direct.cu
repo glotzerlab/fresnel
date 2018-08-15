@@ -1,10 +1,12 @@
-// Copyright (c) 2016-2017 The Regents of the University of Michigan
+// Copyright (c) 2016-2018 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include <optix.h>
+#include "TracerIDs.h"
 #include "common/Material.h"
 #include "common/Camera.h"
 #include "common/Light.h"
+#include "common/RayGen.h"
 
 using namespace fresnel;
 
@@ -63,6 +65,8 @@ rtDeclareVariable(RGB<float>, highlight_warning_color, , );
 rtDeclareVariable(unsigned int, highlight_warning, , );
 rtDeclareVariable(float, background_alpha, , );
 rtDeclareVariable(Lights, lights, , );
+rtDeclareVariable(unsigned int, aa_n, , );
+rtDeclareVariable(unsigned int, seed, , );
 
 //! Trace rays for Whitted
 /*! Implement Whitted ray generation
@@ -71,34 +75,53 @@ RT_PROGRAM void direct_ray_gen()
     {
     // determine the viewing plane relative coordinates
     optix::size_t2 screen = linear_output_buffer.size();
-    float ys = -1.0f*(launch_index.y/float(screen.y-1)-0.5f);
-    float xs = launch_index.x/float(screen.y-1)-0.5f*float(screen.x)/float(screen.y);
 
-    // trace a ray into the scene
-    optix::Ray ray(cam.origin(xs, ys), cam.direction(xs, ys), 0, scene_epsilon);
+    // create the ray generator for this pixel
+    RayGen ray_gen(launch_index.x, launch_index.y, screen.x, screen.y, seed);
 
-    PRDradiance prd;
-    prd.hit = 0;
+    // loop over AA samples
+    RGBA<float> output_avg(0,0,0,0);
+    float aa_factor_total = 0.0f;
 
-    rtTrace(top_object, ray, prd);
-
-    // determine the output pixel color
-    RGB<float> c(background_color);
-    float a = background_alpha;
-    if (prd.hit)
+    for (unsigned int si=0; si < aa_n; si++) for (unsigned int sj=0; sj < aa_n; sj++)
         {
-        c = RGB<float>(prd.result);
-        a = 1.0f;
+        // determine the sample location
+        float aa_factor = 1.0f;
+        vec2<float> sample_loc = ray_gen.jitterSampleAA(aa_factor, si, sj, aa_n);
+
+        // trace a ray into the scene
+        optix::Ray ray(cam.origin(sample_loc), cam.direction(sample_loc), TRACER_PREVIEW_RAY_ID, scene_epsilon);
+
+        PRDradiance prd;
+        prd.hit = 0;
+
+        rtTrace(top_object, ray, prd);
+
+        // determine the output pixel color
+        RGB<float> c(background_color);
+        float a = background_alpha;
+        if (prd.hit)
+            {
+            c = RGB<float>(prd.result);
+            a = 1.0f;
+            }
+
+        // accumulate filtered average
+        output_avg += RGBA<float>(c, a) * aa_factor;
+        aa_factor_total += aa_factor;
         }
+
+    // correct aa sample average
+    RGBA<float> output_pixel = output_avg / aa_factor_total;
 
     // write the output pixel
     RGBA<unsigned char> srgb_output_pixel(0,0,0,0);
-    if (!highlight_warning || (c.r <= 1.0f && c.g <= 1.0f && c.b <= 1.0f))
-        srgb_output_pixel = sRGB(RGBA<float>(c.r, c.g, c.b, a));
+    if (!highlight_warning || (output_pixel.r <= 1.0f && output_pixel.g <= 1.0f && output_pixel.b <= 1.0f))
+        srgb_output_pixel = sRGB(output_pixel);
     else
-        srgb_output_pixel = sRGB(RGBA<float>(highlight_warning_color, a));
+        srgb_output_pixel = sRGB(RGBA<float>(highlight_warning_color, output_pixel.a));
 
-    linear_output_buffer[launch_index] = make_float4(c.r, c.g, c.b, a);
+    linear_output_buffer[launch_index] = make_float4(output_pixel.r, output_pixel.g, output_pixel.b, output_pixel.a);
     srgb_output_buffer[launch_index] = make_uchar4(srgb_output_pixel.r, srgb_output_pixel.g, srgb_output_pixel.b, srgb_output_pixel.a);
     }
 

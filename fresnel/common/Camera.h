@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 The Regents of the University of Michigan
+// Copyright (c) 2016-2018 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include "VectorMath.h"
@@ -76,13 +76,13 @@ struct Camera
     vec3<float> r;  //!< Right vector (normalized)
 
     //! Get a ray start position given screen normal coordinates
-    DEVICE vec3<float> origin(float xs, float ys) const
+    DEVICE vec3<float> origin(const vec2<float>& s) const
         {
-        return p + (ys * u + xs * r) * h;
+        return p + (s.y * u + s.x * r) * h;
         }
 
     //! Get a ray direction given screen relative coordinates
-    DEVICE vec3<float> direction(float xs, float ys) const
+    DEVICE vec3<float> direction(const vec2<float>& s) const
         {
         return d;
         }

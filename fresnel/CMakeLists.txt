@@ -1,35 +1,14 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 #####################################################
-### Macro for building python module
-
-macro(add_python_module target sources)
-# build the shared library
-add_library (${target} SHARED ${sources})
-# change the name of the library to be a valid python module
-set_target_properties(${target} PROPERTIES PREFIX "" OUTPUT_NAME "${target}")
-
-# fixup the library to be a working python module on macOS
-if(APPLE)
-    set_target_properties(${target} PROPERTIES SUFFIX ".so")
-    target_link_libraries(${target} ${PYTHON_LIBRARY})
-    fix_conda_python(${target})
-endif(APPLE)
-
-# install the library
-install(TARGETS ${target}
-        LIBRARY DESTINATION ${PYTHON_MODULE_BASE_DIR}
-        )
-endmacro()
-
-#####################################################
 ## C++ libraries
 
 # _common
-add_python_module(_common "common/module-common.cc")
+pybind11_add_module(_common "common/module-common.cc")
+install(TARGETS _common LIBRARY DESTINATION ${PYTHON_MODULE_BASE_DIR})
 
 # _cpu
-if (ENABLE_EMBREE AND ENABLE_TBB)
+if (ENABLE_EMBREE)
 
 target_compile_definitions(_common PUBLIC FRESNEL_BUILD_CPU)
 
@@ -38,8 +17,10 @@ set(_cpu_sources
      cpu/Device.cc
      cpu/Scene.cc
      cpu/Geometry.cc
+     cpu/GeometryCylinder.cc
      cpu/GeometryPrism.cc
      cpu/GeometryMesh.cc
+     cpu/GeometryConvexPolyhedron.cc
      cpu/GeometrySphere.cc
      cpu/Tracer.cc
      cpu/TracerDirect.cc
@@ -47,23 +28,28 @@ set(_cpu_sources
      cpu/Array.cc
    )
 
-add_python_module(_cpu "${_cpu_sources}")
-target_link_libraries(_cpu ${Embree_LIBRARIES} ${TBB_LIBRARIES})
+pybind11_add_module(_cpu "${_cpu_sources}")
+target_link_libraries(_cpu PRIVATE ${EMBREE_LIBRARY} ${TBB_LIBRARIES})
+install(TARGETS _cpu LIBRARY DESTINATION ${PYTHON_MODULE_BASE_DIR})
 
 endif()
 
 # _gpu
-if (ENABLE_CUDA AND ENABLE_OPTIX)
+if (ENABLE_OPTIX)
 
 target_compile_definitions(_common PUBLIC FRESNEL_BUILD_GPU)
 
 # Build the PTX files for the OptiX programs
 set(_ptx_sources
 	gpu/direct.cu
+    gpu/path.cu
+    gpu/GeometryCylinder.cu
 	gpu/GeometrySphere.cu
-    gpu/GeometryPrism.cu)
+    gpu/GeometryPrism.cu
+    gpu/GeometryConvexPolyhedron.cu)
 
-set(CUDA_NVCC_FLAGS "-arch compute_30")
+list(APPEND CUDA_NVCC_FLAGS "-Xcudafe;--diag_suppress=code_is_unreachable")
+list(APPEND CUDA_NVCC_FLAGS "-arch;compute_30;--use_fast_math")
 CUDA_WRAP_SRCS(_ptx PTX generated_ptx_files ${_ptx_sources})
 add_custom_target(_ptx ALL
     DEPENDS ${generated_ptx_files} ${_ptx_sources}
@@ -79,15 +65,19 @@ set(_gpu_sources
      gpu/Device.cc
      gpu/Scene.cc
      gpu/Geometry.cc
+     gpu/GeometryCylinder.cc
      gpu/GeometryPrism.cc
+     gpu/GeometryConvexPolyhedron.cc
      gpu/GeometrySphere.cc
      gpu/Tracer.cc
      gpu/TracerDirect.cc
+     gpu/TracerPath.cc
      gpu/Array.cc
    )
 
-add_python_module(_gpu "${_gpu_sources}")
-target_link_libraries(_gpu ${optix_LIBRARY})
+pybind11_add_module(_gpu "${_gpu_sources}")
+target_link_libraries(_gpu PRIVATE ${optix_LIBRARY})
+install(TARGETS _gpu LIBRARY DESTINATION ${PYTHON_MODULE_BASE_DIR})
 endif()
 
 #####################################################

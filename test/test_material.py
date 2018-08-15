@@ -11,7 +11,7 @@ def test_set_material(scene_hex_sphere, generate=False):
     assert geometry.material.color == tuple(fresnel.color.linear([1,0,0]))
     assert geometry.material.primitive_color_mix == 0.0
 
-    buf_proxy = fresnel.render(scene_hex_sphere, w=100, h=100)
+    buf_proxy = fresnel.preview(scene_hex_sphere, w=100, h=100)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_material.test_set_material.png', 'wb'), 'png');
@@ -23,7 +23,7 @@ def test_solid(scene_hex_sphere, generate=False):
     geometry.material.solid = 1.0
     assert geometry.material.solid == 1.0
 
-    buf_proxy = fresnel.render(scene_hex_sphere, w=100, h=100)
+    buf_proxy = fresnel.preview(scene_hex_sphere, w=100, h=100)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_material.test_solid.png', 'wb'), 'png');
@@ -35,7 +35,7 @@ def test_color(scene_hex_sphere, generate=False):
     geometry.material.color = fresnel.color.linear([0,0,1])
     assert geometry.material.color == tuple(fresnel.color.linear([0,0,1]))
 
-    buf_proxy = fresnel.render(scene_hex_sphere, w=100, h=100)
+    buf_proxy = fresnel.preview(scene_hex_sphere, w=100, h=100)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_material.test_color.png', 'wb'), 'png');
@@ -47,7 +47,7 @@ def test_specular(scene_hex_sphere, generate=False):
     geometry.material.specular = 1.0
     assert geometry.material.specular == 1.0
 
-    buf_proxy = fresnel.render(scene_hex_sphere, w=100, h=100)
+    buf_proxy = fresnel.preview(scene_hex_sphere, w=100, h=100)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_material.test_specular.png', 'wb'), 'png');
@@ -59,34 +59,19 @@ def test_roughness(scene_hex_sphere, generate=False):
     geometry.material.roughness = 1.0
     assert geometry.material.roughness == 1.0
 
-    buf_proxy = fresnel.render(scene_hex_sphere, w=100, h=100)
+    buf_proxy = fresnel.preview(scene_hex_sphere, w=100, h=100)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_material.test_roughness.png', 'wb'), 'png');
     else:
         conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_material.test_roughness.png')
 
-def test_clearcoat(scene_hex_sphere, generate=False):
-    geometry = scene_hex_sphere.geometry[0]
-    geometry.material.specular = 0;
-    geometry.material.clearcoat = 1.0
-    assert geometry.material.clearcoat == 1.0
-    geometry.material.clearcoat_gloss = 0.5
-    assert geometry.material.clearcoat_gloss == 0.5
-
-    buf_proxy = fresnel.render(scene_hex_sphere, w=100, h=100)
-
-    if generate:
-        PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_material.test_clearcoat.png', 'wb'), 'png');
-    else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_material.test_clearcoat.png')
-
 def test_metal(scene_hex_sphere, generate=False):
     geometry = scene_hex_sphere.geometry[0]
     geometry.material.metal = 1.0
     assert geometry.material.metal == 1.0
 
-    buf_proxy = fresnel.render(scene_hex_sphere, w=100, h=100)
+    buf_proxy = fresnel.preview(scene_hex_sphere, w=100, h=100)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_material.test_metal.png', 'wb'), 'png');
@@ -104,7 +89,7 @@ def test_primitive_color_mix(scene_hex_sphere, generate=False):
     geometry.color[4] = fresnel.color.linear([0,1,1])
     geometry.color[5] = fresnel.color.linear([0,0,0])
 
-    buf_proxy = fresnel.render(scene_hex_sphere, w=100, h=100)
+    buf_proxy = fresnel.preview(scene_hex_sphere, w=100, h=100)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_material.test_primitive_color_mix.png', 'wb'), 'png');
@@ -132,9 +117,6 @@ if __name__ == '__main__':
 
     scene_hex_sphere = conftest.scene_hex_sphere(device)
     test_roughness(scene_hex_sphere, generate=True)
-
-    scene_hex_sphere = conftest.scene_hex_sphere(device)
-    test_clearcoat(scene_hex_sphere, generate=True)
 
     scene_hex_sphere = conftest.scene_hex_sphere(device)
     test_metal(scene_hex_sphere, generate=True)

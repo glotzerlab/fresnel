@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 The Regents of the University of Michigan
+// Copyright (c) 2016-2018 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include <memory>
@@ -8,6 +8,8 @@
 
 #include "Device.h"
 #include "TracerDirect.h"
+#include "TracerPath.h"
+#include "TracerIDs.h"
 
 using namespace std;
 
@@ -37,11 +39,16 @@ Device::Device(const std::string& ptx_root, int n) : m_ptx_root(ptx_root)
     m_context = optix::Context::create();
     m_context->setDevices(devices.begin(), devices.end());
 
-    m_context->setRayTypeCount(1);
+    m_context->setRayTypeCount(2);
+
+    // miss programs
+    optix::Program p2 = getProgram("_ptx_generated_path.cu.ptx", "path_miss");
+    m_context->setMissProgram(TRACER_PATH_RAY_ID, p2);
 
     // initialize materials
-    m_direct_mat = m_context->createMaterial();
-    TracerDirect::setupMaterial(m_direct_mat, this);
+    m_material = m_context->createMaterial();
+    TracerDirect::setupMaterial(m_material, this);
+    TracerPath::setupMaterial(m_material, this);
     }
 
 /*! Destroy the underlying context
@@ -53,8 +60,7 @@ Device::~Device()
         {
         elem.second->destroy();
         }
-    m_direct_mat->destroy();
-    m_context->destroy();
+    m_material->destroy();
     }
 
 static std::string _formatOptiXDeviceList(const std::vector<int>& devices)

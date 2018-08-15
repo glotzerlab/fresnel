@@ -1,16 +1,17 @@
-// Copyright (c) 2016-2017 The Regents of the University of Michigan
+// Copyright (c) 2016-2018 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #ifndef GEOMETRY_PRISM_H_
 #define GEOMETRY_PRISM_H_
 
 #include "embree_platform.h"
-#include <embree2/rtcore.h>
-#include <embree2/rtcore_ray.h>
+#include <embree3/rtcore.h>
+#include <embree3/rtcore_ray.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 
 #include "Geometry.h"
+#include "Array.h"
 
 namespace fresnel { namespace cpu {
 
@@ -78,13 +79,10 @@ class GeometryPrism : public Geometry
         float m_radius=0;                           //!< Precomputed radius in the xy plane
 
         //! Embree bounding function
-        static void bounds(void *ptr, size_t item, RTCBounds& bounds_o);
+        static void bounds(const struct RTCBoundsFunctionArguments *args);
 
         //! Embree ray intersection function
-        static void intersect(void *ptr, RTCRay& ray, size_t item);
-
-        //! Embree ray occlusion function
-        static void occlude(void *ptr, RTCRay& ray, size_t item);
+        static void intersect(const struct RTCIntersectFunctionNArguments *args);
     };
 
 //! Export GeometryPrism to python

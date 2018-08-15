@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 The Regents of the University of Michigan
+// Copyright (c) 2016-2018 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include <pybind11/pybind11.h>
@@ -31,10 +31,8 @@ bool cpu_built()
     #endif
     }
 
-PYBIND11_PLUGIN(_common)
+PYBIND11_MODULE(_common, m)
     {
-    pybind11::module m("_common");
-
     m.def("gpu_built", &gpu_built);
     m.def("cpu_built", &cpu_built);
 
@@ -50,10 +48,9 @@ PYBIND11_PLUGIN(_common)
         .def_readwrite("primitive_color_mix", &Material::primitive_color_mix)
         .def_readwrite("roughness", &Material::roughness)
         .def_readwrite("specular", &Material::specular)
+        .def_readwrite("spec_trans", &Material::spec_trans)
         .def_readwrite("metal", &Material::metal)
         .def_readwrite("color", &Material::color)
-        .def_readwrite("clearcoat", &Material::clearcoat)
-        .def_readwrite("clearcoat_gloss", &Material::clearcoat_gloss)
         .def("__repr__",
             [](const Material &a)
                 {
@@ -64,9 +61,8 @@ PYBIND11_PLUGIN(_common)
                   << " primitive_color_mix=" << a.primitive_color_mix
                   << " roughness=" << a.roughness
                   << " specular=" << a.specular
+                  << " spec_trans=" << a.spec_trans
                   << " metal=" << a.metal
-                  << " clearcoat=" << a.clearcoat
-                  << " clearcoat_gloss=" << a.clearcoat_gloss
                   << ">";
 
                 return s.str();
@@ -107,6 +103,4 @@ PYBIND11_PLUGIN(_common)
         .def("getTheta", &Lights::getTheta)
         .def("setTheta", &Lights::setTheta)
         ;
-
-    return m.ptr();
     }
