@@ -26,6 +26,7 @@ def linear(color):
         A numpy array with the linearized color.
     """
 
+
     c = numpy.ascontiguousarray(color);
     if c.shape == (3,):
         out = numpy.zeros(3, dtype=numpy.float32)
