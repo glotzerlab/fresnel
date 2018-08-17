@@ -100,16 +100,41 @@ def convex_polyhedron_from_vertices(vertices, r=True):
     R""" Get origins and normals for a convex polyhedron for its vertices
 
     Args:
-        vertices (array-like, shape=n,3)): The vertices of the polyhedron
-        r (bool or float): If ``float``, the radius of the circumscribing sphere
-        that encompasses the polyhedron; if ``True`` (default), calculate the
-        radius of the circumscribing sphere.
+        vertices: The vertices of the polyhedron
+          **Type:** anything convertible by numpy to a Nx4 array of floats.
+        r (bool or float): If ``float``, the radius of the circumscribing sphere that encompasses the polyhedron; if ``True`` (default), calculate the radius of the circumscribing sphere.
 
     Returns:
-        origins, normals, r: The origins, normals, and r to pass to
-        :py:class:`ConvexPolyhedron`.
+
+        The ``origins``, ``normals``, and ``r`` to pass to :py:class:`fresnel.geometry.ConvexPolyhedron`.
+
+    This function is intended to be used to draw a convex polygon given its vertices. It
+    returns ``origins``, ``normals``, and ``r`` that can be passed when drawing a convex
+    polyhedron:
+
+    .. highlight:: python
+    .. code-block:: python
+
+        origins, normals, r_circ = convex_polyhedron_from_vertices(vertices)
+        fresnel.geometry.ConvexPolyhedron(scene, origins, normals, r_circ)
     """
-    pass
+    from scipy.spatial import ConvexHull
+
+    ch = ConvexHull(vertices)
+    origins = -ch.equations[:, :-1] * numpy.tile(ch.equations[:, -1], (3, 1)).T
+    normals = ch.equations[:, :-1]
+    if r == True:
+        r = _get_r_circ(vertices)
+    elif r == False:
+        raise ValueError('User must specify circumsphere radius or let fresnel estimate it.')
+
+    return origins, normals, r
 
 
-
+def _get_r_circ(vertices):
+    """Estimate circumsphere radius based on vertices of a polyhedron
+    """
+    vertices = numpy.array(vertices)
+    shifted_vertices = vertices - numpy.mean(vertices, axis=0)
+    radii = numpy.sqrt(numpy.sum(shifted_vertices**2, axis=1))
+    return numpy.amax(radii)
