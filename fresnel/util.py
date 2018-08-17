@@ -94,3 +94,22 @@ class image_array(array):
         self.buf.unmap();
 
         return f.getvalue();
+
+
+def convex_polyhedron_from_vertices(vertices, r=True):
+    R""" Get origins and normals for a convex polyhedron for its vertices
+
+    Args:
+        vertices (array-like, shape=n,3)): The vertices of the polyhedron
+        r (bool or float): If ``float``, the radius of the circumscribing sphere
+        that encompasses the polyhedron; if ``True`` (default), calculate the
+        radius of the circumscribing sphere.
+
+    Returns:
+        origins, normals, r: The origins, normals, and r to pass to
+        :py:class:`ConvexPolyhedron`.
+    """
+    pass
+
+
+
