@@ -128,6 +128,5 @@ def _get_r_circ(vertices):
     """Estimate circumsphere radius based on vertices of a polyhedron
     """
     vertices = numpy.array(vertices)
-    shifted_vertices = vertices - numpy.mean(vertices, axis=0)
-    radii = numpy.sqrt(numpy.sum(shifted_vertices**2, axis=1))
+    radii = numpy.sqrt(numpy.sum(vertices**2, axis=1))
     return numpy.amax(radii)
