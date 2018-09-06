@@ -7,6 +7,7 @@ Utility classes and methods.
 
 import numpy
 import io
+import itertools
 
 try:
     import PIL.Image as PIL_Image;
@@ -120,8 +121,15 @@ def convex_polyhedron_from_vertices(vertices):
     ch = ConvexHull(vertices)
     origins = -ch.equations[:, :-1] * numpy.tile(ch.equations[:, -1], (3, 1)).T
     normals = ch.equations[:, :-1]
+    merged_origins, merged_normals = [], []
+    origin_combos = itertools.combinations(origins, 2)
+    normal_combos = itertools.combinations(normals, 2)
+    for ((a, b), (c, d)) in zip(origin_combos, normal_combos):
+        if numpy.isclose(numpy.dot(c, d), 1):
+            merged_origins.append(a)
+            merged_normals.append(c)
     r = _get_r_circ(vertices)
-    return origins, normals, r
+    return numpy.array(merged_origins), numpy.array(merged_normals), r
 
 
 def _get_r_circ(vertices):
