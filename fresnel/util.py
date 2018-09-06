@@ -96,16 +96,13 @@ class image_array(array):
         return f.getvalue();
 
 
-def convex_polyhedron_from_vertices(vertices, r=True):
+def convex_polyhedron_from_vertices(vertices):
     R""" Get origins and normals for a convex polyhedron for its vertices
 
     Args:
-        vertices: The vertices of the polyhedron
-          **Type:** anything convertible by numpy to a Nx4 array of floats.
-        r (bool or float): If ``float``, the radius of the circumscribing sphere that encompasses the polyhedron; if ``True`` (default), calculate the radius of the circumscribing sphere.
+        vertices (array-like, shape=(n,3)): The vertices of the polyhedron
 
     Returns:
-
         The ``origins``, ``normals``, and ``r`` to pass to :py:class:`fresnel.geometry.ConvexPolyhedron`.
 
     This function is intended to be used to draw a convex polygon given its vertices. It
@@ -123,11 +120,7 @@ def convex_polyhedron_from_vertices(vertices, r=True):
     ch = ConvexHull(vertices)
     origins = -ch.equations[:, :-1] * numpy.tile(ch.equations[:, -1], (3, 1)).T
     normals = ch.equations[:, :-1]
-    if r == True:
-        r = _get_r_circ(vertices)
-    elif r == False:
-        raise ValueError('User must specify circumsphere radius or let fresnel estimate it.')
-
+    r = _get_r_circ(vertices)
     return origins, normals, r
 
 
