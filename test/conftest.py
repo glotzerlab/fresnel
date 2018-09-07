@@ -2,6 +2,7 @@ from __future__ import division
 
 import pytest
 import fresnel
+import itertools
 import math
 import PIL
 import numpy
@@ -131,6 +132,39 @@ def scene_eight_polyhedra(device):
     scene.camera = fresnel.camera.orthographic(position=(20, 20, 20), look_at=(0,0,0), up=(0,1,0), height=7)
 
     return scene
+
+
+@pytest.fixture(scope='function')
+def cube_verts():
+    pms = [+1, -1]
+    return numpy.array([x for x in itertools.product(pms, repeat=3)])
+
+
+@pytest.fixture(scope='function')
+def regular_dodecahedron_verts():
+    phi = (1 + numpy.sqrt(5)) / 2
+    vertices = numpy.array([[1, 1, 1],
+                        [1, 1, -1],
+                        [1, -1, 1],
+                       [-1, 1, 1],
+                       [1, -1, -1],
+                       [-1, 1, -1],
+                       [-1, -1, 1],
+                       [-1, -1, -1],
+                       [0, phi, 1/phi],
+                       [0, -phi, 1/phi],
+                       [0, phi, -1/phi],
+                       [0, -phi, -1/phi],
+                       [1/phi, 0, phi],
+                       [1/phi, 0, -phi],
+                       [-1/phi, 0, phi],
+                       [-1/phi, 0, -phi],
+                       [phi, 1/phi, 0],
+                       [phi, -1/phi, 0],
+                       [-phi, 1/phi, 0],
+                       [-phi, -1/phi, 0]])
+    return vertices
+
 
 def assert_image_approx_equal(a, ref_file, tolerance=1.0):
     im = PIL.Image.open(ref_file)

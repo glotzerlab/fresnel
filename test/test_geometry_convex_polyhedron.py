@@ -1,8 +1,10 @@
 import fresnel
+import itertools
 import numpy
 from collections import namedtuple
 import PIL
 import conftest
+
 
 def test_render(scene_eight_polyhedra, generate=False):
     buf_proxy = fresnel.preview(scene_eight_polyhedra, w=150, h=100)
@@ -11,6 +13,7 @@ def test_render(scene_eight_polyhedra, generate=False):
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_convex_polyhedron.test_render.png', 'wb'), 'png');
     else:
         conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_convex_polyhedron.test_render.png')
+
 
 def test_outline(scene_eight_polyhedra, generate=False):
     geometry = scene_eight_polyhedra.geometry[0]
@@ -22,6 +25,7 @@ def test_outline(scene_eight_polyhedra, generate=False):
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_convex_polyhedron.test_outline.png', 'wb'), 'png');
     else:
         conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_convex_polyhedron.test_outline.png')
+
 
 def test_face_color(scene_eight_polyhedra, generate=False):
     buf_proxy = fresnel.preview(scene_eight_polyhedra, w=150, h=100)
@@ -36,6 +40,21 @@ def test_face_color(scene_eight_polyhedra, generate=False):
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_convex_polyhedron.test_face_color.png', 'wb'), 'png');
     else:
         conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_convex_polyhedron.test_face_color.png')
+
+
+def test_face_merge_cube(cube_verts):
+    origins, normals, r = fresnel.util.convex_polyhedron_from_vertices(cube_verts)
+    assert origins.shape[0] == 6
+    assert normals.shape[0] == 6
+    assert r == numpy.sqrt(3)   # is this dumb to test?
+
+
+def test_face_merge_dodecahedron(regular_dodecahedron_verts):
+    origins, normals, r = fresnel.util.convex_polyhedron_from_vertices(regular_dodecahedron_verts)
+    assert origins.shape[0] == 12
+    assert normals.shape[0] == 12
+    assert r == numpy.sqrt(3)
+
 
 if __name__ == '__main__':
     struct = namedtuple("struct", "param")
