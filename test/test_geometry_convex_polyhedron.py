@@ -1,5 +1,4 @@
 import fresnel
-import itertools
 import numpy
 from collections import namedtuple
 import PIL
