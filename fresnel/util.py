@@ -98,34 +98,31 @@ class image_array(array):
 
 
 def convex_polyhedron_from_vertices(vertices):
-    R""" Get origins and normals for a convex polyhedron for its vertices
+    R""" Convert convex polyhedron vertices to data structures that fresnel can draw.
 
     Args:
         vertices (array-like, shape=(n,3)): The vertices of the polyhedron
 
     Returns:
-        The ``origins``, ``normals``, and ``r`` to pass to :py:class:`fresnel.geometry.ConvexPolyhedron`.
+        A dict containing the information used to draw the polyhedron. The dict
+        contains the keys `face_origin`, `face_normal`, `face_color`, and `radius`.
 
-    This function is intended to be used to draw a convex polygon given its vertices. It
-    returns ``origins``, ``normals``, and ``r`` that can be passed when drawing a convex
-    polyhedron:
+    The dictionary can be used directly to draw a polyhedron from its vertices:
 
     .. highlight:: python
     .. code-block:: python
 
-        origins, normals, r_circ = convex_polyhedron_from_vertices(vertices)
-        fresnel.geometry.ConvexPolyhedron(scene, origins, normals, r_circ)
-    """
-    from scipy.spatial import ConvexHull
+        scene = fresnel.Scene()
+        polyhedron = fresnel.util.convex_polyhedron_from_vertices(vertices)
+        geometry = fresnel.geometry.ConvexPolyhedron(scene,
+                                                     polyhedron,
+                                                     position=[0, 0, 0],
+                                                     orientation=[1, 0, 0, 0])
 
-    ch = ConvexHull(vertices)
-    origins = -ch.equations[:, :-1] * numpy.tile(ch.equations[:, -1], (3, 1)).T
-    normals = ch.equations[:, :-1]
-    merged_origins, merged_normals = [], []
-    merged_normals, indices = numpy.unique(normals, axis=0, return_index=True)
-    merged_origins = origins[indices]
-    r = _get_r_circ(vertices)
-    return merged_origins, merged_normals, r
+    """
+    from fresnel._common import find_polyhedron_faces
+    # sanity checks on the shape of things here?
+    return find_polyhedron_faces(vertices)
 
 
 def _get_r_circ(vertices):

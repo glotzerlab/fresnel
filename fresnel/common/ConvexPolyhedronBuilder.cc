@@ -30,7 +30,7 @@ pybind11::dict find_polyhedron_faces(pybind11::array_t<double, pybind11::array::
         throw std::runtime_error("verts must be a 2-dimensional array");
 
     if (info_verts.shape[1] != 3)
-        throw std::runtime_error("verts must be a N by 3 array");
+        throw std::runtime_error("verts must be an N by 3 array");
 
     size_t N = info_verts.shape[0];
     double *coords = (double *)info_verts.ptr;
@@ -76,6 +76,4 @@ pybind11::dict find_polyhedron_faces(pybind11::array_t<double, pybind11::array::
     retval["radius"] = radius;
     return retval;
     }
-
-
 }

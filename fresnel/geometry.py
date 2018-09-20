@@ -352,13 +352,7 @@ class ConvexPolyhedron(Geometry):
 
     Args:
         scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
-        origins: Origins of the planes in particle local coordinates.
-          **Type:** anything convertible by numpy to a Px3 array of floats.
-        normals: Origins of the planes in particle local coordinates.
-          **Type:** anything convertible by numpy to a Px3 array of floats.
-        r (float): Radius of the circumscribing sphere (centered at the origin) that encompasses the polyhedron.
-        face_colors: Colors of the polyhedron faces
-          **Type:** anything convertible by numpy to a Px3 array of floats.
+        polyhedron_info (dict): A dictionary containing the face normals, orgins, colors, and the radius, see :py:func:`fresnel.util.convex_polyhedron_from_vertices` for more information.
         position: Positions of the polyhedra, *optional*.
           **Type:** anything convertible by numpy to a Nx3 array of floats.
         orientation: Rotation quaternion of each polyhedron, *optional*.
@@ -389,10 +383,7 @@ class ConvexPolyhedron(Geometry):
 
     def __init__(self,
                  scene,
-                 origins,
-                 normals,
-                 r,
-                 face_colors=None,
+                 polyhedron_info,
                  position=None,
                  orientation=None,
                  color=None,
@@ -403,9 +394,11 @@ class ConvexPolyhedron(Geometry):
         if N is None:
             N = len(position);
 
-        if face_colors is None:
-            face_colors = [[1,0,1]] * len(origins)
 
+        origins = polyhedron_info['face_origin']
+        normals = polyhedron_info['face_normal']
+        face_colors = polyhedron_info['face_color']
+        r = polyhedron_info['radius']
         self._geometry = scene.device.module.GeometryConvexPolyhedron(scene._scene, origins, normals, face_colors, N, r);
         self.material = material;
         self.outline_material = outline_material;
