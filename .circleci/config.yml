@@ -145,8 +145,8 @@ jobs:
   clang6-py36:
     <<: *ubuntu18
     environment:
-      CC: /usr/bin/clang-5.0
-      CXX: /usr/bin/clang++-5.0
+      CC: /usr/bin/clang-6.0
+      CXX: /usr/bin/clang++-6.0
       PYVER: "3.6"
       PYTEST: "py.test-3"
       CMAKE: /usr/bin/cmake
