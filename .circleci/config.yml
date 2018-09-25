@@ -1,168 +1,175 @@
-version: 2
+version: 2.1
 
-references:
-  ubuntu16: &ubuntu16
+executors:
+  glotzerlab:
+    parameters:
+      image:
+        type: string
+      python-version:
+        type: string
     docker:
-      - image: glotzerlab/ci:2018.06-ubuntu16.04
-        environment:
-          PYTHONPATH: /home/ci/project/build
+      - image: glotzerlab/ci:2018.09-<< parameters.image >>
+    environment:
+      PYTHONPATH: /home/ci/project/build
+      PYTHON: "/usr/bin/python<< parameters.python-version >>"
+      PYTEST: "/usr/bin/python<< parameters.python-version >> -m pytest"
     working_directory: /home/ci/project
 
-  ubuntu18: &ubuntu18
-    docker:
-      - image: glotzerlab/ci:2018.06-ubuntu18.04
-        environment:
-          PYTHONPATH: /home/ci/project/build
-    working_directory: /home/ci/project
-
-  load_code: &load_code
-    checkout:
-      path: code
-
-  update_submodules: &update_submodules
-    run:
-      name: Update submodules
-      working_directory: code
-      command: git submodule update --init
-
-  build_and_test: &build_and_test
+commands:
+  checkout_with_submodules:
     steps:
-      - *load_code
-      - *update_submodules
+      - checkout:
+          path: code
+      - run:
+          name: Update submodules
+          working_directory: code
+          command: git submodule update --init
+
+  build:
+    parameters:
+      cc:
+        type: string
+      cxx:
+        type: string
+      cmake:
+        type: string
+    steps:
       - run:
           name: Configure
           command: |
+            export CC=<< parameters.cc >> CXX=<< parameters.cxx >>
             mkdir build
             cd build
-            echo cmake=${CMAKE}
-            echo pyver=${PYVER}
-            echo cc=${CC}
-            echo cxx=${CXX}
-            ${CMAKE} ../code -DPYTHON_EXECUTABLE=/usr/bin/python${PYVER} -DENABLE_EMBREE=ON -DENABLE_OPTIX=OFF -Dembree_DIR=/opt/embree-${EMBREE3_VERSION}.x86_64.linux -GNinja
+            << parameters.cmake >> ../code -DPYTHON_EXECUTABLE=${PYTHON} -DENABLE_EMBREE=ON -DENABLE_OPTIX=OFF -Dembree_DIR=/opt/embree-${EMBREE3_VERSION}.x86_64.linux -GNinja
       - run:
           name: Compile
           command: |
             cd build
             ninja -j3
+
+  test:
+    steps:
       - run:
           name: Unit test
           no_output_timeout: 1h
-          command: mkdir test-results && cd code/test && ${PYTEST} --junit-xml=/home/ci/project/test-results/test.xml
+          command: |
+            mkdir test-results
+            cd code/test
+            ${PYTEST} --junit-xml=/home/ci/project/test-results/test.xml
       - store_artifacts:
           path: test-results
           destination: test-results
       - store_test_results:
           path: test-results
 
-jobs:
-  gcc48-py27-cm28:
-    <<: *ubuntu16
-    environment:
-      CC: /usr/bin/gcc-4.8
-      CXX: /usr/bin/g++-4.8
-      PYVER: "2.7"
-      PYTEST: "py.test-2.7"
-      CMAKE: /opt/cmake-2.8.12/bin/cmake
-    <<: *build_and_test
+  sphinx:
+    steps:
+      - run: cd code/doc && sphinx-build -b html -d _build/doctrees -W -n . _build/html
 
-  gcc54-py35:
-    <<: *ubuntu16
-    environment:
-      CC: /usr/bin/gcc
-      CXX: /usr/bin/g++
-      PYVER: "3.5"
-      PYTEST: "py.test-3.5"
-      CMAKE: /usr/bin/cmake
-    <<: *build_and_test
+jobs:
+  build_and_test:
+    parameters:
+      image:
+        type: string
+      cc:
+        type: string
+      cxx:
+        type: string
+      python-version:
+        type: string
+      build-docs:
+        default: false
+        type: boolean
+      cmake:
+        default: /usr/bin/cmake
+        type: string
+    executor:
+      name: glotzerlab
+      image: << parameters.image >>
+      python-version: << parameters.python-version >>
+    steps:
+      - checkout_with_submodules
+      - build:
+          cc: << parameters.cc >>
+          cxx: << parameters.cxx >>
+          cmake: << parameters.cmake >>
+      - test
 
   sphinx-docs:
-    <<: *ubuntu18
+    executor:
+      name: glotzerlab
+      image: ubuntu18.04
+      python-version: "3.6"
     steps:
-      - *load_code
-      - *update_submodules
-      - run: cd code/doc && sphinx-build -b html -d _build/doctrees -W -n . build/html
-
-  clang38-py35:
-    <<: *ubuntu16
-    environment:
-      CC: /usr/bin/clang
-      CXX: /usr/bin/clang++
-      PYVER: "3.5"
-      PYTEST: "py.test-3.5"
-      CMAKE: /usr/bin/cmake
-    <<: *build_and_test
-
-  gcc6-py36:
-    <<: *ubuntu18
-    environment:
-      CC: /usr/bin/gcc-6
-      CXX: /usr/bin/g++-6
-      PYVER: "3.6"
-      PYTEST: "py.test-3"
-      CMAKE: /usr/bin/cmake
-    <<: *build_and_test
-
-  gcc7-py36:
-    <<: *ubuntu18
-    environment:
-      CC: /usr/bin/gcc-7
-      CXX: /usr/bin/g++-7
-      PYVER: "3.6"
-      PYTEST: "py.test-3"
-      CMAKE: /usr/bin/cmake
-    <<: *build_and_test
-
-  gcc8-py36:
-    <<: *ubuntu18
-    environment:
-      CC: /usr/bin/gcc-8
-      CXX: /usr/bin/g++-8
-      PYVER: "3.6"
-      PYTEST: "py.test-3"
-      CMAKE: /usr/bin/cmake
-    <<: *build_and_test
-
-  clang4-py36:
-    <<: *ubuntu18
-    environment:
-      CC: /usr/bin/clang-4.0
-      CXX: /usr/bin/clang++-4.0
-      PYVER: "3.6"
-      PYTEST: "py.test-3"
-      CMAKE: /usr/bin/cmake
-    <<: *build_and_test
-
-  clang5-py36:
-    <<: *ubuntu18
-    environment:
-      CC: /usr/bin/clang-5.0
-      CXX: /usr/bin/clang++-5.0
-      PYVER: "3.6"
-      PYTEST: "py.test-3"
-      CMAKE: /usr/bin/cmake
-    <<: *build_and_test
-
-  clang6-py36:
-    <<: *ubuntu18
-    environment:
-      CC: /usr/bin/clang-6.0
-      CXX: /usr/bin/clang++-6.0
-      PYVER: "3.6"
-      PYTEST: "py.test-3"
-      CMAKE: /usr/bin/cmake
-    <<: *build_and_test
+      - checkout_with_submodules
+      - sphinx
 
 workflows:
-  version: 2
   workflow:
     jobs:
       - sphinx-docs
-      - gcc48-py27-cm28
-      - gcc54-py35
-      - gcc6-py36
-      - gcc7-py36
-      - gcc8-py36
-      - clang38-py35
-      - clang4-py36
-      - clang5-py36
-      - clang6-py36
+
+      - build_and_test:
+          name: gcc8-py36
+          image: ubuntu18.04
+          cc: gcc-8
+          cxx: g++-8
+          python-version: "3.6"
+
+      - build_and_test:
+          name: gcc7-py36-docs
+          image: ubuntu18.04
+          cc: gcc-7
+          cxx: g++-7
+          python-version: "3.6"
+          build-docs: true
+
+      - build_and_test:
+          name: gcc6-py36
+          image: ubuntu18.04
+          cc: gcc-6
+          cxx: g++-6
+          python-version: "3.6"
+
+      - build_and_test:
+          name: clang6-py36
+          image: ubuntu18.04
+          cc: clang-6.0
+          cxx: clang++-6.0
+          python-version: "3.6"
+
+      - build_and_test:
+          name: clang5-py36
+          image: ubuntu18.04
+          cc: clang-5.0
+          cxx: clang++-5.0
+          python-version: "3.6"
+
+      - build_and_test:
+          name: clang4-py36
+          image: ubuntu18.04
+          cc: clang-4.0
+          cxx: clang++-4.0
+          python-version: "3.6"
+
+      - build_and_test:
+          name: gcc5-py35
+          image: ubuntu16.04
+          cc: gcc-5
+          cxx: g++-5
+          python-version: "3.5"
+
+      - build_and_test:
+          name: clang38-py35
+          image: ubuntu16.04
+          cc: clang-3.8
+          cxx: clang++-3.8
+          python-version: "3.5"
+
+      - build_and_test:
+          name: gcc48-py35-cm28
+          image: ubuntu16.04
+          cc: gcc-4.8
+          cxx: g++-4.8
+          python-version: "3.5"
+          cmake: /opt/cmake-2.8.12/bin/cmake
