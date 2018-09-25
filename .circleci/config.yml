@@ -153,11 +153,11 @@ workflows:
           python-version: "3.6"
 
       - build_and_test:
-          name: gcc5-py35
+          name: gcc5-py27
           image: ubuntu16.04
           cc: gcc-5
           cxx: g++-5
-          python-version: "3.5"
+          python-version: "2.7"
 
       - build_and_test:
           name: clang38-py35
