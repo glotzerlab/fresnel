@@ -26,7 +26,7 @@ extensions = [
     'IPython.sphinxext.ipython_console_highlighting'
 ]
 
-intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}
+intersphinx_mapping = {'python': ('https://docs.python.org/3', None), 'numpy': ('https://numpy.readthedocs.io/en/latest/', None)}
 autodoc_docstring_signature = True;
 # autodoc_default_flags = ['inherited-members'];
 autodoc_mock_imports = ['numpy'];
