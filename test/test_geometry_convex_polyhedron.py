@@ -41,18 +41,27 @@ def test_face_color(scene_eight_polyhedra, generate=False):
         conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_convex_polyhedron.test_face_color.png')
 
 
+def test_convert_cube(cube_verts):
+    """Sanity checks on converting vertices to origins and normals
+
+    """
+    poly_info = fresnel.util.convex_polyhedron_from_vertices(cube_verts)
+    assert poly_info['face_origin'].shape[0] == poly_info['face_normal'].shape[0] == 6
+    for f in poly_info['face_sides']:
+        assert f == 4   # should all be squares
+    assert poly_info['radius'] == numpy.sqrt(3)
+
+
 def test_face_merge_cube(cube_verts):
-    origins, normals, r = fresnel.util.convex_polyhedron_from_vertices(cube_verts)
-    assert origins.shape[0] == 6
-    assert normals.shape[0] == 6
-    assert r == numpy.sqrt(3)   # is this dumb to test?
+    """Add a point into the middle of one of the faces and make sure no new faces are created
 
-
-def test_face_merge_dodecahedron(regular_dodecahedron_verts):
-    origins, normals, r = fresnel.util.convex_polyhedron_from_vertices(regular_dodecahedron_verts)
-    assert origins.shape[0] == 12
-    assert normals.shape[0] == 12
-    assert r == numpy.sqrt(3)
+    """
+    cube_verts = numpy.concatenate((cube_verts, [[0.5, 0.5, 1.0]]))
+    poly_info = fresnel.util.convex_polyhedron_from_vertices(cube_verts)
+    assert poly_info['face_origin'].shape[0] == poly_info['face_normal'].shape[0] == 6
+    for f in poly_info['face_sides']:
+        assert f == 4   # should all be squares
+    assert poly_info['radius'] == numpy.sqrt(3)
 
 
 if __name__ == '__main__':
