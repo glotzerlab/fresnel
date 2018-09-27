@@ -102,7 +102,7 @@ def convex_polyhedron_from_vertices(vertices):
 
     Args:
         vertices: The vertices of the polyhedron
-          **Type:** anything convertible by numpy to a Nx2x3 array of floats.
+          **Type:** anything convertible by numpy to a Nx3 array of floats.
 
     Returns:
         A dict containing the information used to draw the polyhedron. The dict
