@@ -7,3 +7,6 @@
 [submodule "doc/examples"]
 	path = doc/examples
 	url = https://bitbucket.org/glotzer/fresnel-examples
+[submodule "extern/qhull"]
+	path = extern/qhull
+	url = https://github.com/glotzerlab/qhull

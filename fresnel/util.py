@@ -8,6 +8,7 @@ Utility classes and methods.
 import numpy
 import io
 
+
 try:
     import PIL.Image as PIL_Image;
 except ImportError:
@@ -94,3 +95,40 @@ class image_array(array):
         self.buf.unmap();
 
         return f.getvalue();
+
+
+def convex_polyhedron_from_vertices(vertices):
+    R""" Convert convex polyhedron vertices to data structures that fresnel can draw.
+
+    Args:
+        vertices: The vertices of the polyhedron
+          **Type:** anything convertible by numpy to a Nx3 array of floats.
+
+    Returns:
+        A dict containing the information used to draw the polyhedron. The dict
+        contains the keys `face_origin`, `face_normal`, `face_color`, and `radius`.
+
+    The dictionary can be used directly to draw a polyhedron from its vertices:
+
+    .. highlight:: python
+    .. code-block:: python
+
+        scene = fresnel.Scene()
+        polyhedron = fresnel.util.convex_polyhedron_from_vertices(vertices)
+        geometry = fresnel.geometry.ConvexPolyhedron(scene,
+                                                     polyhedron,
+                                                     position=[0, 0, 0],
+                                                     orientation=[1, 0, 0, 0])
+
+    """
+    from fresnel._common import find_polyhedron_faces
+    # sanity checks on the shape of things here?
+    return find_polyhedron_faces(vertices)
+
+
+def _get_r_circ(vertices):
+    """Estimate circumsphere radius based on vertices of a polyhedron
+    """
+    vertices = numpy.array(vertices)
+    radii = numpy.sqrt(numpy.sum(vertices**2, axis=1))
+    return numpy.amax(radii)

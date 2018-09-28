@@ -7,6 +7,7 @@ fresnel.util
     :nosignatures:
 
     fresnel.util.array
+    fresnel.util.convex_polyhedron_from_vertices
     fresnel.util.image_array
 
 .. rubric:: Details
