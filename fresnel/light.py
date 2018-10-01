@@ -28,8 +28,8 @@ class Light(object):
 
     Args:
 
-        direction (tuple[float] or list[float]): Vector direction the light points (*in camera space*).
-        color (tuple[float] or list[float]):  Linear RGB color and intensity of the light.
+        direction (`numpy.ndarray` or `array_like`): (``3``, ``float32``) - Vector direction the light points (*in camera space*).
+        color (`numpy.ndarray` or `array_like`):  (``3``, ``float32``) - Linear RGB color and intensity of the light.
         theta (float): Half angle of the cone that defines the area of the light (*radians*).
 
     The direction vector may have any non-zero length, but only the direction the vector points matters.

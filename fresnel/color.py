@@ -8,7 +8,8 @@ Color utilities.
 import numpy
 
 def linear(color):
-    R""" Convert a `sRGB <https://en.wikipedia.org/wiki/SRGB>`_ color (or array of such colors) from the gamma corrected color space into the linear space.
+    R""" Convert a `sRGB <https://en.wikipedia.org/wiki/SRGB>`_ color (or array of such colors) from the gamma corrected
+    color space into the linear space.
 
     Standard tools for working with sRGB colors provide gamma corrected values. fresnel needs to perform calculations
     in a linear color space. This method converts from sRGB to the linear space. Use :py:func:`linear` when specifying
@@ -21,7 +22,7 @@ def linear(color):
 
     Args:
 
-        color (numpy.ndarray or list[float]): (``3``, ``Nx3``, or ``Nx4`` : ``float32``) - ``RGB`` or ``RGBA``
+        color (`numpy.ndarray` or `array_like`): (``3``, ``Nx3``, or ``Nx4`` : ``float32``) - ``RGB`` or ``RGBA``
             color in the range [0,1].
 
     Returns:

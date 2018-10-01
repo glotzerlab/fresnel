@@ -30,7 +30,7 @@ class Device(object):
 
     Args:
 
-        mode (str): Specify execution mode: Valid values are `auto`, `gpu`, and `cpu`.
+        mode (str): Specify execution mode: Valid values are ``auto``, ``gpu``, and ``cpu``.
         n (int): Specify the number of cpu threads / gpus this device will use.
                      *None* sets no limit.
 
@@ -45,9 +45,9 @@ class Device(object):
         :doc:`examples/202-Tracer-methods`
             Tutorial: Using tracers with devices.
 
-    When mode is `auto`, the default, :py:class:`Device` GPU rendering and
+    When mode is ``auto``, the default, :py:class:`Device` GPU rendering and
     fall back on CPU rendering if there is no GPU available or GPU support was not compiled in. Set mode to
-    `gpu` or `cpu` to force a specific mode.
+    ``gpu`` or ``cpu`` to force a specific mode.
 
     .. important::
         By default (n==None), this device will use all available GPUs or CPU cores. Set *n* to the number of GPUs or CPU

@@ -18,13 +18,14 @@ class array(object):
     R""" Map internal fresnel buffers as :py:class:`numpy.ndarray` objects.
 
     :py:class:`fresnel.util.array` provides a python interface to access internal data of memory buffers stored and
-    managed by fresnel. You can access a :py:class:`fresnel.util.array` as if it were a :py:class:`numpy.ndarray` (with limited
-    operations). Below, *slice* is any type of slice or array indexing mechanic that **numpy** understands.
+    managed by fresnel. You can access a :py:class:`fresnel.util.array` as if it were a :py:class:`numpy.ndarray` (with
+    limited operations). Below, *slice* is a :std:term:`slice` or array `indexing <numpy.doc.indexing>` mechanic that
+    **numpy** understands.
 
     .. rubric:: Writing
 
     Write to an array with ``array[slice] = v`` where *v* is :py:class:`numpy.ndarray`, :any:`list`, or
-    scalar value to broadcast. When *v* is a contiguous :py:class:`numpy.ndarray` of the same data type, the data is
+    scalar value to broadcast. When *v* is a *contiguous* :py:class:`numpy.ndarray` of the same data type, the data is
     copied directly from *v* into the internal buffer. Otherwise, it is converted to a :py:class:`numpy.ndarray`
     before copying.
 
@@ -104,11 +105,11 @@ def convex_polyhedron_from_vertices(vertices):
     R""" Convert convex polyhedron vertices to data structures that fresnel can draw.
 
     Args:
-        vertices (numpy.ndarray or list[float]): (``Nx3`` : ``float64``) - The vertices of the polyhedron.
+        vertices (`numpy.ndarray` or `array_like`): (``Nx3`` : ``float64``) - The vertices of the polyhedron.
 
     Returns:
         A dict containing the information used to draw the polyhedron. The dict
-        contains the keys `face_origin`, `face_normal`, `face_color`, and `radius`.
+        contains the keys ``face_origin``, ``face_normal``, ``face_color``, and ``radius``.
 
     The dictionary can be used directly to draw a polyhedron from its vertices:
 

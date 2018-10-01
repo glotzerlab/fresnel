@@ -15,7 +15,7 @@ class Material(object):
     Args:
 
         solid (float): Set to 1 to pass through a solid color, regardless of the light and view angle.
-        color (tuple[float] or list[float]): Linear RGB color of the material.
+        color (`numpy.ndarray` or `array_like`): (``3``, ``float32``) - Linear RGB color of the material.
         primitive_color_mix (float): Set to 1 to use the color provided in the Geometry, 0 to use the color
           specified in the material, or a value in the range [0,1] to mix the two colors.
         roughness (float): Roughness of the material. Nominally in the range [0.1,1].

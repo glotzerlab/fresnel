@@ -26,7 +26,9 @@ extensions = [
     'IPython.sphinxext.ipython_console_highlighting'
 ]
 
-intersphinx_mapping = {'python': ('https://docs.python.org/3', None), 'numpy': ('https://numpy.readthedocs.io/en/latest/', None)}
+napoleon_use_param = False;
+
+intersphinx_mapping = {'python': ('https://docs.python.org/3', None), 'numpy': ('https://docs.scipy.org/doc/numpy', None)}
 autodoc_docstring_signature = True;
 # autodoc_default_flags = ['inherited-members'];
 autodoc_mock_imports = ['numpy'];
@@ -81,7 +83,7 @@ exclude_patterns = ['build']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
-#default_role = None
+default_role = 'any'
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 #add_function_parentheses = True

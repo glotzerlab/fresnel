@@ -33,7 +33,7 @@ class Geometry(object):
     Attributes:
         material (:py:class:`fresnel.material.Material`): The geometry's material.
         outline_material (:py:class:`fresnel.material.Material`): The geometry's outline material.
-        outline_width (:any:`float`): The geometry's outline width, in distance units in the scene's coordinate system.
+        outline_width (`float`): The geometry's outline width, in distance units in the scene's coordinate system.
 
     Note:
 
@@ -99,9 +99,9 @@ class Cylinder(Geometry):
 
     Args:
         scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
-        points (numpy.ndarray or list[float]): (``Nx2x3`` : ``float32``) - cylinder start and end points.
-        radius (numpy.ndarray or list[float]): (``N`` : ``float32``) - Radius of each cylinder.
-        color (numpy.ndarray or list[float]): (``Nx2x3`` : ``float32``) - Color of each start and end point.
+        points (`numpy.ndarray` or `array_like`): (``Nx2x3`` : ``float32``) - cylinder start and end points.
+        radius (`numpy.ndarray` or `array_like`): (``N`` : ``float32``) - Radius of each cylinder.
+        color (`numpy.ndarray` or `array_like`): (``Nx2x3`` : ``float32``) - Color of each start and end point.
         N (int): Number of cylinders in the geometry. If ``None``, determine ``N`` from *points*.
 
     .. seealso::
@@ -278,9 +278,9 @@ class Sphere(Geometry):
 
     Args:
         scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
-        position (numpy.ndarray or list[float]): (``Nx3`` : ``float32``) -  Positions of each sphere.
-        radius (numpy.ndarray or list[float]): (``N`` : ``float32``) - Radius of each sphere.
-        color (numpy.ndarray or list[float]): (``Nx3`` : ``float32``) - Color of each sphere.
+        position (`numpy.ndarray` or `array_like`): (``Nx3`` : ``float32``) -  Positions of each sphere.
+        radius (`numpy.ndarray` or `array_like`): (``N`` : ``float32``) - Radius of each sphere.
+        color (`numpy.ndarray` or `array_like`): (``Nx3`` : ``float32``) - Color of each sphere.
         N (int): Number of spheres in the geometry. If ``None``, determine ``N`` from ``position``.
 
     .. seealso::
@@ -370,11 +370,11 @@ class ConvexPolyhedron(Geometry):
 
     Args:
         scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
-        polyhedron_info (dict): A dictionary containing the face normals (``face_normal``), origins (``face_origin``),
+        polyhedron_info (`dict`): A dictionary containing the face normals (``face_normal``), origins (``face_origin``),
             colors (``face_color``), and the radius (``radius``)).
-        position (numpy.ndarray or list[float]): (``Nx3`` : ``float32``) -  Position of each polyhedra.
-        orientation (numpy.ndarray or list[float]): (``Nx4`` : ``float32``) -  Orientation of each polyhedra (as a quaternion).
-        color (numpy.ndarray or list[float]): (``Nx3`` : ``float32``) - Color of each polyhedron.
+        position (`numpy.ndarray` or `array_like`): (``Nx3`` : ``float32``) -  Position of each polyhedra.
+        orientation (`numpy.ndarray` or `array_like`): (``Nx4`` : ``float32``) -  Orientation of each polyhedra (as a quaternion).
+        color (`numpy.ndarray` or `array_like`): (``Nx3`` : ``float32``) - Color of each polyhedron.
         N (int): Number of spheres in the geometry. If ``None``, determine ``N`` from ``position``.
 
     .. seealso::
