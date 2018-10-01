@@ -200,7 +200,7 @@ class Prism(Geometry):
           **Type:** anything convertible by numpy to a N length array of floats.
         color: (r,g,b) color of each particle, *optional*.
           **Type:** anything convertible by numpy to a Nx3 array of floats.
-        N (int): Number of spheres in the geometry. If ``None``, determine ``N`` from ``position``.
+        N (int): Number of prisms in the geometry. If ``None``, determine ``N`` from ``position``.
 
     Note:
         The constructor arguments ``position``, ``height``, ``angle``, and ``color`` are optional, and just short-hand
@@ -393,8 +393,7 @@ class ConvexPolyhedron(Geometry):
         position (:py:class:`fresnel.util.array`): Read or modify the positions of the polyhedra.
         orientation (:py:class:`fresnel.util.array`): Read or modify the orientations of the polyhedra.
         color (:py:class:`fresnel.util.array`): Read or modify the color of the polyhedra.
-        color_by_face (float): Set to 0 to color particles by the per-particle color. Set to 1 to color faces by the
-                               per-face color.
+        color_by_face (float): Set to 0 to color particles by the per-particle color. Set to 1 to color faces by the per-face color. Set to a value between 0 and 1 to blend per-particle and per-face colors.
 
     """
 
