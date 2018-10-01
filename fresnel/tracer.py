@@ -2,7 +2,18 @@
 # This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 R"""
-Ray tracers.
+Ray tracers process a :py:class:`fresnel.Scene` and render output images.
+
+Fresnel provides a :py:class:`Preview` tracer to generate a quick approximate render
+and :py:class:`Path` which provides soft shadows, reflections, and other effects.
+
+.. seealso::
+    :doc:`examples/000-Introduction`
+        Tutorial: Introduction to tracers
+
+    :doc:`examples/202-Tracer-methods`
+        Tutorial: Configuring tracer parameters.
+
 """
 
 import numpy

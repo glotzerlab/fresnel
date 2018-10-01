@@ -3,6 +3,22 @@
 
 R"""
 Geometric primitives.
+
+:py:class:`Geometry` provides operations common to all geometry classes. Use a specific geometry class to add objects
+to the :py:class:`fresnel.Scene`.
+
+.. seealso::
+    :doc:`examples/001-Primitive-properties`
+        Tutorial: Modifying primitive properties.
+
+    :doc:`examples/002-Material-properties`
+        Tutorial: Modifying material properties.
+
+    :doc:`examples/003-Outline-materials`
+        Tutorial: Applying outline materials.
+
+    :doc:`examples/200-Multiple-geometries`
+        Tutorial: Displaying multiple geometries in a scene.
 """
 
 from . import material
@@ -15,8 +31,8 @@ class Geometry(object):
     :py:class:`Geometry` provides operations common to all geometry classes.
 
     Attributes:
-        material (:py:class:`fresnel.material.Material`): Read, set, or modify the geometry's material.
-        outline_material (:py:class:`fresnel.material.Material`): Read, set, or modify the geometry's outline material.
+        material (:py:class:`fresnel.material.Material`): The geometry's material.
+        outline_material (:py:class:`fresnel.material.Material`): The geometry's outline material.
         outline_width (:any:`float`): The geometry's outline width, in distance units in the scene's coordinate system.
 
     Note:
@@ -38,7 +54,7 @@ class Geometry(object):
     def disable(self):
         R""" Disable the geometry.
 
-        When disabled, the geometry will not be present in the scene. No rays will intersect it.
+        When disabled, the geometry will not be present in the scene.
         """
 
         self._geometry.disable();
@@ -79,28 +95,30 @@ class Geometry(object):
 class Cylinder(Geometry):
     R""" Cylinder geometry.
 
-    Define a set of cylinder primitives with start and end positions, radii, and individual colors.
+    Define a set of spherocylinder primitives with start and end positions, radii, and individual colors.
 
     Args:
         scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
-        points: cylinder start and end points, *optional*.
-          **Type:** anything convertible by numpy to a Nx2x3 array of floats.
-        radius: Radius of each cylinder, *optional*.
-          **Type:** anything convertible by numpy to a N length array of floats.
-        color: (r,g,b) color of each particle, *optional*.
-          **Type:** anything convertible by numpy to a Nx2x3 array of floats.
-        N (int): Number of cylinders in the geometry. If ``None``, determine ``N`` from ``position``.
+        points (numpy.ndarray or list[float]): (``Nx2x3`` : ``float32``) - cylinder start and end points.
+        radius (numpy.ndarray or list[float]): (``N`` : ``float32``) - Radius of each cylinder.
+        color (numpy.ndarray or list[float]): (``Nx2x3`` : ``float32``) - Color of each start and end point.
+        N (int): Number of cylinders in the geometry. If ``None``, determine ``N`` from *points*.
+
+    .. seealso::
+        :doc:`examples/101-Cylinder-geometry`
+            Tutorial: defining and setting cyliner geometry properties
 
     Note:
-        The constructor arguments ``points``, ``radius``, and ``color`` are optional, and just short-hand
-        for assigning the properties after construction.
-
-    Colors are in the linearized sRGB color space. Use :py:func:`fresnel.color.linear` to convert standard sRGB colors
-    into this space.
+        The constructor arguments ``points``, ``radius``, and ``color`` are optional. If you do not provide them,
+        they are initialized to 0's.
 
     .. hint::
         Avoid costly memory allocations and type conversions by specifying primitive properties in the appropriate
         numpy array type.
+
+    .. tip::
+        When all cylinders are the same size, pass a single value for *radius* and numpy will broadcast it to all
+        elements of the array.
 
     Attributes:
         points (:py:class:`fresnel.util.array`): Read or modify the start and end points of the cylinders.
@@ -141,8 +159,7 @@ class Cylinder(Geometry):
         R""" Get the extents of the geometry
 
         Returns:
-            [[minimum x, minimum y, minimum z],
-             [maximum x, maximum y, maximum z]]
+            [[minimum x, minimum y, minimum z],[maximum x, maximum y, maximum z]]
         """
         A = self.points[:,0];
         B = self.points[:,1];
@@ -261,24 +278,26 @@ class Sphere(Geometry):
 
     Args:
         scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
-        position: Positions of the spheres, *optional*.
-          **Type:** anything convertible by numpy to a Nx3 array of floats.
-        radius: Radius of each sphere, *optional*.
-          **Type:** anything convertible by numpy to a N length array of floats.
-        color: (r,g,b) color of each particle, *optional*.
-          **Type:** anything convertible by numpy to a Nx3 array of floats.
+        position (numpy.ndarray or list[float]): (``Nx3`` : ``float32``) -  Positions of each sphere.
+        radius (numpy.ndarray or list[float]): (``N`` : ``float32``) - Radius of each sphere.
+        color (numpy.ndarray or list[float]): (``Nx3`` : ``float32``) - Color of each sphere.
         N (int): Number of spheres in the geometry. If ``None``, determine ``N`` from ``position``.
 
-    Note:
-        The constructor arguments ``position``, ``radius``, and ``color`` are optional, and just short-hand
-        for assigning the properties after construction.
+    .. seealso::
+        :doc:`examples/100-Sphere-geometry`
+            Tutorial: Defining and setting sphere geometry properties.
 
-    Colors are in the linearized sRGB color space. Use :py:func:`fresnel.color.linear` to convert standard sRGB colors
-    into this space.
+    Note:
+        The constructor arguments ``position``, ``radius``, and ``color`` are optional. If you do not provide them,
+        they are initialized to 0's.
 
     .. hint::
         Avoid costly memory allocations and type conversions by specifying primitive properties in the appropriate
         numpy array type.
+
+    .. tip::
+        When all spheres are the same size, pass a single value for *radius* and numpy will broadcast it to all
+        elements of the array.
 
     Attributes:
         position (:py:class:`fresnel.util.array`): Read or modify the positions of the spheres.
@@ -319,8 +338,7 @@ class Sphere(Geometry):
         R""" Get the extents of the geometry
 
         Returns:
-            [[minimum x, minimum y, minimum z],
-             [maximum x, maximum y, maximum z]]
+            [[minimum x, minimum y, minimum z],[maximum x, maximum y, maximum z]]
         """
         pos = self.position[:];
         r = self.radius[:];
@@ -347,35 +365,34 @@ class ConvexPolyhedron(Geometry):
 
     Define a set of convex polyhedron primitives. A convex polyhedron is defined by *P* outward facing planes
     (origin and normal vector) and a radius that encompass the shape.
-
-    Note: Future versions may (or may not) provide a more user friendly interface.
+    :py:func:`fresnel.util.convex_polyhedron_from_vertices` can construct this by computing the convex hull of a set
+    of vertices.
 
     Args:
         scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
-        polyhedron_info (dict): A dictionary containing the face normals, orgins, colors, and the radius, see :py:func:`fresnel.util.convex_polyhedron_from_vertices` for more information.
-        position: Positions of the polyhedra, *optional*.
-          **Type:** anything convertible by numpy to a Nx3 array of floats.
-        orientation: Rotation quaternion of each polyhedron, *optional*.
-          **Type:** anything convertible by numpy to a Nx4 array of floats.
-        color: (r,g,b) color of each particle, *optional*.
-          **Type:** anything convertible by numpy to a Nx3 array of floats.
+        polyhedron_info (dict): A dictionary containing the face normals (``face_normal``), origins (``face_origin``),
+            colors (``face_color``), and the radius (``radius``)).
+        position (numpy.ndarray or list[float]): (``Nx3`` : ``float32``) -  Position of each polyhedra.
+        orientation (numpy.ndarray or list[float]): (``Nx4`` : ``float32``) -  Orientation of each polyhedra (as a quaternion).
+        color (numpy.ndarray or list[float]): (``Nx3`` : ``float32``) - Color of each polyhedron.
         N (int): Number of spheres in the geometry. If ``None``, determine ``N`` from ``position``.
 
-    Note:
-        The constructor arguments ``position``, ``orientation``, and ``color`` are optional, and just short-hand
-        for assigning the attribute after construction.
+    .. seealso::
+        :doc:`examples/102-Convex-polyhedron-geometry`
+            Tutorial: Defining and setting convex polyhedron geometry properties.
 
-    Colors are in the linearized sRGB color space. Use :py:func:`fresnel.color.linear` to convert standard sRGB colors
-    into this space.
+    Note:
+        The constructor arguments ``position``, ``orientation``, and ``color`` are optional. If you do not provide them,
+        they are initialized to 0's.
 
     .. hint::
         Avoid costly memory allocations and type conversions by specifying primitive properties in the appropriate
         numpy array type.
 
     Attributes:
-        position (:py:class:`fresnel.util.array`): Read or modify the positions of the prisms.
-        orientation (:py:class:`fresnel.util.array`): Read or modify the orientations of the prisms.
-        color (:py:class:`fresnel.util.array`): Read or modify the color of the prisms.
+        position (:py:class:`fresnel.util.array`): Read or modify the positions of the polyhedra.
+        orientation (:py:class:`fresnel.util.array`): Read or modify the orientations of the polyhedra.
+        color (:py:class:`fresnel.util.array`): Read or modify the color of the polyhedra.
         color_by_face (float): Set to 0 to color particles by the per-particle color. Set to 1 to color faces by the
                                per-face color.
 
@@ -422,8 +439,7 @@ class ConvexPolyhedron(Geometry):
         R""" Get the extents of the geometry
 
         Returns:
-            [[minimum x, minimum y, minimum z],
-             [maximum x, maximum y, maximum z]]
+            [[minimum x, minimum y, minimum z],[maximum x, maximum y, maximum z]]
         """
         pos = self.position[:];
         r = self._radius;

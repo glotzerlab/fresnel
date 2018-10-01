@@ -19,12 +19,19 @@ class Camera(object):
 
         * :py:func:`orthographic`
 
+    .. seealso::
+        :doc:`examples/004-Scene-properties`
+            Tutorial: Setting scene properties
+
+        TODO:
+            More advanced camera tutorials (when more advance camera functions are available)
+
     The camera is a property of the :py:class:`Scene <fresnel.Scene>`. You may read and modify any of these camera attributes.
 
     Attributes:
-        position (tuple): the position of the camera (the center of projection).
-        look_at (tuple): the point the camera looks at (the center of the focal plane).
-        up (tuple): a vector pointing up.
+        position (tuple[float]): the position of the camera (the center of projection).
+        look_at (tuple[float]): the point the camera looks at (the center of the focal plane).
+        up (tuple[float]): a vector pointing up.
         height: the height of the image plane.
 
     :py:class:`Camera <fresnel.camera.Camera>` space is a coordinate system centered on the camera's position.
@@ -32,6 +39,7 @@ class Camera(object):
     :py:class:`Camera <fresnel.camera.Camera>` space shares units with :py:class:`Scene <fresnel.Scene>` space.
 
     TODO: Move description of spaces to an overview page and create figures.
+    TODO: Use numpy arrays for camera vectors?
     """
     def __init__(self, _camera=None):
         if _camera is None:
@@ -87,10 +95,10 @@ def orthographic(position, look_at, up, height):
     R""" Orthographic camera
 
     Args:
-        position (tuple): the position of the camera.
-        look_at (tuple): the point the camera looks at (the center of the focal plane).
-        up (tuple): a vector pointing up.
-        height: the height of the image plane.
+        position (numpy.ndarray or list[float]): (``3`` : ``float32``) - the position of the camera.
+        look_at (numpy.ndarray or list[float]): (``3`` : ``float32``) - the point the camera looks at (the center of the focal plane).
+        up (numpy.ndarray or list[float]): (``3`` : ``float32``) - a vector pointing up.
+        height (float): the height of the image plane.
 
     An orthographic camera traces parallel rays from the image plane into the scene. Lines that are parallel in
     the :py:class:`Scene <fresnel.Scene>` will remain parallel in the rendered image.

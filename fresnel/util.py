@@ -2,7 +2,7 @@
 # This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 R"""
-Utility classes and methods.
+Utilities.
 """
 
 import numpy
@@ -15,21 +15,23 @@ except ImportError:
     PIL_Image = None;
 
 class array(object):
-    R""" Map internal fresnel buffers as numpy arrays.
+    R""" Map internal fresnel buffers as :py:class:`numpy.ndarray` objects.
 
     :py:class:`fresnel.util.array` provides a python interface to access internal data of memory buffers stored and
-    managed by fresnel. These buffers may exist on the CPU or GPU depending on the device configuration, so
-    :py:class:`fresnel.util.array` only allows certain operations: read/write of array data, and read-only querying of
-    array properties.
+    managed by fresnel. You can access a :py:class:`fresnel.util.array` as if it were a :py:class:`numpy.ndarray` (with limited
+    operations). Below, *slice* is any type of slice or array indexing mechanic that **numpy** understands.
 
-    You can access a :py:class:`fresnel.util.array` as if it were a numpy array (with limited operations).
+    .. rubric:: Writing
 
-    Write to an array with ``array[slice] = v`` where *v* is a numpy array or anything that numpy can convert to an
-    array. When *v* is a contiguous numpy array of the appropriate data type, the data is copied directly from *v*
-    into the internal buffer.
+    Write to an array with ``array[slice] = v`` where *v* is :py:class:`numpy.ndarray`, :any:`list`, or
+    scalar value to broadcast. When *v* is a contiguous :py:class:`numpy.ndarray` of the same data type, the data is
+    copied directly from *v* into the internal buffer. Otherwise, it is converted to a :py:class:`numpy.ndarray`
+    before copying.
 
-    Read from an array with ``v = array[slice]``. This returns a **copy** of the data as a numpy array because the
-    array references internal data structures in fresnel that may exist on the GPU.
+    .. rubric:: Reading
+
+    Read from an array with ``v = array[slice]``. This returns a **copy** of the data as a :py:class:`numpy.ndarray`
+    each time it is called.
 
     Attributes:
 
@@ -74,12 +76,13 @@ class array(object):
         return a.dtype;
 
 class image_array(array):
-    R""" Map internal fresnel image buffers as numpy arrays.
+    R""" Map internal image buffers as :py:class:`numpy.ndarray` objects.
 
     Inherits from :py:class:`array` and provides all of its functionality, plus some additional convenience methods
-    specific to working with images. Images are represented as WxHx4 numpy arrays of unsigned chars in RGBA format.
+    specific to working with images. Images are represented as ``WxHx4`` :py:class:`numpy.ndarray` of ``uint8`` values
+    in **RGBA** format.
 
-    Specifically, when a :py:class:`image_array` is the result of an image in a Jupyter notebook cell, Jupyter will
+    When a :py:class:`image_array` is the result of an image in a Jupyter notebook cell, Jupyter will
     display the image.
     """
 
@@ -101,7 +104,7 @@ def convex_polyhedron_from_vertices(vertices):
     R""" Convert convex polyhedron vertices to data structures that fresnel can draw.
 
     Args:
-        vertices (numpy.ndarray or list[float]): The vertices of the polyhedron (Nx3, float64).
+        vertices (numpy.ndarray or list[float]): (``Nx3`` : ``float64``) - The vertices of the polyhedron.
 
     Returns:
         A dict containing the information used to draw the polyhedron. The dict
@@ -123,11 +126,3 @@ def convex_polyhedron_from_vertices(vertices):
     from fresnel._common import find_polyhedron_faces
     # sanity checks on the shape of things here?
     return find_polyhedron_faces(vertices)
-
-
-def _get_r_circ(vertices):
-    """Estimate circumsphere radius based on vertices of a polyhedron
-    """
-    vertices = numpy.array(vertices)
-    radii = numpy.sqrt(numpy.sum(vertices**2, axis=1))
-    return numpy.amax(radii)

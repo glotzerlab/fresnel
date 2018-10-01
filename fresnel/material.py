@@ -10,20 +10,28 @@ from fresnel import _common
 class Material(object):
     R"""Define material properties.
 
+    Materials control how light interacts with the geometry.
+
     Args:
 
         solid (float): Set to 1 to pass through a solid color, regardless of the light and view angle.
-        color (tuple): The linear RGB color of the material as a 3-tuple, list or other iterable.
+        color (tuple[float] or list[float]): Linear RGB color of the material.
         primitive_color_mix (float): Set to 1 to use the color provided in the Geometry, 0 to use the color
           specified in the material, or a value in the range [0,1] to mix the two colors.
-        roughness (float): Roughness of the material. Nominally in the range [0,1], though 0.1 is a realistic minimum.
+        roughness (float): Roughness of the material. Nominally in the range [0.1,1].
         specular (float): Control the strength of the specular highlights. Nominally in the range [0,1].
         spec_trans (float): Control the amount of specular light transmission. In the range [0,1].
         metal (float): Set to 0 for dielectric material, or 1 for metal. Intermediate values interpolate between
                        the two.
 
-    Colors are in the linearized sRGB color space. Use :py:func:`fresnel.color.linear` to convert standard sRGB colors
-    into this space.
+    .. seealso::
+        :doc:`examples/002-Material-properties`
+            Tutorial: Modifying material properties.
+
+
+    Note:
+        Colors are in the linearized color space. Use :py:func:`fresnel.color.linear` to convert standard sRGB colors
+        into this space.
     """
 
     def __init__(self, solid=0, color=(0,0,0), primitive_color_mix=0, roughness=0.3, specular=0.5, spec_trans=0, metal=0):

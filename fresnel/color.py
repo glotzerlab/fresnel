@@ -10,20 +10,21 @@ import numpy
 def linear(color):
     R""" Convert a sRGB color (or array of such colors) from the gamma corrected color space into the linear space.
 
-    Standard tools for working with RGB colors provide gamma corrected values. fresnel needs to perform calculations
-    in a linear color space. This method converts a sRGB into that linear space. Use :py:func:`linear` when specifying
-    material or particle colors with sRGB inputs.
+    Standard tools for working with sRGB colors provide gamma corrected values. fresnel needs to perform calculations
+    in a linear color space. This method converts from sRGB to the linear space. Use :py:func:`linear` when specifying
+    material or particle colors with sRGB inputs (such as you find in a color picker).
 
-    :py:func:`linear` accepts RGBA input (such as from matplotlib's to_rgba colormap method), but ignores the alpha
-    channel and outputs an Nx3 array.
+    :py:func:`linear` accepts ``RGBA`` input (such as from matplotlib's to_rgba colormap method), but ignores the alpha
+    channel and outputs an ``Nx3`` array.
 
     Args:
 
-        color (tuple): 3-length (or Nx3, or Nx4) list, or other object convertible to a numpy array (in the range 0-1).
+        color (numpy.ndarray or list[float]): (``3``, ``Nx3``, or ``Nx4`` : ``float32``) - ``RGB`` or ``RGBA``
+            color in the range [0,1].
 
     Returns:
 
-        A numpy array with the linearized color.
+        :py:class:`numpy.ndarray` with the linearized color(s).
     """
 
     c = numpy.ascontiguousarray(color);

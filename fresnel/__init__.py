@@ -6,7 +6,6 @@ The fresnel ray tracing package.
 
 Attributes:
     __version__ (str): Fresnel version
-
 """
 
 import os
@@ -38,6 +37,13 @@ class Device(object):
     :py:class:`Device` defines hardware device to use for ray tracing. :py:class:`Scene` and
     :py:mod:`tracer <fresnel.tracer>` instances must be attached to a :py:class:`Device`. You may attach any number of
     scenes and tracers to a single :py:class:`Device`.
+
+    .. seealso::
+        :doc:`examples/201-Devices`
+            Tutorial: Using devices.
+
+        :doc:`examples/202-Tracer-methods`
+            Tutorial: Using tracers with devices.
 
     When mode is `auto`, the default, :py:class:`Device` GPU rendering and
     fall back on CPU rendering if there is no GPU available or GPU support was not compiled in. Set mode to
@@ -139,7 +145,7 @@ if _common.gpu_built():
         Device.available_gpus = gpus_list[:-1]
 
 class Scene(object):
-    R""" Content of the scene to ray trace.
+    R"""Content of the scene to ray trace.
 
     Args:
 
@@ -152,6 +158,19 @@ class Scene(object):
 
     Every :py:class:`Scene` attaches to a :py:class:`Device`. For convenience, :py:class:`Scene` creates a default
     :py:class:`Device` when **device** is *None*. If you want a non-default device, you must create it explicitly.
+
+    .. seealso::
+        :doc:`examples/000-Introduction`
+            Tutorial: Introduction to scenes
+
+        :doc:`examples/004-Scene-properties`
+            Tutorial: Setting scene properties.
+
+        :doc:`examples/005-Lighting-setups`
+            Tutorial: Using lighting setups with scenes.
+
+        :doc:`examples/201-Devices`
+            Tutorial: Using devices.
 
     .. rubric:: Lights
 
@@ -191,7 +210,7 @@ class Scene(object):
                                          linearized color space. Use :py:func:`fresnel.color.linear` to convert standard
                                          sRGB colors
         background_alpha (float): Background alpha (opacity).
-        lights (list of `light.Light`): Globals lights in the scene.
+        lights (list[light.Light]): Globals lights in the scene.
     """
 
     def __init__(self, device=None, camera='auto', lights=light.rembrandt()):
@@ -209,8 +228,7 @@ class Scene(object):
         R""" Get the extents of the scene
 
         Returns:
-            [[minimum x, minimum y, minimum z],
-             [maximum x, maximum y, maximum z]]
+            [[minimum x, minimum y, minimum z], [maximum x, maximum y, maximum z]]
         """
         if len(self.geometry) == 0:
             return numpy.array([[0,0,0],[0,0,0]], dtype=numpy.float32);

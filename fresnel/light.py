@@ -2,8 +2,18 @@
 # This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 R"""
-Lights.
+Lights provide light to a :py:class:`fresnel.Scene`.
 
+Without lights, nothing will be visible in the scene. Fresnel provides a number of quality lighting setups for your use,
+and you can always define custom lights.
+
+.. seealso::
+
+    :doc:`examples/004-Scene-properties`
+        Tutorial: Setting scene properties.
+
+    :doc:`examples/005-Lighting-setups`
+        Tutorial: Using lighting setups with scenes.
 """
 
 from __future__ import division
@@ -18,13 +28,13 @@ class Light(object):
 
     Args:
 
-        direction: A 3-tuple that defines the direction the light points in camera space.
-        color:  A 3-tuple that defines the color and intensity of the light as a linear sRGB value (see :py:func:`fresnel.color.linear`)
-        theta (float): Half angle of the cone that defines the area of the light (in radians)
+        direction (tuple[float] or list[float]): Vector direction the light points (*in camera space*).
+        color (tuple[float] or list[float]):  Linear RGB color and intensity of the light.
+        theta (float): Half angle of the cone that defines the area of the light (*radians*).
 
     The direction vector may have any non-zero length, but only the direction the vector points matters.
 
-    The color also sets the light intensity. A (0.5, 0.5, 0.5) light is twice as bright as (0.25, 0.25, 0.25).
+    The color also sets the light intensity. A ``(0.5, 0.5, 0.5)`` light is twice as bright as ``(0.25, 0.25, 0.25)``.
     """
 
     def __init__(self, direction, color=(1,1,1), theta=0.375):
