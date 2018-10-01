@@ -137,32 +137,6 @@ def cube_verts():
     return numpy.array([x for x in itertools.product(pms, repeat=3)])
 
 
-@pytest.fixture(scope='function')
-def regular_dodecahedron_verts():
-    phi = (1 + numpy.sqrt(5)) / 2
-    vertices = numpy.array([[1, 1, 1],
-                        [1, 1, -1],
-                        [1, -1, 1],
-                       [-1, 1, 1],
-                       [1, -1, -1],
-                       [-1, 1, -1],
-                       [-1, -1, 1],
-                       [-1, -1, -1],
-                       [0, phi, 1/phi],
-                       [0, -phi, 1/phi],
-                       [0, phi, -1/phi],
-                       [0, -phi, -1/phi],
-                       [1/phi, 0, phi],
-                       [1/phi, 0, -phi],
-                       [-1/phi, 0, phi],
-                       [-1/phi, 0, -phi],
-                       [phi, 1/phi, 0],
-                       [phi, -1/phi, 0],
-                       [-phi, 1/phi, 0],
-                       [-phi, -1/phi, 0]])
-    return vertices
-
-
 def assert_image_approx_equal(a, ref_file, tolerance=1.0):
     im = PIL.Image.open(ref_file)
     im_arr = numpy.fromstring(im.tobytes(), dtype=numpy.uint8)
