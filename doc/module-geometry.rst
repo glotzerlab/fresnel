@@ -7,8 +7,8 @@ fresnel.geometry
     :nosignatures:
 
     fresnel.geometry.Geometry
-    fresnel.geometry.Cylinder
     fresnel.geometry.ConvexPolyhedron
+    fresnel.geometry.Cylinder
     fresnel.geometry.Sphere
 
 .. rubric:: Details
