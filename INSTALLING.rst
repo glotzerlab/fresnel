@@ -1,7 +1,8 @@
 Installation
 ============
 
-**Fresnel** binary images are available on `Docker Hub <https://hub.docker.com/>`_ and packages on
+**Fresnel** binaries are available in the `glotzerlab-software <https://glotzerlab-software.readthedocs.io>`_
+`Docker <https://hub.docker.com/>`_/`Singularity <https://www.sylabs.io/>`_ images and in packages on
 `conda-forge <https://conda-forge.org/>`_. You can also compile **fresnel** from source.
 
 Anaconda package
@@ -29,25 +30,29 @@ You can update **fresnel** with:
 
    $ conda update fresnel
 
+.. note::
+
+    The **fresnel** package on ``conda-forge`` does not include GPU support.
+
 Docker images
 -------------
 
-Pull the docker image `glotzerlab/software <https://hub.docker.com/r/glotzerlab/software/>`_ to get **fresnel**
-along with many other tools commonly used in simulation and analysis workflows. See full usage information on the
-`glotzerlab/software docker hub page <https://hub.docker.com/r/glotzerlab/software/>`_.
+Pull the `glotzerlab-software <https://glotzerlab-software.readthedocs.io>`_ image to get
+**fresnel** along with many other tools commonly used in simulation and analysis workflows. See full usage information in the
+`glotzerlab-software documentation <https://glotzerlab-software.readthedocs.io>`_.
 
 Singularity:
 
 .. code-block:: bash
 
-   $ umask 002
-   $ singularity pull docker://glotzerlab/software
+   $ singularity pull shub://glotzerlab/software
 
 Docker:
 
 .. code-block:: bash
 
    $ docker pull glotzerlab/software
+
 
 Compile from source
 -------------------
