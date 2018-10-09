@@ -46,4 +46,51 @@ set(PYTHON_MODULE_BASE_DIR fresnel)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extern/pybind11/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extern/random123/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extern/random123/examples)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src)
+
+#############################################################################################
+### Qhull compilation
+
+set(
+    libqhullr_SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhull_r/global_r.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhull_r/stat_r.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhull_r/geom2_r.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhull_r/poly2_r.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhull_r/merge_r.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhull_r/libqhull_r.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhull_r/geom_r.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhull_r/poly_r.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhull_r/qset_r.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhull_r/mem_r.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhull_r/random_r.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhull_r/usermem_r.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhull_r/io_r.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhull_r/user_r.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhull_r/rboxlib_r.c
+)
+
+set(
+    libqhullcpp_SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhullcpp/Coordinates.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhullcpp/PointCoordinates.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhullcpp/Qhull.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhullcpp/QhullFacet.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhullcpp/QhullFacetList.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhullcpp/QhullFacetSet.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhullcpp/QhullHyperplane.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhullcpp/QhullPoint.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhullcpp/QhullPointSet.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhullcpp/QhullPoints.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhullcpp/QhullQh.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhullcpp/QhullRidge.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhullcpp/QhullSet.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhullcpp/QhullStat.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhullcpp/QhullVertex.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhullcpp/QhullVertexSet.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhullcpp/RboxPoints.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhullcpp/RoadError.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/extern/qhull/src/libqhullcpp/RoadLogEvent.cpp
+)
+
 add_subdirectory(fresnel)

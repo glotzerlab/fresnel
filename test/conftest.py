@@ -2,6 +2,7 @@ from __future__ import division
 
 import pytest
 import fresnel
+import itertools
 import math
 import PIL
 import numpy
@@ -115,12 +116,9 @@ def scene_eight_polyhedra(device):
                 origins.append([x*0.75, y*0.75, z*0.75])
                 colors.append([166/255,206/255,227/255])
 
-    geometry = fresnel.geometry.ConvexPolyhedron(scene,
-                                                 origins=origins,
-                                                 normals=normals,
-                                                 face_colors = fresnel.color.linear(colors),
-                                                 r=math.sqrt(3),
-                                                 position=position)
+    poly_info = {'face_normal': normals, 'face_origin': origins, 'radius': math.sqrt(3),
+            'face_color': fresnel.color.linear(colors)}
+    geometry = fresnel.geometry.ConvexPolyhedron(scene, poly_info, position=position)
 
     geometry.material = fresnel.material.Material(color=fresnel.color.linear([1.0,0, 0]),
                                                  roughness=0.8,
@@ -131,6 +129,13 @@ def scene_eight_polyhedra(device):
     scene.camera = fresnel.camera.orthographic(position=(20, 20, 20), look_at=(0,0,0), up=(0,1,0), height=7)
 
     return scene
+
+
+@pytest.fixture(scope='function')
+def cube_verts():
+    pms = [+1, -1]
+    return numpy.array([x for x in itertools.product(pms, repeat=3)])
+
 
 def assert_image_approx_equal(a, ref_file, tolerance=1.0):
     im = PIL.Image.open(ref_file)
