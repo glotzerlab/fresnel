@@ -382,7 +382,7 @@ class Mesh(Geometry):
         for assigning the attribute after construction.
 
     Colors are in the linearized sRGB color space. Use :py:func:`fresnel.color.linear` to convert standard sRGB colors
-    into this space. :py:clas:`fresnel.geometry.mesh` determines the color of a triangle using interpolation
+    into this space. :py:class:`fresnel.geometry.mesh` determines the color of a triangle using interpolation
     with the barycentric coordinates in every triangular face.
 
     .. hint::
