@@ -397,22 +397,30 @@ class Mesh(Geometry):
 
     def __init__(self,
                  scene,
-                 points=None,
+                 vertices,
+                 triangles,
+                 position=None,
+                 orientation=None,
                  color=None,
                  N=None,
                  material=material.Material(solid=1.0, color=(1,0,1)),
                  outline_material=material.Material(solid=1.0, color=(0,0,0)),
                  outline_width=0.0):
         if N is None:
-            N = len(points);
+            N = len(position);
 
-        self._geometry = scene.device.module.GeometryMesh(scene._scene, N);
+        self.vertices = numpy.asarray(vertices,dtype=numpy.float32)
+        self.triangles = numpy.asarray(triangles,dtype=numpy.uint)
+        self._geometry = scene.device.module.GeometryMesh(scene._scene, self.vertices, self.triangles, N);
         self.material = material;
         self.outline_material = outline_material;
         self.outline_width = outline_width;
 
-        if points is not None:
-            self.points[:] = points;
+        if position is not None:
+            self.position[:] = position;
+
+        if orientation is not None:
+            self.orientation[:] = orientation;
 
         if color is not None:
             self.color[:] = color;
@@ -421,8 +429,12 @@ class Mesh(Geometry):
         self.scene.geometry.append(self);
 
     @property
-    def points(self):
-        return util.array(self._geometry.getPointsBuffer(), geom=self)
+    def position(self):
+        return util.array(self._geometry.getPositionBuffer(), geom=self)
+
+    @property
+    def orientation(self):
+        return util.array(self._geometry.getOrientationBuffer(), geom=self)
 
     @property
     def color(self):
@@ -435,13 +447,13 @@ class Mesh(Geometry):
             [[minimum x, minimum y, minimum z],
              [maximum x, maximum y, maximum z]]
         """
-        a = self.points[:,0];
-        b = self.points[:,1];
-        c = self.points[:,2];
-        res = numpy.array([numpy.min([numpy.min(a, axis=0), numpy.min(b, axis=0), numpy.min(c, axis=0)], axis=0),
-                           numpy.max([numpy.max(a, axis=0), numpy.max(b, axis=0), numpy.max(c, axis=0)], axis=0)])
+        r = numpy.max(numpy.linalg.norm(self.vertices,axis=1)).reshape(-1,1)
+        pos = self.position[:];
+        res = numpy.array([numpy.min(pos - r, axis=0),
+                           numpy.max(pos + r, axis=0)])
         return res;
 
+#--------------------------------------------------------------
 
 class ConvexPolyhedron(Geometry):
     R""" Convex polyhedron geometry.
@@ -530,11 +542,11 @@ class ConvexPolyhedron(Geometry):
 
     @property
     def position(self):
-        return util.array(self._geometry.getPointsBuffer(), geom=self)
+        return util.array(self._geometry.getPositionBuffer(), geom=self)
 
     @property
     def orientation(self):
-        return util.array(self._geometry.getRadiusBuffer(), geom=self)
+        return util.array(self._geometry.getOrientationBuffer(), geom=self)
 
     @property
     def color(self):

@@ -72,7 +72,7 @@ void GeometryCylinder::bounds(const struct RTCBoundsFunctionArguments *args)
 
 /*! Compute the intersection of a ray with the given primitive
 
-    \param args Arguments to the intersect check
+    \param args Arguments to the bounds check
 */
 void GeometryCylinder::intersect(const struct RTCIntersectFunctionNArguments *args)
    {

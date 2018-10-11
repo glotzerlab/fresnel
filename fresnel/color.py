@@ -30,7 +30,6 @@ def linear(color):
         :py:class:`numpy.ndarray` with the linearized color(s), same shape as ``color``.
     """
 
-
     c = numpy.ascontiguousarray(color);
     if c.shape == (3,):
         out = numpy.zeros(3, dtype=numpy.float32)
