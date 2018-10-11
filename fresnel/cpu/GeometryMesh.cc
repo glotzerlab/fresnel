@@ -4,6 +4,8 @@
 #include <stdexcept>
 
 #include "GeometryMesh.h"
+#include "common/IntersectTriangle.h"
+
 
 namespace fresnel { namespace cpu {
 
@@ -15,14 +17,12 @@ namespace fresnel { namespace cpu {
 */
 GeometryMesh::GeometryMesh(std::shared_ptr<Scene> scene,
                              pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast> vertices,
-                             pybind11::array_t<unsigned int, pybind11::array::c_style | pybind11::array::forcecast> triangles,
                              unsigned int N)
     : Geometry(scene)
     {
     // allocate buffer data
     m_position = std::shared_ptr< Array< vec3<float> > >(new Array< vec3<float> >(N));
     m_orientation = std::shared_ptr< Array< quat<float>  > >(new Array< quat<float> >(N));
-    m_color = std::shared_ptr< Array< RGB<float> > >(new Array< RGB<float> >(N));
 
     // now create planes for each of the polygon edges
     pybind11::buffer_info info_vertices = vertices.request();
@@ -33,18 +33,13 @@ GeometryMesh::GeometryMesh(std::shared_ptr<Scene> scene,
     if (info_vertices.shape[1] != 3)
         throw std::runtime_error("vertices must be a Nvert by 3 array");
 
-    pybind11::buffer_info info_faces = triangles.request();
-    if (info_faces.ndim != 2)
-        throw std::runtime_error("faces must be a 2-dimensional array");
+    if (info_vertices.shape[0] % 3 != 0)
+        throw std::runtime_error("the number of triangle vertices must be a multiple of three.");
 
-    if (info_faces.shape[1] != 3)
-        throw std::runtime_error("faces must be a Nvert by 3 array");
-
-    unsigned int n_faces = info_faces.shape[0];
+    unsigned int n_faces = info_vertices.shape[0] / 3;
     unsigned int n_verts = info_vertices.shape[0];
 
     float *verts_f = (float *)info_vertices.ptr;
-    unsigned int *faces_f = (unsigned int *)info_faces.ptr;
 
     m_radius.resize(n_faces,0.0);
     m_face_origin.resize(n_faces);
@@ -52,9 +47,9 @@ GeometryMesh::GeometryMesh(std::shared_ptr<Scene> scene,
     for (unsigned int i = 0; i < n_faces; i++)
         {
         // construct the normal and origin of each plane
-        unsigned int t1 = faces_f[3*i];
-        unsigned int t2 = faces_f[3*i+1];
-        unsigned int t3 = faces_f[3*i+2];
+        unsigned int t1 = 3*i;
+        unsigned int t2 = 3*i+1;
+        unsigned int t3 = 3*i+2;
 
         if (t1 >= n_verts || t2 >= n_verts || t3 >= n_verts)
             throw std::runtime_error("face indices out of bounds");
@@ -69,10 +64,9 @@ GeometryMesh::GeometryMesh(std::shared_ptr<Scene> scene,
 
         vec3<float> n = cross(a,b);
 
-        // validate winding order
-        if (dot(n,cross(b, c)) <= 0)
+        if (dot(n,cross(b, c)) == 0.0)
             {
-            throw std::invalid_argument("triangles vertices must not be colinear");
+//            throw std::invalid_argument("triangles vertices must not be colinear");
             }
 
         n = n / sqrtf(dot(n,n));
@@ -99,8 +93,14 @@ GeometryMesh::GeometryMesh(std::shared_ptr<Scene> scene,
         m_radius[i] = sqrtf(rsq);
         }
 
+    m_color = std::shared_ptr< Array< RGB<float> > >(new Array< RGB<float> >(n_verts));
+
     // create the geometry
-    m_geom_id = rtcNewUserGeometry(m_scene->getRTCScene(), N*n_faces);
+    m_geometry = rtcNewGeometry(m_device->getRTCDevice(), RTC_GEOMETRY_TYPE_USER);
+    m_device->checkError();
+    rtcSetGeometryUserPrimitiveCount(m_geometry,N*n_faces);
+    m_device->checkError();
+    m_geom_id = rtcAttachGeometry(m_scene->getRTCScene(), m_geometry);
     m_device->checkError();
 
     // set default material
@@ -108,13 +108,14 @@ GeometryMesh::GeometryMesh(std::shared_ptr<Scene> scene,
     setOutlineMaterial(Material(RGB<float>(0,0,0), 1.0f));
 
     // register functions for embree
-    rtcSetUserData(m_scene->getRTCScene(), m_geom_id, this);
+    rtcSetGeometryUserData(m_geometry, this);
     m_device->checkError();
-    rtcSetBoundsFunction(m_scene->getRTCScene(), m_geom_id, &GeometryMesh::bounds);
+    rtcSetGeometryBoundsFunction(m_geometry, &GeometryMesh::bounds, NULL);
     m_device->checkError();
-    rtcSetIntersectFunction(m_scene->getRTCScene(), m_geom_id, &GeometryMesh::intersect);
+    rtcSetGeometryIntersectFunction(m_geometry, &GeometryMesh::intersect);
     m_device->checkError();
-    rtcSetOccludedFunction(m_scene->getRTCScene(), m_geom_id, &GeometryMesh::occlude);
+
+    rtcCommitGeometry(m_geometry);
     m_device->checkError();
 
     m_valid = true;
@@ -126,13 +127,13 @@ GeometryMesh::~GeometryMesh()
 
 /*! Compute the bounding box of a given primitive
 
-    \param ptr Pointer to a GeometryMesh instance
-    \param item Index of the primitive to compute the bounding box of
-    \param bounds_o Output bounding box
+    \param args Arguments to the bounds check
 */
-void GeometryMesh::bounds(void *ptr, size_t item, RTCBounds& bounds_o)
+void GeometryMesh::bounds(const struct RTCBoundsFunctionArguments *args)
     {
-    GeometryMesh *geom = (GeometryMesh*)ptr;
+    GeometryMesh *geom = (GeometryMesh*)args->geometryUserPtr;
+
+    unsigned int item = args->primID;
     unsigned int n_faces = geom->m_radius.size();
     unsigned int i_poly = item / n_faces;
     unsigned int i_face = item % n_faces;
@@ -145,6 +146,7 @@ void GeometryMesh::bounds(void *ptr, size_t item, RTCBounds& bounds_o)
     vec3<float> r_t = p3 + rotate(q,o);
     float r = geom->m_radius[i_face];
 
+    RTCBounds& bounds_o = *args->bounds_o;
     bounds_o.lower_x = r_t.x - r;
     bounds_o.lower_y = r_t.y - r;
     bounds_o.lower_z = r_t.z - r;
@@ -154,89 +156,55 @@ void GeometryMesh::bounds(void *ptr, size_t item, RTCBounds& bounds_o)
     bounds_o.upper_z = r_t.z + r;
     }
 
-// From Real-time Collision Detection (Christer Ericson)
-// Given ray pq and triangle abc, returns whether segment intersects
-// triangle and if so, also returns the barycentric coordinates (u,v,w)
-// of the intersection point
-// Note: the triangle is assumed to be oriented counter-clockwise when viewed from the direction of p
-inline bool IntersectRayTriangle(const vec3<float>& p, const vec3<float>& q,
-     const vec3<float>& a, const vec3<float>& b, const vec3<float>& c,
-    float &u, float &v, float &w, float &t)
-    {
-    vec3<float> ab = b - a;
-    vec3<float> ac = c - a;
-    vec3<float> qp = p - q;
-
-    // Compute triangle normal. Can be precalculated or cached if
-    // intersecting multiple segments against the same triangle
-    vec3<float> n = cross(ab, ac);
-
-    // Compute denominator d. If d <= 0, segment is parallel to or points
-    // away from triangle, so exit early
-    float d = dot(qp, n);
-    if (d <= float(0.0)) return false;
-
-    // Compute intersection t value of pq with plane of triangle. A ray
-    // intersects iff 0 <= t. Segment intersects iff 0 <= t <= 1. Delay
-    // dividing by d until intersection has been found to pierce triangle
-    vec3<float> ap = p - a;
-    t = dot(ap, n);
-    if (t < float(0.0)) return false;
-//    if (t > d) return false; // For segment; exclude this code line for a ray test
-
-    // Compute barycentric coordinate components and test if within bounds
-    vec3<float> e = cross(qp, ap);
-    v = dot(ac, e);
-    if (v < float(0.0) || v > d) return false;
-    w = -dot(ab, e);
-    if (w < float(0.0) || v + w > d) return false;
-
-    // Segment/ray intersects triangle. Perform delayed division and
-    // compute the last barycentric coordinate component
-    float ood = float(1.0) / d;
-    t *= ood;
-    v *= ood;
-    w *= ood;
-    u = float(1.0) - v - w;
-    return true;
-    }
-
 /*! Compute the intersection of a ray with the given primitive
-
-    \param ptr Pointer to a GeometryMesh instance
-    \param ray The ray to intersect
-    \param item Index of the primitive to compute the bounding box of
+   \param args Arguments to the intersect check
 */
-void GeometryMesh::intersect(void *ptr, RTCRay& ray, size_t item)
+void GeometryMesh::intersect(const struct RTCIntersectFunctionNArguments *args)
     {
-    GeometryMesh *geom = (GeometryMesh*)ptr;
+    GeometryMesh *geom = (GeometryMesh*)args->geometryUserPtr;
 
+    unsigned int item = args->primID;
     unsigned int n_faces = geom->m_radius.size();
     unsigned int i_poly = item / n_faces;
     unsigned int i_face = item % n_faces;
+
+    RTCRayHit& rayhit = *(RTCRayHit *)args->rayhit;
+    RTCRay& ray = rayhit.ray;
 
     const vec3<float> p3 = geom->m_position->get(i_poly);
     const quat<float> q_world = geom->m_orientation->get(i_poly);
 
     // transform the ray into the primitive coordinate system
-    vec3<float> ray_dir_local = rotate(conj(q_world), ray.dir);
-    vec3<float> ray_org_local = rotate(conj(q_world), ray.org - p3);
+    vec3<float> ray_dir_local = rotate(conj(q_world), vec3<float>(ray.dir_x,ray.dir_y,ray.dir_z));
+    vec3<float> ray_org_local = rotate(conj(q_world), vec3<float>(ray.org_x,ray.org_y,ray.org_z) - p3);
 
     vec3<float> v0 = geom->m_vertices[i_face*3];
     vec3<float> v1 = geom->m_vertices[i_face*3+1];
     vec3<float> v2 = geom->m_vertices[i_face*3+2];
     float u,v,w,t;
-    if (!IntersectRayTriangle(ray_org_local, ray_org_local+ray_dir_local, v0, v1, v2, u,v,w,t))
+    if (!intersect_ray_triangle(ray_org_local, ray_org_local+ray_dir_local, v0, v1, v2, u,v,w,t))
         return;
 
     // if the t is in (tnear,tfar), we hit the entry plane
     if ((ray.tnear < t) & (t < ray.tfar))
         {
+        rayhit.hit.u = 0.0f;
+        rayhit.hit.v = 0.0f;
         ray.tfar = t;
-        ray.geomID = geom->m_geom_id;
-        ray.primID = item;
-        ray.Ng = rotate(q_world, geom->m_face_normal[i_face]);
-        ray.shading_color = geom->m_color->get(i_poly);
+        rayhit.hit.geomID = geom->m_geom_id;
+        rayhit.hit.primID = item;
+        vec3<float> n = rotate(q_world, geom->m_face_normal[i_face]);
+
+        rayhit.hit.Ng_x = n.x;
+        rayhit.hit.Ng_y = n.y;
+        rayhit.hit.Ng_z = n.z;
+
+        FresnelRTCIntersectContext & context = *(FresnelRTCIntersectContext *)args->context;
+        rayhit.hit.instID[0] = context.context.instID[0];
+
+        context.shading_color = geom->m_color->get(i_face*3 + 0)*u
+            + geom->m_color->get(i_face*3 + 1)*v
+            + geom->m_color->get(i_face*3 + 2)*w;
 
         // determine distance from the hit point to the nearest edge
         vec3<float> edge;
@@ -272,45 +240,10 @@ void GeometryMesh::intersect(void *ptr, RTCRay& ray, size_t item)
         vec3<float> r_hit =  ray_org_local + t * ray_dir_local;
         vec3<float> q = cross(edge, r_hit - pt);
         float dsq = dot(q, q) / dot(edge,edge);
-        ray.d = sqrtf(dsq);
+        context.d = sqrtf(dsq);
         }
     }
 
-
-
-/*! Test if a ray intersects with the given primitive
-
-    \param ptr Pointer to a GeometryMesh instance
-    \param ray The ray to intersect
-    \param item Index of the primitive to compute the bounding box of
-*/
-void GeometryMesh::occlude(void *ptr, RTCRay& ray, size_t item)
-    {
-    // this method is a copy and pasted version of intersect with a different behavior on hit, to
-    // meet Embree API standards. When intersect is updated, it should be copied and pasted back here.
-    GeometryMesh *geom = (GeometryMesh*)ptr;
-
-    unsigned int n_faces = geom->m_radius.size();
-    unsigned int i_poly = item / n_faces;
-    unsigned int i_face = item % n_faces;
-
-    const vec3<float> p3 = geom->m_position->get(i_poly);
-    const quat<float> q_world = geom->m_orientation->get(i_poly);
-    const vec3<float> pos_world = p3 + rotate(q_world, geom->m_face_origin[i_face]);
-
-    // transform the ray into the primitive coordinate system
-    vec3<float> ray_dir_local = rotate(conj(q_world), ray.dir);
-    vec3<float> ray_org_local = rotate(conj(q_world), ray.org - pos_world);
-
-    vec3<float> v0 = geom->m_vertices[i_face*3];
-    vec3<float> v1 = geom->m_vertices[i_face*3+1];
-    vec3<float> v2 = geom->m_vertices[i_face*3+2];
-    float u,v,w,t;
-    if (!IntersectRayTriangle(ray_org_local, ray_org_local+ray_dir_local, v0, v1, v2, u,v,w,t))
-        return;
-
-    if ((ray.tnear < t) & (t < ray.tfar)) ray.geomID = 0;
-    }
 
 /*! \param m Python module to export in
  */
@@ -319,7 +252,6 @@ void export_GeometryMesh(pybind11::module& m)
     pybind11::class_<GeometryMesh, std::shared_ptr<GeometryMesh> >(m, "GeometryMesh", pybind11::base<Geometry>())
         .def(pybind11::init<std::shared_ptr<Scene>,
              pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast>,
-             pybind11::array_t<unsigned int, pybind11::array::c_style | pybind11::array::forcecast>,
              unsigned int>())
         .def("getPositionBuffer", &GeometryMesh::getPositionBuffer)
         .def("getOrientationBuffer", &GeometryMesh::getOrientationBuffer)

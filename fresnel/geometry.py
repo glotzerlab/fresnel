@@ -367,23 +367,23 @@ class Mesh(Geometry):
 
     Args:
         scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
-        vertices: The vertices of the triangles
+        vertices: The vertices of the triangles, in contiguous representation
           **Type:** anything convertible by numpy to a Nvertsx3 array of floats.
-        triangles: The face indices of the triangles in a counter clockwise winding direction.
-          **Type:** anything convertible by numpy to a Nvertsx3 array of ints.
+          [[tri0a_x, tri0a_y, tri0a_z], [tri0b_x, ..], [tri0c_x, ..], [tri1a_x, ..], ..]
+        colors: (r,g,b) color of each vertex, *optional*.
+          **Type:** anything convertible by numpy to a Nx3 array of floats.
         position: Positions of the triangle meshes, *optional*.
           **Type:** anything convertible by numpy to a Nx3 array of floats.
         orientation: Orientation quaternion angle of each triangle mesh, *optional*.
           **Type:** anything convertible by numpy to a Nx4 length array of floats.
-        color: (r,g,b) color of each particle, *optional*.
-          **Type:** anything convertible by numpy to a Nx3 array of floats.
         N (int): Number of triangle meshes in the geometry. If ``None``, determine ``N`` from ``position``.
     Note:
         The constructor arguments ``position``, ``orientation``, and ``color`` are optional, and just short-hand
         for assigning the attribute after construction.
 
     Colors are in the linearized sRGB color space. Use :py:func:`fresnel.color.linear` to convert standard sRGB colors
-    into this space.
+    into this space. :py:clas:`fresnel.geometry.mesh` determines the color of a triangle using interpolation
+    with the barycentric coordinates in every triangular face.
 
     .. hint::
         Avoid costly memory allocations and type conversions by specifying primitive properties in the appropriate
@@ -392,16 +392,15 @@ class Mesh(Geometry):
     Attributes:
         position (:py:class:`fresnel.util.array`): Read or modify the positions of the triangle meshes.
         orientation (:py:class:`fresnel.util.array`): Read or modify the orientations of the triangle meshes.
-        color (:py:class:`fresnel.util.array`): Read or modify the color of the meshes.
+        colors (:py:class:`fresnel.util.array`): Read or modify the color of the meshes.
     """
 
     def __init__(self,
                  scene,
                  vertices,
-                 triangles,
                  position=None,
                  orientation=None,
-                 color=None,
+                 colors=None,
                  N=None,
                  material=material.Material(solid=1.0, color=(1,0,1)),
                  outline_material=material.Material(solid=1.0, color=(0,0,0)),
@@ -410,8 +409,7 @@ class Mesh(Geometry):
             N = len(position);
 
         self.vertices = numpy.asarray(vertices,dtype=numpy.float32)
-        self.triangles = numpy.asarray(triangles,dtype=numpy.uint)
-        self._geometry = scene.device.module.GeometryMesh(scene._scene, self.vertices, self.triangles, N);
+        self._geometry = scene.device.module.GeometryMesh(scene._scene, self.vertices, N);
         self.material = material;
         self.outline_material = outline_material;
         self.outline_width = outline_width;
@@ -422,8 +420,8 @@ class Mesh(Geometry):
         if orientation is not None:
             self.orientation[:] = orientation;
 
-        if color is not None:
-            self.color[:] = color;
+        if colors is not None:
+            self.colors[:] = colors;
 
         self.scene = scene;
         self.scene.geometry.append(self);
@@ -437,7 +435,7 @@ class Mesh(Geometry):
         return util.array(self._geometry.getOrientationBuffer(), geom=self)
 
     @property
-    def color(self):
+    def colors(self):
         return util.array(self._geometry.getColorBuffer(), geom=self)
 
     def get_extents(self):
