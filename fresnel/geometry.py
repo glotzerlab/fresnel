@@ -445,10 +445,15 @@ class Mesh(Geometry):
             [[minimum x, minimum y, minimum z],
              [maximum x, maximum y, maximum z]]
         """
-        r = numpy.max(numpy.linalg.norm(self.vertices,axis=1)).reshape(-1,1)
+        a = self.vertices[:,0];
+        b = self.vertices[:,1];
+        c = self.vertices[:,2];
+        r = numpy.array([numpy.min([numpy.min(a, axis=0), numpy.min(b, axis=0), numpy.min(c, axis=0)], axis=0),
+                           numpy.max([numpy.max(a, axis=0), numpy.max(b, axis=0), numpy.max(c, axis=0)], axis=0)])
+
         pos = self.position[:];
-        res = numpy.array([numpy.min(pos - r, axis=0),
-                           numpy.max(pos + r, axis=0)])
+        res = numpy.array([numpy.min(pos + r[0], axis=0),
+                           numpy.max(pos + r[1], axis=0)])
         return res;
 
 #--------------------------------------------------------------
