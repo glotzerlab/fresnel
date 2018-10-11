@@ -4,7 +4,13 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 ## C++ libraries
 
 # _common
-pybind11_add_module(_common "common/module-common.cc")
+set(_common_sources
+     common/module-common.cc
+     common/ConvexPolyhedronBuilder.cc
+    )
+
+pybind11_add_module(_common ${_common_sources} ${libqhullr_SOURCES} ${libqhullcpp_SOURCES})
+set_source_files_properties(${libqhullr_SOURCES} ${libqhullcpp_SOURCES} PROPERTIES COMPILE_FLAGS -w) # hide compiler warnings for qhull
 install(TARGETS _common LIBRARY DESTINATION ${PYTHON_MODULE_BASE_DIR})
 
 # _cpu

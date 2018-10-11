@@ -19,7 +19,7 @@ pipeline
                         {
                         CC = 'gcc'
                         CXX = 'g++'
-                        CONTAINER = '/nfs/glotzer/containers/ci-optix-2018.06.simg'
+                        CONTAINER = '/nfs/glotzer/containers/ci-optix-2018.09.simg'
                         }
 
                     steps

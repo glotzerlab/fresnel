@@ -2,11 +2,14 @@
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
+
 #include "common/Material.h"
 #include "common/Camera.h"
 #include "common/Light.h"
 #include "common/VectorMath.h"
 #include "common/ColorMath.h"
+#include "common/ConvexPolyhedronBuilder.h"
 
 #include <sstream>
 
@@ -35,6 +38,7 @@ PYBIND11_MODULE(_common, m)
     {
     m.def("gpu_built", &gpu_built);
     m.def("cpu_built", &cpu_built);
+    m.def("find_polyhedron_faces", &find_polyhedron_faces);
 
     pybind11::class_< RGB<float> >(m, "RGBf")
         .def(pybind11::init<float, float, float>())
