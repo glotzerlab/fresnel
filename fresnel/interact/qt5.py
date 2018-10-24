@@ -1,13 +1,28 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget
-from PyQt5.QtGui import QPainter, QColor, QFont, QImage, QPixmap
-from PyQt5.QtCore import Qt, QTimer
+
+# workaround bug in ipython that prevents pyside2 importing
+# https://github.com/jupyter/qtconsole/pull/280
+try:
+    import IPython.external.qt_loaders
+    if type(sys.meta_path[0]) == IPython.external.qt_loaders.ImportDenier:
+        del sys.meta_path[0]
+except:
+    pass
+
+from PySide2 import QtGui
+from PySide2 import QtWidgets
+from PySide2 import QtCore
 import numpy
 import time
 import collections
 import math
 
-import fresnel
+from .. import tracer, camera
+
+# initialize QApplication
+app = QtWidgets.QApplication.instance();
+if app is None:
+    app = QtWidgets.QApplication(['fresnel'])
 
 def q_mult(q1, q2):
     w1, x1, y1, z1 = q1
@@ -38,6 +53,8 @@ def axisangle_to_q(v, theta):
 class CameraController3D:
     def __init__(self, camera):
         self.camera = camera;
+        if type(self.camera) == type('str'):
+            raise RuntimeError("Cannot control an auto camera");
 
     def orbit(self, yaw=0, pitch=0, roll=0, factor=-0.0025, slight=False):
         R""" Rotate the camera position about the look at point
@@ -99,63 +116,146 @@ class CameraController3D:
         # TODO: different types of zoom for perspective cameras
         self.camera.height = self.camera.height * (1 - s*factor)
 
-class SceneView(QWidget):
+class SceneView(QtWidgets.QWidget):
     R""" View a fresnel Scene in real time
-
-    :py:class:`SceneView` is a Qt widget that provides a real time updating view of a fresnel scene.
-
-    Args:
-
-        scene (:py:class:`fresnel.Scene`) Scene to display.
     """
     def __init__(self, scene):
         super().__init__()
+        self.setWindowTitle("fresnel: scene viewer")
+
+        self.setMinimumSize(10,10)
 
         # pick a default camera if one isn't already set
         self.scene = scene
-        if self.scene.camera == 'auto':
-            self.scene.camera = fresnel.camera.fit(scene)
-        self.camera_controller = CameraController3D(self.scene.camera)
+        if type(self.scene.camera) == type('str'):
+            self.scene.camera = camera.fit(self.scene);
 
         # use a ring buffer of recorded times to generate FPS information
         self.times = collections.deque(maxlen=100)
 
         # fire off a timer to repaint the window as often as possible
-        self.repaint_timer = QTimer(self)
+        self.repaint_timer = QtCore.QTimer(self)
         self.repaint_timer.timeout.connect(self.update)
-        self.repaint_timer.start()
 
         # fire off a timer to print fps information every second
-        self.fps_timer = QTimer(self)
+        self.fps_timer = QtCore.QTimer(self)
         self.fps_timer.timeout.connect(self.print_fps)
         self.fps_timer.start(1000)
 
         # initialize a single-shot timer to delay resizing
-        self.resize_timer = QTimer(self)
+        self.resize_timer = QtCore.QTimer(self)
         self.resize_timer.setSingleShot(True)
         self.resize_timer.timeout.connect(self.resize_done)
 
         # initialize the tracer
-        self.tracer = fresnel.tracer.Path(device=scene.device, w=10, h=10)
+        self.tracer = tracer.Path(device=scene.device, w=10, h=10)
+        self.rendering = False
+        self.initial_resize = True
+
+    def _repr_html_(self):
+        self.show();
+        self.raise_();
+        self.activateWindow();
+        return "<p><i>scene view opened in a new window...</i></p>"
+
+    def minimumSizeHint(self):
+        return QtCore.QSize(1610, 1000)
+
+    def setScene(self, scene):
+        self.scene = scene;
+        self.start_rendering()
+
+    def paintEvent(self, event):
+        if self.rendering:
+            # track frame render times for FPS counting
+            self.times.append(time.time())
+
+            # Render the scene
+            self.tracer.render(self.scene)
+
+            self.samples += 1;
+            if self.samples >= 200:
+                self.stop_rendering()
+
+        # Display
+        image_array = self.tracer.output;
+
+        # display the rendered scene in the widget
+        image_array.buf.map();
+        img = QtGui.QImage(image_array.buf,image_array.shape[1],image_array.shape[0],QtGui.QImage.Format_RGBA8888)
+        qp = QtGui.QPainter(self)
+        target = QtCore.QRectF(0, 0, self.width(), self.height());
+        source = QtCore.QRectF(0.0, 0.0, image_array.shape[1], image_array.shape[0]);
+        #qp.drawImage(0,0,img);
+        qp.drawImage(target, img, source);
+        qp.end()
+        image_array.buf.unmap();
+
+    def resizeEvent(self, event):
+        delta = event.size() - event.oldSize();
+        r = max(delta.width() / event.size().width(), delta.height() / event.size().height())
+
+        # for the initial window size, resize immediately
+        if self.initial_resize:
+            self.resize_done()
+            self.initial_resize = False;
+        else:
+            # otherwise, defer resizing the tracer until the window sits still for a bit
+            self.resize_timer.start(300)
+
+    def resize_done(self):
+        # resize the tracer
+        self.tracer.resize(w=self.width(), h=self.height());
+        self.start_rendering()
+
+    def print_fps(self):
+        # print the average FPS to the console
+        # if len(self.times) > 2:
+        #     t1 = self.times[0];
+        #     t2 = self.times[-1];
+        # print(len(self.times) / (t2 - t1), " FPS")
+        pass
+
+    def stop_rendering(self):
+        self.repaint_timer.stop()
+        self.fps_timer.stop()
+        self.rendering = False;
+        print('Stop rendering')
+
+    def start_rendering(self):
+        self.rendering = True;
+        self.samples = 0;
+        self.tracer.reset()
+        self.repaint_timer.start()
+        self.fps_timer.start()
+        print('Start rendering')
+
+class SceneEditor(QtWidgets.QWidget):
+    def __init__(self, scene):
+        super().__init__()
+        self.setWindowTitle("fresnel: scene editor")
+
+        self.scene = scene
+        layout = QtWidgets.QHBoxLayout();
+        self.view = SceneView(scene)
+        layout.addWidget(self.view);
+        self.setLayout(layout)
 
         # flag to notify view rotation
         self.camera_update_mode = None;
         self.mouse_initial_pos = None;
 
-    def paintEvent(self, event):
-        # track frame render times for FPS counting
-        self.times.append(time.time())
+        self.camera_controller = CameraController3D(self.scene.camera)
 
-        # Render the scene
-        self.image_array = self.tracer.render(self.scene)
+    def _repr_html_(self):
+        self.show();
+        self.raise_();
+        self.activateWindow();
+        return "<p><i>scene editor opened in a new window...</i></p>";
 
-        # dispaly the rendered scene in the widget
-        self.image_array.buf.map();
-        img = QImage(self.image_array.buf,self.image_array.shape[1],self.image_array.shape[0],QImage.Format_RGBA8888)
-        qp = QPainter(self)
-        qp.drawImage(0,0,img);
-        qp.end()
-        self.image_array.buf.unmap();
+    def setScene(self, scene):
+        self.camera_controller = CameraController3D(scene.camera)
+        self.view.setScene(scene)
 
     def mouseMoveEvent(self, event):
         delta = event.pos() - self.mouse_initial_pos;
@@ -164,21 +264,21 @@ class SceneView(QWidget):
         if self.camera_update_mode == 'pitch/yaw':
              self.camera_controller.orbit(yaw=delta.x(),
                                           pitch=delta.y(),
-                                          slight=event.modifiers() & Qt.ControlModifier)
+                                          slight=event.modifiers() & QtCore.Qt.ControlModifier)
 
         elif self.camera_update_mode == 'roll':
             self.camera_controller.orbit(roll=delta.x(),
-                                         slight=event.modifiers() & Qt.ControlModifier)
+                                         slight=event.modifiers() & QtCore.Qt.ControlModifier)
 
         elif self.camera_update_mode == 'pan':
             h = self.height()
             self.camera_controller.pan(x=-delta.x()/h,
                                        y=delta.y()/h,
-                                       slight=event.modifiers() & Qt.ControlModifier)
+                                       slight=event.modifiers() & QtCore.Qt.ControlModifier)
 
 
-        self.tracer.reset();
-        self.update();
+        self.view.start_rendering()
+        self.view.update()
         event.accept();
 
 
@@ -186,11 +286,11 @@ class SceneView(QWidget):
         self.mouse_initial_pos = event.pos()
         event.accept();
 
-        if event.button() == Qt.LeftButton:
+        if event.button() == QtCore.Qt.LeftButton:
             self.camera_update_mode = 'pitch/yaw';
-        elif event.button() == Qt.RightButton:
+        elif event.button() == QtCore.Qt.RightButton:
             self.camera_update_mode = 'roll';
-        elif event.button() == Qt.MiddleButton:
+        elif event.button() == QtCore.Qt.MiddleButton:
             self.camera_update_mode = 'pan';
 
     def mouseReleaseEvent(self, event):
@@ -200,22 +300,7 @@ class SceneView(QWidget):
 
     def wheelEvent(self, event):
         self.camera_controller.zoom(event.angleDelta().y(),
-                                    slight=event.modifiers() & Qt.ControlModifier)
-        self.tracer.reset();
+                                    slight=event.modifiers() & QtCore.Qt.ControlModifier)
+        self.view.start_rendering()
         event.accept()
-
-    def resizeEvent(self, event):
-        # defer resizing the tracer until the window sits still for a bit
-        self.resize_timer.start(50)
-
-    def resize_done(self):
-        # resize the tracer
-        self.tracer.resize(w=self.width(), h=self.height());
-        self.update();
-
-    def print_fps(self):
-        # print the average FPS to the console
-        t1 = self.times[0];
-        t2 = self.times[-1];
-        print(len(self.times) / (t2 - t1), " FPS")
 
