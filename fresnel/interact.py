@@ -167,10 +167,8 @@ class SceneView(QtWidgets.QWidget):
 
         The interactive window will open on the system that *hosts* jupyter.
 
-    TODO: Build interactive example notebook
-
     .. seealso::
-        :doc:`examples/000-Introduction`
+        :doc:`examples/301-Interactive-scene-view
             Tutorial: Interactive scene display
 
     """
