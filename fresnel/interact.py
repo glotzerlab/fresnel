@@ -1,3 +1,10 @@
+# Copyright (c) 2016-2018 The Regents of the University of Michigan
+# This file is part of the Fresnel project, released under the BSD 3-Clause License.
+
+R"""
+Interactive Qt widgets.
+"""
+
 import sys
 
 # workaround bug in ipython that prevents pyside2 importing
@@ -17,12 +24,14 @@ import time
 import collections
 import math
 
-from .. import tracer, camera
+from . import tracer, camera
 
 # initialize QApplication
-app = QtWidgets.QApplication.instance();
-if app is None:
-    app = QtWidgets.QApplication(['fresnel'])
+# but not in sphinx
+if 'sphinx' not in sys.modules:
+    app = QtCore.QCoreApplication.instance();
+    if app is None:
+        app = QtWidgets.QApplication(['fresnel'])
 
 def q_mult(q1, q2):
     w1, x1, y1, z1 = q1
@@ -57,11 +66,6 @@ class CameraController3D:
             raise RuntimeError("Cannot control an auto camera");
 
     def orbit(self, yaw=0, pitch=0, roll=0, factor=-0.0025, slight=False):
-        R""" Rotate the camera position about the look at point
-
-            TODO: document me
-        """
-
         if slight:
             factor = factor * 0.1;
 
@@ -82,11 +86,6 @@ class CameraController3D:
         self.camera.up = qv_mult(q, u)
 
     def pan(self, x, y, slight=False):
-        R""" Move both the camera and the lookat point
-
-            TODO: document me
-        """
-
         # TODO: this should be the height at the focal plane
         factor = self.camera.height
 
@@ -118,6 +117,62 @@ class CameraController3D:
 
 class SceneView(QtWidgets.QWidget):
     R""" View a fresnel Scene in real time
+
+    :py:class:`SceneView` is a PySide2 widget that displays a :py:class:`fresnel.Scene`, rendering it with
+    :py:class:`fresnel.tracer.Path` interactively. Use the mouse to rotate the camera view.
+
+    Args:
+
+        scene (:py:class:`Scene <fresnel.Scene>`): The scene to display.
+
+    * Left click to pitch and yaw
+    * Right click to roll
+    * Middle click to pan
+    * Hold ctrl to make small adjustments
+
+    .. rubric:: Using in a standalone script
+
+    To use SceneView in a standalone script, import the :py:mod:`fresnel.interact` module, create your :py:class:`fresnel.Scene`, instantiate the
+    :py:class:`SceneView`, show it, and start the app event loop.
+
+    .. code-block:: python
+
+        import fresnel, fresnel.interact
+        # build Scene
+        view = fresnel.interact.SceneView(scene)
+        view.show()
+        fresnel.interact.app.exec_();
+
+    .. rubric:: Using with jupyter notebooks
+
+    To use SceneView in a jupyter notebook, import PySide2.QtCore and activate jupyter's qt5 integration.
+
+    .. code-block:: python
+
+        from PySide2 import QtCore
+        % gui qt
+
+
+    Import the :py:mod:`fresnel.interact` module, create your :py:class:`fresnel.Scene`, and instantiate the
+    :py:class:`SceneView`. Do not call the app event loop, jupyter is already running the event loop in the background.
+    When the SceneView object is the result of a cell, it will automatically show and activate focus.
+
+    .. code-block:: python
+
+        import fresnel, fresnel.interact
+        # build Scene
+        fresnel.interact.SceneView(scene)
+
+    Note:
+
+        The interactive window will open on the system that *hosts* jupyter.
+
+    TODO: Build interactive example notebook
+
+    .. seealso::
+        :doc:`examples/000-Introduction`
+            Tutorial: Interactive scene display
+
     """
     def __init__(self, scene):
         super().__init__()
@@ -130,17 +185,9 @@ class SceneView(QtWidgets.QWidget):
         if type(self.scene.camera) == type('str'):
             self.scene.camera = camera.fit(self.scene);
 
-        # use a ring buffer of recorded times to generate FPS information
-        self.times = collections.deque(maxlen=100)
-
         # fire off a timer to repaint the window as often as possible
         self.repaint_timer = QtCore.QTimer(self)
         self.repaint_timer.timeout.connect(self.update)
-
-        # fire off a timer to print fps information every second
-        self.fps_timer = QtCore.QTimer(self)
-        self.fps_timer.timeout.connect(self.print_fps)
-        self.fps_timer.start(1000)
 
         # initialize a single-shot timer to delay resizing
         self.resize_timer = QtCore.QTimer(self)
@@ -152,6 +199,12 @@ class SceneView(QtWidgets.QWidget):
         self.rendering = False
         self.initial_resize = True
 
+        # flag to notify view rotation
+        self.camera_update_mode = None;
+        self.mouse_initial_pos = None;
+
+        self.camera_controller = CameraController3D(self.scene.camera)
+
     def _repr_html_(self):
         self.show();
         self.raise_();
@@ -162,19 +215,25 @@ class SceneView(QtWidgets.QWidget):
         return QtCore.QSize(1610, 1000)
 
     def setScene(self, scene):
+        R""" Set a new scene
+
+        Args:
+
+            scene (:py:class:`Scene <fresnel.Scene>`): The scene to render.
+
+        Also call setScene when you make any changes to the scene so that SceneView window will re-render the scene
+        with the changes.
+        """
         self.scene = scene;
         self.start_rendering()
 
     def paintEvent(self, event):
         if self.rendering:
-            # track frame render times for FPS counting
-            self.times.append(time.time())
-
             # Render the scene
             self.tracer.render(self.scene)
 
             self.samples += 1;
-            if self.samples >= 200:
+            if self.samples >= 2000:
                 self.stop_rendering()
 
         # Display
@@ -208,54 +267,16 @@ class SceneView(QtWidgets.QWidget):
         self.tracer.resize(w=self.width(), h=self.height());
         self.start_rendering()
 
-    def print_fps(self):
-        # print the average FPS to the console
-        # if len(self.times) > 2:
-        #     t1 = self.times[0];
-        #     t2 = self.times[-1];
-        # print(len(self.times) / (t2 - t1), " FPS")
-        pass
-
     def stop_rendering(self):
         self.repaint_timer.stop()
-        self.fps_timer.stop()
         self.rendering = False;
-        print('Stop rendering')
 
     def start_rendering(self):
         self.rendering = True;
         self.samples = 0;
         self.tracer.reset()
         self.repaint_timer.start()
-        self.fps_timer.start()
-        print('Start rendering')
 
-class SceneEditor(QtWidgets.QWidget):
-    def __init__(self, scene):
-        super().__init__()
-        self.setWindowTitle("fresnel: scene editor")
-
-        self.scene = scene
-        layout = QtWidgets.QHBoxLayout();
-        self.view = SceneView(scene)
-        layout.addWidget(self.view);
-        self.setLayout(layout)
-
-        # flag to notify view rotation
-        self.camera_update_mode = None;
-        self.mouse_initial_pos = None;
-
-        self.camera_controller = CameraController3D(self.scene.camera)
-
-    def _repr_html_(self):
-        self.show();
-        self.raise_();
-        self.activateWindow();
-        return "<p><i>scene editor opened in a new window...</i></p>";
-
-    def setScene(self, scene):
-        self.camera_controller = CameraController3D(scene.camera)
-        self.view.setScene(scene)
 
     def mouseMoveEvent(self, event):
         delta = event.pos() - self.mouse_initial_pos;
@@ -277,8 +298,8 @@ class SceneEditor(QtWidgets.QWidget):
                                        slight=event.modifiers() & QtCore.Qt.ControlModifier)
 
 
-        self.view.start_rendering()
-        self.view.update()
+        self.start_rendering()
+        self.update()
         event.accept();
 
 
@@ -301,6 +322,27 @@ class SceneEditor(QtWidgets.QWidget):
     def wheelEvent(self, event):
         self.camera_controller.zoom(event.angleDelta().y(),
                                     slight=event.modifiers() & QtCore.Qt.ControlModifier)
-        self.view.start_rendering()
+        self.start_rendering()
         event.accept()
+
+# class SceneEditor(QtWidgets.QWidget):
+#     def __init__(self, scene):
+#         super().__init__()
+#         self.setWindowTitle("fresnel: scene editor")
+
+#         self.scene = scene
+#         layout = QtWidgets.QHBoxLayout();
+#         self.view = SceneView(scene)
+#         layout.addWidget(self.view);
+#         self.setLayout(layout)
+
+#     def _repr_html_(self):
+#         self.show();
+#         self.raise_();
+#         self.activateWindow();
+#         return "<p><i>scene editor opened in a new window...</i></p>";
+
+#     def setScene(self, scene):
+#         self.camera_controller = CameraController3D(scene.camera)
+#         self.view.setScene(scene)
 

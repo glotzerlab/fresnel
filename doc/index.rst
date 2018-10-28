@@ -52,6 +52,13 @@ Here are a few quick samples of what **fresnel** can do:
     examples/2*
 
 .. toctree::
+    :maxdepth: 1
+    :caption: Interactive rendering
+    :glob:
+
+    examples/3*
+
+.. toctree::
     :maxdepth: 3
     :caption: Python API Reference
 
