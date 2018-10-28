@@ -11,7 +11,7 @@ pipeline
             failFast true
             parallel
                 {
-                stage('cuda9-optix50')
+                stage('cuda9-optix51')
                     {
                     agent { label 'gpu' }
 
@@ -19,7 +19,7 @@ pipeline
                         {
                         CC = 'gcc'
                         CXX = 'g++'
-                        CONTAINER = '/nfs/glotzer/containers/ci-optix-2018.09.simg'
+                        CONTAINER = '/nfs/glotzer/containers/ci-optix-2018.10.simg'
                         }
 
                     steps
