@@ -367,32 +367,37 @@ class Mesh(Geometry):
 
     Args:
         scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
-        vertices: The vertices of the triangles, in contiguous representation
-          **Type:** anything convertible by numpy to a Nvertsx3 array of floats.
-          [[tri0a_x, tri0a_y, tri0a_z], [tri0b_x, ..], [tri0c_x, ..], [tri1a_x, ..], ..]
-        colors: (r,g,b) color of each vertex, *optional*.
-          **Type:** anything convertible by numpy to a Nx3 array of floats.
-        position: Positions of the triangle meshes, *optional*.
-          **Type:** anything convertible by numpy to a Nx3 array of floats.
-        orientation: Orientation quaternion angle of each triangle mesh, *optional*.
-          **Type:** anything convertible by numpy to a Nx4 length array of floats.
-        N (int): Number of triangle meshes in the geometry. If ``None``, determine ``N`` from ``position``.
+        vertices (`numpy.ndarray` or `array_like`): (``3Tx3`` : ``float32``) -  Vertices of the triangles, listed
+           contiguously. Vertices 0,1,2 define the first triangle, 3,4,5 define the second, and so on.
+        color (`numpy.ndarray` or `array_like`): (``3Tx3`` : ``float32``) - Color of each vertex.
+        position (`numpy.ndarray` or `array_like`): (``Nx3`` : ``float32``) -  Positions of each mesh instance.
+        orientation (`numpy.ndarray` or `array_like`): (``Nx4`` : ``float32``) -  Orientation of each mesh instance (as a quaternion).
+        N (int): Number of mesh instances in the geometry. If ``None``, determine ``N`` from ``position``.
+
+    .. seealso::
+        :doc:`examples/103-Mesh-geometry`
+            Tutorial: Defining and setting mesh geometry properties.
+
     Note:
         The constructor arguments ``position``, ``orientation``, and ``color`` are optional, and just short-hand
         for assigning the attribute after construction.
 
     Colors are in the linearized sRGB color space. Use :py:func:`fresnel.color.linear` to convert standard sRGB colors
-    into this space. :py:class:`fresnel.geometry.mesh` determines the color of a triangle using interpolation
+    into this space. :py:class:`Mesh` determines the color of a triangle using interpolation
     with the barycentric coordinates in every triangular face.
 
-    .. hint::
+     .. hint::
         Avoid costly memory allocations and type conversions by specifying primitive properties in the appropriate
         numpy array type.
 
+    .. tip::
+        When all spheres are the same size, pass a single value for *radius* and numpy will broadcast it to all
+        elements of the array.
+
     Attributes:
-        position (:py:class:`fresnel.util.array`): Read or modify the positions of the triangle meshes.
-        orientation (:py:class:`fresnel.util.array`): Read or modify the orientations of the triangle meshes.
-        colors (:py:class:`fresnel.util.array`): Read or modify the color of the meshes.
+        position (:py:class:`fresnel.util.array`): Read or modify the positions of the mesh instances.
+        orientation (:py:class:`fresnel.util.array`): Read or modify the orientations of the mesh instances.
+        color (:py:class:`fresnel.util.array`): Read or modify the color of the vertices.
     """
 
     def __init__(self,
@@ -400,7 +405,7 @@ class Mesh(Geometry):
                  vertices,
                  position=None,
                  orientation=None,
-                 colors=None,
+                 color=None,
                  N=None,
                  material=material.Material(solid=1.0, color=(1,0,1)),
                  outline_material=material.Material(solid=1.0, color=(0,0,0)),
@@ -420,8 +425,8 @@ class Mesh(Geometry):
         if orientation is not None:
             self.orientation[:] = orientation;
 
-        if colors is not None:
-            self.colors[:] = colors;
+        if color is not None:
+            self.color[:] = colors;
 
         self.scene = scene;
         self.scene.geometry.append(self);
@@ -435,7 +440,7 @@ class Mesh(Geometry):
         return util.array(self._geometry.getOrientationBuffer(), geom=self)
 
     @property
-    def colors(self):
+    def color(self):
         return util.array(self._geometry.getColorBuffer(), geom=self)
 
     def get_extents(self):
