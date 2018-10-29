@@ -88,7 +88,11 @@ Prerequisites
   * OptiX >= 4.0
   * CUDA >= 7.5
 
-* To execute tests:
+* To enable interactive widgets:
+
+    * pyside2
+
+* To execute tests (optional):
 
   * pytest
   * pillow
