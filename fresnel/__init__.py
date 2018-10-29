@@ -70,7 +70,7 @@ class Device(object):
 
         available_modes (list): List of the available execution modes (static member).
         available_gpus (list): List of the available gpus (static member).
-        mode (string): The active mode
+        mode (str): The active mode
 
     """
 
