@@ -20,14 +20,27 @@ namespace fresnel {
 
 const float mesh_epsilon = 1e-4f;
 
-// From Real-time Collision Detection (Christer Ericson)
-// Given ray pq and triangle abc, returns whether segment intersects
-// triangle and if so, also returns the barycentric coordinates (u,v,w)
-// of the intersection point
-// Note: the triangle is assumed to be oriented counter-clockwise when viewed from the direction of p
-inline bool intersect_ray_triangle(const vec3<float>& p, const vec3<float>& q,
-     const vec3<float>& a, const vec3<float>& b, const vec3<float>& c,
-    float &u, float &v, float &w, float &t)
+//! Ray triangle intersection test
+/*!
+\param u [out] Barycentric coordinate of intersection point
+\param v [out] Barycentric coordinate of intersection point
+\param w [out] Barycentric coordinate of intersection point
+\param t [out] Intersection t value along ray
+\param d_edge [out] Distance from shape edge in the view plane
+\param p Start point of segment
+\param q End point of segment
+\param a Triangle vertex 0
+\param b Triangle vertex 1
+\param c Triangle vertex 2
+
+From Real-time Collision Detection (Christer Ericson)
+Given ray pq and triangle abc, returns whether segment intersects
+triangle and if so, also returns the barycentric coordinates (u,v,w)
+of the intersection point
+Note: the triangle is assumed to be oriented counter-clockwise when viewed from the direction of p
+*/
+inline bool intersect_ray_triangle(float &u, float &v, float &w, float &t, float &d_edge, const vec3<float>& p, const vec3<float>& q,
+     const vec3<float>& a, const vec3<float>& b, const vec3<float>& c)
     {
     vec3<float> ab = b - a;
     vec3<float> ac = c - a;
@@ -64,6 +77,43 @@ inline bool intersect_ray_triangle(const vec3<float>& p, const vec3<float>& q,
     v *= ood;
     w *= ood;
     u = float(1.0) - v - w;
+
+    // determine distance from the hit point to the nearest edge
+    vec3<float> edge;
+    vec3<float> pt;
+    if (u < v)
+        {
+        if (u < w)
+            {
+            edge = c - b;
+            pt = b;
+            }
+        else
+            {
+            edge =  b - a;
+            pt = a;
+            }
+        }
+    else
+        {
+        if (v < w)
+            {
+            edge = a - c;
+            pt = c;
+            }
+        else
+            {
+            edge = b - a;
+            pt = a;
+            }
+        }
+
+    // find the distance from the hit point to the line
+    vec3<float> r_hit = p + t * (q-p);
+    vec3<float> vec = cross(edge, r_hit - pt);
+    float dsq = dot(vec, vec) / dot(edge,edge);
+    d_edge = sqrt(dsq);
+
     return true;
     }
 

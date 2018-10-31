@@ -181,8 +181,8 @@ void GeometryMesh::intersect(const struct RTCIntersectFunctionNArguments *args)
     vec3<float> v0 = geom->m_vertices[i_face*3];
     vec3<float> v1 = geom->m_vertices[i_face*3+1];
     vec3<float> v2 = geom->m_vertices[i_face*3+2];
-    float u,v,w,t;
-    if (!intersect_ray_triangle(ray_org_local, ray_org_local+ray_dir_local, v0, v1, v2, u,v,w,t))
+    float u,v,w,t,d;
+    if (!intersect_ray_triangle(u, v, w, t, d, ray_org_local, ray_org_local+ray_dir_local, v0, v1, v2))
         return;
 
     // if the t is in (tnear,tfar), we hit the entry plane
@@ -206,41 +206,7 @@ void GeometryMesh::intersect(const struct RTCIntersectFunctionNArguments *args)
             + geom->m_color->get(i_face*3 + 1)*v
             + geom->m_color->get(i_face*3 + 2)*w;
 
-        // determine distance from the hit point to the nearest edge
-        vec3<float> edge;
-        vec3<float> pt;
-        if (u < v)
-            {
-            if (u < w)
-                {
-                edge = v2 - v1;
-                pt = v1;
-                }
-            else
-                {
-                edge =  v1 - v0;
-                pt = v0;
-                }
-            }
-        else
-            {
-            if (v < w)
-                {
-                edge = v0 - v2;
-                pt = v2;
-                }
-            else
-                {
-                edge = v1 - v0;
-                pt = v0;
-                }
-            }
-
-        // find the distance from the hit point to the line
-        vec3<float> r_hit =  ray_org_local + t * ray_dir_local;
-        vec3<float> q = cross(edge, r_hit - pt);
-        float dsq = dot(q, q) / dot(edge,edge);
-        context.d = sqrtf(dsq);
+        context.d = d;
         }
     }
 
