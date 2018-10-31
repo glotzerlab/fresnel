@@ -139,21 +139,25 @@ void GeometryMesh::bounds(const struct RTCBoundsFunctionArguments *args)
     unsigned int i_face = item % n_faces;
 
     vec3<float> p3 = geom->m_position->get(i_poly);
-    quat<float> q = geom->m_orientation->get(i_poly);
-    vec3<float> o = geom->m_face_origin[i_face];
+    quat<float> q_world = geom->m_orientation->get(i_poly);
 
-    // rotate into space frame
-    vec3<float> r_t = p3 + rotate(q,o);
-    float r = geom->m_radius[i_face];
+    // rotate vertices into space frame
+    const vec3<float> v0(geom->m_vertices[i_face*3]);
+    const vec3<float> v1(geom->m_vertices[i_face*3+1]);
+    const vec3<float> v2(geom->m_vertices[i_face*3+2]);
+
+    vec3<float> v0_world = rotate(q_world, v0) + p3;
+    vec3<float> v1_world = rotate(q_world, v1) + p3;
+    vec3<float> v2_world = rotate(q_world, v2) + p3;
 
     RTCBounds& bounds_o = *args->bounds_o;
-    bounds_o.lower_x = r_t.x - r;
-    bounds_o.lower_y = r_t.y - r;
-    bounds_o.lower_z = r_t.z - r;
+    bounds_o.lower_x = std::min(v0_world.x, std::min(v1_world.x, v2_world.x));
+    bounds_o.lower_y = std::min(v0_world.y, std::min(v1_world.y, v2_world.y));
+    bounds_o.lower_z = std::min(v0_world.z, std::min(v1_world.z, v2_world.z));
 
-    bounds_o.upper_x = r_t.x + r;
-    bounds_o.upper_y = r_t.y + r;
-    bounds_o.upper_z = r_t.z + r;
+    bounds_o.upper_x = std::max(v0_world.x, std::max(v1_world.x, v2_world.x));
+    bounds_o.upper_y = std::max(v0_world.y, std::max(v1_world.y, v2_world.y));
+    bounds_o.upper_z = std::max(v0_world.z, std::max(v1_world.z, v2_world.z));
     }
 
 /*! Compute the intersection of a ray with the given primitive
@@ -182,7 +186,8 @@ void GeometryMesh::intersect(const struct RTCIntersectFunctionNArguments *args)
     vec3<float> v1 = geom->m_vertices[i_face*3+1];
     vec3<float> v2 = geom->m_vertices[i_face*3+2];
     float u,v,w,t,d;
-    if (!intersect_ray_triangle(u, v, w, t, d, ray_org_local, ray_org_local+ray_dir_local, v0, v1, v2))
+    vec3<float> n;
+    if (!intersect_ray_triangle(u, v, w, t, d, n, ray_org_local, ray_org_local+ray_dir_local, v0, v1, v2))
         return;
 
     // if the t is in (tnear,tfar), we hit the entry plane
@@ -193,11 +198,11 @@ void GeometryMesh::intersect(const struct RTCIntersectFunctionNArguments *args)
         ray.tfar = t;
         rayhit.hit.geomID = geom->m_geom_id;
         rayhit.hit.primID = item;
-        vec3<float> n = rotate(q_world, geom->m_face_normal[i_face]);
+        vec3<float> n_world = rotate(q_world, n);
 
-        rayhit.hit.Ng_x = n.x;
-        rayhit.hit.Ng_y = n.y;
-        rayhit.hit.Ng_z = n.z;
+        rayhit.hit.Ng_x = n_world.x;
+        rayhit.hit.Ng_y = n_world.y;
+        rayhit.hit.Ng_z = n_world.z;
 
         FresnelRTCIntersectContext & context = *(FresnelRTCIntersectContext *)args->context;
         rayhit.hit.instID[0] = context.context.instID[0];

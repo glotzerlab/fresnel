@@ -39,8 +39,9 @@ triangle and if so, also returns the barycentric coordinates (u,v,w)
 of the intersection point
 Note: the triangle is assumed to be oriented counter-clockwise when viewed from the direction of p
 */
-inline bool intersect_ray_triangle(float &u, float &v, float &w, float &t, float &d_edge, const vec3<float>& p, const vec3<float>& q,
-     const vec3<float>& a, const vec3<float>& b, const vec3<float>& c)
+DEVICE inline bool intersect_ray_triangle(float &u, float &v, float &w, float &t, float &d_edge,
+                                          vec3<float>& n, const vec3<float>& p, const vec3<float>& q,
+                                          const vec3<float>& a, const vec3<float>& b, const vec3<float>& c)
     {
     vec3<float> ab = b - a;
     vec3<float> ac = c - a;
@@ -48,7 +49,7 @@ inline bool intersect_ray_triangle(float &u, float &v, float &w, float &t, float
 
     // Compute triangle normal. Can be precalculated or cached if
     // intersecting multiple segments against the same triangle
-    vec3<float> n = cross(ab, ac);
+    n = cross(ab, ac);
 
     // Compute denominator d. If d <= 0, segment is parallel to or points
     // away from triangle, so exit early

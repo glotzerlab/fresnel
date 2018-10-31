@@ -50,6 +50,7 @@ set(_ptx_sources
 	gpu/direct.cu
     gpu/path.cu
     gpu/GeometryCylinder.cu
+    gpu/GeometryMesh.cu
 	gpu/GeometrySphere.cu
     gpu/GeometryPrism.cu
     gpu/GeometryConvexPolyhedron.cu)
@@ -72,6 +73,7 @@ set(_gpu_sources
      gpu/Scene.cc
      gpu/Geometry.cc
      gpu/GeometryCylinder.cc
+     gpu/GeometryMesh.cc
      gpu/GeometryPrism.cc
      gpu/GeometryConvexPolyhedron.cc
      gpu/GeometrySphere.cc
