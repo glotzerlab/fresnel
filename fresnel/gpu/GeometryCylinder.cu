@@ -29,7 +29,8 @@ RT_PROGRAM void intersect(int primIdx)
     float t=0, d=0;
     vec3<float> N;
     unsigned int color_index;
-    bool hit = intersect_ray_spherocylinder(t, d, N, color_index, ray_origin, ray_direction, A, B, radius);
+    if (!intersect_ray_spherocylinder(t, d, N, color_index, ray_origin, ray_direction, A, B, radius))
+        return;
 
     if (rtPotentialIntersection(t))
         {
