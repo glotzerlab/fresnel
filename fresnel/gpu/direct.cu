@@ -141,7 +141,7 @@ RT_PROGRAM void direct_closest_hit()
     Material m;
 
     // apply the material color or outline color depending on the distance to the edge
-    if (shading_distance > outline_width)
+    if (shading_distance >= outline_width)
         {
         m = material;
         }
