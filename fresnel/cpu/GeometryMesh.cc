@@ -11,7 +11,6 @@ namespace fresnel { namespace cpu {
 
 /*! \param scene Scene to attach the Geometry to
     \param vertices vertices of the mesh
-    \param triangles triangle indices of the mesh
     \param N Number of polyhedra
     Initialize the mesh.
 */
@@ -20,11 +19,7 @@ GeometryMesh::GeometryMesh(std::shared_ptr<Scene> scene,
                              unsigned int N)
     : Geometry(scene)
     {
-    // allocate buffer data
-    m_position = std::shared_ptr< Array< vec3<float> > >(new Array< vec3<float> >(N));
-    m_orientation = std::shared_ptr< Array< quat<float>  > >(new Array< quat<float> >(N));
-
-    // now create planes for each of the polygon edges
+    // extract vertices array from numpy
     pybind11::buffer_info info_vertices = vertices.request();
 
     if (info_vertices.ndim != 2)
@@ -38,62 +33,16 @@ GeometryMesh::GeometryMesh(std::shared_ptr<Scene> scene,
 
     unsigned int n_faces = info_vertices.shape[0] / 3;
     unsigned int n_verts = info_vertices.shape[0];
-
     float *verts_f = (float *)info_vertices.ptr;
 
-    m_radius.resize(n_faces,0.0);
-    m_face_origin.resize(n_faces);
-
-    for (unsigned int i = 0; i < n_faces; i++)
-        {
-        // construct the normal and origin of each plane
-        unsigned int t1 = 3*i;
-        unsigned int t2 = 3*i+1;
-        unsigned int t3 = 3*i+2;
-
-        if (t1 >= n_verts || t2 >= n_verts || t3 >= n_verts)
-            throw std::runtime_error("face indices out of bounds");
-
-        vec3<float> v_0 = vec3<float>(verts_f[3*t1],verts_f[3*t1+1],verts_f[3*t1+2]);
-        vec3<float> v_1 = vec3<float>(verts_f[3*t2],verts_f[3*t2+1],verts_f[3*t2+2]);
-        vec3<float> v_2 = vec3<float>(verts_f[3*t3],verts_f[3*t3+1],verts_f[3*t3+2]);
-
-        vec3<float> a(v_1-v_0);
-        vec3<float> b(v_2-v_1);
-        vec3<float> c(v_0-v_2);
-
-        vec3<float> n = cross(a,b);
-
-        if (dot(n,cross(b, c)) == 0.0)
-            {
-//            throw std::invalid_argument("triangles vertices must not be colinear");
-            }
-
-        n = n / sqrtf(dot(n,n));
-
-        // store vertices
-        m_vertices.push_back(v_0);
-        m_vertices.push_back(v_1);
-        m_vertices.push_back(v_2);
-
-        m_face_normal.push_back(n);
-
-        // find circumcenter and -radius
-        //https://en.wikipedia.org/wiki/Circumscribed_circle
-        float asq = dot(b,b); // a = BC
-        float bsq = dot(c,c); // b = AC
-        float csq = dot(a,a); // c = AB
-        vec3<float> u = asq*(bsq+csq-asq)*v_0+bsq*(csq+asq-bsq)*v_1 + csq*(asq+bsq-csq)*v_2;
-        u /= asq*(bsq+csq-asq)+bsq*(csq+asq-bsq)+csq*(asq+bsq-csq);
-        m_face_origin[i] = u;
-
-        float rsq = std::max(dot(v_0-u,v_0-u),std::max(dot(v_1-u,v_1-u),dot(v_2-u,v_2-u)));
-
-        // precompute radius in the xy plane
-        m_radius[i] = sqrtf(rsq);
-        }
-
+    // allocate buffer data
+    m_position = std::shared_ptr< Array< vec3<float> > >(new Array< vec3<float> >(N));
+    m_orientation = std::shared_ptr< Array< quat<float>  > >(new Array< quat<float> >(N));
     m_color = std::shared_ptr< Array< RGB<float> > >(new Array< RGB<float> >(n_verts));
+
+    // copy vertices into local buffer
+    m_vertices.resize(n_verts);
+    memcpy(&m_vertices[0], verts_f, sizeof(vec3<float>)*n_verts);
 
     // create the geometry
     m_geometry = rtcNewGeometry(m_device->getRTCDevice(), RTC_GEOMETRY_TYPE_USER);
@@ -134,7 +83,7 @@ void GeometryMesh::bounds(const struct RTCBoundsFunctionArguments *args)
     GeometryMesh *geom = (GeometryMesh*)args->geometryUserPtr;
 
     unsigned int item = args->primID;
-    unsigned int n_faces = geom->m_radius.size();
+    unsigned int n_faces = geom->m_vertices.size()/3;
     unsigned int i_poly = item / n_faces;
     unsigned int i_face = item % n_faces;
 
@@ -168,7 +117,7 @@ void GeometryMesh::intersect(const struct RTCIntersectFunctionNArguments *args)
     GeometryMesh *geom = (GeometryMesh*)args->geometryUserPtr;
 
     unsigned int item = args->primID;
-    unsigned int n_faces = geom->m_radius.size();
+    unsigned int n_faces = geom->m_vertices.size()/3;
     unsigned int i_poly = item / n_faces;
     unsigned int i_face = item % n_faces;
 

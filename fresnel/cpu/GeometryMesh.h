@@ -51,11 +51,8 @@ class GeometryMesh : public Geometry
             }
 
     protected:
-        std::vector< vec3<float> > m_face_origin;   //!< Origins of all the faces in the polyhedron
-        std::vector< vec3<float> > m_face_normal;   //!< Normals of all the faces in the polyhedron
         std::vector< vec3<float> > m_vertices;      //!< Holds the vertex coordinates in ccw order for each face
         std::shared_ptr< Array< RGB<float> > > m_color;      //!< Color for each vertex point
-        std::vector<float> m_radius;                //!< Radius of each primitive
 
         std::shared_ptr< Array< vec3<float> > > m_position;    //!< Position of each polyhedron
         std::shared_ptr< Array< quat<float> > > m_orientation; //!< Orientation of each polyhedron
