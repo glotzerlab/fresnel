@@ -424,6 +424,8 @@ class Mesh(Geometry):
 
         if orientation is not None:
             self.orientation[:] = orientation;
+        else:
+            self.orientation[:] = [1,0,0,0];
 
         if color is not None:
             self.color[:] = colors;
