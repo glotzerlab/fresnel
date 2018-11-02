@@ -390,10 +390,6 @@ class Mesh(Geometry):
         Avoid costly memory allocations and type conversions by specifying primitive properties in the appropriate
         numpy array type.
 
-    .. tip::
-        When all spheres are the same size, pass a single value for *radius* and numpy will broadcast it to all
-        elements of the array.
-
     Attributes:
         position (:py:class:`fresnel.util.array`): Read or modify the positions of the mesh instances.
         orientation (:py:class:`fresnel.util.array`): Read or modify the orientations of the mesh instances.

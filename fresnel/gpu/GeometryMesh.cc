@@ -11,7 +11,6 @@ namespace fresnel { namespace gpu {
 /*! \param scene Scene to attach the Geometry to
     \param plane_origins Origins of the planes that make up the polyhedron
     \param plane_normals Normals of the planes that make up the polyhedron
-    \param r radius of the polyhedron
 
     Initialize the polyhedron geometry.
 */
