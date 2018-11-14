@@ -424,7 +424,7 @@ class Mesh(Geometry):
             self.orientation[:] = [1,0,0,0];
 
         if color is not None:
-            self.color[:] = colors;
+            self.color[:] = color
 
         self.scene = scene;
         self.scene.geometry.append(self);
