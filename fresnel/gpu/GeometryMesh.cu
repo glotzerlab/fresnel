@@ -41,7 +41,10 @@ RT_PROGRAM void intersect(int primIdx)
 
     float t=0, d=0, u=0, v=0, w=0;
     vec3<float> n;
-    if (!intersect_ray_triangle(u, v, w, t, d, n, ray_org_local, ray_org_local+ray_dir_local, v0, v1, v2))
+
+    // double-sided triangle test
+    if (!intersect_ray_triangle(u, v, w, t, d, n, ray_org_local, ray_org_local+ray_dir_local, v0, v1, v2)
+        && !intersect_ray_triangle(v, u, w, t, d, n, ray_org_local, ray_org_local+ray_dir_local, v1, v0, v2))
         return;
 
     if (rtPotentialIntersection(t))

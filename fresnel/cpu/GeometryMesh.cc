@@ -136,7 +136,10 @@ void GeometryMesh::intersect(const struct RTCIntersectFunctionNArguments *args)
     vec3<float> v2 = geom->m_vertices[i_face*3+2];
     float u,v,w,t,d;
     vec3<float> n;
-    if (!intersect_ray_triangle(u, v, w, t, d, n, ray_org_local, ray_org_local+ray_dir_local, v0, v1, v2))
+
+    // double-sided triangle test
+    if (!intersect_ray_triangle(u, v, w, t, d, n, ray_org_local, ray_org_local+ray_dir_local, v0, v1, v2)
+        && !intersect_ray_triangle(v, u, w, t, d, n, ray_org_local, ray_org_local+ray_dir_local, v1, v0, v2))
         return;
 
     // if the t is in (tnear,tfar), we hit the entry plane
