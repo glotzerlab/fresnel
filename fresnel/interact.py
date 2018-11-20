@@ -325,25 +325,3 @@ class SceneView(QtWidgets.QWidget):
                                     slight=event.modifiers() & QtCore.Qt.ControlModifier)
         self.start_rendering()
         event.accept()
-
-# class SceneEditor(QtWidgets.QWidget):
-#     def __init__(self, scene):
-#         super().__init__()
-#         self.setWindowTitle("fresnel: scene editor")
-
-#         self.scene = scene
-#         layout = QtWidgets.QHBoxLayout();
-#         self.view = SceneView(scene)
-#         layout.addWidget(self.view);
-#         self.setLayout(layout)
-
-#     def _repr_html_(self):
-#         self.show();
-#         self.raise_();
-#         self.activateWindow();
-#         return "<p><i>scene editor opened in a new window...</i></p>";
-
-#     def setScene(self, scene):
-#         self.camera_controller = CameraController3D(scene.camera)
-#         self.view.setScene(scene)
-
