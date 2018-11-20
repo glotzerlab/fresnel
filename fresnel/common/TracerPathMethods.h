@@ -90,7 +90,7 @@ DEVICE void path_tracer_hit(PRDpath& prd,
     Material m;
 
     // apply the material color or outline color depending on the distance to the edge
-    if (_shading_distance > _outline_width)
+    if (_shading_distance >= _outline_width)
         {
         m = _material;
         }

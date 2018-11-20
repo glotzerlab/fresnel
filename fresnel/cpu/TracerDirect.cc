@@ -115,7 +115,7 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
                         Material m;
 
                         // apply the material color or outline color depending on the distance to the edge
-                        if (context.d > scene->getOutlineWidth(ray_hit.hit.geomID))
+                        if (context.d >= scene->getOutlineWidth(ray_hit.hit.geomID))
                             m = scene->getMaterial(ray_hit.hit.geomID);
                         else
                             m = scene->getOutlineMaterial(ray_hit.hit.geomID);

@@ -27,7 +27,8 @@ RT_PROGRAM void intersect(int primIdx)
 
     float t=0, d=0;
     vec3<float> N;
-    bool hit = intersect_ray_sphere(t, d, N, ray_origin, ray_direction, position, radius);
+    if (!intersect_ray_sphere(t, d, N, ray_origin, ray_direction, position, radius))
+        return;
 
     if (rtPotentialIntersection(t))
         {
