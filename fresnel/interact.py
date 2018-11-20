@@ -124,6 +124,7 @@ class SceneView(QtWidgets.QWidget):
     Args:
 
         scene (:py:class:`Scene <fresnel.Scene>`): The scene to display.
+        max_samples (int): Sample until ``max_samples`` have been averaged.
 
     * Left click to pitch and yaw
     * Right click to roll
@@ -172,11 +173,13 @@ class SceneView(QtWidgets.QWidget):
             Tutorial: Interactive scene display
 
     """
-    def __init__(self, scene):
+    def __init__(self, scene, max_samples=2000):
         super().__init__()
         self.setWindowTitle("fresnel: scene viewer")
 
         self.setMinimumSize(10,10)
+
+        self.max_samples = max_samples;
 
         # pick a default camera if one isn't already set
         self.scene = scene
@@ -231,7 +234,7 @@ class SceneView(QtWidgets.QWidget):
             self.tracer.render(self.scene)
 
             self.samples += 1;
-            if self.samples >= 2000:
+            if self.samples >= self.max_samples:
                 self.stop_rendering()
 
         # Display
