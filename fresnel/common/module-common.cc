@@ -97,6 +97,13 @@ PYBIND11_MODULE(_common, m)
         .def_readwrite("h", &UserCamera::h)
         ;
 
+    pybind11::class_< CameraBasis >(m, "CameraBasis")
+        .def(pybind11::init< const UserCamera& >())
+        .def_readwrite("r", &CameraBasis::r)
+        .def_readwrite("d", &CameraBasis::d)
+        .def_readwrite("u", &CameraBasis::u)
+        ;
+
     pybind11::class_< Lights >(m, "Lights")
         .def(pybind11::init<>())
         .def_readwrite("N", &Lights::N)

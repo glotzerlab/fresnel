@@ -36,22 +36,15 @@ struct UserCamera
     float h;
     };
 
-//! Device Camera properties
-/*! Camera is a plain old data struct that holds camera properties, and a few methods for computing
-    vectors in the image plane given normal screen coordinates. Normal screen coordinates range from
-    -0.5 to 0.5 in the y direction and from -0.5*aspect to 0.5*aspect in the x direction, where aspect is the aspect
-    ratio.
 
-    A camera is defined by a position and coordinate system. The position  is the center of projection of
-    the camera. The direction (normalized) is the direction that the camera points, right (normalized)
-    points to the right and up (normalized) points up. The scalar *h* is the height of the image plane.
-    The look_at position defines the point that the camera looks at and the center of the focal plane.
+//! Store an orthonormal basis
+/*! For a camera, an orthonormal basis is defined by a right (x), look (y) and up (z) directions.
 */
-struct Camera
+struct CameraBasis
     {
-    Camera() {}
-    explicit Camera(const UserCamera& user)
-        : p(user.position), u(user.up), h(user.h)
+    CameraBasis() {}
+    explicit CameraBasis(const UserCamera& user)
+        : u(user.up)
         {
         d = user.look_at - user.position;
 
@@ -68,23 +61,44 @@ struct Camera
         u *= 1.0f / sqrtf(dot(u, u));
         }
 
-    vec3<float> p;  //!< Center of projection
     vec3<float> d;  //!< Direction the camera faces (normalized)
     vec3<float> u;  //!< Up vector (orthonormal)
-    float h;        //!< Height of the camera image plane
-
     vec3<float> r;  //!< Right vector (normalized)
+    };
+
+//! Device Camera properties
+/*! Camera is a plain old data struct that holds camera properties, and a few methods for computing
+    vectors in the image plane given normal screen coordinates. Normal screen coordinates range from
+    -0.5 to 0.5 in the y direction and from -0.5*aspect to 0.5*aspect in the x direction, where aspect is the aspect
+    ratio.
+
+    A camera is defined by a position and coordinate system. The position  is the center of projection of
+    the camera. The direction (normalized) is the direction that the camera points, right (normalized)
+    points to the right and up (normalized) points up. The scalar *h* is the height of the image plane.
+    The look_at position defines the point that the camera looks at and the center of the focal plane.
+*/
+struct Camera
+    {
+    Camera() {}
+    explicit Camera(const UserCamera& user)
+        : p(user.position), basis(user), h(user.h)
+        {
+        }
+
+    vec3<float> p;     //!< Center of projection
+    CameraBasis basis; //!< Camera coordinate basis
+    float h;           //!< Height of the camera image plane
 
     //! Get a ray start position given screen normal coordinates
     DEVICE vec3<float> origin(const vec2<float>& s) const
         {
-        return p + (s.y * u + s.x * r) * h;
+        return p + (s.y * basis.u + s.x * basis.r) * h;
         }
 
     //! Get a ray direction given screen relative coordinates
     DEVICE vec3<float> direction(const vec2<float>& s) const
         {
-        return d;
+        return basis.d;
         }
     };
 
