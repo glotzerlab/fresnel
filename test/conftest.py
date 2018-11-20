@@ -139,7 +139,7 @@ def cube_verts():
 
 def assert_image_approx_equal(a, ref_file, tolerance=1.0):
     im = PIL.Image.open(ref_file)
-    im_arr = numpy.fromstring(im.tobytes(), dtype=numpy.uint8)
+    im_arr = numpy.frombuffer(im.tobytes(), dtype=numpy.uint8)
     im_arr = im_arr.reshape((im.size[1], im.size[0], 4))
 
     # intelligently compare images
