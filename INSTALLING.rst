@@ -18,7 +18,7 @@ Then add the ``conda-forge`` channel and install **fresnel**:
    $ conda install fresnel
 
 **jupyter** and **matplotlib** are required to execute the
-`fresnel example notebooks <https://bitbucket.org/glotzer/fresnel-examples>`_, install
+`fresnel example notebooks <https://github.com/glotzerlab/fresnel-examples>`_, install
 
 .. code-block:: bash
 
@@ -67,7 +67,7 @@ Or, clone using git:
 
 .. code-block:: bash
 
-   $ git clone --recursive  https://bitbucket.org/glotzer/fresnel.git
+   $ git clone --recursive  https://github.com/glotzerlab/fresnel
 
 **Fresnel** uses git submodules. Either clone with the ``--recursive`` option, or execute ``git submodule update --init``
 to fetch the submodules.

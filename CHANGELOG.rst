@@ -1,7 +1,7 @@
 Change log
 ==========
 
-`fresnel <https://bitbucket.org/glotzer/fresnel>`_ releases follow `semantic versioning <https://semver.org/>`_.
+`fresnel <https://github.com/glotzerlab/fresnel>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
 v0.6.0 (2018-07-06)
 -------------------
