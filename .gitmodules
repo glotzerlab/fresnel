@@ -3,10 +3,10 @@
 	url = https://github.com/glotzerlab/pybind11.git
 [submodule "extern/random123"]
 	path = extern/random123
-	url = https://bitbucket.org/joaander/random123
+	url = https://github.com/glotzerlab/random123
 [submodule "doc/examples"]
 	path = doc/examples
-	url = https://bitbucket.org/glotzer/fresnel-examples
+	url = https://github.com/glotzerlab/fresnel-examples
 [submodule "extern/qhull"]
 	path = extern/qhull
 	url = https://github.com/glotzerlab/qhull
