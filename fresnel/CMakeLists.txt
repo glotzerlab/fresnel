@@ -24,7 +24,7 @@ set(_cpu_sources
      cpu/Scene.cc
      cpu/Geometry.cc
      cpu/GeometryCylinder.cc
-     cpu/GeometryPrism.cc
+     cpu/GeometryPolygon.cc
      cpu/GeometryMesh.cc
      cpu/GeometryConvexPolyhedron.cc
      cpu/GeometrySphere.cc
