@@ -4,14 +4,13 @@ data = numpy.load('cuboids.npz')
 
 scene = fresnel.Scene()
 scene.lights = fresnel.light.lightbox()
+W,H,D = data['width']
+poly_info = fresnel.util.convex_polyhedron_from_vertices(
+    [[-W,-H,-D], [-W,-H, D], [-W, H,-D], [-W, H, D],
+     [ W,-H,-D], [ W,-H, D], [ W, H,-D], [ W, H, D]])
 
 geometry = fresnel.geometry.ConvexPolyhedron(
-    scene,
-    origins = [[-data['width'][0],0,0], [data['width'][0],0,0], [0, -data['width'][1], 0],
-               [0, data['width'][1], 0], [0, 0, -data['width'][2]], [0, 0, data['width'][2]]],
-    normals = [[-1,0,0], [1,0,0], [0, -1, 0],
-               [0, 1, 0],[0, 0, -1], [0, 0, 1]],
-    r = math.sqrt(data['width'][0]**2 + data['width'][1]**2 + data['width'][2]**2),
+    scene, poly_info,
     position = data['position'],
     orientation = data['orientation'],
     outline_width = 0.015)
@@ -25,6 +24,7 @@ geometry.outline_material = fresnel.material.Material(
     metal = 1.0)
 
 scene.camera = fresnel.camera.fit(scene, view='front')
-
-out = fresnel.pathtrace(scene, samples=64, light_samples=32, w=500, h=500)
+out = fresnel.pathtrace(scene, samples=64,
+                        light_samples=32,
+                        w=580, h=580)
 PIL.Image.fromarray(out[:], mode='RGBA').save('cuboid.png')
