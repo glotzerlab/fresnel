@@ -30,7 +30,7 @@ All pull requests should be based off of `master`.
 Changes proposed in a single topic branch / pull request should all be related to each other. Don't propose too
 many changes at once, as review becomes challenging. Multiple new features that are loosely coupled should be completed
 in separate topic branches. It is OK if the branch for `feature2` is based on `feature1` - as long as it is made clear
-that `feature1` should be merged before the review of `feature2`. You can merge both `feature1` and `feature1`
+that `feature1` should be merged before the review of `feature2`. You can merge both `feature1` and `feature2`
 into a temporary integration branch during testing.
 
 ## Keep changes to a minimum

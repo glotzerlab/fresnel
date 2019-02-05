@@ -15,7 +15,7 @@ Please review [the contributor's guide](CONTRIBUTING.md) for more information be
 
 # Documentation
 
-Read the [tutorial and reference documentation on readthedocs](<https://fresnel.readthedocs.io/>). The tutorial
+Read the [tutorial and reference documentation on readthedocs](https://fresnel.readthedocs.io/). The tutorial
 is also available in Jupyter notebooks in the [fresnel-examples repository](https://github.com/glotzerlab/fresnel-examples).
 
 ## Gallery
