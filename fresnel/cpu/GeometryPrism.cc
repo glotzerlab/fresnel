@@ -21,7 +21,7 @@ GeometryPrism::GeometryPrism(std::shared_ptr<Scene> scene,
     : Geometry(scene)
     {
     // create the geometry
-    RTCGeometry m_geometry = rtcNewGeometry(m_device->getRTCDevice(), RTC_GEOMETRY_TYPE_USER);
+    m_geometry = rtcNewGeometry(m_device->getRTCDevice(), RTC_GEOMETRY_TYPE_USER);
     m_device->checkError();
     rtcSetGeometryUserPrimitiveCount(m_geometry,N);
     m_device->checkError();
@@ -331,6 +331,7 @@ void export_GeometryPrism(pybind11::module& m)
         .def("getHeightBuffer", &GeometryPrism::getHeightBuffer)
         .def("getAngleBuffer", &GeometryPrism::getAngleBuffer)
         .def("getColorBuffer", &GeometryPrism::getColorBuffer)
+        .def("getRadius", &GeometryPrism::getRadius)
         ;
     }
 
