@@ -53,6 +53,12 @@ class GeometryPrism : public Geometry
             return m_color;
             }
 
+        //! Get the radius
+        float getRadius()
+            {
+            return m_radius;
+            }
+
     protected:
         optix::Buffer m_plane_origin;   //!< Buffer containing plane origins
         optix::Buffer m_plane_normal;   //!< Buffer containing plane normals
@@ -61,6 +67,8 @@ class GeometryPrism : public Geometry
         std::shared_ptr< Array< float > > m_angle;            //!< Orientation of each polyhedron
         std::shared_ptr< Array< float > > m_height;           //!< Height of each prism
         std::shared_ptr< Array< RGB<float> > > m_color;       //!< Per-particle color
+
+        float m_radius=0;                           //!< Precomputed radius in the xy plane
     };
 
 //! Export GeometryPrism to python

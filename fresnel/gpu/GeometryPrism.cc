@@ -83,6 +83,9 @@ GeometryPrism::GeometryPrism(std::shared_ptr<Scene> scene,
         radius = std::max(radius, sqrtf(dot(p0,p0)));
         }
 
+    // save radius for later use on the host side
+    m_radius = radius;
+
     // copy data values to OptiX
     m_geometry["prism_radius"]->setFloat(radius);
 
@@ -143,6 +146,7 @@ void export_GeometryPrism(pybind11::module& m)
         .def("getHeightBuffer", &GeometryPrism::getHeightBuffer)
         .def("getAngleBuffer", &GeometryPrism::getAngleBuffer)
         .def("getColorBuffer", &GeometryPrism::getColorBuffer)
+        .def("getRadius", &GeometryPrism::getRadius)
         ;
     }
 

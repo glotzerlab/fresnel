@@ -67,6 +67,12 @@ class GeometryPrism : public Geometry
             return m_color;
             }
 
+        //! Get the radius
+        float getRadius()
+            {
+            return m_radius;
+            }
+
     protected:
         std::vector< vec3<float> > m_plane_origin;  //!< Origins of all the planes in the convex polyhedron
         std::vector< vec3<float> > m_plane_normal;  //!< Normals of all the planes in the convex polyhedron

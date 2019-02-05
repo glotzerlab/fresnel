@@ -331,6 +331,7 @@ void export_GeometryPrism(pybind11::module& m)
         .def("getHeightBuffer", &GeometryPrism::getHeightBuffer)
         .def("getAngleBuffer", &GeometryPrism::getAngleBuffer)
         .def("getColorBuffer", &GeometryPrism::getColorBuffer)
+        .def("getRadius", &GeometryPrism::getRadius)
         ;
     }
 
