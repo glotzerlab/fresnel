@@ -14,18 +14,18 @@ Here are a few quick samples of what **fresnel** can do:
 
 .. sidebar:: Sphere
 
-    .. image:: sphere.png
+    .. image:: gallery/sphere.png
         :width: 275px
 
-.. literalinclude:: sphere.py
+.. literalinclude:: gallery/sphere.py
     :lines: 3-21
 
 .. sidebar:: Cuboids
 
-    .. image:: cuboid.png
+    .. image:: gallery/cuboid.png
         :width: 275px
 
-.. literalinclude:: cuboid.py
+.. literalinclude:: gallery/cuboid.py
     :lines: 3-29
 
 .. toctree::

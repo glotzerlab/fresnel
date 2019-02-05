@@ -10,7 +10,7 @@ post questions for advice on using the software, and discuss potential new featu
 Issue tracker
 -------------
 
-File bug reports on `frenel's issue tracker <https://github.com/glotzerlab/fresnel/issues>`_.
+File bug reports on `fresnel's issue tracker <https://github.com/glotzerlab/fresnel/issues>`_.
 
 Contribute
 ----------
