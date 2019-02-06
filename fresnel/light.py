@@ -205,9 +205,9 @@ def lightbox():
     """
 
     res = [];
-    res.append(Light(direction=(0,0,-1),
+    res.append(Light(direction=(0,0,1),
                color=(0.9,0.9,0.9),
-               theta=math.pi*0.8));
+               theta=math.pi));
     return res
 
 def cloudy():

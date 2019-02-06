@@ -3,6 +3,17 @@ Change log
 
 `fresnel <https://github.com/glotzerlab/fresnel>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
+v0.7.0 (2019-02-08)
+-------------------
+* Add ``util.convex_polyhedron_from_vertices``: compute convex polyhedron plane origins and normals given a set of vertices
+* Improve documentation
+* Add ``interact.SceneView``: pyside2 widget for interactively rendering scenes with path tracing
+* Add ``geometry.Mesh``: Arbitrary triangular mesh geometry, instanced with N positions and orientations
+* **fresnel** development is now hosted on github: https://github.com/glotzerlab/fresnel/
+* Improve ``light.lightbox`` lighting setup
+* API breaking changes:
+    * ``geometry.ConvexPolyhedron`` arguments changed. It now accepts polyhedron information as a dictionary.
+
 v0.6.0 (2018-07-06)
 -------------------
 

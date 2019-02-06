@@ -16,5 +16,7 @@ geometry.material = fresnel.material.Material(
     roughness = 0.8,
     specular = 0.2)
 
-out = fresnel.pathtrace(scene, samples=64, light_samples=32, w=500, h=500)
+out = fresnel.pathtrace(scene, samples=64,
+                        light_samples=32,
+                        w=580, h=580)
 PIL.Image.fromarray(out[:], mode='RGBA').save('sphere.png')

@@ -3,7 +3,7 @@ your work to ensure that your plans mesh well with the planned development direc
 Then implement your code.
 
 Submit a pull request on Github. Multiple developers and/or users will review requested changes and make comments.
-This The rest of this file will be used as a checklist to review the pull request. The lead developer will merge into
+The rest of this file will be used as a checklist to review the pull request. The lead developer will merge into
 the mainline after the review is complete and approved.
 
 # Features
@@ -23,20 +23,19 @@ existing code.
 
 ## Base your work off the correct branch
 
-Bug fixes should be based on `maint`. New features should be based on `master`.
+All pull requests should be based off of `master`.
 
 ## Propose a single set of related changes
 
 Changes proposed in a single topic branch / pull request should all be related to each other. Don't propose too
-many changes at once, review becomes challenging. Multiple new features that are loosely coupled should be completed
+many changes at once, as review becomes challenging. Multiple new features that are loosely coupled should be completed
 in separate topic branches. It is OK if the branch for `feature2` is based on `feature1` - as long as it is made clear
-that `feature1` should be merged before the review of `feature2`. It is better to merge both `feature1` and `feature1`
+that `feature1` should be merged before the review of `feature2`. You can merge both `feature1` and `feature2`
 into a temporary integration branch during testing.
 
 ## Keep changes to a minimum
 
-Don't go and "fix" spelling errors all over the code, or make lots of whitespace changes along with a new feature.
-If there are spelling errors to fix, propose that in a separate pull request :)
+Don't go and "fix" spelling errors all over the code, or make lots of whitespace changes unrelated to the new feature.
 
 ## Agree to the contributor agreement
 
@@ -73,15 +72,11 @@ select.
 User documentation for the user facing script commands should be documented with docstrings in the napoleon format.
 Include examples on using new functionality.
 
-## Link new commands into the documentation index
-
-The master command index needs a reference to new script commands so they are easy to find for users.
-
 ## Add developer to the credits
 
-Developers need to be credited for their work. Update the credits documentation to reference what each developer
+Developers should be credited for their work. Update the credits documentation to reference what each developer
 contributed to the code.
 
-## Update ChangeLog.md
+## Propose a change log entry
 
-Add a short concise entry describing the change to the ChangeLog.md.
+Propose a short concise entry describing the change in the pull request description or comments.

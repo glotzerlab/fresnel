@@ -12,15 +12,21 @@ _______
 
 Here are a few quick samples of what **fresnel** can do:
 
-.. image:: sphere.png
+.. sidebar:: Sphere
 
-.. literalinclude:: sphere.py
-    :lines: 1-19
+    .. image:: gallery/sphere.png
+        :width: 275px
 
-.. image:: cuboid.png
+.. literalinclude:: gallery/sphere.py
+    :lines: 3-21
 
-.. literalinclude:: cuboid.py
-    :lines: 1-29
+.. sidebar:: Cuboids
+
+    .. image:: gallery/cuboid.png
+        :width: 275px
+
+.. literalinclude:: gallery/cuboid.py
+    :lines: 3-29
 
 .. toctree::
     :maxdepth: 1
