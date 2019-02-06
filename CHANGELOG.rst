@@ -3,7 +3,12 @@ Change log
 
 `fresnel <https://github.com/glotzerlab/fresnel>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
-v0.7.0 (2019-02-08)
+v0.7.1 (2019-02-05)
+-------------------
+
+* Fix conda-forge build on mac
+
+v0.7.0 (2019-02-05)
 -------------------
 * Add ``util.convex_polyhedron_from_vertices``: compute convex polyhedron plane origins and normals given a set of vertices
 * Improve documentation
