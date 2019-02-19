@@ -6,14 +6,14 @@ ray tracing engine. **fresnel** also supports multi-core CPUs using Intel's [Emb
 ray tracing kernels. Path tracing enables high quality global illumination and advanced rendering effects controlled by
 intuitive parameters (like *roughness*, *specular*, and *metal*).
 
-# fresnel Community
+## fresnel Community
 
 Subscribe to the [fresnel-users](https://groups.google.com/d/forum/fresnel-users) mailing list to receive release
 announcements, post questions for advice on using the software, and discuss potential new features. File bug reports
 on [fresnel's issue tracker](https://github.com/glotzerlab/fresnel/issues). **fresnel** is an open source project.
 Please review [the contributor's guide](CONTRIBUTING.md) for more information before contributing.
 
-# Documentation
+## Documentation
 
 Read the [tutorial and reference documentation on readthedocs](https://fresnel.readthedocs.io/). The tutorial
 is also available in Jupyter notebooks in the [fresnel-examples repository](https://github.com/glotzerlab/fresnel-examples).
