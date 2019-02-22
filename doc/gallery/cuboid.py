@@ -2,7 +2,7 @@ import fresnel, numpy, math, PIL
 
 data = numpy.load('cuboids.npz')
 
-scene = fresnel.Scene()
+scene = fresnel.Scene(fresnel.Device(mode='cpu'))
 scene.lights = fresnel.light.lightbox()
 W,H,D = data['width']
 poly_info = fresnel.util.convex_polyhedron_from_vertices(
@@ -28,3 +28,8 @@ out = fresnel.pathtrace(scene, samples=64,
                         light_samples=32,
                         w=580, h=580)
 PIL.Image.fromarray(out[:], mode='RGBA').save('cuboid.png')
+
+out = fresnel.pathtrace(scene, samples=256,
+                        light_samples=16,
+                        w=1380, h=1380)
+PIL.Image.fromarray(out[:], mode='RGBA').save('cuboid-hires.png')
