@@ -31,17 +31,17 @@ assignees: ''
 <!-- Check all that apply and replace "?"'s accordingly -->
 
 Platform:
-- [ ] Mac
-- [ ] Linux
-- [ ] GPU
-- [ ] CPU
+- ( ) Mac
+- ( ) Linux
+- ( ) GPU
+- ( ) CPU
 - Python version: ?.?.?
 - Fresnel version: ?.?.?
 
 Installation method:
-- [ ] Conda package
-- [ ] Compiled from source
-- [ ] glotzerlab-software container
+- ( ) Conda package
+- ( ) Compiled from source
+- ( ) glotzerlab-software container
 
 ## Developer
 
