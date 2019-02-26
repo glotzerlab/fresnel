@@ -14,7 +14,7 @@ a description of the **fresnel** features used to make it.
 .. image:: gallery/protomer.png
     :width: 220px
     :alt: Protomer
-    :target: gallery-cover-art.html#protomer
+    :target: gallery-research.html#protomer
 
 .. image:: gallery/cuboid.png
     :width: 220px
