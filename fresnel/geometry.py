@@ -8,16 +8,16 @@ Geometric primitives.
 to the :py:class:`fresnel.Scene`.
 
 .. seealso::
-    :doc:`examples/001-Primitive-properties`
+    :doc:`examples/00-Basic-tutorials/01-Primitive-properties`
         Tutorial: Modifying primitive properties.
 
-    :doc:`examples/002-Material-properties`
+    :doc:`examples/00-Basic-tutorials/02-Material-properties`
         Tutorial: Modifying material properties.
 
-    :doc:`examples/003-Outline-materials`
+    :doc:`examples/00-Basic-tutorials/03-Outline-materials`
         Tutorial: Applying outline materials.
 
-    :doc:`examples/200-Multiple-geometries`
+    :doc:`examples/02-Advanced-topics/00-Multiple-geometries`
         Tutorial: Displaying multiple geometries in a scene.
 """
 
@@ -105,7 +105,7 @@ class Cylinder(Geometry):
         N (int): Number of cylinders in the geometry. If ``None``, determine ``N`` from *points*.
 
     .. seealso::
-        :doc:`examples/101-Cylinder-geometry`
+        :doc:`examples/01-Primitives/01-Cylinder-geometry`
             Tutorial: defining and setting cyliner geometry properties
 
     Note:
@@ -299,7 +299,7 @@ class Sphere(Geometry):
         N (int): Number of spheres in the geometry. If ``None``, determine ``N`` from ``position``.
 
     .. seealso::
-        :doc:`examples/100-Sphere-geometry`
+        :doc:`examples/01-Primitives/00-Sphere-geometry`
             Tutorial: Defining and setting sphere geometry properties.
 
     Note:
@@ -390,7 +390,7 @@ class Mesh(Geometry):
         N (int): Number of mesh instances in the geometry. If ``None``, determine ``N`` from ``position``.
 
     .. seealso::
-        :doc:`examples/103-Mesh-geometry`
+        :doc:`examples/01-Primitives/03-Mesh-geometry`
             Tutorial: Defining and setting mesh geometry properties.
 
     Note:
@@ -494,7 +494,7 @@ class ConvexPolyhedron(Geometry):
         N (int): Number of spheres in the geometry. If ``None``, determine ``N`` from ``position``.
 
     .. seealso::
-        :doc:`examples/102-Convex-polyhedron-geometry`
+        :doc:`examples/01-Primitives/02-Convex-polyhedron-geometry`
             Tutorial: Defining and setting convex polyhedron geometry properties.
 
     Note:

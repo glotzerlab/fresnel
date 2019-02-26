@@ -52,28 +52,21 @@ Getting started
     :caption: Basic tutorials
     :glob:
 
-    examples/0*
+    examples/00-Basic-tutorials/*
 
 .. toctree::
     :maxdepth: 1
     :caption: Primitives
     :glob:
 
-    examples/1*
+    examples/01-Primitives/*
 
 .. toctree::
     :maxdepth: 1
     :caption: Advanced topics
     :glob:
 
-    examples/2*
-
-.. toctree::
-    :maxdepth: 1
-    :caption: Interactive rendering
-    :glob:
-
-    examples/3*
+    examples/02-Advanced-topics/*
 
 .. toctree::
     :maxdepth: 3
