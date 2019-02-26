@@ -2,7 +2,7 @@ import fresnel, numpy, PIL
 
 data = numpy.load('spheres.npz')
 
-scene = fresnel.Scene(fresnel.Device(mode='cpu'))
+scene = fresnel.Scene()
 scene.lights = fresnel.light.cloudy()
 
 geometry = fresnel.geometry.Sphere(
