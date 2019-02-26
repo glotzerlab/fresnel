@@ -1,6 +1,8 @@
 Features
 =========
 
+A gallery of **fresnel** renders that demonstrate specific features.
+
 Cuboids
 -------
 

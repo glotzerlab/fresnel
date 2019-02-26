@@ -1,5 +1,7 @@
-Cover art
+Research
 =========
+
+A gallery of **fresnel** renders from research papers.
 
 Protomer
 ---------
