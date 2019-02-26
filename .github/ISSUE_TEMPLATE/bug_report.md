@@ -28,20 +28,26 @@ assignees: ''
 
 ## Configuration
 
-<!-- Check all that apply and replace "?"'s accordingly -->
+<!-- What is your system configuration? -->
+
+<!-- Remove items that do not apply. -->
 
 Platform:
-- ( ) Mac
-- ( ) Linux
-- ( ) GPU
-- ( ) CPU
-- Python version: ?.?.?
-- Fresnel version: ?.?.?
+- Mac
+- Linux
+- GPU
+- CPU
 
 Installation method:
-- ( ) Conda package
-- ( ) Compiled from source
-- ( ) glotzerlab-software container
+- Conda package
+- Compiled from source
+- glotzerlab-software container
+
+<!-- What software versions do you have-->
+
+Versions:
+- Python version: ?.?.?
+- Fresnel version: ?.?.?
 
 ## Developer
 
