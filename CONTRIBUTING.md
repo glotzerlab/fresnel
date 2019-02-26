@@ -19,14 +19,10 @@ Expensive code paths should only execute when requested.
 
 All pull requests should be based off of `master`.
 
-## Propose a single set of related changes
+## Propose a minimal set of related changes
 
-All changes pull request should all be closely related. Multiple change sets that
+All changes in a pull request should be closely related. Multiple change sets that
 are loosely coupled should be proposed in separate pull requests.
-
-## Keep changes to a minimum
-
-Make changes to files only as necessary.
 
 ## Agree to the contributor agreement
 
@@ -62,7 +58,7 @@ Document public facing API with python docstrings in the napoleon format.
 
 ## Example notebooks
 
-Add demonstrating new functionality to [fresnel-examples](https://github.com/glotzerlab/fresnel-examples).
+Add demonstrations of new functionality to [fresnel-examples](https://github.com/glotzerlab/fresnel-examples).
 
 ## Add developer to the credits
 
