@@ -8,8 +8,7 @@ ray tracing kernels. Path tracing enables high quality global illumination and a
 **Fresnel** offers intuitive material parameters (like *roughness*, *specular*, and *metal*) and simple predefined
 lighting setups (like *cloudy* and *lightbox*).
 
-Here are a few samples of what **fresnel** can do. Click one of the gallery images below for a high resolution view and
-a description of the **fresnel** features used to make it.
+Here are a few samples of what **fresnel** can do:
 
 .. image:: gallery/protomer.png
     :width: 220px
@@ -26,12 +25,19 @@ a description of the **fresnel** features used to make it.
     :alt: Spheres
     :target: gallery-features.html#spheres
 
+Gallery
+++++++++++
+
 .. toctree::
     :maxdepth: 1
     :caption: Gallery
 
     gallery-research
     gallery-features
+    gallery-alternate
+
+Getting started
++++++++++++++++
 
 .. toctree::
     :maxdepth: 1
