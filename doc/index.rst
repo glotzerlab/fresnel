@@ -30,7 +30,7 @@ a description of the **fresnel** features used to make it.
     :maxdepth: 1
     :caption: Gallery
 
-    gallery-cover-art
+    gallery-research
     gallery-features
 
 .. toctree::
