@@ -1,8 +1,6 @@
 Features
 =========
 
-.. _gallery-cuboids:
-
 Cuboids
 -------
 
@@ -11,13 +9,12 @@ Cuboids
     :alt: Cuboids
 
 Cuboid example script. Utilizes the :py:class:`convex polyhedron geometry <fresnel.geometry.ConvexPolyhedron>` with
-metallic outlines, :py:class:`smooth materials <fresnel.material.Material>`, and
-:py:meth:`lightbox lighting <fresnel.light.lightbox>`. Author: *Joshua A. Anderson*
+metallic outlines, :py:class:`smooth materials <fresnel.material.Material>`,
+:py:meth:`lightbox lighting <fresnel.light.lightbox>`, and :py:class:`path tracing <fresnel.tracer.Path>`.
+Author: *Joshua A. Anderson*
 
 .. literalinclude:: gallery/cuboid.py
     :lines: 3-29
-
-.. _gallery-spheres:
 
 Spheres
 -------
@@ -27,7 +24,8 @@ Spheres
     :alt: Spheres
 
 Spheres example script. Utilizes the :py:class:`sphere geometry <fresnel.geometry.Sphere>` with black outlines,
-:py:class:`rough materials <fresnel.material.Material>` and :py:meth:`cloudy lighting <fresnel.light.cloudy>`.
+:py:class:`rough materials <fresnel.material.Material>`, :py:meth:`cloudy lighting <fresnel.light.cloudy>`,
+and :py:class:`path tracing <fresnel.tracer.Path>`.
 Author: *Joshua A. Anderson*
 
 .. literalinclude:: gallery/sphere.py
