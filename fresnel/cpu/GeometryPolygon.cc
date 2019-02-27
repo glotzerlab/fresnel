@@ -4,20 +4,22 @@
 #include <stdexcept>
 
 #include "GeometryPolygon.h"
+#include "common/GeometryMath.h"
 
 namespace fresnel { namespace cpu {
 
 /*! \param scene Scene to attach the Geometry to
     \param vertices vertices of the polygon (in counterclockwise order)
+    \param rounding_radius The rounding radius of the spheropolygon
     \param N number of primitives
-
 
     Initialize the prism.
 */
 GeometryPolygon::GeometryPolygon(std::shared_ptr<Scene> scene,
                              pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast> vertices,
+                             float rounding_radius,
                              unsigned int N)
-    : Geometry(scene)
+    : Geometry(scene), m_rounding_radius(rounding_radius)
     {
     // create the geometry
     m_geometry = rtcNewGeometry(m_device->getRTCDevice(), RTC_GEOMETRY_TYPE_USER);
@@ -56,6 +58,8 @@ GeometryPolygon::GeometryPolygon(std::shared_ptr<Scene> scene,
         // precompute radius in the xy plane
         m_radius = std::max(m_radius, sqrtf(dot(p0,p0)));
         }
+    // pad the radius with the rounding radius
+    m_radius += m_rounding_radius;
 
     // register functions for embree
     rtcSetGeometryUserData(m_geometry, this);
@@ -98,24 +102,28 @@ void GeometryPolygon::bounds(const struct RTCBoundsFunctionArguments *args)
     }
 
 //! Test if a point is inside a polygon
-/*! \param verts Polygon vertices
+/*! \param min_d  [out] minimum distance from p to the polygon edge
     \param p Point
+    \param verts Polygon vertices
+
     \returns true if the point is inside the polygon
 
     \note \a p is *in the polygon's reference frame!*
 
     \ingroup overlap
 */
-inline bool is_inside(const vec2<float>& p, const std::vector< vec2<float> >& verts)
+inline bool is_inside(float &min_d, const vec2<float>& p, const std::vector< vec2<float> >& verts)
     {
     // code for concave test from: http://alienryderflex.com/polygon/
     unsigned int nvert = verts.size();
+    min_d = FLT_MAX;
 
     unsigned int  i, j=nvert-1;
     bool oddNodes=false;
 
     for (i = 0; i < nvert; i++)
         {
+        min_d = fast::min(min_d, point_line_segment_distance(p, verts[i], verts[j]));
         // if (polyY[i]<y && polyY[j]>=y ||  polyY[j]<y && polyY[i]>=y)
         if ((verts[i].y < p.y && verts[j].y >= p.y) ||  (verts[j].y < p.y && verts[i].y >= p.y))
             {
@@ -169,15 +177,25 @@ void GeometryPolygon::intersect(const struct RTCIntersectFunctionNArguments *arg
     // see if the intersection point is inside the polygon
     vec3<float> r_hit = ray_org_local + t_hit * ray_dir_local;
     vec2<float> r_hit_2d(r_hit.x, r_hit.y);
-    if (!is_inside(r_hit_2d, geom->m_vertices))
+    float d_edge, min_d;
+
+    bool inside = is_inside(d_edge, r_hit_2d, geom->m_vertices);
+
+    // spheropolygon (equivalent to sharp polygon when rounding radius is 0
+    // make distance signed (negative is inside)
+    if (inside)
+        {
+        d_edge = -d_edge;
+        }
+
+    // exit if outside
+    if (d_edge > geom->m_rounding_radius)
         {
         return;
         }
+    min_d = geom->m_rounding_radius - d_edge;
 
     // if we get here, we hit the inside of the polygon
-    // fill out the hit structure
-    bool hit = false;
-
     // if the t_hit is in (tnear,tfar), we hit the polygon
     RTCRayHit& rh = *(RTCRayHit *)args->rayhit;
     FresnelRTCIntersectContext & context = *(FresnelRTCIntersectContext *)args->context;
@@ -204,15 +222,6 @@ void GeometryPolygon::intersect(const struct RTCIntersectFunctionNArguments *arg
         rh.hit.Ng_y = Ng.y;
         rh.hit.Ng_z = Ng.z;
         context.shading_color = geom->m_color->get(args->primID);
-        hit = true;
-        }
-
-    // determine distance from the hit point to the nearest edge
-    float min_d = std::numeric_limits<float>::max();
-
-    if (hit)
-        {
-        // TODO: determine min_d
         context.d = min_d;
         }
     }
@@ -224,6 +233,7 @@ void export_GeometryPolygon(pybind11::module& m)
     pybind11::class_<GeometryPolygon, std::shared_ptr<GeometryPolygon> >(m, "GeometryPolygon", pybind11::base<Geometry>())
         .def(pybind11::init<std::shared_ptr<Scene>,
              pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast>,
+             float,
              unsigned int>())
         .def("getPositionBuffer", &GeometryPolygon::getPositionBuffer)
         .def("getAngleBuffer", &GeometryPolygon::getAngleBuffer)

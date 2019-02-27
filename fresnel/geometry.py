@@ -194,6 +194,7 @@ class Polygon(Geometry):
         position (`numpy.ndarray` or `array_like`): (``Nx2`` : ``float32``) -  Position of each polygon.
         angle (`numpy.ndarray` or `array_like`): (``N`` : ``float32``) -  Orientation angle of each polygon.
         color (`numpy.ndarray` or `array_like`): (``Nx3`` : ``float32``) - Color of polygon.
+        rounding_radius (float): Rounding radius for spheropolygons
         N (int): Number of polygons in the geometry. If ``None``, determine ``N`` from *points*.
 
     .. seealso::
@@ -221,6 +222,7 @@ class Polygon(Geometry):
                  position=None,
                  angle=None,
                  color=None,
+                 rounding_radius=0,
                  N=None,
                  material=material.Material(solid=1.0, color=(1,0,1)),
                  outline_material=material.Material(solid=1.0, color=(0,0,0)),
@@ -228,7 +230,7 @@ class Polygon(Geometry):
         if N is None:
             N = len(position);
 
-        self._geometry = scene.device.module.GeometryPolygon(scene._scene, vertices, N);
+        self._geometry = scene.device.module.GeometryPolygon(scene._scene, vertices, rounding_radius, N);
         self.material = material;
         self.outline_material = outline_material;
         self.outline_width = outline_width;

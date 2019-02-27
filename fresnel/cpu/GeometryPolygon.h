@@ -26,6 +26,7 @@ class GeometryPolygon : public Geometry
         //! Constructor
         GeometryPolygon(std::shared_ptr<Scene> scene,
                       pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast> vertices,
+                      float rounding_radius,
                       unsigned int N);
         //! Destructor
         virtual ~GeometryPolygon();
@@ -56,6 +57,7 @@ class GeometryPolygon : public Geometry
 
     protected:
         std::vector< vec2<float> > m_vertices;  //!< Polygon vertices
+        float m_rounding_radius;                //!< Spheropolygon rounding radius
 
         std::shared_ptr< Array< vec2<float> > > m_position;   //!< Position of each polyhedron
         std::shared_ptr< Array< float > > m_angle;            //!< Orientation of each polyhedron
