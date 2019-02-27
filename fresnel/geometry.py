@@ -257,6 +257,21 @@ class Polygon(Geometry):
     def color(self):
         return util.array(self._geometry.getColorBuffer(), geom=self)
 
+    def get_extents(self):
+        R""" Get the extents of the geometry
+
+        Returns:
+            [[minimum x, minimum y, minimum z],[maximum x, maximum y, maximum z]]
+        """
+        pos = self.position[:];
+        r = self._geometry.getRadius();
+        res2d = numpy.array([numpy.min(pos - r, axis=0),
+                           numpy.max(pos + r, axis=0)])
+        res = numpy.array([[res2d[0][0], res2d[0][1], 0],
+                           [res2d[1][0], res2d[1][1], numpy.max(self.height[:])]])
+
+        return res;
+
 class Sphere(Geometry):
     R""" Sphere geometry.
 

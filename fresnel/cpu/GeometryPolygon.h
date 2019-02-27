@@ -48,6 +48,12 @@ class GeometryPolygon : public Geometry
             return m_color;
             }
 
+        //! Get the radius
+        float getRadius()
+            {
+            return m_radius;
+            }
+
     protected:
         std::vector< vec2<float> > m_vertices;  //!< Polygon vertices
 
