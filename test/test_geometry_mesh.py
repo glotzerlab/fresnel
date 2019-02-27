@@ -6,7 +6,6 @@ import conftest
 import pytest
 import sys
 
-@pytest.fixture(scope='function')
 def scene_one_triangle(device):
     scene = fresnel.Scene(device, lights = conftest.test_lights())
 
@@ -32,6 +31,9 @@ def scene_one_triangle(device):
     return scene
 
 @pytest.fixture(scope='function')
+def scene_one_triangle_(device_):
+    return scene_one_triangle(device_);
+
 def scene_tetrahedra(device):
     scene = fresnel.Scene(device, lights = conftest.test_lights())
 
@@ -67,8 +69,12 @@ def scene_tetrahedra(device):
 
     return scene
 
-def test_render(scene_one_triangle, generate=False):
-    buf_proxy = fresnel.preview(scene_one_triangle, w=100, h=100)
+@pytest.fixture(scope='function')
+def scene_tetrahedra_(device_):
+    return scene_tetrahedra(device_)
+
+def test_render(scene_one_triangle_, generate=False):
+    buf_proxy = fresnel.preview(scene_one_triangle_, w=100, h=100)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_mesh.test_render.png', 'wb'), 'png');
@@ -76,30 +82,30 @@ def test_render(scene_one_triangle, generate=False):
         conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_mesh.test_render.png')
 
 
-def test_outline(scene_one_triangle, generate=False):
-    geometry = scene_one_triangle.geometry[0]
+def test_outline(scene_one_triangle_, generate=False):
+    geometry = scene_one_triangle_.geometry[0]
     geometry.outline_width = 0.1
 
-    buf_proxy = fresnel.preview(scene_one_triangle, w=100, h=100)
+    buf_proxy = fresnel.preview(scene_one_triangle_, w=100, h=100)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_mesh.test_outline.png', 'wb'), 'png');
     else:
         conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_mesh.test_outline.png')
 
-def test_color_interp(scene_one_triangle, generate=False):
-    geometry = scene_one_triangle.geometry[0]
+def test_color_interp(scene_one_triangle_, generate=False):
+    geometry = scene_one_triangle_.geometry[0]
     geometry.material.primitive_color_mix = 1.0
 
-    buf_proxy = fresnel.preview(scene_one_triangle, w=100, h=100)
+    buf_proxy = fresnel.preview(scene_one_triangle_, w=100, h=100)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_mesh.test_color_interp.png', 'wb'), 'png');
     else:
         conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_mesh.test_color_interp.png')
 
-def test_multiple(scene_tetrahedra, generate=False):
-    buf_proxy = fresnel.preview(scene_tetrahedra, w=100, h=100)
+def test_multiple(scene_tetrahedra_, generate=False):
+    buf_proxy = fresnel.preview(scene_tetrahedra_, w=100, h=100)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_mesh.test_multiple.png', 'wb'), 'png');
