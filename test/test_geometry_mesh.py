@@ -5,6 +5,7 @@ import PIL
 import conftest
 import pytest
 import sys
+import os
 
 def scene_one_triangle(device):
     scene = fresnel.Scene(device, lights = conftest.test_lights())
@@ -73,16 +74,16 @@ def scene_tetrahedra(device):
 def scene_tetrahedra_(device_):
     return scene_tetrahedra(device_)
 
-def test_render(scene_one_triangle_, generate=False):
+def test_render(scene_one_triangle_, pytestconfig, generate=False):
     buf_proxy = fresnel.preview(scene_one_triangle_, w=100, h=100)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_mesh.test_render.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_mesh.test_render.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(pytestconfig.rootdir,'test/reference/test_geometry_mesh.test_render.png'))
 
 
-def test_outline(scene_one_triangle_, generate=False):
+def test_outline(scene_one_triangle_, pytestconfig, generate=False):
     geometry = scene_one_triangle_.geometry[0]
     geometry.outline_width = 0.1
 
@@ -91,9 +92,9 @@ def test_outline(scene_one_triangle_, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_mesh.test_outline.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_mesh.test_outline.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(pytestconfig.rootdir,'test/reference/test_geometry_mesh.test_outline.png'))
 
-def test_color_interp(scene_one_triangle_, generate=False):
+def test_color_interp(scene_one_triangle_, pytestconfig, generate=False):
     geometry = scene_one_triangle_.geometry[0]
     geometry.material.primitive_color_mix = 1.0
 
@@ -102,28 +103,28 @@ def test_color_interp(scene_one_triangle_, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_mesh.test_color_interp.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_mesh.test_color_interp.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(pytestconfig.rootdir,'test/reference/test_geometry_mesh.test_color_interp.png'))
 
-def test_multiple(scene_tetrahedra_, generate=False):
+def test_multiple(scene_tetrahedra_, pytestconfig, generate=False):
     buf_proxy = fresnel.preview(scene_tetrahedra_, w=100, h=100)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_mesh.test_multiple.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_mesh.test_multiple.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(pytestconfig.rootdir,'test/reference/test_geometry_mesh.test_multiple.png'))
 
 if __name__ == '__main__':
     struct = namedtuple("struct", "param")
     device = conftest.device(struct(('cpu', None)))
 
     scene = scene_one_triangle(device)
-    test_render(scene, generate=True)
+    test_render(scene, None, generate=True)
 
     scene = scene_one_triangle(device)
-    test_outline(scene, generate=True)
+    test_outline(scene, None, generate=True)
 
     scene = scene_one_triangle(device)
-    test_color_interp(scene, generate=True)
+    test_color_interp(scene, None, generate=True)
 
     scene = scene_tetrahedra(device)
-    test_multiple(scene, generate=True)
+    test_multiple(scene, None, generate=True)

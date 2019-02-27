@@ -3,8 +3,9 @@ import numpy
 from collections import namedtuple
 import PIL
 import conftest
+import os
 
-def test_render(scene_hex_sphere_, generate=False):
+def test_render(scene_hex_sphere_, pytestconfig, generate=False):
     tracer = fresnel.tracer.Preview(device=scene_hex_sphere_.device, w=100, h=100)
     buf = tracer.output[:]
     assert buf.shape == (100,100,4)
@@ -14,9 +15,9 @@ def test_render(scene_hex_sphere_, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_tracer_direct.test_render.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_tracer_direct.test_render.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(pytestconfig.rootdir,'test/reference/test_tracer_direct.test_render.png'))
 
-def test_render_aa(scene_hex_sphere_, generate=False):
+def test_render_aa(scene_hex_sphere_, pytestconfig, generate=False):
     tracer = fresnel.tracer.Preview(device=scene_hex_sphere_.device, w=100, h=100, aa_level=3)
     buf = tracer.output[:]
     assert buf.shape == (100,100,4)
@@ -26,9 +27,9 @@ def test_render_aa(scene_hex_sphere_, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_tracer_direct.test_render_aa.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_tracer_direct.test_render_aa.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(pytestconfig.rootdir,'test/reference/test_tracer_direct.test_render_aa.png'))
 
-def test_resize(scene_hex_sphere_, generate=False):
+def test_resize(scene_hex_sphere_, pytestconfig, generate=False):
     tracer = fresnel.tracer.Preview(device=scene_hex_sphere_.device, w=100, h=100)
     buf = tracer.output[:]
     assert buf.shape == (100,100,4)
@@ -42,7 +43,7 @@ if __name__ == '__main__':
     device = conftest.device(struct(('cpu', None)))
 
     scene = conftest.scene_hex_sphere(device)
-    test_render(scene, generate=True)
+    test_render(scene, None, generate=True)
 
     scene = conftest.scene_hex_sphere(device)
-    test_render_aa(scene, generate=True)
+    test_render_aa(scene, None, generate=True)
