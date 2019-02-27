@@ -10,7 +10,7 @@
 using namespace optix;
 using namespace fresnel;
 
-// prism geometry buffers and variables
+// polygon geometry buffers and variables
 rtBuffer<float3> convex_polyhedron_plane_origin;
 rtBuffer<float3> convex_polyhedron_plane_normal;
 rtBuffer<float3> convex_polyhedron_plane_color;

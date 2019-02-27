@@ -15,7 +15,7 @@
 
 namespace fresnel { namespace cpu {
 
-//! Prism geometry
+//! Polygon geometry
 /*! Define a polygon geometry.
 
     It supports simple polygons in the x,y,z=0 plane.

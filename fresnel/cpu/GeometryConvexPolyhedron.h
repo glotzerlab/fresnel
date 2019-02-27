@@ -85,7 +85,7 @@ class GeometryConvexPolyhedron : public Geometry
         static void intersect(const struct RTCIntersectFunctionNArguments *args);
     };
 
-//! Export GeometryPrism to python
+//! Export GeometryPolygon to python
 void export_GeometryConvexPolyhedron(pybind11::module& m);
 
 } } // end namespace fresnel::cpu

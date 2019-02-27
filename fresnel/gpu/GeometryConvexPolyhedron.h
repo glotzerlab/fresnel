@@ -14,7 +14,7 @@
 
 namespace fresnel { namespace gpu {
 
-//! Prism geometry
+//! Polygon geometry
 /*! Define a convex polyhedron geometry.
 
     See fresnel::cpu::GeometryConvexPolyhedron for full API and description. This class re-implements that using OptiX.

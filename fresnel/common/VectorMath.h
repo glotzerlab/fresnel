@@ -156,7 +156,7 @@ template < class Real >
 inline DEVICE Real min(Real a, Real b)
     {
     #ifdef __CUDA_ARCH__
-    return min(a, b);
+    return ::min(a, b);
     #else
     return std::min(a, b);
     #endif
@@ -166,7 +166,7 @@ template < class Real >
 inline DEVICE Real max(Real a, Real b)
     {
     #ifdef __CUDA_ARCH__
-    return max(a, b);
+    return ::max(a, b);
     #else
     return std::max(a, b);
     #endif

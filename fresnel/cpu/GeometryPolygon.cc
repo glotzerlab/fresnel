@@ -13,7 +13,7 @@ namespace fresnel { namespace cpu {
     \param rounding_radius The rounding radius of the spheropolygon
     \param N number of primitives
 
-    Initialize the prism.
+    Initialize the polygon geometry.
 */
 GeometryPolygon::GeometryPolygon(std::shared_ptr<Scene> scene,
                              pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast> vertices,
@@ -149,7 +149,6 @@ void GeometryPolygon::intersect(const struct RTCIntersectFunctionNArguments *arg
     {
     GeometryPolygon *geom = (GeometryPolygon*)args->geometryUserPtr;
 
-    // adapted from OptiX quick start tutorial and Embree user_geometry tutorial files
     const vec2<float> p2 = geom->m_position->get(args->primID);
     const vec3<float> pos_world(p2.x, p2.y, 0.0f);
     const float angle = geom->m_angle->get(args->primID);
