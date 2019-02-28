@@ -270,8 +270,8 @@ class Polygon(Geometry):
         r = self._geometry.getRadius();
         res2d = numpy.array([numpy.min(pos - r, axis=0),
                            numpy.max(pos + r, axis=0)])
-        res = numpy.array([[res2d[0][0], res2d[0][1], 0],
-                           [res2d[1][0], res2d[1][1], numpy.max(self.height[:])]])
+        res = numpy.array([[res2d[0][0], res2d[0][1], -0.1],
+                           [res2d[1][0], res2d[1][1], 0.1]])
 
         return res;
 
