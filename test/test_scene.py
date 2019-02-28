@@ -22,7 +22,7 @@ def test_background_color(device_):
     numpy.testing.assert_array_equal(buf[:,:,3], numpy.ones(shape=(100,100), dtype=buf.dtype)*128)
     numpy.testing.assert_array_equal(buf[:,:,0:3], numpy.ones(shape=(100,100,3), dtype=buf.dtype)*(32,191,96))
 
-def test_camera(scene_hex_sphere_, pytestconfig, generate=False):
+def test_camera(scene_hex_sphere_, generate=False):
     scene_hex_sphere_.camera = fresnel.camera.orthographic(position=(1, 0, 10), look_at=(1,0,0), up=(0,1,0), height=6)
 
     assert scene_hex_sphere_.camera.position == (1,0,10)
@@ -35,9 +35,9 @@ def test_camera(scene_hex_sphere_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_scene.test_camera.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_scene.test_camera.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_scene.test_camera.png')
 
-def test_light_dir(scene_hex_sphere_, pytestconfig, generate=False):
+def test_light_dir(scene_hex_sphere_, generate=False):
     scene_hex_sphere_.lights[0].direction = (1, 0, 0)
     scene_hex_sphere_.lights[0].color = (0.5, 0.5, 0.5)
     assert scene_hex_sphere_.lights[0].direction == (1, 0, 0)
@@ -48,9 +48,9 @@ def test_light_dir(scene_hex_sphere_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_scene.test_light_dir.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_scene.test_light_dir.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_scene.test_light_dir.png')
 
-def test_multiple_geometries(device_, pytestconfig, generate=False):
+def test_multiple_geometries(device_, generate=False):
     scene = fresnel.Scene(lights=conftest.test_lights())
     scene.camera = fresnel.camera.orthographic(position=(0, 0, 10), look_at=(0,0,0), up=(0,1,0), height=7)
 
@@ -66,7 +66,7 @@ def test_multiple_geometries(device_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_scene.test_multiple_geometries1.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_scene.test_multiple_geometries1.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_scene.test_multiple_geometries1.png')
 
     geom1.disable()
 
@@ -75,7 +75,7 @@ def test_multiple_geometries(device_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_scene.test_multiple_geometries2.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_scene.test_multiple_geometries2.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_scene.test_multiple_geometries2.png')
 
     geom1.enable()
 
@@ -84,7 +84,7 @@ def test_multiple_geometries(device_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_scene.test_multiple_geometries3.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_scene.test_multiple_geometries3.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_scene.test_multiple_geometries3.png')
 
     geom2.remove()
 
@@ -93,17 +93,17 @@ def test_multiple_geometries(device_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_scene.test_multiple_geometries4.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_scene.test_multiple_geometries4.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_scene.test_multiple_geometries4.png')
 
 if __name__ == '__main__':
     struct = namedtuple("struct", "param")
     device = conftest.device(struct(('cpu', None)))
 
     scene = conftest.scene_hex_sphere(device)
-    test_camera(scene, None, generate=True)
+    test_camera(scene, generate=True)
 
     scene = conftest.scene_hex_sphere(device)
-    test_light_dir(scene, None, generate=True)
+    test_light_dir(scene, generate=True)
 
     scene = conftest.scene_hex_sphere(device)
-    test_multiple_geometries(scene, None, generate=True)
+    test_multiple_geometries(scene, generate=True)

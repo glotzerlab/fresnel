@@ -32,15 +32,15 @@ def scene_four_spheres(device):
 def scene_four_spheres_(device_):
     return scene_four_spheres(device_);
 
-def test_render(scene_four_spheres_, pytestconfig, generate=False):
+def test_render(scene_four_spheres_, generate=False):
     buf_proxy = fresnel.preview(scene_four_spheres_, w=150, h=100)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_sphere.test_render.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_geometry_sphere.test_render.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_sphere.test_render.png')
 
-def test_radius(scene_four_spheres_, pytestconfig, generate=False):
+def test_radius(scene_four_spheres_, generate=False):
     geometry = scene_four_spheres_.geometry[0]
 
     r = numpy.array([0.5, 0.6, 0.8, 1.0], dtype=numpy.float32)
@@ -52,9 +52,9 @@ def test_radius(scene_four_spheres_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_sphere.test_radius.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_geometry_sphere.test_radius.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_sphere.test_radius.png')
 
-def test_position(scene_four_spheres_, pytestconfig, generate=False):
+def test_position(scene_four_spheres_, generate=False):
     geometry = scene_four_spheres_.geometry[0]
 
     p = numpy.array([[1.5,0,1],
@@ -69,9 +69,9 @@ def test_position(scene_four_spheres_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_sphere.test_position.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_geometry_sphere.test_position.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_sphere.test_position.png')
 
-def test_color(scene_four_spheres_, pytestconfig, generate=False):
+def test_color(scene_four_spheres_, generate=False):
     geometry = scene_four_spheres_.geometry[0]
     geometry.material.primitive_color_mix = 1.0
 
@@ -84,9 +84,9 @@ def test_color(scene_four_spheres_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_sphere.test_color.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_geometry_sphere.test_color.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_sphere.test_color.png')
 
-def test_outline(scene_four_spheres_, pytestconfig, generate=False):
+def test_outline(scene_four_spheres_, generate=False):
     geometry = scene_four_spheres_.geometry[0]
     geometry.outline_width = 0.1
 
@@ -95,23 +95,23 @@ def test_outline(scene_four_spheres_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_sphere.test_outline.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_geometry_sphere.test_outline.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_sphere.test_outline.png')
 
 if __name__ == '__main__':
     struct = namedtuple("struct", "param")
     device = conftest.device(struct(('cpu', None)))
 
     scene = scene_four_spheres(device)
-    test_render(scene, None, generate=True)
+    test_render(scene, generate=True)
 
     scene = scene_four_spheres(device)
-    test_radius(scene, None, generate=True)
+    test_radius(scene, generate=True)
 
     scene = scene_four_spheres(device)
-    test_position(scene, None, generate=True)
+    test_position(scene, generate=True)
 
     scene = scene_four_spheres(device)
-    test_color(scene, None, generate=True)
+    test_color(scene, generate=True)
 
     scene = scene_four_spheres(device)
-    test_outline(scene, None, generate=True)
+    test_outline(scene, generate=True)

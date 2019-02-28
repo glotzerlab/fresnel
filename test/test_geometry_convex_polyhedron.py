@@ -60,16 +60,16 @@ def scene_eight_polyhedra(device):
 def scene_eight_polyhedra_(device_):
     return scene_eight_polyhedra(device_)
 
-def test_render(scene_eight_polyhedra_, pytestconfig, generate=False):
+def test_render(scene_eight_polyhedra_, generate=False):
     buf_proxy = fresnel.preview(scene_eight_polyhedra_, w=150, h=100)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_convex_polyhedron.test_render.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_geometry_convex_polyhedron.test_render.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_convex_polyhedron.test_render.png')
 
 
-def test_outline(scene_eight_polyhedra_, pytestconfig, generate=False):
+def test_outline(scene_eight_polyhedra_, generate=False):
     geometry = scene_eight_polyhedra_.geometry[0]
     geometry.outline_width = 0.1
 
@@ -78,10 +78,10 @@ def test_outline(scene_eight_polyhedra_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_convex_polyhedron.test_outline.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_geometry_convex_polyhedron.test_outline.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_convex_polyhedron.test_outline.png')
 
 
-def test_face_color(scene_eight_polyhedra_, pytestconfig, generate=False):
+def test_face_color(scene_eight_polyhedra_, generate=False):
     buf_proxy = fresnel.preview(scene_eight_polyhedra_, w=150, h=100)
 
     geometry = scene_eight_polyhedra_.geometry[0]
@@ -93,7 +93,7 @@ def test_face_color(scene_eight_polyhedra_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_convex_polyhedron.test_face_color.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_geometry_convex_polyhedron.test_face_color.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_convex_polyhedron.test_face_color.png')
 
 def test_convert_cube():
     """Sanity checks on converting vertices to origins and normals
@@ -129,10 +129,10 @@ if __name__ == '__main__':
     device = conftest.device(struct(('cpu', None)))
 
     scene = scene_eight_polyhedra(device)
-    test_render(scene, None, generate=True)
+    test_render(scene, generate=True)
 
     scene = scene_eight_polyhedra(device)
-    test_outline(scene, None, generate=True)
+    test_outline(scene, generate=True)
 
     scene = scene_eight_polyhedra(device)
-    test_face_color(scene, None, generate=True)
+    test_face_color(scene, generate=True)

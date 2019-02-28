@@ -149,6 +149,7 @@ Run tests
 
    $ export PYTHONPATH=/path/to/build
    $ cd /path/to/fresnel
+   $ cd test
    $ pytest
 
 Build user documentation
