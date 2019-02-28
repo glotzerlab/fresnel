@@ -1,3 +1,4 @@
+from __future__ import division
 import fresnel
 import numpy
 from collections import namedtuple
