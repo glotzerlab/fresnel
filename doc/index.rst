@@ -13,31 +13,23 @@ Here are a few samples of what **fresnel** can do:
 .. image:: gallery/protomer.png
     :width: 220px
     :alt: Protomer
-    :target: gallery-research.html#protomer
+    :target: gallery/protomer.html
 
 .. image:: gallery/cuboid.png
     :width: 220px
     :alt: Cuboids
-    :target: gallery-features.html#cuboids
+    :target: gallery/cuboid.html
 
 .. image:: gallery/sphere.png
     :width: 220px
     :alt: Spheres
-    :target: gallery-features.html#spheres
-
-Gallery
-++++++++++
+    :target: gallery/sphere.html
 
 .. toctree::
     :maxdepth: 1
-    :caption: Gallery
+    :caption: Examples
 
-    gallery-research
-    gallery-features
-    gallery-alternate
-
-Getting started
-+++++++++++++++
+    gallery
 
 .. toctree::
     :maxdepth: 1
