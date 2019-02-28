@@ -9,10 +9,10 @@ and you can always define custom lights.
 
 .. seealso::
 
-    :doc:`examples/004-Scene-properties`
+    :doc:`examples/00-Basic-tutorials/04-Scene-properties`
         Tutorial: Setting scene properties.
 
-    :doc:`examples/005-Lighting-setups`
+    :doc:`examples/00-Basic-tutorials/05-Lighting-setups`
         Tutorial: Using lighting setups with scenes.
 """
 

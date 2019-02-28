@@ -22,8 +22,9 @@ is also available in Jupyter notebooks in the [fresnel-examples repository](http
 
 Here are a few samples of what **fresnel** can do:
 
-[<img src="doc/gallery/sphere.png" width="290" />](doc/gallery/sphere.py)
-[<img src="doc/gallery/cuboid.png" width="290" />](doc/gallery/cuboid.py)
+[<img alt="nature chemistry cover art" src="doc/gallery/protomer.png" width="290" />](https://www.nature.com/nchem/volumes/11/issues/3)
+[<img alt="cuboid sample" src="doc/gallery/cuboid.png" width="290" />](doc/gallery/cuboid.py)
+[<img alt="sphere sample" src="doc/gallery/sphere.png" width="290" />](doc/gallery/sphere.py)
 
 ## Installing fresnel
 

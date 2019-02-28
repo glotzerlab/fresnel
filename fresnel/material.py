@@ -25,7 +25,7 @@ class Material(object):
                        the two.
 
     .. seealso::
-        :doc:`examples/002-Material-properties`
+        :doc:`examples/00-Basic-tutorials/02-Material-properties`
             Tutorial: Modifying material properties.
 
 
