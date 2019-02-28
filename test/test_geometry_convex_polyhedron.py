@@ -66,7 +66,7 @@ def test_render(scene_eight_polyhedra_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_convex_polyhedron.test_render.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(pytestconfig.rootdir,'test/reference/test_geometry_convex_polyhedron.test_render.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_geometry_convex_polyhedron.test_render.png'))
 
 
 def test_outline(scene_eight_polyhedra_, pytestconfig, generate=False):
@@ -78,7 +78,7 @@ def test_outline(scene_eight_polyhedra_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_convex_polyhedron.test_outline.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(pytestconfig.rootdir,'test/reference/test_geometry_convex_polyhedron.test_outline.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_geometry_convex_polyhedron.test_outline.png'))
 
 
 def test_face_color(scene_eight_polyhedra_, pytestconfig, generate=False):
@@ -93,7 +93,7 @@ def test_face_color(scene_eight_polyhedra_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_convex_polyhedron.test_face_color.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(pytestconfig.rootdir,'test/reference/test_geometry_convex_polyhedron.test_face_color.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_geometry_convex_polyhedron.test_face_color.png'))
 
 def test_convert_cube():
     """Sanity checks on converting vertices to origins and normals

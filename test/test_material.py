@@ -17,7 +17,7 @@ def test_set_material(scene_hex_sphere_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_material.test_set_material.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(pytestconfig.rootdir,'test/reference/test_material.test_set_material.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_material.test_set_material.png'))
 
 def test_solid(scene_hex_sphere_, pytestconfig, generate=False):
     geometry = scene_hex_sphere_.geometry[0]
@@ -29,7 +29,7 @@ def test_solid(scene_hex_sphere_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_material.test_solid.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(pytestconfig.rootdir,'test/reference/test_material.test_solid.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_material.test_solid.png'))
 
 def test_color(scene_hex_sphere_, pytestconfig, generate=False):
     geometry = scene_hex_sphere_.geometry[0]
@@ -41,7 +41,7 @@ def test_color(scene_hex_sphere_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_material.test_color.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(pytestconfig.rootdir,'test/reference/test_material.test_color.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_material.test_color.png'))
 
 def test_specular(scene_hex_sphere_, pytestconfig, generate=False):
     geometry = scene_hex_sphere_.geometry[0]
@@ -53,7 +53,7 @@ def test_specular(scene_hex_sphere_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_material.test_specular.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(pytestconfig.rootdir,'test/reference/test_material.test_specular.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_material.test_specular.png'))
 
 def test_roughness(scene_hex_sphere_, pytestconfig, generate=False):
     geometry = scene_hex_sphere_.geometry[0]
@@ -65,7 +65,7 @@ def test_roughness(scene_hex_sphere_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_material.test_roughness.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(pytestconfig.rootdir,'test/reference/test_material.test_roughness.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_material.test_roughness.png'))
 
 def test_metal(scene_hex_sphere_, pytestconfig, generate=False):
     geometry = scene_hex_sphere_.geometry[0]
@@ -77,7 +77,7 @@ def test_metal(scene_hex_sphere_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_material.test_metal.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(pytestconfig.rootdir,'test/reference/test_material.test_metal.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_material.test_metal.png'))
 
 def test_primitive_color_mix(scene_hex_sphere_, pytestconfig, generate=False):
     geometry = scene_hex_sphere_.geometry[0]
@@ -95,7 +95,7 @@ def test_primitive_color_mix(scene_hex_sphere_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_material.test_primitive_color_mix.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(pytestconfig.rootdir,'test/reference/test_material.test_primitive_color_mix.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_material.test_primitive_color_mix.png'))
 
 if __name__ == '__main__':
     struct = namedtuple("struct", "param")

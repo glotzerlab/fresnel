@@ -16,7 +16,7 @@ def test_render(scene_hex_sphere_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_tracer_path.test_render.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(pytestconfig.rootdir,'test/reference/test_tracer_path.test_render.png'), tolerance=16)
+        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_tracer_path.test_render.png'), tolerance=16)
 
 if __name__ == '__main__':
     struct = namedtuple("struct", "param")

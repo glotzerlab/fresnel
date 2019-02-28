@@ -15,7 +15,7 @@ def test_render(scene_hex_sphere_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_tracer_direct.test_render.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(pytestconfig.rootdir,'test/reference/test_tracer_direct.test_render.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_tracer_direct.test_render.png'))
 
 def test_render_aa(scene_hex_sphere_, pytestconfig, generate=False):
     tracer = fresnel.tracer.Preview(device=scene_hex_sphere_.device, w=100, h=100, aa_level=3)
@@ -27,7 +27,7 @@ def test_render_aa(scene_hex_sphere_, pytestconfig, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_tracer_direct.test_render_aa.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(pytestconfig.rootdir,'test/reference/test_tracer_direct.test_render_aa.png'))
+        conftest.assert_image_approx_equal(buf_proxy[:], os.path.join(str(pytestconfig.rootdir),'test/reference/test_tracer_direct.test_render_aa.png'))
 
 def test_resize(scene_hex_sphere_, pytestconfig, generate=False):
     tracer = fresnel.tracer.Preview(device=scene_hex_sphere_.device, w=100, h=100)
