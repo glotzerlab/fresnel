@@ -199,7 +199,7 @@ class Polygon(Geometry):
         N (int): Number of polygons in the geometry. If ``None``, determine ``N`` from *points*.
 
     .. seealso::
-        :doc:`examples/101-Cylinder-geometry`
+        :doc:`examples/01-Primitives/04-Polygon-geometry`
             Tutorial: defining and setting polygon geometry properties
 
     Note:
