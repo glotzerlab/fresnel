@@ -4,29 +4,32 @@ Fresnel
 **fresnel** is a python library for path tracing publication quality images of soft matter simulations in real time.
 The fastest render performance is possible on NVIDIA GPUs using their `OptiX <https://developer.nvidia.com/optix>`_
 ray tracing engine. **fresnel** also supports multi-core CPUs using Intel's `Embree <https://embree.github.io/>`_
-ray tracing kernels. Path tracing enables high quality global illumination and advanced rendering effects controlled by
-intuitive parameters (like *roughness*, *specular*, and *metal*).
+ray tracing kernels. Path tracing enables high quality global illumination and advanced rendering effects.
+**Fresnel** offers intuitive material parameters (like *roughness*, *specular*, and *metal*) and simple predefined
+lighting setups (like *cloudy* and *lightbox*).
 
-Samples
-_______
+Here are a few samples of what **fresnel** can do:
 
-Here are a few quick samples of what **fresnel** can do:
+.. image:: gallery/protomer.png
+    :width: 220px
+    :alt: Protomer
+    :target: gallery/protomer.html
 
-.. sidebar:: Sphere
+.. image:: gallery/cuboid.png
+    :width: 220px
+    :alt: Cuboids
+    :target: gallery/cuboid.html
 
-    .. image:: gallery/sphere.png
-        :width: 275px
+.. image:: gallery/sphere.png
+    :width: 220px
+    :alt: Spheres
+    :target: gallery/sphere.html
 
-.. literalinclude:: gallery/sphere.py
-    :lines: 3-21
+.. toctree::
+    :maxdepth: 1
+    :caption: Examples
 
-.. sidebar:: Cuboids
-
-    .. image:: gallery/cuboid.png
-        :width: 275px
-
-.. literalinclude:: gallery/cuboid.py
-    :lines: 3-29
+    gallery
 
 .. toctree::
     :maxdepth: 1
@@ -41,28 +44,21 @@ Here are a few quick samples of what **fresnel** can do:
     :caption: Basic tutorials
     :glob:
 
-    examples/0*
+    examples/00-Basic-tutorials/*
 
 .. toctree::
     :maxdepth: 1
     :caption: Primitives
     :glob:
 
-    examples/1*
+    examples/01-Primitives/*
 
 .. toctree::
     :maxdepth: 1
     :caption: Advanced topics
     :glob:
 
-    examples/2*
-
-.. toctree::
-    :maxdepth: 1
-    :caption: Interactive rendering
-    :glob:
-
-    examples/3*
+    examples/02-Advanced-topics/*
 
 .. toctree::
     :maxdepth: 3

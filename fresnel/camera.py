@@ -20,7 +20,7 @@ class Camera(object):
         * :py:func:`orthographic`
 
     .. seealso::
-        :doc:`examples/004-Scene-properties`
+        :doc:`examples/00-Basic-tutorials/04-Scene-properties`
             Tutorial: Setting scene properties
 
         TODO:
