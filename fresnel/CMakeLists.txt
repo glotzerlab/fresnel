@@ -24,7 +24,7 @@ set(_cpu_sources
      cpu/Scene.cc
      cpu/Geometry.cc
      cpu/GeometryCylinder.cc
-     cpu/GeometryPrism.cc
+     cpu/GeometryPolygon.cc
      cpu/GeometryMesh.cc
      cpu/GeometryConvexPolyhedron.cc
      cpu/GeometrySphere.cc
@@ -51,8 +51,8 @@ set(_ptx_sources
     gpu/path.cu
     gpu/GeometryCylinder.cu
     gpu/GeometryMesh.cu
-	gpu/GeometrySphere.cu
-    gpu/GeometryPrism.cu
+    gpu/GeometrySphere.cu
+    gpu/GeometryPolygon.cu
     gpu/GeometryConvexPolyhedron.cu)
 
 list(APPEND CUDA_NVCC_FLAGS "-Xcudafe;--diag_suppress=code_is_unreachable")
@@ -74,7 +74,7 @@ set(_gpu_sources
      gpu/Geometry.cc
      gpu/GeometryCylinder.cc
      gpu/GeometryMesh.cc
-     gpu/GeometryPrism.cc
+     gpu/GeometryPolygon.cc
      gpu/GeometryConvexPolyhedron.cc
      gpu/GeometrySphere.cc
      gpu/Tracer.cc

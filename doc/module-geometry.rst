@@ -9,6 +9,7 @@ fresnel.geometry
     fresnel.geometry.Geometry
     fresnel.geometry.ConvexPolyhedron
     fresnel.geometry.Cylinder
+    fresnel.geometry.Polygon
     fresnel.geometry.Sphere
 
 .. rubric:: Details

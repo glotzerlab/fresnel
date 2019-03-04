@@ -7,7 +7,7 @@
 #include "Geometry.h"
 #include "GeometryCylinder.h"
 #include "GeometryMesh.h"
-#include "GeometryPrism.h"
+#include "GeometryPolygon.h"
 #include "GeometryConvexPolyhedron.h"
 #include "GeometrySphere.h"
 #include "Tracer.h"
@@ -33,7 +33,7 @@ PYBIND11_MODULE(_gpu, m)
     export_Geometry(m);
     export_GeometryCylinder(m);
     export_GeometryMesh(m);
-    export_GeometryPrism(m);
+    export_GeometryPolygon(m);
     export_GeometryConvexPolyhedron(m);
     export_GeometrySphere(m);
     export_Tracer(m);

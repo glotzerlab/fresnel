@@ -5,6 +5,7 @@
 #define __VECTOR_MATH_H__
 
 #include <math.h>
+#include <cfloat>
 
 // need to declare these class methods with __device__ qualifiers when building in nvcc
 // DEVICE is __host__ __device__ when included in nvcc and blank when included into the host compiler
@@ -13,6 +14,10 @@
 #define DEVICE __host__ __device__
 #else
 #define DEVICE
+#endif
+
+#ifndef __CUDA_ARCH__
+#include <algorithm>
 #endif
 
 namespace fresnel {
@@ -145,6 +150,26 @@ inline DEVICE float acos(float x)
 inline DEVICE double acos(double x)
     {
     return ::acos(x);
+    }
+
+template < class Real >
+inline DEVICE Real min(Real a, Real b)
+    {
+    #ifdef __CUDA_ARCH__
+    return ::min(a, b);
+    #else
+    return std::min(a, b);
+    #endif
+    }
+
+template < class Real >
+inline DEVICE Real max(Real a, Real b)
+    {
+    #ifdef __CUDA_ARCH__
+    return ::max(a, b);
+    #else
+    return std::max(a, b);
+    #endif
     }
 }
 

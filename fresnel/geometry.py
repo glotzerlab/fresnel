@@ -105,8 +105,9 @@ class Cylinder(Geometry):
         N (int): Number of cylinders in the geometry. If ``None``, determine ``N`` from *points*.
 
     .. seealso::
+
         :doc:`examples/01-Primitives/01-Cylinder-geometry`
-            Tutorial: defining and setting cyliner geometry properties
+            Tutorial: defining and setting cylinder geometry properties
 
     Note:
         The constructor arguments ``points``, ``radius``, and ``color`` are optional. If you do not provide them,
@@ -182,42 +183,37 @@ class Cylinder(Geometry):
     def color(self):
         return util.array(self._geometry.getColorBuffer(), geom=self)
 
-class Prism(Geometry):
-    R""" Prism geometry.
+class Polygon(Geometry):
+    R""" Polygon geometry.
 
-    Define a set of right convex prism primitives. The bottom polygon face is always in the xy plane. Each prism may
-    have a different height and rotation angle.
+    Define a set of simple polygon primitives. Each polygon face is always in the xy plane. Each polygon may
+    have a different color and rotation angle.
 
     Args:
         scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
-        vertices: The vertices of the polygon in a counter clockwise winding direction.
-          **Type:** anything convertible by numpy to a Nx2 array of floats.
-        position: Positions of the prisms, *optional*.
-          **Type:** anything convertible by numpy to a Nx3 array of floats.
-        height: Height of each prism in the z direction, *optional*.
-          **Type:** anything convertible by numpy to a N length array of floats.
-        angle: Rotation angle of each prism (in radians), *optional*.
-          **Type:** anything convertible by numpy to a N length array of floats.
-        color: (r,g,b) color of each particle, *optional*.
-          **Type:** anything convertible by numpy to a Nx3 array of floats.
-        N (int): Number of prisms in the geometry. If ``None``, determine ``N`` from ``position``.
+        vertices (`numpy.ndarray` or `array_like`): (``Nx2`` : ``float32``) - Polygon vertices.
+        position (`numpy.ndarray` or `array_like`): (``Nx2`` : ``float32``) -  Position of each polygon.
+        angle (`numpy.ndarray` or `array_like`): (``N`` : ``float32``) -  Orientation angle of each polygon.
+        color (`numpy.ndarray` or `array_like`): (``Nx3`` : ``float32``) - Color of each polygon.
+        rounding_radius (float): Rounding radius for spheropolygons.
+        N (int): Number of polygons in the geometry. If ``None``, determine ``N`` from ``position``.
+
+    .. seealso::
+        :doc:`examples/01-Primitives/04-Polygon-geometry`
+            Tutorial: defining and setting polygon geometry properties
 
     Note:
-        The constructor arguments ``position``, ``height``, ``angle``, and ``color`` are optional, and just short-hand
-        for assigning the attribute after construction.
-
-    Colors are in the linearized sRGB color space. Use :py:func:`fresnel.color.linear` to convert standard sRGB colors
-    into this space.
+        The constructor arguments ``position``, ``angle``, and ``color`` are optional. If you do not provide them,
+        they are initialized to 0's.
 
     .. hint::
         Avoid costly memory allocations and type conversions by specifying primitive properties in the appropriate
         numpy array type.
 
     Attributes:
-        position (:py:class:`fresnel.util.array`): Read or modify the positions of the prisms.
-        height (:py:class:`fresnel.util.array`): Read or modify the heights of the prisms.
-        angle (:py:class:`fresnel.util.array`): Read or modify the angles of the prisms.
-        color (:py:class:`fresnel.util.array`): Read or modify the color of the prisms.
+        position (:py:class:`fresnel.util.array`): Read or modify the positions of the polygons.
+        angle (:py:class:`fresnel.util.array`): Read or modify the orientation angles of the polygons.
+        color (:py:class:`fresnel.util.array`): Read or modify the colors of the polygons.
 
     """
 
@@ -226,8 +222,8 @@ class Prism(Geometry):
                  vertices,
                  position=None,
                  angle=None,
-                 height=None,
                  color=None,
+                 rounding_radius=0,
                  N=None,
                  material=material.Material(solid=1.0, color=(1,0,1)),
                  outline_material=material.Material(solid=1.0, color=(0,0,0)),
@@ -235,16 +231,13 @@ class Prism(Geometry):
         if N is None:
             N = len(position);
 
-        self._geometry = scene.device.module.GeometryPrism(scene._scene, vertices, N);
+        self._geometry = scene.device.module.GeometryPolygon(scene._scene, vertices, rounding_radius, N);
         self.material = material;
         self.outline_material = outline_material;
         self.outline_width = outline_width;
 
         if position is not None:
             self.position[:] = position;
-
-        if height is not None:
-            self.height[:] = height;
 
         if angle is not None:
             self.angle[:] = angle;
@@ -258,10 +251,6 @@ class Prism(Geometry):
     @property
     def position(self):
         return util.array(self._geometry.getPositionBuffer(), geom=self)
-
-    @property
-    def height(self):
-        return util.array(self._geometry.getHeightBuffer(), geom=self)
 
     @property
     def angle(self):
@@ -281,8 +270,8 @@ class Prism(Geometry):
         r = self._geometry.getRadius();
         res2d = numpy.array([numpy.min(pos - r, axis=0),
                            numpy.max(pos + r, axis=0)])
-        res = numpy.array([[res2d[0][0], res2d[0][1], 0],
-                           [res2d[1][0], res2d[1][1], numpy.max(self.height[:])]])
+        res = numpy.array([[res2d[0][0], res2d[0][1], -1e-5],
+                           [res2d[1][0], res2d[1][1], 1e-5]])
 
         return res;
 
