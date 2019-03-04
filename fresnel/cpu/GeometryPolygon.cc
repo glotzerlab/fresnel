@@ -118,22 +118,22 @@ inline bool is_inside(float &min_d, const vec2<float>& p, const std::vector< vec
     unsigned int nvert = verts.size();
     min_d = FLT_MAX;
 
-    unsigned int  i, j=nvert-1;
-    bool oddNodes=false;
+    unsigned int i, j = nvert-1;
+    bool oddNodes = false;
 
     for (i = 0; i < nvert; i++)
         {
         min_d = fast::min(min_d, point_line_segment_distance(p, verts[i], verts[j]));
-        // if (polyY[i]<y && polyY[j]>=y ||  polyY[j]<y && polyY[i]>=y)
+
         if ((verts[i].y < p.y && verts[j].y >= p.y) ||  (verts[j].y < p.y && verts[i].y >= p.y))
             {
-            // if (polyX[i]+(y-polyY[i])/(polyY[j]-polyY[i])*(polyX[j]-polyX[i])<x)
-            if (verts[i].x+(p.y-verts[i].y)/(verts[j].y-verts[i].y)*(verts[j].x-verts[i].x) < p.x)
+
+            if (verts[i].x + (p.y - verts[i].y) / (verts[j].y - verts[i].y) * (verts[j].x - verts[i].x) < p.x)
                 {
-                oddNodes=!oddNodes;
+                oddNodes = !oddNodes;
                 }
             }
-        j=i;
+        j = i;
         }
 
     return oddNodes;
@@ -237,6 +237,7 @@ void export_GeometryPolygon(pybind11::module& m)
         .def("getPositionBuffer", &GeometryPolygon::getPositionBuffer)
         .def("getAngleBuffer", &GeometryPolygon::getAngleBuffer)
         .def("getColorBuffer", &GeometryPolygon::getColorBuffer)
+        .def("getRadius", &GeometryPolygon::getRadius)
         ;
     }
 

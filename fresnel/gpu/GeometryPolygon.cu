@@ -44,22 +44,21 @@ static __device__ bool is_inside(float &min_d, const vec2<float>& p)
     unsigned int nvert = polygon_vertices.size();
     min_d = FLT_MAX;
 
-    unsigned int  i, j=nvert-1;
+    unsigned int  i, j = nvert-1;
     bool oddNodes=false;
 
     for (i = 0; i < nvert; i++)
         {
         min_d = fast::min(min_d, point_line_segment_distance(p, vec2<float>(polygon_vertices[i]), vec2<float>(polygon_vertices[j])));
-        // if (polyY[i]<y && polyY[j]>=y ||  polyY[j]<y && polyY[i]>=y)
+
         if ((polygon_vertices[i].y < p.y && polygon_vertices[j].y >= p.y) ||  (polygon_vertices[j].y < p.y && polygon_vertices[i].y >= p.y))
             {
-            // if (polyX[i]+(y-polyY[i])/(polyY[j]-polyY[i])*(polyX[j]-polyX[i])<x)
-            if (polygon_vertices[i].x+(p.y-polygon_vertices[i].y)/(polygon_vertices[j].y-polygon_vertices[i].y)*(polygon_vertices[j].x-polygon_vertices[i].x) < p.x)
+            if (polygon_vertices[i].x + (p.y - polygon_vertices[i].y) / (polygon_vertices[j].y - polygon_vertices[i].y) * (polygon_vertices[j].x - polygon_vertices[i].x) < p.x)
                 {
-                oddNodes=!oddNodes;
+                oddNodes = !oddNodes;
                 }
             }
-        j=i;
+        j = i;
         }
 
     return oddNodes;

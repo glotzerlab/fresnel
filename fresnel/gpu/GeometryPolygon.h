@@ -57,8 +57,8 @@ class GeometryPolygon : public Geometry
     protected:
         optix::Buffer m_vertices;       //!< Buffer containing polygon vertices
 
-        std::shared_ptr< Array< vec2<float> > > m_position;   //!< Position of each polyhedron
-        std::shared_ptr< Array< float > > m_angle;            //!< Orientation of each polyhedron
+        std::shared_ptr< Array< vec2<float> > > m_position;   //!< Position of each polygon
+        std::shared_ptr< Array< float > > m_angle;            //!< Orientation of each polygon
         std::shared_ptr< Array< RGB<float> > > m_color;       //!< Per-particle color
 
         float m_radius=0;                           //!< Precomputed radius in the xy plane

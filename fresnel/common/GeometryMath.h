@@ -1,8 +1,8 @@
 // Copyright (c) 2016-2019 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
-#ifndef __GEOEMTRY_MATH_H__
-#define __GEOEMTRY_MATH_H__
+#ifndef GEOEMTRY_MATH_H__
+#define GEOEMTRY_MATH_H__
 
 // need to declare these class methods with __device__ qualifiers when building in nvcc
 // DEVICE is __host__ __device__ when included in nvcc and blank when included into the host compiler

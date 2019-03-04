@@ -191,12 +191,12 @@ class Polygon(Geometry):
 
     Args:
         scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
-        vertices (`numpy.ndarray` or `array_like`): (``Nx2`` : ``float32``) - polygon vertices.
+        vertices (`numpy.ndarray` or `array_like`): (``Nx2`` : ``float32``) - Polygon vertices.
         position (`numpy.ndarray` or `array_like`): (``Nx2`` : ``float32``) -  Position of each polygon.
         angle (`numpy.ndarray` or `array_like`): (``N`` : ``float32``) -  Orientation angle of each polygon.
-        color (`numpy.ndarray` or `array_like`): (``Nx3`` : ``float32``) - Color of polygon.
-        rounding_radius (float): Rounding radius for spheropolygons
-        N (int): Number of polygons in the geometry. If ``None``, determine ``N`` from *points*.
+        color (`numpy.ndarray` or `array_like`): (``Nx3`` : ``float32``) - Color of each polygon.
+        rounding_radius (float): Rounding radius for spheropolygons.
+        N (int): Number of polygons in the geometry. If ``None``, determine ``N`` from ``position``.
 
     .. seealso::
         :doc:`examples/01-Primitives/04-Polygon-geometry`
@@ -270,8 +270,8 @@ class Polygon(Geometry):
         r = self._geometry.getRadius();
         res2d = numpy.array([numpy.min(pos - r, axis=0),
                            numpy.max(pos + r, axis=0)])
-        res = numpy.array([[res2d[0][0], res2d[0][1], -0.1],
-                           [res2d[1][0], res2d[1][1], 0.1]])
+        res = numpy.array([[res2d[0][0], res2d[0][1], -1e-5],
+                           [res2d[1][0], res2d[1][1], 1e-5]])
 
         return res;
 
