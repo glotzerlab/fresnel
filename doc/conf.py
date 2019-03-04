@@ -51,7 +51,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'Fresnel'
+project = 'fresnel'
 copyright = '2016-2019, The Regents of the University of Michigan'
 author = 'The Regents of the University of Michigan'
 
