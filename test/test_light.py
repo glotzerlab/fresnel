@@ -1,8 +1,8 @@
 import fresnel
 import pytest
 
-def test_lightlist(device):
-    scene = fresnel.Scene(device, lights=[])
+def test_lightlist(device_):
+    scene = fresnel.Scene(device_, lights=[])
     l = scene.lights
     assert(len(l) == 0)
     l.append(fresnel.light.Light(direction=(1,2,3), color=(0.5, 0.125, 0.75), theta=2))

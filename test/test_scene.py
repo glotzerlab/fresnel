@@ -3,9 +3,10 @@ import numpy
 from collections import namedtuple
 import PIL
 import conftest
+import os
 
-def test_background_color(device):
-    scene = fresnel.Scene(device=device)
+def test_background_color(device_):
+    scene = fresnel.Scene(device=device_)
 
     scene.background_color = fresnel.color.linear((0.125, 0.75, 0.375))
 
@@ -21,35 +22,35 @@ def test_background_color(device):
     numpy.testing.assert_array_equal(buf[:,:,3], numpy.ones(shape=(100,100), dtype=buf.dtype)*128)
     numpy.testing.assert_array_equal(buf[:,:,0:3], numpy.ones(shape=(100,100,3), dtype=buf.dtype)*(32,191,96))
 
-def test_camera(scene_hex_sphere, generate=False):
-    scene_hex_sphere.camera = fresnel.camera.orthographic(position=(1, 0, 10), look_at=(1,0,0), up=(0,1,0), height=6)
+def test_camera(scene_hex_sphere_, generate=False):
+    scene_hex_sphere_.camera = fresnel.camera.orthographic(position=(1, 0, 10), look_at=(1,0,0), up=(0,1,0), height=6)
 
-    assert scene_hex_sphere.camera.position == (1,0,10)
-    assert scene_hex_sphere.camera.look_at == (1,0,0)
-    assert scene_hex_sphere.camera.up == (0,1,0)
-    assert scene_hex_sphere.camera.height == 6
+    assert scene_hex_sphere_.camera.position == (1,0,10)
+    assert scene_hex_sphere_.camera.look_at == (1,0,0)
+    assert scene_hex_sphere_.camera.up == (0,1,0)
+    assert scene_hex_sphere_.camera.height == 6
 
-    buf_proxy = fresnel.preview(scene_hex_sphere, w=100, h=100)
+    buf_proxy = fresnel.preview(scene_hex_sphere_, w=100, h=100)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_scene.test_camera.png', 'wb'), 'png');
     else:
         conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_scene.test_camera.png')
 
-def test_light_dir(scene_hex_sphere, generate=False):
-    scene_hex_sphere.lights[0].direction = (1, 0, 0)
-    scene_hex_sphere.lights[0].color = (0.5, 0.5, 0.5)
-    assert scene_hex_sphere.lights[0].direction == (1, 0, 0)
-    assert scene_hex_sphere.lights[0].color == (0.5, 0.5, 0.5)
+def test_light_dir(scene_hex_sphere_, generate=False):
+    scene_hex_sphere_.lights[0].direction = (1, 0, 0)
+    scene_hex_sphere_.lights[0].color = (0.5, 0.5, 0.5)
+    assert scene_hex_sphere_.lights[0].direction == (1, 0, 0)
+    assert scene_hex_sphere_.lights[0].color == (0.5, 0.5, 0.5)
 
-    buf_proxy = fresnel.preview(scene_hex_sphere, w=100, h=100)
+    buf_proxy = fresnel.preview(scene_hex_sphere_, w=100, h=100)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_scene.test_light_dir.png', 'wb'), 'png');
     else:
         conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_scene.test_light_dir.png')
 
-def test_multiple_geometries(device, generate=False):
+def test_multiple_geometries(device_, generate=False):
     scene = fresnel.Scene(lights=conftest.test_lights())
     scene.camera = fresnel.camera.orthographic(position=(0, 0, 10), look_at=(0,0,0), up=(0,1,0), height=7)
 
@@ -98,11 +99,11 @@ if __name__ == '__main__':
     struct = namedtuple("struct", "param")
     device = conftest.device(struct(('cpu', None)))
 
-    scene_hex_sphere = conftest.scene_hex_sphere(device)
-    test_camera(scene_hex_sphere, generate=True)
+    scene = conftest.scene_hex_sphere(device)
+    test_camera(scene, generate=True)
 
-    scene_hex_sphere = conftest.scene_hex_sphere(device)
-    test_light_dir(scene_hex_sphere, generate=True)
+    scene = conftest.scene_hex_sphere(device)
+    test_light_dir(scene, generate=True)
 
-    scene_hex_sphere = conftest.scene_hex_sphere(device)
-    test_multiple_geometries(scene_hex_sphere, generate=True)
+    scene = conftest.scene_hex_sphere(device)
+    test_multiple_geometries(scene, generate=True)

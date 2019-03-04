@@ -123,7 +123,7 @@ template<class T> class Array
             m_ndim = 1;
 
             // reset to zero for primitive data types
-            memset(&m_data[0], 0, sizeof(T)*n);
+            memset((void*)&m_data[0], 0, sizeof(T)*n);
 
             // this looks weird, because the underlying std::vector has already constructed
             // the objects, but we just reset the array to zero to account for non-primitive data-types
@@ -136,7 +136,7 @@ template<class T> class Array
             m_w = w;
             m_h = h;
             m_ndim = 2;
-            memset(&m_data[0], 0, sizeof(T)*w*h);
+            memset((void*)&m_data[0], 0, sizeof(T)*w*h);
             for (std::size_t i = 0; i < w*h; ++i) ::new ((void **) &m_data[i]) T;
             }
 

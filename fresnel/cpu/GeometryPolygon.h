@@ -1,44 +1,40 @@
 // Copyright (c) 2016-2019 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
-#ifndef GEOMETRY_PRISM_H_
-#define GEOMETRY_PRISM_H_
+#ifndef GEOMETRY_POLYGON_H_
+#define GEOMETRY_POLYGON_H_
 
-#include <optixu/optixpp_namespace.h>
-
+#include "embree_platform.h"
+#include <embree3/rtcore.h>
+#include <embree3/rtcore_ray.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 
 #include "Geometry.h"
 #include "Array.h"
 
-namespace fresnel { namespace gpu {
+namespace fresnel { namespace cpu {
 
-//! Prism geometry
-/*! Define a prism geometry.
+//! Polygon geometry
+/*! Define a polygon geometry.
 
-    See fresnel::cpu::GeometryPrism for full API and description. This class re-implements that using OptiX.
+    It supports simple polygons in the x,y,z=0 plane.
 */
-class GeometryPrism : public Geometry
+class GeometryPolygon : public Geometry
     {
     public:
         //! Constructor
-        GeometryPrism(std::shared_ptr<Scene> scene,
+        GeometryPolygon(std::shared_ptr<Scene> scene,
                       pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast> vertices,
+                      float rounding_radius,
                       unsigned int N);
         //! Destructor
-        virtual ~GeometryPrism();
+        virtual ~GeometryPolygon();
 
         //! Get the position buffer
         std::shared_ptr< Array< vec2<float> > > getPositionBuffer()
             {
             return m_position;
-            }
-
-        //! Get the height buffer
-        std::shared_ptr< Array< float > > getHeightBuffer()
-            {
-            return m_height;
             }
 
         //! Get the angle buffer
@@ -60,20 +56,25 @@ class GeometryPrism : public Geometry
             }
 
     protected:
-        optix::Buffer m_plane_origin;   //!< Buffer containing plane origins
-        optix::Buffer m_plane_normal;   //!< Buffer containing plane normals
+        std::vector< vec2<float> > m_vertices;  //!< Polygon vertices
+        float m_rounding_radius;                //!< Spheropolygon rounding radius
 
-        std::shared_ptr< Array< vec2<float> > > m_position;   //!< Position of each polyhedron
-        std::shared_ptr< Array< float > > m_angle;            //!< Orientation of each polyhedron
-        std::shared_ptr< Array< float > > m_height;           //!< Height of each prism
+        std::shared_ptr< Array< vec2<float> > > m_position;   //!< Position of each polygon
+        std::shared_ptr< Array< float > > m_angle;            //!< Orientation of each polygon
         std::shared_ptr< Array< RGB<float> > > m_color;       //!< Per-particle color
 
         float m_radius=0;                           //!< Precomputed radius in the xy plane
+
+        //! Embree bounding function
+        static void bounds(const struct RTCBoundsFunctionArguments *args);
+
+        //! Embree ray intersection function
+        static void intersect(const struct RTCIntersectFunctionNArguments *args);
     };
 
-//! Export GeometryPrism to python
-void export_GeometryPrism(pybind11::module& m);
+//! Export GeometryPolygon to python
+void export_GeometryPolygon(pybind11::module& m);
 
-} } // end namespace fresnel::gpu
+} } // end namespace fresnel::cpu
 
 #endif

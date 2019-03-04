@@ -1,6 +1,6 @@
 import fresnel
 
-def test_camera_fit_front(device):
+def test_camera_fit_front(device_):
     scene = fresnel.Scene()
 
     geom1 = fresnel.geometry.Sphere(scene, position = [[-9, -2, 0], [-5, -1, 0], [4, 0, 0], [2, 1, 0]], radius=1.0)
@@ -11,7 +11,7 @@ def test_camera_fit_front(device):
     assert cam.look_at == (-2.5,-0.5,0)
     assert cam.height == 5
 
-def test_camera_fit_isometric(device):
+def test_camera_fit_isometric(device_):
     scene = fresnel.Scene()
 
     geom1 = fresnel.geometry.Sphere(scene, position = [[-9, -2, 0], [-5, -1, 0], [4, 0, 0], [2, 1, 0]], radius=1.0)
@@ -19,7 +19,7 @@ def test_camera_fit_isometric(device):
     cam = fresnel.camera.fit(scene, view='isometric', margin=0)
     # isometric cameras do not have a simple testable format, just test that the API works
 
-def test_scene_auto(device):
+def test_scene_auto(device_):
     scene = fresnel.Scene()
 
     geom1 = fresnel.geometry.Sphere(scene, position = [[-9, -2, 0], [-5, -1, 0], [4, 0, 0], [2, 1, 0]], radius=1.0)
