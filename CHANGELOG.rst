@@ -9,6 +9,7 @@ v0.8.0 (2019-03-05)
 * Documentation improvements
 * Add ``geometry.Polygon``: Simple and/or rounded polygons in the *z=0* plane.
 * API breaking changes:
+
     * Remove: ``geometry.Prism``
 
 v0.7.1 (2019-02-05)
@@ -25,6 +26,7 @@ v0.7.0 (2019-02-05)
 * **fresnel** development is now hosted on github: https://github.com/glotzerlab/fresnel/
 * Improve ``light.lightbox`` lighting setup
 * API breaking changes:
+
     * ``geometry.ConvexPolyhedron`` arguments changed. It now accepts polyhedron information as a dictionary.
 
 v0.6.0 (2018-07-06)
