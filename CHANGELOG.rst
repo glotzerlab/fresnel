@@ -3,6 +3,14 @@ Change log
 
 `fresnel <https://github.com/glotzerlab/fresnel>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
+v0.8.0 (2019-03-05)
+-------------------
+
+* Documentation improvements
+* Add `geometry.Polygon`: Simple and/or rounded polygons in the *z=0* plane.
+* API breaking changes:
+    * Remove: `geometry.Prism`
+
 v0.7.1 (2019-02-05)
 -------------------
 
