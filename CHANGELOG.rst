@@ -7,9 +7,9 @@ v0.8.0 (2019-03-05)
 -------------------
 
 * Documentation improvements
-* Add `geometry.Polygon`: Simple and/or rounded polygons in the *z=0* plane.
+* Add ``geometry.Polygon``: Simple and/or rounded polygons in the *z=0* plane.
 * API breaking changes:
-    * Remove: `geometry.Prism`
+    * Remove: ``geometry.Prism``
 
 v0.7.1 (2019-02-05)
 -------------------
