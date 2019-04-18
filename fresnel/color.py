@@ -22,7 +22,7 @@ def linear(color):
 
     Args:
 
-        color (`numpy.ndarray` or `array_like`): (``3``, ``Nx3``, or ``Nx4`` : ``float32``) - ``RGB`` or ``RGBA``
+        color (`numpy.ndarray` or `array_like`): (``3``, ``4``, ``Nx3``, or ``Nx4`` : ``float32``) - ``RGB`` or ``RGBA``
             color in the range [0,1].
 
     Returns:
@@ -31,7 +31,7 @@ def linear(color):
     """
 
     c = numpy.ascontiguousarray(color);
-    if c.shape == (3,):
+    if c.shape == (3,) or c.shape == (4,):
         out = numpy.zeros(3, dtype=numpy.float32)
         if c[0] < 0.04045:
             out[0] = c[0] / 12.92;
@@ -56,6 +56,6 @@ def linear(color):
             not_s = numpy.logical_not(s);
             out[not_s, i] = ((c[not_s,i] + 0.055) / (1.055))**2.4;
     else:
-        raise TypeError("color must be a length 3, Nx3, or Nx4 array");
+        raise TypeError("color must be a length 3, 4, Nx3, or Nx4 array");
 
     return out;
