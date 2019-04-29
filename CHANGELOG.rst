@@ -3,6 +3,11 @@ Change log
 
 `fresnel <https://github.com/glotzerlab/fresnel>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
+v0.9.0 (2019-04-30)
+-------------------
+
+* Added support for linearizing colors of shape (4,).
+
 v0.8.0 (2019-03-05)
 -------------------
 
