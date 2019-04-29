@@ -61,7 +61,7 @@ Download source releases directly from the web: https://glotzerlab.engin.umich.e
 
 .. code-block:: bash
 
-   $ curl -O https://glotzerlab.engin.umich.edu/Downloads/fresnel/fresnel-v0.8.0.tar.gz
+   $ curl -O https://glotzerlab.engin.umich.edu/Downloads/fresnel/fresnel-v0.9.0.tar.gz
 
 Or, clone using git:
 
