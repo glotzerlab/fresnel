@@ -6,7 +6,8 @@ Change log
 v0.9.0 (2019-04-30)
 -------------------
 
-* Added support for linearizing colors of shape (4,).
+* Added support for linearizing colors of shape (4,)
+* Improve examples
 
 v0.8.0 (2019-03-05)
 -------------------
