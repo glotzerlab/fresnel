@@ -32,7 +32,7 @@ GeometryPolygon::GeometryPolygon(std::shared_ptr<Scene> scene,
     m_geometry->setPrimitiveCount(N);
 
     // load bounding and intresection programs
-    const char * path_to_ptx = "_ptx_generated_GeometryPolygon.cu.ptx";
+    const char * path_to_ptx = "GeometryPolygon.ptx";
     bounding_box_program = device->getProgram(path_to_ptx, "bounds");
     m_geometry->setBoundingBoxProgram(bounding_box_program);
 

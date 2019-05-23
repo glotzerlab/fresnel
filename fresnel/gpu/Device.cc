@@ -42,7 +42,7 @@ Device::Device(const std::string& ptx_root, int n) : m_ptx_root(ptx_root)
     m_context->setRayTypeCount(2);
 
     // miss programs
-    optix::Program p2 = getProgram("_ptx_generated_path.cu.ptx", "path_miss");
+    optix::Program p2 = getProgram("path.ptx", "path_miss");
     m_context->setMissProgram(TRACER_PATH_RAY_ID, p2);
 
     // initialize materials

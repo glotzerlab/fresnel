@@ -25,7 +25,7 @@ namespace fresnel { namespace gpu {
 		m_geometry = context->createGeometry();
 		m_geometry->setPrimitiveCount(N);
 
-		const char * path_to_ptx = "_ptx_generated_GeometrySphere.cu.ptx";
+		const char * path_to_ptx = "GeometrySphere.ptx";
 		bounding_box_program = device->getProgram(path_to_ptx, "bounds");
 		m_geometry->setBoundingBoxProgram(bounding_box_program);
 

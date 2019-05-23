@@ -25,7 +25,7 @@ GeometryCylinder::GeometryCylinder(std::shared_ptr<Scene> scene, unsigned int N)
 	m_geometry = context->createGeometry();
 	m_geometry->setPrimitiveCount(N);
 
-	const char * path_to_ptx = "_ptx_generated_GeometryCylinder.cu.ptx";
+	const char * path_to_ptx = "GeometryCylinder.ptx";
 	bounding_box_program = device->getProgram(path_to_ptx, "bounds");
 	m_geometry->setBoundingBoxProgram(bounding_box_program);
 

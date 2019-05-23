@@ -10,7 +10,7 @@
 // need to declare these class methods with __device__ qualifiers when building in nvcc
 // DEVICE is __host__ __device__ when included in nvcc and blank when included into the host compiler
 #undef DEVICE
-#ifdef NVCC
+#ifdef __CUDACC__
 #define DEVICE __host__ __device__
 #else
 #define DEVICE
@@ -332,7 +332,7 @@ struct vec3
     //! Construct an undefined vec3
     DEVICE vec3() { }
 
-    #ifdef NVCC
+    #ifdef __CUDACC__
     //! Convenience function to generate float3 in device code
     DEVICE operator float3()
         {
@@ -643,7 +643,7 @@ struct vec2
         {
         }
 
-    #ifdef NVCC
+    #ifdef __CUDACC__
     //! Convenience function to generate float2 in device code
     DEVICE operator float2()
         {
@@ -976,7 +976,7 @@ struct quat
         {
         }
 
-    #ifdef NVCC
+    #ifdef __CUDACC__
     //! Convenience function to get a quat from a float4 in device code
     DEVICE explicit quat(const float4& a) : s(a.x), v(vec3<float>(a.y, a.z, a.w))
         {

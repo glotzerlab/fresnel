@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 2.8.0 FATAL_ERROR)
-project(fresnel)
+cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
+project(fresnel LANGUAGES C CXX)
 
 add_subdirectory(CMake)
 include(CFlagsSetup)
@@ -26,11 +26,15 @@ endif()
 option(ENABLE_OPTIX "Use OptiX for ray tracing on the GPU" OFF)
 
 if (ENABLE_OPTIX)
+    enable_language(CUDA)
+    if (CMAKE_CUDA_COMPILER_VERSION VERSION_LESS 9.0)
+        message(SEND_ERROR "Fresnel requires CUDA 9.0 or newer")
+    endif()
+
     find_package(OptiX REQUIRED)
-    find_package(CUDA 7.5 REQUIRED)
 
     include_directories(${OptiX_INCLUDE})
-    include_directories(${CUDA_INCLUDE_DIRS})
+    include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
 endif()
 
 if (NOT (ENABLE_OPTIX) AND NOT (ENABLE_EMBREE))

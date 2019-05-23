@@ -7,7 +7,7 @@
 // need to declare these class methods with __device__ qualifiers when building in nvcc
 // DEVICE is __host__ __device__ when included in nvcc and blank when included into the host compiler
 #undef DEVICE
-#ifdef NVCC
+#ifdef __CUDACC__
 #define DEVICE __host__ __device__
 #else
 #define DEVICE
@@ -39,7 +39,7 @@ struct RGB
         {
         }
 
-    #ifdef NVCC
+    #ifdef __CUDA_ARCH__
     //! Convenience function to generate float3 in device code
     DEVICE operator float3()
         {

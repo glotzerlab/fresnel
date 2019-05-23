@@ -29,7 +29,7 @@ GeometryMesh::GeometryMesh(std::shared_ptr<Scene> scene,
     m_geometry = context->createGeometry();
 
     // load bounding and intresection programs
-    const char * path_to_ptx = "_ptx_generated_GeometryMesh.cu.ptx";
+    const char * path_to_ptx = "GeometryMesh.ptx";
     bounding_box_program = device->getProgram(path_to_ptx, "bounds");
     m_geometry->setBoundingBoxProgram(bounding_box_program);
 

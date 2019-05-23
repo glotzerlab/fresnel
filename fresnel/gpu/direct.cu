@@ -209,6 +209,6 @@ RT_PROGRAM void direct_closest_hit()
             }
         }
 
-    prd_radiance.result = c;
+    prd_radiance.result = float3(c);
     prd_radiance.hit = 1;
     }
