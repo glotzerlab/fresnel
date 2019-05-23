@@ -8,7 +8,7 @@ pipeline
         stage('Unit and validation tests')
             {
             when { not { branch 'release' } }
-            failFast true
+
             parallel
                 {
                 {% for test in tests %}stage('{{ test.name }}')
@@ -19,7 +19,7 @@ pipeline
                         {
                         CC = '{{ test.CC }}'
                         CXX = '{{ test.CXX }}'
-                        CONTAINER = '/nfs/glotzer/containers/{{ test.CONTAINER }}'
+                        CONTAINER = '/nfs/turbo/glotzer/containers/ci/{{ test.CONTAINER }}'
                         }
 
                     steps
@@ -37,7 +37,7 @@ pipeline
                             timeout(time: 1, unit: 'HOURS')
                                 {
                                 sh '''
-                                    singularity exec --nv ${CONTAINER} {{ test.CMAKE }} ../code -DPYTHON_EXECUTABLE=/usr/bin/python{{ test.PYVER }} -DENABLE_EMBREE={{ test.ENABLE_EMBREE }} -DENABLE_OPTIX={{ test.ENABLE_OPTIX }} -GNinja
+                                    singularity exec --nv ${CONTAINER} cmake ../code -DPYTHON_EXECUTABLE=/usr/bin/python{{ test.PYVER }} -DENABLE_EMBREE={{ test.ENABLE_EMBREE }} -DENABLE_OPTIX={{ test.ENABLE_OPTIX }} -GNinja
                                    '''
 
                                 sh 'singularity exec --nv ${CONTAINER} ninja -j 3'
@@ -50,7 +50,7 @@ pipeline
                                 {
                                 sh '''
                                     export PYTHONPATH=${WORKSPACE}/build
-                                    singularity exec --nv ${CONTAINER} {{ test.PYTEST }} --junit-xml=${WORKSPACE}/test.xml
+                                    singularity exec --nv ${CONTAINER} /usr/bin/python{{ test.PYVER }} -m pytest --junit-xml=${WORKSPACE}/test.xml
                                    '''
                                 }
                             }
