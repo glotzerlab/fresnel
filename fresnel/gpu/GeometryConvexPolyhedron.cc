@@ -33,7 +33,7 @@ GeometryConvexPolyhedron::GeometryConvexPolyhedron(std::shared_ptr<Scene> scene,
     m_geometry->setPrimitiveCount(N);
 
     // load bounding and intresection programs
-    const char * path_to_ptx = "_ptx_generated_GeometryConvexPolyhedron.cu.ptx";
+    const char * path_to_ptx = "GeometryConvexPolyhedron.ptx";
     bounding_box_program = device->getProgram(path_to_ptx, "bounds");
     m_geometry->setBoundingBoxProgram(bounding_box_program);
 

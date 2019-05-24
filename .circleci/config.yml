@@ -8,7 +8,7 @@ executors:
       python-version:
         type: string
     docker:
-      - image: glotzerlab/ci:2018.10-<< parameters.image >>
+      - image: glotzerlab/ci:2019.05-<< parameters.image >>
     environment:
       PYTHONPATH: /home/ci/project/build
       PYTHON: "/usr/bin/python<< parameters.python-version >>"
@@ -65,6 +65,7 @@ commands:
   sphinx:
     steps:
       - run: cd code/doc && sphinx-build -b html -d _build/doctrees -W -n . _build/html
+      - run: cd code/doc && sphinx-build -b latex -d _build/doctrees -W -n . _build/latex
 
 jobs:
   build_and_test:
@@ -110,6 +111,27 @@ workflows:
       - sphinx-docs
 
       - build_and_test:
+          name: clang8-py37
+          image: ubuntu19.04
+          cc: clang-8
+          cxx: clang++-8
+          python-version: "3.7"
+
+      - build_and_test:
+          name: clang7-py37
+          image: ubuntu19.04
+          cc: clang-7
+          cxx: clang++-7
+          python-version: "3.7"
+
+      - build_and_test:
+          name: gcc9-py37
+          image: ubuntu19.04
+          cc: gcc-9
+          cxx: g++-9
+          python-version: "3.7"
+
+      - build_and_test:
           name: gcc8-py36
           image: ubuntu18.04
           cc: gcc-8
@@ -132,6 +154,20 @@ workflows:
           python-version: "3.6"
 
       - build_and_test:
+          name: gcc5-py36
+          image: ubuntu18.04
+          cc: gcc-5
+          cxx: g++-5
+          python-version: "3.6"
+
+      - build_and_test:
+          name: gcc48-py36
+          image: ubuntu18.04
+          cc: gcc-4.8
+          cxx: g++-4.8
+          python-version: "3.6"
+
+      - build_and_test:
           name: clang6-py36
           image: ubuntu18.04
           cc: clang-6.0
@@ -144,32 +180,3 @@ workflows:
           cc: clang-5.0
           cxx: clang++-5.0
           python-version: "3.6"
-
-      - build_and_test:
-          name: clang4-py36
-          image: ubuntu18.04
-          cc: clang-4.0
-          cxx: clang++-4.0
-          python-version: "3.6"
-
-      - build_and_test:
-          name: gcc5-py27
-          image: ubuntu16.04
-          cc: gcc-5
-          cxx: g++-5
-          python-version: "2.7"
-
-      - build_and_test:
-          name: clang38-py35
-          image: ubuntu16.04
-          cc: clang-3.8
-          cxx: clang++-3.8
-          python-version: "3.5"
-
-      - build_and_test:
-          name: gcc48-py35-cm28
-          image: ubuntu16.04
-          cc: gcc-4.8
-          cxx: g++-4.8
-          python-version: "3.5"
-          cmake: /opt/cmake-2.8.12/bin/cmake

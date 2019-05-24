@@ -46,23 +46,45 @@ if (ENABLE_OPTIX)
 target_compile_definitions(_common PUBLIC FRESNEL_BUILD_GPU)
 
 # Build the PTX files for the OptiX programs
-set(_ptx_sources
-	gpu/direct.cu
-    gpu/path.cu
-    gpu/GeometryCylinder.cu
-    gpu/GeometryMesh.cu
-    gpu/GeometrySphere.cu
-    gpu/GeometryPolygon.cu
-    gpu/GeometryConvexPolyhedron.cu)
+set(_ptx_files
+    direct
+    path
+    GeometryCylinder
+    GeometryMesh
+    GeometrySphere
+    GeometryPolygon
+    GeometryConvexPolyhedron
+    )
 
-list(APPEND CUDA_NVCC_FLAGS "-Xcudafe;--diag_suppress=code_is_unreachable")
-list(APPEND CUDA_NVCC_FLAGS "-arch;compute_30;--use_fast_math")
-CUDA_WRAP_SRCS(_ptx PTX generated_ptx_files ${_ptx_sources})
-add_custom_target(_ptx ALL
-    DEPENDS ${generated_ptx_files} ${_ptx_sources}
-    SOURCES ${_ptx_sources})
+set(_ptx_sources "")
+set(_ptx_outputs "")
 
-install(FILES ${generated_ptx_files}
+foreach(ptx_file ${_ptx_files})
+    list(APPEND _ptx_sources "gpu/${ptx_file}.cu")
+    list(APPEND _ptx_outputs "${ptx_file}.ptx")
+endforeach()
+
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -Xcudafe --diag_suppress=code_is_unreachable")
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -arch compute_30 --use_fast_math")
+
+add_library(_ptx OBJECT ${_ptx_sources})
+set_property(TARGET _ptx PROPERTY CUDA_PTX_COMPILATION ON)
+target_compile_features(_ptx PUBLIC cxx_std_11)
+
+add_custom_command(
+  OUTPUT ${_ptx_outputs}
+  COMMAND ${CMAKE_COMMAND}
+    "-DOBJECTS=$<TARGET_OBJECTS:_ptx>"
+    "-DOUTPUT_DIR=${CMAKE_CURRENT_BINARY_DIR}"
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/copy_wrapper.cmake
+  VERBATIM
+  DEPENDS $<TARGET_OBJECTS:_ptx>
+  COMMENT "Copying ptx files"
+)
+
+add_custom_target(copy_ptx ALL DEPENDS ${_ptx_outputs})
+
+install(FILES $<TARGET_OBJECTS:_ptx>
         DESTINATION ${PYTHON_MODULE_BASE_DIR}
        )
 

@@ -17,11 +17,11 @@ TracerDirect::TracerDirect(std::shared_ptr<Device> device, unsigned int w, unsig
     {
     // create the entry point program
     optix::Context context = m_device->getContext();
-    m_ray_gen = m_device->getProgram("_ptx_generated_direct.cu.ptx", "direct_ray_gen");
-    m_ray_gen_entry = m_device->getEntryPoint("_ptx_generated_direct.cu.ptx", "direct_ray_gen");
+    m_ray_gen = m_device->getProgram("direct.ptx", "direct_ray_gen");
+    m_ray_gen_entry = m_device->getEntryPoint("direct.ptx", "direct_ray_gen");
 
     // load the exception program
-    m_exception_program = m_device->getProgram("_ptx_generated_direct.cu.ptx", "direct_exception");
+    m_exception_program = m_device->getProgram("direct.ptx", "direct_exception");
     context->setExceptionProgram(m_ray_gen_entry, m_exception_program);
     }
 
@@ -32,7 +32,7 @@ TracerDirect::~TracerDirect()
 //! Initialize the Material for use in tracing
 void TracerDirect::setupMaterial(optix::Material mat, Device *dev)
     {
-    optix::Program p = dev->getProgram("_ptx_generated_direct.cu.ptx", "direct_closest_hit");
+    optix::Program p = dev->getProgram("direct.ptx", "direct_closest_hit");
     mat->setClosestHitProgram(TRACER_PREVIEW_RAY_ID, p);
     }
 

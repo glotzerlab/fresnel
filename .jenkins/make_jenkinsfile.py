@@ -6,15 +6,23 @@ template = env.get_template('Jenkinsfile.jinja')
 tests = []
 
 tests.append(dict(name='cuda9-optix51',
-                  agent='gpu',
+                  agent='gpu-short',
                   CC = 'gcc',
                   CXX = 'g++',
                   PYVER = '3.6',
-                  PYTEST = 'py.test-3',
-                  CMAKE = 'cmake',
                   ENABLE_OPTIX = 'ON',
                   ENABLE_EMBREE = 'OFF',
-                  CONTAINER = 'ci-optix-2018.10.simg',
+                  CONTAINER = 'ci-2019.05-cuda9-optix51.simg',
+                  timeout=2))
+
+tests.append(dict(name='cuda10-optix51',
+                  agent='gpu-short',
+                  CC = 'gcc',
+                  CXX = 'g++',
+                  PYVER = '3.6',
+                  ENABLE_OPTIX = 'ON',
+                  ENABLE_EMBREE = 'OFF',
+                  CONTAINER = 'ci-2019.05-cuda10-optix51.simg',
                   timeout=2))
 
 print(template.render(tests=tests))
