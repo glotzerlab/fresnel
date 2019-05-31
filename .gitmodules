@@ -1,6 +1,3 @@
-[submodule "extern/pybind11"]
-	path = extern/pybind11
-	url = https://github.com/glotzerlab/pybind11.git
 [submodule "extern/random123"]
 	path = extern/random123
 	url = https://github.com/glotzerlab/random123
