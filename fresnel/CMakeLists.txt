@@ -9,8 +9,10 @@ set(_common_sources
      common/ConvexPolyhedronBuilder.cc
     )
 
-pybind11_add_module(_common ${_common_sources} ${libqhullr_SOURCES} ${libqhullcpp_SOURCES})
-set_source_files_properties(${libqhullr_SOURCES} ${libqhullcpp_SOURCES} PROPERTIES COMPILE_FLAGS -w) # hide compiler warnings for qhull
+find_package(Qhull)
+
+pybind11_add_module(_common ${_common_sources})
+target_link_libraries(_common PRIVATE QHull::qhull_r QHull::qhull_cpp)
 install(TARGETS _common LIBRARY DESTINATION ${PYTHON_SITE_INSTALL_DIR})
 
 # _cpu
