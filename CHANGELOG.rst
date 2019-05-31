@@ -3,6 +3,11 @@ Change log
 
 `fresnel <https://github.com/glotzerlab/fresnel>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
+v0.10.0 (not yet released)
+--------------------------
+
+* CMake v3.8 or newer is now required to build fresnel
+
 v0.9.0 (2019-04-30)
 -------------------
 
