@@ -12,7 +12,7 @@ tests.append(dict(name='cuda9-optix51',
                   PYVER = '3.6',
                   ENABLE_OPTIX = 'ON',
                   ENABLE_EMBREE = 'OFF',
-                  CONTAINER = 'ci-2019.05-cuda9-optix51.simg',
+                  CONTAINER = 'ci-2019.06-cuda9-optix51.simg',
                   timeout=2))
 
 tests.append(dict(name='cuda10-optix51',
@@ -22,7 +22,7 @@ tests.append(dict(name='cuda10-optix51',
                   PYVER = '3.6',
                   ENABLE_OPTIX = 'ON',
                   ENABLE_EMBREE = 'OFF',
-                  CONTAINER = 'ci-2019.05-cuda10-optix51.simg',
+                  CONTAINER = 'ci-2019.06-cuda10-optix51.simg',
                   timeout=2))
 
 print(template.render(tests=tests))
