@@ -19,7 +19,7 @@ pipeline
                         {
                         CC = 'gcc'
                         CXX = 'g++'
-                        CONTAINER = '/nfs/turbo/glotzer/containers/ci/ci-2019.05-cuda9-optix51.simg'
+                        CONTAINER = '/nfs/turbo/glotzer/containers/ci/ci-2019.06-cuda9-optix51.simg'
                         }
 
                     steps
@@ -74,7 +74,7 @@ pipeline
                         {
                         CC = 'gcc'
                         CXX = 'g++'
-                        CONTAINER = '/nfs/turbo/glotzer/containers/ci/ci-2019.05-cuda10-optix51.simg'
+                        CONTAINER = '/nfs/turbo/glotzer/containers/ci/ci-2019.06-cuda10-optix51.simg'
                         }
 
                     steps

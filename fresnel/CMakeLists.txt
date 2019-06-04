@@ -9,9 +9,11 @@ set(_common_sources
      common/ConvexPolyhedronBuilder.cc
     )
 
-pybind11_add_module(_common ${_common_sources} ${libqhullr_SOURCES} ${libqhullcpp_SOURCES})
-set_source_files_properties(${libqhullr_SOURCES} ${libqhullcpp_SOURCES} PROPERTIES COMPILE_FLAGS -w) # hide compiler warnings for qhull
-install(TARGETS _common LIBRARY DESTINATION ${PYTHON_MODULE_BASE_DIR})
+find_package(Qhull)
+
+pybind11_add_module(_common ${_common_sources})
+target_link_libraries(_common PRIVATE QHull::qhull_r QHull::qhull_cpp)
+install(TARGETS _common LIBRARY DESTINATION ${PYTHON_SITE_INSTALL_DIR})
 
 # _cpu
 if (ENABLE_EMBREE)
@@ -35,8 +37,8 @@ set(_cpu_sources
    )
 
 pybind11_add_module(_cpu "${_cpu_sources}")
-target_link_libraries(_cpu PRIVATE ${EMBREE_LIBRARY} ${TBB_LIBRARIES})
-install(TARGETS _cpu LIBRARY DESTINATION ${PYTHON_MODULE_BASE_DIR})
+target_link_libraries(_cpu PRIVATE EMBREE::embree)
+install(TARGETS _cpu LIBRARY DESTINATION ${PYTHON_SITE_INSTALL_DIR})
 
 endif()
 
@@ -85,7 +87,7 @@ add_custom_command(
 add_custom_target(copy_ptx ALL DEPENDS ${_ptx_outputs})
 
 install(FILES $<TARGET_OBJECTS:_ptx>
-        DESTINATION ${PYTHON_MODULE_BASE_DIR}
+        DESTINATION ${PYTHON_SITE_INSTALL_DIR}
        )
 
 # Build the shared object
@@ -107,7 +109,7 @@ set(_gpu_sources
 
 pybind11_add_module(_gpu "${_gpu_sources}")
 target_link_libraries(_gpu PRIVATE ${optix_LIBRARY})
-install(TARGETS _gpu LIBRARY DESTINATION ${PYTHON_MODULE_BASE_DIR})
+install(TARGETS _gpu LIBRARY DESTINATION ${PYTHON_SITE_INSTALL_DIR})
 endif()
 
 #####################################################
@@ -137,7 +139,7 @@ set(files __init__.py
     )
 
 install(FILES ${files}
-        DESTINATION ${PYTHON_MODULE_BASE_DIR}
+        DESTINATION ${PYTHON_SITE_INSTALL_DIR}
        )
 
 foreach(file ${files})
