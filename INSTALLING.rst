@@ -81,6 +81,7 @@ Prerequisites
 
 * C++11 capable compiler
 * CMake >= 2.8
+* pybind11 >= 2.2
 * Python >= 2.7
 * Qhull >= 2015.2
 * For CPU execution (required when ``ENABLE_EMBREE=ON``):
