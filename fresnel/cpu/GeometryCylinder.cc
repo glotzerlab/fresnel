@@ -119,7 +119,7 @@ void GeometryCylinder::intersect(const struct RTCIntersectFunctionNArguments *ar
  */
 void export_GeometryCylinder(pybind11::module& m)
     {
-    pybind11::class_<GeometryCylinder, std::shared_ptr<GeometryCylinder> >(m, "GeometryCylinder", pybind11::base<Geometry>())
+    pybind11::class_<GeometryCylinder, Geometry, std::shared_ptr<GeometryCylinder> >(m, "GeometryCylinder")
         .def(pybind11::init<std::shared_ptr<Scene>, unsigned int>())
         .def("getPointsBuffer", &GeometryCylinder::getPointsBuffer)
         .def("getRadiusBuffer", &GeometryCylinder::getRadiusBuffer)

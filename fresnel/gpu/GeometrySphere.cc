@@ -53,7 +53,7 @@ namespace fresnel { namespace gpu {
 
 	void export_GeometrySphere(pybind11::module& m)
 		{
-		pybind11::class_<GeometrySphere, std::shared_ptr<GeometrySphere>>(m, "GeometrySphere", pybind11::base<Geometry>())
+		pybind11::class_<GeometrySphere, Geometry, std::shared_ptr<GeometrySphere>>(m, "GeometrySphere")
             .def(pybind11::init<std::shared_ptr<Scene>, unsigned int>())
             .def("getPositionBuffer", &GeometrySphere::getPositionBuffer)
             .def("getRadiusBuffer", &GeometrySphere::getRadiusBuffer)

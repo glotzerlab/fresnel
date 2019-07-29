@@ -42,7 +42,7 @@ GeometryMesh::GeometryMesh(std::shared_ptr<Scene> scene,
 
     // copy vertices into local buffer
     m_vertices.resize(n_verts);
-    memcpy(&m_vertices[0], verts_f, sizeof(vec3<float>)*n_verts);
+    memcpy((void *)&m_vertices[0], verts_f, sizeof(vec3<float>)*n_verts);
 
     // create the geometry
     m_geometry = rtcNewGeometry(m_device->getRTCDevice(), RTC_GEOMETRY_TYPE_USER);
@@ -172,7 +172,7 @@ void GeometryMesh::intersect(const struct RTCIntersectFunctionNArguments *args)
  */
 void export_GeometryMesh(pybind11::module& m)
     {
-    pybind11::class_<GeometryMesh, std::shared_ptr<GeometryMesh> >(m, "GeometryMesh", pybind11::base<Geometry>())
+    pybind11::class_<GeometryMesh, Geometry, std::shared_ptr<GeometryMesh> >(m, "GeometryMesh")
         .def(pybind11::init<std::shared_ptr<Scene>,
              pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast>,
              unsigned int>())
