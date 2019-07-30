@@ -547,7 +547,7 @@ license::
 qhull
 ^^^^^^^^^
 
-.. code::
+Qhull is used under the following license::
 
                         Qhull, Copyright (c) 1993-2019
 
