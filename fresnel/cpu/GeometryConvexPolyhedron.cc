@@ -326,7 +326,7 @@ void GeometryConvexPolyhedron::intersect(const struct RTCIntersectFunctionNArgum
  */
 void export_GeometryConvexPolyhedron(pybind11::module& m)
     {
-    pybind11::class_<GeometryConvexPolyhedron, std::shared_ptr<GeometryConvexPolyhedron> >(m, "GeometryConvexPolyhedron", pybind11::base<Geometry>())
+    pybind11::class_<GeometryConvexPolyhedron, Geometry, std::shared_ptr<GeometryConvexPolyhedron> >(m, "GeometryConvexPolyhedron")
         .def(pybind11::init<std::shared_ptr<Scene>,
              pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast>,
              pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast>,

@@ -101,7 +101,7 @@ GeometryPolygon::~GeometryPolygon()
  */
 void export_GeometryPolygon(pybind11::module& m)
     {
-    pybind11::class_<GeometryPolygon, std::shared_ptr<GeometryPolygon> >(m, "GeometryPolygon", pybind11::base<Geometry>())
+    pybind11::class_<GeometryPolygon, Geometry, std::shared_ptr<GeometryPolygon> >(m, "GeometryPolygon")
         .def(pybind11::init<std::shared_ptr<Scene>,
              pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast>,
              float,

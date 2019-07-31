@@ -102,7 +102,7 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
  */
 void export_TracerPath(pybind11::module& m)
     {
-    pybind11::class_<TracerPath, std::shared_ptr<TracerPath> >(m, "TracerPath", pybind11::base<Tracer>())
+    pybind11::class_<TracerPath, Tracer, std::shared_ptr<TracerPath> >(m, "TracerPath")
         .def(pybind11::init<std::shared_ptr<Device>, unsigned int, unsigned int, unsigned int>())
         .def("getNumSamples", &TracerPath::getNumSamples)
         .def("reset", &TracerPath::reset)

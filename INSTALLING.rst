@@ -5,8 +5,11 @@ Installation
 `Docker <https://hub.docker.com/>`_/`Singularity <https://www.sylabs.io/>`_ images and in packages on
 `conda-forge <https://conda-forge.org/>`_. You can also compile **fresnel** from source.
 
+Binaries
+--------
+
 Anaconda package
-----------------
+^^^^^^^^^^^^^^^^
 
 **Fresnel** is available on `conda-forge <https://conda-forge.org/>`_. To install, first download and install
 `miniconda <http://conda.pydata.org/miniconda.html>`_.
@@ -20,36 +23,25 @@ Then add the ``conda-forge`` channel and install **fresnel**::
 
    ▶ conda install jupyter matplotlib
 
-You can update **fresnel** with:::
-
-   ▶ conda update fresnel
-
 .. note::
 
     The **fresnel** package on ``conda-forge`` does not support GPUs
 
-Docker images
--------------
+Singularity / Docker images
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Pull the `glotzerlab-software <https://glotzerlab-software.readthedocs.io>`_ image to get
-**fresnel** along with many other tools commonly used in simulation and analysis workflows. See full usage information in the
-`glotzerlab-software documentation <https://glotzerlab-software.readthedocs.io>`_.
-
-Singularity::
-
-   ▶ singularity pull shub://glotzerlab/software
-
-Docker::
-
-   ▶ docker pull glotzerlab/software
-
+See the `glotzerlab-software documentation <https://glotzerlab-software.readthedocs.io/>`_ for container usage
+information and cluster specific instructions.
 
 Compile from source
 -------------------
 
-Download source releases directly from the web: https://glotzerlab.engin.umich.edu/Downloads/fresnel::
+Obtain the source
+^^^^^^^^^^^^^^^^^
 
-   ▶ curl -O https://glotzerlab.engin.umich.edu/Downloads/fresnel/fresnel-v0.9.0.tar.gz
+Download source releases directly from the web: https://glotzerlab.engin.umich.edu/downloads/fresnel::
+
+   ▶ curl -O https://glotzerlab.engin.umich.edu/downloads/fresnel/fresnel-v0.9.0.tar.gz
 
 Or, clone using git::
 
@@ -58,31 +50,38 @@ Or, clone using git::
 **Fresnel** uses git submodules. Either clone with the ``--recursive`` option, or execute ``git submodule update --init``
 to fetch the submodules.
 
+Configure a virtual environment
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+When using a shared Python installation, create a `virtual environment
+<https://docs.python.org/3/library/venv.html>`_ where you can install
+**fresnel**::
+
+    ▶ python3 -m venv /path/to/virtual/environment --system-site-packages
+
+Activate the environment before configuring and before executing
+**fresnel** scripts::
+
+    ▶ source /path/to/virtual/environment/bin/activate
+
+Tell CMake to search in the virtual environment first::
+
+    ▶ export CMAKE_PREFIX_PATH=/path/to/virtual/environment
+
 .. note::
 
-    When using a shared (read-only) Python installation, such as a module on a
-    cluster, create a `virtual environment
-    <https://docs.python.org/3/library/venv.html>`_ where you can install
-    **fresnel**::
+   Other types of virtual environments (such as *conda*) may work, but are not thoroughly tested.
 
-        ▶ python3 -m venv /path/to/virtual/environment --system-site-packages
+Install Prerequisites
+^^^^^^^^^^^^^^^^^^^^^
 
-    Activate the environment before configuring and before executing
-    **fresnel** scripts::
-
-        ▶ source /path/to/virtual/environment/bin/activate
-
-    Tell CMake to search in the virtual environment first::
-
-        ▶ export CMAKE_PREFIX_PATH=/path/to/virtual/environment
-
-Prerequisites
-^^^^^^^^^^^^^
+**fresnel** requires:
 
 * C++11 capable compiler
-* CMake >= 2.8
+* CMake >= 3.8
 * pybind11 >= 2.2
-* Python >= 2.7
+* Python >= 3.5
+* numpy
 * Qhull >= 2015.2
 * For CPU execution (required when ``ENABLE_EMBREE=ON``):
 
@@ -97,8 +96,7 @@ Prerequisites
 ``ENABLE_EMBREE`` (*defaults ON*) and ``ENABLE_OPTIX`` (*defaults OFF*) are orthogonal settings, either or both may be
 enabled.
 
-Optional dependencies
-^^^^^^^^^^^^^^^^^^^^^
+Additional packages may be needed:
 
 * pyside2
 
@@ -121,27 +119,25 @@ Optional dependencies
 
   * Requited to build developer documentation.
 
-Installing prerequisites
-^^^^^^^^^^^^^^^^^^^^^^^^
+Install these tools with your system or virtual environment package manager. **fresnel** developers have had success with
+``pacman`` (`arch linux <https://www.archlinux.org/>`_), ``apt-get`` (`ubuntu <https://ubuntu.com/>`_), `Homebrew
+<https://brew.sh/>`_ (macOS), and `MacPorts <https://www.macports.org/>`_ (macOS)::
 
-.. rubric:: Install prerequisites on Mac with homebrew
+    ▶ your-package-manager install cmake doxygen embree pybind11 python python-pillow python-pytest python-sphinx python-sphinx_rtd_theme python-nbsphinx intell-tbb qhull
 
-Homebrew provides all of the required dependencies::
+Typical HPC cluster environments provide python, numpy, and cmake via a module system::
 
-    ▶ brew install cmake embree pybind11 python tbb qhull
+    ▶ module load gcc python cmake
 
-.. rubric:: Install prerequisites on Linux
+.. note::
 
-Arch linux as an example::
+    Packages may be named differently, check your system's package list. Install any ``-dev`` packages as needed.
 
-    ▶ pacman -S cmake doxygen embree pybind11 python python-pillow python-pytest python-sphinx python-sphinx_rtd_theme python-nbsphinx intell-tbb qhull
+.. tip::
 
-Package names may differ on other Linux distributions and ``-dev`` packages may be required to provide headers:
+    You can install numpy and other python packages into your virtual environment::
 
-.. rubric:: Install prerequisites into a virtual environment
-
-You can install prerequisites directly into your virtual environment. For example, when configuring ``pybind11`` with,
-``cmake``, specify ``-DCMAKE_INSTALL_PREFIX=/path/to/virtual/environment``.
+        python3 -m pip install numpy
 
 Compile
 ^^^^^^^
@@ -164,7 +160,7 @@ To test **fresnel** builds without installing, add the build directory to your `
 
    ▶ export PYTHONPATH=$PYTHONPATH:/path/to/fresnel/build
 
-**Fresnel** has extensive unit tests to verify correct execution.
+Execute ``pytest`` in the ``test`` directory to run all tests.
 
 .. code-block:: bash
 

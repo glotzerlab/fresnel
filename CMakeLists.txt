@@ -40,9 +40,9 @@ endif()
 ## Python configuration
 
 set(PYBIND11_PYTHON_VERSION 3)
-find_package(pybind11 CONFIG REQUIRED)
+find_package(pybind11 2.2 CONFIG REQUIRED)
 if (pybind11_FOUND)
-    find_package_message(pybind11 "Found pybind11: ${pybind11_DIR} ${pybind11_INCLUDE_DIR}" "[${pybind11_DIR}][${pybind11_INCLUDE_DIR}]")
+    find_package_message(pybind11 "Found pybind11: ${pybind11_DIR} ${pybind11_INCLUDE_DIR} (version ${pybind11_VERSION})" "[${pybind11_DIR}][${pybind11_INCLUDE_DIR}]")
 endif()
 
 # when the user specifies CMAKE_INSTALL_PREFIX on first configure, install to "fresnel" under that prefix

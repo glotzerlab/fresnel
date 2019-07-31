@@ -58,7 +58,7 @@ GeometryMesh::GeometryMesh(std::shared_ptr<Scene> scene,
     m_vertices = context->createBuffer(RT_BUFFER_INPUT_OUTPUT, RT_FORMAT_FLOAT3, n_verts);
 
     vec3<float>* optix_vertices = (vec3<float>*)m_vertices->map();
-    memcpy(optix_vertices, verts_f, n_verts*3*sizeof(float));
+    memcpy((void *)optix_vertices, verts_f, n_verts*3*sizeof(float));
     m_vertices->unmap();
 
     m_geometry["mesh_vertices"]->setBuffer(m_vertices);
@@ -87,7 +87,7 @@ GeometryMesh::~GeometryMesh()
  */
 void export_GeometryMesh(pybind11::module& m)
     {
-    pybind11::class_<GeometryMesh, std::shared_ptr<GeometryMesh> >(m, "GeometryMesh", pybind11::base<Geometry>())
+    pybind11::class_<GeometryMesh, Geometry, std::shared_ptr<GeometryMesh> >(m, "GeometryMesh")
         .def(pybind11::init<std::shared_ptr<Scene>,
              pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast>,
              unsigned int>())
