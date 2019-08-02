@@ -12,8 +12,14 @@ steps:
 - script: nice -n 19 ninja -j 4
   displayName: Compile
   workingDirectory: build
-- script: python3 -m pytest
+- script: |
+    mkdir $(Pipeline.Workspace)/test-results
+    python3 -m pytest --junit-xml=$(Pipeline.Workspace)/test-results/test.xml
   displayName: Unit test
   workingDirectory: test
   env:
     PYTHONPATH: $(Pipeline.Workspace)/s/build
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '$(Pipeline.Workspace)/test-results/test.xml'
