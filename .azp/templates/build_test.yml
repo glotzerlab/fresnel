@@ -1,0 +1,19 @@
+parameters:
+  enable_embree: 'ON'
+  enable_optix: 'OFF'
+
+steps:
+- checkout: self
+  submodules: true
+- script: "set"
+- task: CMake@1
+  inputs:
+    cmakeArgs: $(Pipeline.Workspace)/s -GNinja -DENABLE_EMBREE=${{ parameters.enable_embree }} -DENABLE_OPTIX=${{ parameters.enable_optix }} -Dembree_DIR=/opt/embree-${EMBREE3_VERSION}.x86_64.linux -GNinja
+- script: nice -n 19 ninja -j 4
+  displayName: Compile
+  workingDirectory: build
+- script: python3 -m pytest
+  displayName: Unit test
+  workingDirectory: test
+  env:
+    PYTHONPATH: $(Pipeline.Workspace)/s/build
