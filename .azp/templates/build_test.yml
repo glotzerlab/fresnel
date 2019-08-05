@@ -3,17 +3,29 @@ parameters:
   enable_optix: 'OFF'
 
 steps:
+- script: set
 - checkout: self
   submodules: true
 - script: "set"
 - task: CMake@1
   inputs:
-    cmakeArgs: $(Pipeline.Workspace)/s -GNinja -DENABLE_EMBREE=${{ parameters.enable_embree }} -DENABLE_OPTIX=${{ parameters.enable_optix }} -Dembree_DIR=/opt/embree-${EMBREE3_VERSION}.x86_64.linux -GNinja
+    cmakeArgs: $(Build.SourcesDirectory) -GNinja -DENABLE_EMBREE=${{ parameters.enable_embree }} -DENABLE_OPTIX=${{ parameters.enable_optix }} -Dembree_DIR=/opt/embree-${EMBREE3_VERSION}.x86_64.linux -GNinja
+    workingDirectory: $(Build.BinariesDirectory)
 - script: nice -n 19 ninja -j 4
   displayName: Compile
-  workingDirectory: build
-- script: python3 -m pytest
+  workingDirectory: $(Build.BinariesDirectory)
+- script: |
+    cat << EOF >> pytest.ini
+    [pytest]
+    junit_suite_name = ${AGENT_JOBNAME}
+    EOF
+
+    python3 -m pytest --junit-xml=$(Common.TestResultsDirectory)/test.xml
   displayName: Unit test
   workingDirectory: test
   env:
-    PYTHONPATH: $(Pipeline.Workspace)/s/build
+    PYTHONPATH: $(Build.BinariesDirectory)
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '$(Common.TestResultsDirectory)/test.xml'
