@@ -6,6 +6,9 @@ import conftest
 import pytest
 import sys
 import os
+import pathlib
+
+dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 def scene_one_triangle(device):
     scene = fresnel.Scene(device, lights = conftest.test_lights())
@@ -80,7 +83,7 @@ def test_render(scene_one_triangle_, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_mesh.test_render.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_mesh.test_render.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], dir_path / 'reference' / 'test_geometry_mesh.test_render.png')
 
 
 def test_outline(scene_one_triangle_, generate=False):
@@ -92,7 +95,7 @@ def test_outline(scene_one_triangle_, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_mesh.test_outline.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_mesh.test_outline.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], dir_path / 'reference' / 'test_geometry_mesh.test_outline.png')
 
 def test_color_interp(scene_one_triangle_, generate=False):
     geometry = scene_one_triangle_.geometry[0]
@@ -103,7 +106,7 @@ def test_color_interp(scene_one_triangle_, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_mesh.test_color_interp.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_mesh.test_color_interp.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], dir_path / 'reference' / 'test_geometry_mesh.test_color_interp.png')
 
 def test_multiple(scene_tetrahedra_, generate=False):
     buf_proxy = fresnel.preview(scene_tetrahedra_, w=100, h=100)
@@ -111,7 +114,7 @@ def test_multiple(scene_tetrahedra_, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_mesh.test_multiple.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_mesh.test_multiple.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], dir_path / 'reference' / 'test_geometry_mesh.test_multiple.png')
 
 if __name__ == '__main__':
     struct = namedtuple("struct", "param")

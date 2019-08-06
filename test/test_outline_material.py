@@ -4,6 +4,9 @@ from collections import namedtuple
 import PIL
 import conftest
 import os
+import pathlib
+
+dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 def test_set_material(scene_hex_sphere_, generate=False):
     geometry = scene_hex_sphere_.geometry[0]
@@ -18,7 +21,7 @@ def test_set_material(scene_hex_sphere_, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_outline_material.test_set_material.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_outline_material.test_set_material.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], dir_path / 'reference' / 'test_outline_material.test_set_material.png')
 
 def test_solid(scene_hex_sphere_, generate=False):
     geometry = scene_hex_sphere_.geometry[0]
@@ -31,7 +34,7 @@ def test_solid(scene_hex_sphere_, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_outline_material.test_solid.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_outline_material.test_solid.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], dir_path / 'reference' / 'test_outline_material.test_solid.png')
 
 def test_color(scene_hex_sphere_, generate=False):
     geometry = scene_hex_sphere_.geometry[0]
@@ -44,7 +47,7 @@ def test_color(scene_hex_sphere_, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_outline_material.test_color.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_outline_material.test_color.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], dir_path / 'reference' / 'test_outline_material.test_color.png')
 
 def test_primitive_color_mix(scene_hex_sphere_, generate=False):
     geometry = scene_hex_sphere_.geometry[0]
@@ -63,7 +66,7 @@ def test_primitive_color_mix(scene_hex_sphere_, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_outline_material.test_primitive_color_mix.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_outline_material.test_primitive_color_mix.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], dir_path / 'reference' / 'test_outline_material.test_primitive_color_mix.png')
 
 if __name__ == '__main__':
     struct = namedtuple("struct", "param")

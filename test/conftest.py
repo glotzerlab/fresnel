@@ -41,8 +41,17 @@ def device(request):
 
     return dev
 
+def device_name(device):
+    name = device[0];
+    if device[1] is None:
+        name += '(all)';
+    else:
+        name += '(' + str(device[1]) + ')'
+    return name
+
 @pytest.fixture(scope='session',
-                params=devices)
+                params=devices,
+                ids=device_name)
 def device_(request):
     return device(request)
 
@@ -87,4 +96,3 @@ def assert_image_approx_equal(a, ref_file, tolerance=1.0):
     msd = numpy.mean(diff[selection]**2)
 
     assert msd < tolerance
-

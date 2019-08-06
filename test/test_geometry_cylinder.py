@@ -5,6 +5,9 @@ import PIL
 import conftest
 import pytest
 import os
+import pathlib
+
+dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 def scene_four_cylinders(device):
     scene = fresnel.Scene(device, lights = conftest.test_lights())
@@ -35,7 +38,7 @@ def test_render(scene_four_cylinders_, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_clyinder.test_render.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_clyinder.test_render.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], dir_path / 'reference' / 'test_geometry_clyinder.test_render.png')
 
 def test_radius(scene_four_cylinders_, generate=False):
     geometry = scene_four_cylinders_.geometry[0]
@@ -49,7 +52,7 @@ def test_radius(scene_four_cylinders_, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_clyinder.test_radius.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_clyinder.test_radius.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], dir_path / 'reference' / 'test_geometry_clyinder.test_radius.png')
 
 def test_points(scene_four_cylinders_, generate=False):
     geometry = scene_four_cylinders_.geometry[0]
@@ -66,7 +69,7 @@ def test_points(scene_four_cylinders_, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_clyinder.test_position.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_clyinder.test_position.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], dir_path / 'reference' / 'test_geometry_clyinder.test_position.png')
 
 def test_color(scene_four_cylinders_, generate=False):
     geometry = scene_four_cylinders_.geometry[0]
@@ -84,7 +87,7 @@ def test_color(scene_four_cylinders_, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_clyinder.test_color.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_clyinder.test_color.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], dir_path / 'reference' / 'test_geometry_clyinder.test_color.png')
 
 def test_outline(scene_four_cylinders_, generate=False):
     geometry = scene_four_cylinders_.geometry[0]
@@ -95,7 +98,7 @@ def test_outline(scene_four_cylinders_, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_clyinder.test_outline.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_clyinder.test_outline.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], dir_path / 'reference' / 'test_geometry_clyinder.test_outline.png')
 
 if __name__ == '__main__':
     struct = namedtuple("struct", "param")

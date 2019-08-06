@@ -5,6 +5,9 @@ import PIL
 import pytest
 import conftest
 import os
+import pathlib
+
+dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 def scene_rounded_polygons(device):
     scene = fresnel.Scene(device, lights = conftest.test_lights())
@@ -57,7 +60,7 @@ def test_render(scene_polygons_, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_polygon.test_render.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_polygon.test_render.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], dir_path / 'reference' / 'test_geometry_polygon.test_render.png')
 
 def test_rounded(scene_rounded_polygons_, generate=False):
     geometry = scene_rounded_polygons_.geometry[0]
@@ -68,7 +71,7 @@ def test_rounded(scene_rounded_polygons_, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_polygon.test_rounded.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_polygon.test_rounded.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], dir_path / 'reference' / 'test_geometry_polygon.test_rounded.png')
 
 def test_angle(scene_polygons_, generate=False):
     geometry = scene_polygons_.geometry[0]
@@ -82,7 +85,7 @@ def test_angle(scene_polygons_, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_polygon.test_angle.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_polygon.test_angle.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], dir_path / 'reference' / 'test_geometry_polygon.test_angle.png')
 
 def test_position(scene_polygons_, generate=False):
     geometry = scene_polygons_.geometry[0]
@@ -97,7 +100,7 @@ def test_position(scene_polygons_, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_polygon.test_position.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_polygon.test_position.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], dir_path / 'reference' / 'test_geometry_polygon.test_position.png')
 
 def test_color(scene_polygons_, generate=False):
     geometry = scene_polygons_.geometry[0]
@@ -112,7 +115,7 @@ def test_color(scene_polygons_, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_polygon.test_color.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_polygon.test_color.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], dir_path / 'reference' / 'test_geometry_polygon.test_color.png')
 
 def test_outline(scene_polygons_, generate=False):
     geometry = scene_polygons_.geometry[0]
@@ -123,7 +126,7 @@ def test_outline(scene_polygons_, generate=False):
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_polygon.test_outline.png', 'wb'), 'png');
     else:
-        conftest.assert_image_approx_equal(buf_proxy[:], 'reference/test_geometry_polygon.test_outline.png')
+        conftest.assert_image_approx_equal(buf_proxy[:], dir_path / 'reference' / 'test_geometry_polygon.test_outline.png')
 
 if __name__ == '__main__':
     struct = namedtuple("struct", "param")
