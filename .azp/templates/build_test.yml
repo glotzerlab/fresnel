@@ -14,13 +14,7 @@ steps:
 - script: nice -n 19 ninja -j 4
   displayName: Compile
   workingDirectory: $(Build.BinariesDirectory)
-- script: |
-    cat << EOF >> pytest.ini
-    [pytest]
-    junit_suite_name = ${AGENT_JOBNAME}
-    EOF
-
-    python3 -m pytest --junit-xml=$(Common.TestResultsDirectory)/test.xml
+- script: python3 -m pytest -o junit_suite_name="${AGENT_JOBNAME}" --junit-xml=$(Common.TestResultsDirectory)/test.xml
   displayName: Unit test
   workingDirectory: test
   env:
