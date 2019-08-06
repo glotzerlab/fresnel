@@ -160,12 +160,11 @@ To test **fresnel** builds without installing, add the build directory to your `
 
    ▶ export PYTHONPATH=$PYTHONPATH:/path/to/fresnel/build
 
-Execute ``pytest`` in the ``test`` directory to run all tests.
+Execute ``pytest`` in the source directory to run all tests.
 
 .. code-block:: bash
 
    ▶ cd /path/to/fresnel
-   ▶ cd test
    ▶ pytest
 
 Build user documentation
