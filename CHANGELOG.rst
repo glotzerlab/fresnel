@@ -6,7 +6,20 @@ Change log
 v0.10.0 (not yet released)
 --------------------------
 
-* CMake v3.8 or newer is now required to build fresnel
+*Added*
+
+*Changed*
+
+* CMake >= 3.8 is required at build time
+* pybind11 >= 2.2 is required at build time
+* qhull >= 2015 is required
+* install to the python ``site-packages`` directory by default
+* CI tests execute on Microsoft Azure Pipelines
+
+*Fixed*
+
+* Improved installation documentation
+
 
 v0.9.0 (2019-04-30)
 -------------------
