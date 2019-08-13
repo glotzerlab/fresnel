@@ -127,7 +127,8 @@ stages:
 
     container:
        image: $(private_image_root)-$(container_image)
-       options: -u 0 --gpus=all --cpus=4 --memory=8g -e CUDA_VISIBLE_DEVICES
+       # bind mount needed to load OpTiX driver: https://github.com/NVIDIA/nvidia-docker/issues/990
+       options: -u 0 --mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --gpus=all --cpus=4 --memory=8g -e CUDA_VISIBLE_DEVICES
 
     workspace:
       clean: all
