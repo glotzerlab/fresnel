@@ -14,7 +14,7 @@ using namespace fresnel;
 // scene wide variables
 
 //! Per ray data for radiance rays
-struct PRDradiance
+struct alignas(16) PRDradiance
     {
     float3 result;
     unsigned int hit;
