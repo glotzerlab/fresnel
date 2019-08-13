@@ -5,13 +5,17 @@ trigger:
     - '*'
 
 variables:
-  image_root: glotzerlab/ci:2019.06
+  image_root: glotzerlab/ci:2019.08
   private_image_root: joaander/ci:2019.07
 
 stages:
 - stage: build_test_cpu
   displayName: Unit test (CPU)
   dependsOn: []
+
+  variables:
+    enable_embree: 'on'
+    enable_optix: 'off'
 
   jobs:
   - job: linux_cpu
@@ -93,6 +97,10 @@ stages:
   displayName: Unit test (GPU)
   dependsOn: []
 
+  variables:
+    enable_embree: 'off'
+    enable_optix: 'on'
+
   jobs:
   - job: linux_gpu
     displayName: Linux
@@ -121,9 +129,6 @@ stages:
 
     steps:
     - template: templates/build_test.yml
-      parameters:
-        enable_embree: OFF
-        enable_optix: ON
 
 - stage: doc
   displayName: Documentation
