@@ -125,6 +125,7 @@ stages:
       name: 'GPU'
       demands:
         - short_jobs
+        # optix6 jobs require a capable GPU
         - optix6
 
     container:
