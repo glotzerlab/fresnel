@@ -4,6 +4,8 @@ trigger:
     include:
     - '*'
 
+pr: none
+
 variables:
   image_root: glotzerlab/ci:2019.08
   private_image_root: joaander/ci:2019.08
