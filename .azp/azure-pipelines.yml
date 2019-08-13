@@ -123,7 +123,9 @@ stages:
 
     pool:
       name: 'GPU'
-      demands: short_jobs
+      demands:
+        - short_jobs
+        - optix6
 
     container:
        image: $(private_image_root)-$(container_image)
