@@ -1,4 +1,10 @@
-trigger: none
+trigger:
+  batch: true
+  branches:
+    include:
+    - '*'
+
+pr: none
 
 variables:
   image_root: glotzerlab/ci:2019.08
