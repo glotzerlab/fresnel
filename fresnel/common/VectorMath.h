@@ -992,7 +992,7 @@ struct quat
     */
     DEVICE static quat fromAxisAngle(const vec3<Real>& axis, const Real& theta)
         {
-        quat<Real> q(fast::cos(theta/2.0), (Real)fast::sin(theta/2.0) * axis);
+        quat<Real> q(fast::cos(theta/Real(2.0)), (Real)fast::sin(theta/Real(2.0)) * axis);
         return q;
         }
 

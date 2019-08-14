@@ -6,7 +6,7 @@ trigger:
 
 variables:
   image_root: glotzerlab/ci:2019.08
-  private_image_root: joaander/ci:2019.07
+  private_image_root: joaander/ci:2019.08
 
 stages:
 - stage: build_test_cpu
@@ -106,6 +106,11 @@ stages:
     displayName: Linux
     strategy:
       matrix:
+        cuda10_optix60:
+          container_image: cuda10-optix60
+          cc: gcc
+          cxx: g++
+
         cuda10_optix51:
           container_image: cuda10-optix51
           cc: gcc
@@ -118,11 +123,15 @@ stages:
 
     pool:
       name: 'GPU'
-      demands: short_jobs
+      demands:
+        - short_jobs
+        # optix6 jobs require a capable GPU
+        - optix6
 
     container:
        image: $(private_image_root)-$(container_image)
-       options: -u 0 --gpus=all --cpus=4 --memory=8g -e CUDA_VISIBLE_DEVICES
+       # bind mount needed to load OpTiX driver: https://github.com/NVIDIA/nvidia-docker/issues/990
+       options: -u 0 --mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --gpus=all --cpus=4 --memory=8g -e CUDA_VISIBLE_DEVICES
 
     workspace:
       clean: all
