@@ -3,10 +3,8 @@ Change log
 
 `fresnel <https://github.com/glotzerlab/fresnel>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
-v0.10.0 (not yet released)
---------------------------
-
-*Added*
+v0.10.0 (2019-08-19)
+--------------------
 
 *Changed*
 
