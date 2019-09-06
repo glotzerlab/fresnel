@@ -3,6 +3,13 @@ Change log
 
 `fresnel <https://github.com/glotzerlab/fresnel>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
+v0.10.1 (2019-09-05)
+--------------------
+
+*Fixed*
+
+* Restore missing examples on readthedocs
+
 v0.10.0 (2019-08-19)
 --------------------
 

@@ -41,7 +41,7 @@ Obtain the source
 
 Download source releases directly from the web: https://glotzerlab.engin.umich.edu/downloads/fresnel::
 
-   ▶ curl -O https://glotzerlab.engin.umich.edu/downloads/fresnel/fresnel-v0.10.0.tar.gz
+   ▶ curl -O https://glotzerlab.engin.umich.edu/downloads/fresnel/fresnel-v0.10.1.tar.gz
 
 Or, clone using git::
 
