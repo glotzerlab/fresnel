@@ -9,3 +9,5 @@ conda:
 submodules:
     include: all
     recursive: true
+
+formats: all
