@@ -59,7 +59,7 @@ if(NOT can_link_libqhullcpp)
         ${CMAKE_SOURCE_DIR}/extern/qhull/src/libqhullcpp/RoadLogEvent.cpp
         )
 
-    add_library(qhull_cpp OBJECT ${libqhullcpp_SOURCES})
+    add_library(qhull_cpp STATIC ${libqhullcpp_SOURCES})
     set_target_properties(qhull_cpp PROPERTIES INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/extern/qhull/src)
     set_target_properties(qhull_cpp PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
     add_library(QHull::qhull_cpp ALIAS qhull_cpp)
