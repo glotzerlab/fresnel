@@ -21,9 +21,9 @@ if(Qhull_r_LIBRARY AND NOT TARGET QHull::qhull_r)
 endif()
 
 if(Qhull_cpp_LIBRARY)
-    set(CMAKE_REQUIRED_LIBRARIES "${Qhull_cpp_LIBRARY}")
+    set(CMAKE_REQUIRED_LIBRARIES "${Qhull_cpp_LIBRARY}; ${Qhull_r_LIBRARY}")
     set(CMAKE_REQUIRED_INCLUDES "${Qhull_INCLUDE_DIR}")
-    check_cxx_source_compiles("#include \"libqhullcpp/Qhull.h\"; int main(int argc, char **argv) { orgQhull::Qhull q; return 0;}" can_link_libqhullcpp)
+    check_cxx_source_compiles("#include \"libqhullcpp/Qhull.h\"\nint main(int argc, char **argv) { orgQhull::Qhull q; return 0;}" can_link_libqhullcpp)
 
     if(can_link_libqhullcpp AND NOT TARGET QHull::qhull_cpp)
         add_library(QHull::qhull_cpp UNKNOWN IMPORTED)
