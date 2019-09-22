@@ -9,6 +9,7 @@
 #include "GeometryPolygon.h"
 #include "GeometryMesh.h"
 #include "GeometryConvexPolyhedron.h"
+#include "GeometryHemisphere.h"
 #include "GeometrySphere.h"
 #include "Tracer.h"
 #include "TracerDirect.h"
@@ -29,6 +30,7 @@ PYBIND11_MODULE(_cpu, m)
     export_GeometryPolygon(m);
     export_GeometryConvexPolyhedron(m);
     export_GeometrySphere(m);
+    export_GeometryHemisphere(m);
     export_GeometryMesh(m);
     export_Tracer(m);
     export_TracerDirect(m);

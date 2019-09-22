@@ -364,6 +364,111 @@ class Sphere(Geometry):
     def color(self):
         return util.array(self._geometry.getColorBuffer(), geom=self)
 
+class Hemisphere(Geometry):
+    R""" Hemisphere geometry.
+
+    Define a set of hemisphere primitives with positions, radii, orientations, directors and individual colors.
+
+    Args:
+        scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
+        position (`numpy.ndarray` or `array_like`): (``Nx3`` : ``float32``) -  Positions of each sphere.
+        orientation (`numpy.ndarray` or `array_like`): (``Nx4`` : ``float32``) -  Orientation of each mesh instance (as a quaternion).
+        radius (`numpy.ndarray` or `array_like`): (``N`` : ``float32``) - Radius of each sphere.
+        director (`numpy.ndarray` or `array_like`): (``Nx3`` : ``float32``) - Hemisphere director of each sphere
+        color (`numpy.ndarray` or `array_like`): (``Nx3`` : ``float32``) - Color of each sphere.
+        N (int): Number of spheres in the geometry. If ``None``, determine ``N`` from ``position``.
+
+    Note:
+        The constructor arguments ``position``, ``radius``, and ``color`` are optional. If you do not provide them,
+        they are initialized to 0's.
+
+    .. tip::
+        When all spheres are the same size, pass a single value for *radius* and numpy will broadcast it to all
+        elements of the array.
+
+    Attributes:
+        position (:py:class:`fresnel.util.array`): Read or modify the positions of the spheres.
+        orientation (:py:class:`fresnel.util.array`): Read or modify the orientations of the spheres.
+        radius (:py:class:`fresnel.util.array`): Read or modify the radii of the spheres.
+        color (:py:class:`fresnel.util.array`): Read or modify the color of the spheres.
+    """
+
+    def __init__(self,
+                 scene,
+                 position=None,
+                 orientation=None,
+                 radius=None,
+                 director=None,
+                 color=None,
+                 N=None,
+                 material=material.Material(solid=1.0, color=(1,0,1)),
+                 outline_material=material.Material(solid=1.0, color=(0,0,0)),
+                 outline_width=0.0):
+        if N is None:
+            N = len(position);
+
+        self._geometry = scene.device.module.GeometryHemisphere(scene._scene, N);
+        self.material = material;
+        self.outline_material = outline_material;
+        self.outline_width = outline_width;
+
+        if position is not None:
+            self.position[:] = position;
+
+        if orientation is not None:
+            self.orientation[:] = orientation;
+        else:
+            self.orientation[:] = [1,0,0,0];
+
+        if radius is not None:
+            self.radius[:] = radius;
+
+        if director is not None:
+            self.director[:] = director;
+        else:
+            self.director[:] = (1,0,0)
+
+        if color is not None:
+            self.color[:] = color;
+
+        self.scene = scene;
+        self.scene.geometry.append(self);
+
+    def get_extents(self):
+        R""" Get the extents of the geometry
+
+        Returns:
+            [[minimum x, minimum y, minimum z],[maximum x, maximum y, maximum z]]
+        """
+        pos = self.position[:];
+        r = self.radius[:];
+        r = r.reshape(len(r),1);
+        res = numpy.array([numpy.min(pos - r, axis=0),
+                           numpy.max(pos + r, axis=0)])
+        return res;
+
+
+    @property
+    def position(self):
+        return util.array(self._geometry.getPositionBuffer(), geom=self)
+
+    @property
+    def orientation(self):
+        return util.array(self._geometry.getOrientationBuffer(), geom=self)
+
+    @property
+    def radius(self):
+        return util.array(self._geometry.getRadiusBuffer(), geom=self)
+
+    @property
+    def director(self):
+        return util.array(self._geometry.getDirectorBuffer(), geom=self)
+
+    @property
+    def color(self):
+        return util.array(self._geometry.getColorBuffer(), geom=self)
+
+
 class Mesh(Geometry):
     R""" Mesh geometry.
 

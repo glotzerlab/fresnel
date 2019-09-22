@@ -30,6 +30,7 @@ set(_cpu_sources
      cpu/GeometryMesh.cc
      cpu/GeometryConvexPolyhedron.cc
      cpu/GeometrySphere.cc
+     cpu/GeometryHemisphere.cc
      cpu/Tracer.cc
      cpu/TracerDirect.cc
      cpu/TracerPath.cc
