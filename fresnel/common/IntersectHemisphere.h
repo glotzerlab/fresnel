@@ -77,10 +77,24 @@ DEVICE inline bool intersect_ray_hemisphere(float& t,
                                         const vec3<float>& q)
     {
     // test intersection with hemisphere cap
-    if (intersect_ray_disk(q, p, r, o, d, t, d_edge) || intersect_ray_disk(-q, p, r, o, d, t, d_edge))
+    t = -1.0;
+
+    float t_disk = -1.0;
+    vec3<float> N_disk;
+    float d0,t0;
+    float d_edge_disk;
+    if (intersect_ray_disk(q, p, r, o, d, t0, d0))
         {
-        N = q;
-        return true;
+        N_disk = q;
+        t_disk = t0;
+        d_edge_disk = d0;
+        }
+
+    if (intersect_ray_disk(-q, p, r, o, d, t0, d0))
+        {
+        N_disk = q;
+        t_disk = t0;
+        d_edge_disk = d0;
         }
 
     // vector from ray origin to sphere
@@ -90,49 +104,104 @@ DEVICE inline bool intersect_ray_hemisphere(float& t,
     float b = dot(v,d);
     float det = b*b - dot(v,v) + r*r;
 
-    // no solution when determinant is negative
-    if (det < 0)
-        return false;
+    float t_sphere = -1.0;
+    vec3<float> N_sphere;
+    float d_edge_sphere = 0.0;
 
-    // the ray intersects the sphere
-    // solve the quadratic equation
-    det=fast::sqrt(det);
-
-    // first case
-    float l0 = b - det;
-    float l1 = b + det;
-
-    // test both hits-p against normal q
-    vec3<float> w = o+l0*d-p;
-    if (dot(w,q) > hemisphere_epsilon)
+    // no solution on sphere when determinant is negative
+    if (det >= 0)
         {
-        // the ray hits the cut plane
-        l0 = -1.0;
+        // the ray intersects the sphere
+        // solve the quadratic equation
+        det=fast::sqrt(det);
+
+        // first case
+        float l0 = b - det;
+        float l1 = b + det;
+
+        // test both hits-p against normal q
+        vec3<float> w = o+l0*d-p;
+        if (dot(w,q) > hemisphere_epsilon)
+            {
+            // the ray hits the cut plane
+            l0 = -1.0;
+            }
+
+        w = o+l1*d-p;
+        if (dot(w,q) > hemisphere_epsilon)
+            {
+            l1 = -1.0;
+            }
+
+        if (l0<0.0)
+            l0=l1;
+        if (l1<0.0)
+            l1=l0;
+
+        t_sphere = l0 < l1 ? l0 : l1;
+        if (t_sphere <= hemisphere_epsilon)
+            t_sphere = l0 > l1 ? l0 : l1;
+
+        if (t_sphere > hemisphere_epsilon)
+            {
+            N_sphere = o+t_sphere*d-p;
+            d_edge_sphere = fast::sqrt(dot(N,N));
+            }
         }
 
-    w = o+l1*d-p;
-    if (dot(w,q) > hemisphere_epsilon)
+    t0 = t_sphere;
+    float t1 = t_disk;
+
+    vec3<float> N0 = N_sphere;
+    vec3<float> N1 = N_disk;
+
+    d0 = d_edge_sphere;
+    float d1 = d_edge_disk;
+
+    if (t0 < 0.0)
         {
-        l1 = -1.0;
+        t0 = t1;
+        N0 = N1;
+        d0 = d1;
         }
 
-    if (l0<0.0)
-        l0=l1;
-    if (l1<0.0)
-        l1=l0;
-
-    t=l0 < l1 ? l0 : l1;
-    if (t<=hemisphere_epsilon)
-        t=l0 > l1 ? l0 : l1;
-
-    if (t > hemisphere_epsilon)
+    if (t1 < 0.0)
         {
-        N = o+t*d-p;
-        d_edge = fast::sqrt(dot(N,N));
-        return true;
+        t1 = t0;
+        N1 = N0;
+        d1 = d0;
         }
 
-    return false;
+    if (t0 < t1)
+        {
+        t = t0;
+        N = N0;
+        d_edge = d0;
+        }
+    else
+        {
+        t = t1;
+        N = N1;
+        d_edge = d1;
+        }
+
+    if (t <= hemisphere_epsilon)
+        {
+        if (t0 > t1)
+            {
+            t = t0;
+            N = N0;
+            d_edge = d0;
+            }
+        else
+            {
+            t = t1;
+            N = N1;
+            d_edge = d1;
+            }
+        }
+
+    return (t > hemisphere_epsilon);
     }
 
 }
