@@ -57,6 +57,7 @@ set(_ptx_files
     GeometrySphere
     GeometryPolygon
     GeometryConvexPolyhedron
+    GeometryHemisphere
     )
 
 set(_ptx_sources "")
@@ -102,6 +103,7 @@ set(_gpu_sources
      gpu/GeometryPolygon.cc
      gpu/GeometryConvexPolyhedron.cc
      gpu/GeometrySphere.cc
+     gpu/GeometryHemisphere.cc
      gpu/Tracer.cc
      gpu/TracerDirect.cc
      gpu/TracerPath.cc
