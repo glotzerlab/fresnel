@@ -5,8 +5,8 @@ trigger:
     - '*'
 
 variables:
-  image_root: glotzerlab/ci:2019.08
-  private_image_root: joaander/ci:2019.08
+  image_root: glotzerlab/ci:2019.09
+  private_image_root: joaander/ci:2019.09
 
 stages:
 - stage: build_test_cpu
