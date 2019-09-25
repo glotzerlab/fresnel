@@ -3,6 +3,13 @@ Change log
 
 `fresnel <https://github.com/glotzerlab/fresnel>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
+v0.10.2 (not yet released)
+--------------------------
+
+*Fixed*
+
+* Compile on systems where ``libqhullcpp.a`` is missing or broken
+
 v0.10.1 (2019-09-05)
 --------------------
 
