@@ -183,6 +183,157 @@ class Cylinder(Geometry):
     def color(self):
         return util.array(self._geometry.getColorBuffer(), geom=self)
 
+
+class Box(Cylinder):
+    R""" Box geometry.
+
+    Generate a "box" shape.
+
+    Args:
+        scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
+        box (`numpy.ndarray` or `array_like`): (``1x1, 1x3, or 1x6`` : ``float32``) Assumes 1x1 is cubic, 1x3 is orthorhombic, and 1x6 is triclinic.
+        radius (`numpy.ndarray` or `array_like`): (``N`` : ``float32``) - Radius of box edges.
+        color (`numpy.ndarray` or `array_like`): (``Nx2x3`` : ``float32``) - Color of box edges.
+
+    .. seealso::
+
+        :doc:`examples/01-Primitives/05-Box-geometry`
+            Tutorial: defining and setting box geometry properties
+        :doc:`examples/02-Advanced-topics/05-GSD-visualization`
+            Tutorial: Visualizing GSD files
+
+
+    Note:
+        The constructor arguments ``radius``, and ``color`` are optional. If you do not provide them,
+        they are initialized to 0.5 and black, respectively.
+
+    .. hint::
+        Avoid costly memory allocations and type conversions by specifying primitive properties in the appropriate
+        numpy array type.
+
+    Attributes:
+        points (:py:class:`fresnel.util.array`): Read or modify the box.
+        radius (:py:class:`fresnel.util.array`): Read or modify the radii of the box edges.
+        color (:py:class:`fresnel.util.array`): Read or modify the colors of the box.
+    """
+
+    def __init__(self,
+                 scene,
+                 box,
+                 radius=None,
+                 color=None,
+                 material=material.Material(solid=1.0, color=(0, 0, 0)),
+                 outline_material=material.Material(solid=1.0, color=(0, 0, 0)),
+                 outline_width=0.0):
+
+        self._geometry = scene.device.module.GeometryCylinder(scene._scene, 12)
+        self.material = material
+        self.outline_material = outline_material
+        self.outline_width = outline_width
+        self.box = box
+        self.points[:] = self._generate_points(self.box)
+
+        if radius is not None:
+            self.radius[:] = radius
+        else:
+            self.radius[:] = [0.5] * 12
+
+        if color is not None:
+            self.color[:] = color
+
+        self.scene = scene
+        self.scene.geometry.append(self)
+
+    def _generate_points(self, box):
+        '''
+        Helper function to take a box and calculate the 12 edges
+        '''
+        if len(box) == 1:
+            Lx = box[0]
+            Ly = Lx
+            Lz = Lx
+            xy = 0
+            xz = 0
+            yz = 0
+        elif len(box) == 3:
+            Lx = box[0]
+            Ly = box[1]
+            Lz = box[2]
+            xy = 0
+            xz = 0
+            yz = 0
+
+        elif len(box) == 6:
+            Lx = box[0]
+            Ly = box[1]
+            Lz = box[2]
+            xy = box[3]
+            xz = box[4]
+            yz = box[5]
+        else:
+            raise RuntimeError(
+                "box must be an array-like of length 1, 3, or 6, you provided box={}".format(
+                    box
+                )
+            )
+
+        # Follow hoomd convention
+        box_matrix = numpy.array([[Lx, xy*Ly, xz*Lz],
+                                  [0, Ly, yz*Lz],
+                                  [0, 0, Lz]])
+        a_1, a_2, a_3 = box_matrix.T
+        #           F--------------H
+        #          /|             /|
+        #         / |            / |
+        #        D--+-----------E  |
+        #        |  |           |  |
+        #        |  |           |  |
+        #        |  |           |  |
+        #        |  C-----------+--G
+        #        | /            | /
+        #        |/             |/
+        #        A--------------B
+        # Translate A so that 0, 0, 0 is the center of the box
+        A = -(a_1 + a_2 + a_3)/2
+        B = A + a_1
+        C = A + a_2
+        D = A + a_3
+        E = A + a_1 + a_3
+        F = A + a_2 + a_3
+        G = A + a_1 + a_2
+        H = A + a_1 + a_2 + a_3
+        # Define all edges
+        box_points = numpy.asarray(
+            [
+                [A, B],
+                [A, C],
+                [A, D],
+                [B, E],
+                [B, G],
+                [C, G],
+                [C, F],
+                [D, E],
+                [D, F],
+                [E, H],
+                [F, H],
+                [G, H]
+
+            ]
+        )
+        return box_points
+
+    @property
+    def points(self):
+        return util.array(self._geometry.getPointsBuffer(), geom=self)
+
+    @property
+    def radius(self):
+        return util.array(self._geometry.getRadiusBuffer(), geom=self)
+
+    @property
+    def color(self):
+        return util.array(self._geometry.getColorBuffer(), geom=self)
+
 class Polygon(Geometry):
     R""" Polygon geometry.
 
