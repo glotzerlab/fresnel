@@ -9,6 +9,8 @@ The following people contributed to **fresnel**.
 * Tim Moore, University of Michigan
 * Vyas Ramasubramani, University of Michigan
 * Bryan VanSaders, University of Michigan
+* Mike Henry, Boise State University
+* Jenny Fothergill, Boise State University
 
 Libraries
 ---------
