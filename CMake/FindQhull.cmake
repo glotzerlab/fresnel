@@ -16,7 +16,20 @@ find_package_handle_standard_args(Qhull
 if(Qhull_r_LIBRARY AND Qhull_cpp_LIBRARY)
     set(CMAKE_REQUIRED_LIBRARIES "${Qhull_cpp_LIBRARY}; ${Qhull_r_LIBRARY}")
     set(CMAKE_REQUIRED_INCLUDES "${Qhull_INCLUDE_DIR}")
-    check_cxx_source_compiles("#include \"libqhullcpp/Qhull.h\"\nint main(int argc, char **argv) { orgQhull::Qhull q; return 0;}" can_link_libqhullcpp)
+    set(CMAKE_REQUIRED_LINK_OPTIONS "-shared")
+    set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+    check_cxx_source_compiles("#include \"libqhullcpp/Qhull.h\"\n\
+                              int main(int argc, char **argv)\n\
+                                  {\n\
+                                  double coords[9]={1,2,3,4,5,6,7,8,9};\n\
+                                  orgQhull::Qhull q;\n\
+                                  q.runQhull(\"\", 3, 3, coords, \"\");\n\
+                                  return 0;\n\
+                                }" can_link_libqhullcpp)
+    set(CMAKE_POSITION_INDEPENDENT_CODE "")
+    set(CMAKE_REQUIRED_LINK_OPTIONS "")
+    set(CMAKE_REQUIRED_INCLUDES "")
+    set (CMAKE_REQUIRED_LIBRARIES "")
 
     if(can_link_libqhullcpp AND NOT TARGET QHull::qhull_cpp)
         add_library(QHull::qhull_cpp UNKNOWN IMPORTED)
