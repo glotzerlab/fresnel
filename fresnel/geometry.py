@@ -226,8 +226,6 @@ class Box(Cylinder):
         super().__init__(scene=scene, N=12)
         self._box = box
         self.points[:] = self._generate_points(box)
-        #self._points = self._generate_points(box)
-        #self.points[:] = self._points
 
         if radius is not None:
             self.radius[:] = radius
@@ -316,16 +314,6 @@ class Box(Cylinder):
             ]
         )
         return box_points
-
-    @property
-    def points(self):
-        return util.array(self._geometry.getPointsBuffer(), geom=self)
-
-    @points.setter
-    def points(self, value):
-        raise AttributeError(
-                "'points' attribute should not be set manually. Please set box instead."
-                )
 
     @property
     def box(self):
