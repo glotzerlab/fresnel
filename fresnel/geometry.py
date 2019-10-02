@@ -122,9 +122,9 @@ class Cylinder(Geometry):
         elements of the array.
 
     Attributes:
-        points (:py:class:`fresnel.util.array`): Read or modify the start and end points of the cylinders.
+        points (:py:class:`fresnel.util.array`): Read the start and end points of the cylinders.
         radius (:py:class:`fresnel.util.array`): Read or modify the radii of the cylinders.
-        color (:py:class:`fresnel.util.array`): Read or modify the colors of the start and end points of the cylinders.
+        color (:py:class:`fresnel.util.array`): Read or modify the colors of the box.
     """
 
     def __init__(self,
@@ -212,7 +212,7 @@ class Box(Cylinder):
         numpy array type.
 
     Attributes:
-        points (:py:class:`fresnel.util.array`): Read or modify the box.
+        points (:py:class:`fresnel.util.array`): Read the points at the corners of the box.
         radius (:py:class:`fresnel.util.array`): Read or modify the radii of the box edges.
         color (:py:class:`fresnel.util.array`): Read or modify the colors of the box.
     """
@@ -221,31 +221,23 @@ class Box(Cylinder):
                  scene,
                  box,
                  radius=None,
-                 color=None,
-                 material=material.Material(solid=1.0, color=(0, 0, 0)),
-                 outline_material=material.Material(solid=1.0, color=(0, 0, 0)),
-                 outline_width=0.0):
+                 color=None):
 
-        self._geometry = scene.device.module.GeometryCylinder(scene._scene, 12)
-        self.material = material
-        self.outline_material = outline_material
-        self.outline_width = outline_width
-        self.box = box
-        self.points[:] = self._generate_points(self.box)
+        super().__init__(scene=scene, N=12)
+        self._box = box
+        self.points[:] = self._generate_points(box)
+        #self._points = self._generate_points(box)
+        #self.points[:] = self._points
 
         if radius is not None:
             self.radius[:] = radius
         else:
-            self.radius[:] = [0.5] * 12
+            self.radius[:] = [0.5]
 
         if color is not None:
-            # broadcast the color value to all cylinders which make up the box
-            self.color[:] = numpy.zeros((12,2,3)) + color
+            self.color[:] = color
             # this makes it so the color will show up
             self.material.primitive_color_mix = 1.0
-
-        self.scene = scene
-        self.scene.geometry.append(self)
 
     def _generate_points(self, box):
         '''
@@ -329,13 +321,21 @@ class Box(Cylinder):
     def points(self):
         return util.array(self._geometry.getPointsBuffer(), geom=self)
 
-    @property
-    def radius(self):
-        return util.array(self._geometry.getRadiusBuffer(), geom=self)
+    @points.setter
+    def points(self, value):
+        raise AttributeError(
+                "'points' attribute should not be set manually. Please set box instead."
+                )
 
     @property
-    def color(self):
-        return util.array(self._geometry.getColorBuffer(), geom=self)
+    def box(self):
+        return self._box
+
+    @box.setter
+    def box(self, box):
+        self._box = box
+        self.points[:] = self._generate_points(self._box)
+
 
 class Polygon(Geometry):
     R""" Polygon geometry.
