@@ -224,8 +224,8 @@ class Box(Cylinder):
                  color=None):
 
         super().__init__(scene=scene, N=12)
-        self._box = box
-        self.points[:] = self._generate_points(box)
+        self._box = self.from_box(box)
+        self.points[:] = self._generate_points(self._box)
 
         if radius is not None:
             self.radius[:] = radius
@@ -237,38 +237,61 @@ class Box(Cylinder):
             # this makes it so the color will show up
             self.material.primitive_color_mix = 1.0
 
+    def from_box(self,box):
+        """Duck type the box from a valid input.
+        Boxes can be a number, list, dictionary, or object with attributes.
+        """
+        try:
+            # Handles freud.box.Box and namedtuple
+            Lx = box.Lx
+            Ly = box.Ly
+            Lz = getattr(box, 'Lz', 0)
+            xy = getattr(box, 'xy', 0)
+            xz = getattr(box, 'xz', 0)
+            yz = getattr(box, 'yz', 0)
+        except AttributeError:
+            try:
+                # Handle dictionary-like
+                Lx = box['Lx']
+                Ly = box['Ly']
+                Lz = box.get('Lz', 0)
+                xy = box.get('xy', 0)
+                xz = box.get('xz', 0)
+                yz = box.get('yz', 0)
+            except (IndexError, KeyError, TypeError):
+                try:
+                    if not len(box) in [1, 3, 6]:
+                        raise ValueError(
+                            "List-like objects must have length 1, 3, or 6 to be "
+                            "converted to a box.")
+                    # Handle list-like
+                    Lx = box[0]
+                    Ly = box[0] if len(box) == 1 else box[1]
+                    Lz = box[0] if len(box) == 1 else box[2]
+                    xy, xz, yz = box[3:6] if len(box) == 6 else (0, 0, 0)
+                except TypeError:
+                    if isinstance(box, int) or isinstance(box, float):
+                        # Handle int or float
+                        Lx = box
+                        Ly = box
+                        Lz = box
+                        xy = 0
+                        xz = 0
+                        yz = 0
+                    else:
+                        raise TypeError(f"unsupported box type {type(box)}")
+        return (Lx, Ly, Lz, xy, xz, yz)
+
     def _generate_points(self, box):
         '''
         Helper function to take a box and calculate the 12 edges
         '''
-        if len(box) == 1:
-            Lx = box[0]
-            Ly = Lx
-            Lz = Lx
-            xy = 0
-            xz = 0
-            yz = 0
-        elif len(box) == 3:
-            Lx = box[0]
-            Ly = box[1]
-            Lz = box[2]
-            xy = 0
-            xz = 0
-            yz = 0
-
-        elif len(box) == 6:
-            Lx = box[0]
-            Ly = box[1]
-            Lz = box[2]
-            xy = box[3]
-            xz = box[4]
-            yz = box[5]
-        else:
-            raise RuntimeError(
-                "box must be an array-like of length 1, 3, or 6, you provided box={}".format(
-                    box
-                )
-            )
+        Lx = box[0]
+        Ly = box[1]
+        Lz = box[2]
+        xy = box[3]
+        xz = box[4]
+        yz = box[5]
 
         # Follow hoomd convention
         box_matrix = numpy.array([[Lx, xy*Ly, xz*Lz],
