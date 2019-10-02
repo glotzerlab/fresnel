@@ -187,7 +187,7 @@ class Cylinder(Geometry):
 class Box(Cylinder):
     R""" Box geometry.
 
-    Generate a "box" shape.
+    Generate a triclinic box shape.
 
     Args:
         scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
