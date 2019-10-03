@@ -106,7 +106,7 @@ def test_box_update(scene_box_, generate=False):
         geometry.box = update_box
 
         assert isinstance(geometry.box, tuple)
-        assert len(geometry.box), 6
+        assert len(geometry.box) is 6
 
         buf_proxy = fresnel.preview(scene_box_, w=150, h=100)
 
