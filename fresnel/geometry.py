@@ -206,34 +206,29 @@ class Box(Cylinder):
     Note:
         The constructor arguments ``radius``, and ``color`` are optional. If you do not provide them,
         they are initialized to 0.5 and black, respectively.
+        The Box class is constructed from Cylinders, which can be modified invidually.
 
     Attributes:
-        points (:py:class:`fresnel.util.array`): Read the points at the corners of the box.
-        radius (:py:class:`fresnel.util.array`): Read or modify the radii of the box edges.
-        color (:py:class:`fresnel.util.array`): Read or modify the colors of the box.
+        points (:py:class:`fresnel.util.array`): Read or modify the start and end points of the cylinders.
+        radius (:py:class:`fresnel.util.array`): Read or modify the radii of the cylinders.
+        color (:py:class:`fresnel.util.array`): Read or modify the colors of the start and end points of the cylinders.
         box (```tuple```): Read or modify the box parameters. Boxes will be converted from any acceptable box type to a
-        length 6 tuple (Lx, Ly, Lz, xy, xz, yz). Changing the box will update the points.
+        length 6 tuple (Lx, Ly, Lz, xy, xz, yz). Changing the box will update the points used to generate the cylinders.
     """
 
     def __init__(self,
                  scene,
                  box,
-                 radius=None,
-                 color=None):
+                 radius=0.5,
+                 color=[0, 0, 0]):
 
-        super().__init__(scene=scene, N=12)
+        super().__init__(scene=scene, N=12, material=material.Material(solid=1.0))
         self._box = self._from_box(box)
         self.points[:] = self._generate_points(self._box)
 
-        if radius is not None:
-            self.radius[:] = radius
-        else:
-            self.radius[:] = [0.5]
+        self.radius[:] = radius
 
-        if color is not None:
-            self.color[:] = color
-            # this makes it so the color will show up
-            self.material.primitive_color_mix = 1.0
+        self.material.color = color
 
     def _from_box(self, box):
         """Duck type the box from a valid input.
