@@ -207,10 +207,6 @@ class Box(Cylinder):
         The constructor arguments ``radius``, and ``color`` are optional. If you do not provide them,
         they are initialized to 0.5 and black, respectively.
 
-    .. hint::
-        Avoid costly memory allocations and type conversions by specifying primitive properties in the appropriate
-        numpy array type.
-
     Attributes:
         points (:py:class:`fresnel.util.array`): Read the points at the corners of the box.
         radius (:py:class:`fresnel.util.array`): Read or modify the radii of the box edges.
