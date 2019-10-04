@@ -226,7 +226,7 @@ class Box(Cylinder):
                  color=None):
 
         super().__init__(scene=scene, N=12)
-        self._box = self.from_box(box)
+        self._box = self._from_box(box)
         self.points[:] = self._generate_points(self._box)
 
         if radius is not None:
@@ -239,7 +239,7 @@ class Box(Cylinder):
             # this makes it so the color will show up
             self.material.primitive_color_mix = 1.0
 
-    def from_box(self, box):
+    def _from_box(self, box):
         """Duck type the box from a valid input.
         Boxes can be a number, list, dictionary, or object with attributes.
         """
@@ -346,7 +346,7 @@ class Box(Cylinder):
 
     @box.setter
     def box(self, box):
-        self._box = self.from_box(box)
+        self._box = self._from_box(box)
         self.points[:] = self._generate_points(self._box)
 
 
