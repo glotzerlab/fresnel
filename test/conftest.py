@@ -83,7 +83,7 @@ def assert_image_approx_equal(a, ref_file, tolerance=1.0):
     # first, ensure that they share a large fraction of non-background pixels (this assumes that all image compare
     # tests use a background alpha = 0)
     a_selection = a[:,:,3] > 0;
-    ref_selection = a[:,:,3] > 0;
+    ref_selection = im_arr[:,:,3] > 0;
     assert numpy.sum(a_selection) > 3/4 * numpy.sum(ref_selection)
 
     # Now, compute the sum of the image difference squared, but only over those pixels that are
