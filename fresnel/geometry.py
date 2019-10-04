@@ -192,7 +192,7 @@ class Box(Cylinder):
     Args:
         scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
         box (`numpy.ndarray` or `array_like`): (``1x1, 1x3, or 1x6`` : ``float32``) Assumes 1x1 is cubic, 1x3 is orthorhombic, and 1x6 is triclinic.
-        radius (``float32``): Radius of box edges.
+        radius (`float`): Radius of box edges.
         color (`numpy.ndarray` or `array_like`): (``1x3`` : ``float32``) Color of box edges.
 
     .. seealso::
@@ -204,16 +204,17 @@ class Box(Cylinder):
 
 
     Note:
-        The constructor arguments ``radius``, and ``color`` are optional. If you do not provide them,
+        The constructor arguments ``radius`` and ``color`` are optional. If you do not provide them,
         they are initialized to 0.5 and black, respectively.
+
+    Note:
         The Box class is constructed from Cylinders, which can be modified invidually.
 
     Attributes:
         points (:py:class:`fresnel.util.array`): Read or modify the start and end points of the cylinders.
         radius (:py:class:`fresnel.util.array`): Read or modify the radii of the cylinders.
         color (:py:class:`fresnel.util.array`): Read or modify the colors of the start and end points of the cylinders.
-        box (```tuple```): Read or modify the box parameters. Boxes will be converted from any acceptable box type to a
-        length 6 tuple (Lx, Ly, Lz, xy, xz, yz). Changing the box will update the points used to generate the cylinders.
+        box (`tuple`): Read or modify the box parameters. Boxes will be converted from any acceptable box type to a tuple (Lx, Ly, Lz, xy, xz, yz). Changing the box will update the points used to generate the cylinders.
     """
 
     def __init__(self,
