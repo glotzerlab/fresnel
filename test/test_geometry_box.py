@@ -88,6 +88,44 @@ def test_color(scene_box_, generate=False):
         )
 
 
+def test_box_radius(scene_box_, generate=False):
+    geometry = scene_box_.geometry[0]
+
+    r = 0.1
+    geometry.box_radius = r
+    assert r == pytest.approx(geometry.box_radius)
+
+    buf_proxy = fresnel.preview(scene_box_, w=150, h=100)
+
+    if generate:
+        PIL.Image.fromarray(buf_proxy[:], mode="RGBA").save(
+            open("output/test_geometry_box.test_box_radius.png", "wb"), "png"
+        )
+    else:
+        conftest.assert_image_approx_equal(
+            buf_proxy[:], dir_path / "reference" / "test_geometry_box.test_box_radius.png"
+        )
+
+
+def test_box_color(scene_box_, generate=False):
+    geometry = scene_box_.geometry[0]
+
+    c = numpy.array([1,0,1], dtype=numpy.float32)
+    geometry.box_color = c
+    numpy.testing.assert_array_equal(c, geometry.box_color)
+
+    buf_proxy = fresnel.preview(scene_box_, w=150, h=100)
+
+    if generate:
+        PIL.Image.fromarray(buf_proxy[:], mode="RGBA").save(
+            open("output/test_geometry_box.test_box_color.png", "wb"), "png"
+        )
+    else:
+        conftest.assert_image_approx_equal(
+            buf_proxy[:], dir_path / "reference" / "test_geometry_box.test_box_color.png"
+        )
+
+
 def test_box_update(scene_box_, generate=False):
     box_tuple = namedtuple("box_tuple", "Lx Ly Lz xy xz yz")
     box_list = [
@@ -136,6 +174,12 @@ if __name__ == "__main__":
 
     scene = scene_box(device)
     test_color(scene, generate=True)
+
+    scene = scene_box(device)
+    test_box_radius(scene, generate=True)
+
+    scene = scene_box(device)
+    test_box_color(scene, generate=True)
 
     scene = scene_box(device)
     test_box_update(scene, generate=True)
