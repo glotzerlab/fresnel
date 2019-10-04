@@ -215,6 +215,8 @@ class Box(Cylinder):
         points (:py:class:`fresnel.util.array`): Read the points at the corners of the box.
         radius (:py:class:`fresnel.util.array`): Read or modify the radii of the box edges.
         color (:py:class:`fresnel.util.array`): Read or modify the colors of the box.
+        box (```tuple```): Read or modify the box parameters. Boxes will be converted from any acceptable box type to a
+        length 6 tuple (Lx, Ly, Lz, xy, xz, yz). Changing the box will update the points.
     """
 
     def __init__(self,
