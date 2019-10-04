@@ -80,7 +80,7 @@ Install Prerequisites
 * C++11 capable compiler
 * CMake >= 3.8
 * pybind11 >= 2.2
-* Python >= 3.5
+* Python >= 3.6
 * numpy
 * Qhull >= 2015.2
 * For CPU execution (required when ``ENABLE_EMBREE=ON``):
