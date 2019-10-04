@@ -122,9 +122,9 @@ class Cylinder(Geometry):
         elements of the array.
 
     Attributes:
-        points (:py:class:`fresnel.util.array`): Read the start and end points of the cylinders.
+        points (:py:class:`fresnel.util.array`): Read or modify the start and end points of the cylinders.
         radius (:py:class:`fresnel.util.array`): Read or modify the radii of the cylinders.
-        color (:py:class:`fresnel.util.array`): Read or modify the colors of the box.
+        color (:py:class:`fresnel.util.array`): Read or modify the colors of the start and end points of the cylinders.
     """
 
     def __init__(self,
