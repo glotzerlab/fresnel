@@ -208,13 +208,15 @@ class Box(Cylinder):
         they are initialized to 0.5 and black, respectively.
 
     Note:
-        The Box class is constructed from Cylinders, which can be modified invidually.
+        The Box class is constructed from Cylinders, which can be modified invidually. The convenience attributes ``box_radius`` and ``box_color`` can be used to easily modify the thickness and color of the box. If the individual cylinders are modified, the getter for the ``box_radius`` will return the radius of the 0th element cylinder.
 
     Attributes:
         points (:py:class:`fresnel.util.array`): Read or modify the start and end points of the cylinders.
         radius (:py:class:`fresnel.util.array`): Read or modify the radii of the cylinders.
         color (:py:class:`fresnel.util.array`): Read or modify the colors of the start and end points of the cylinders.
         box (`tuple`): Read or modify the box parameters. Boxes will be converted from any acceptable box type to a tuple (Lx, Ly, Lz, xy, xz, yz). Changing the box will update the points used to generate the cylinders.
+        box_radius (`float`): Read or modify the radii of all the cylinders.
+        box_color (`tuple`): Read or modify the color of the box material.
     """
 
     def __init__(self,
@@ -227,9 +229,9 @@ class Box(Cylinder):
         self._box = self._from_box(box)
         self.points[:] = self._generate_points(self._box)
 
-        self.radius[:] = radius
+        self.box_radius = radius
 
-        self.material.color = color
+        self.box_color = color
 
     def _from_box(self, box):
         """Duck type the box from a valid input.
@@ -340,6 +342,22 @@ class Box(Cylinder):
     def box(self, box):
         self._box = self._from_box(box)
         self.points[:] = self._generate_points(self._box)
+
+    @property
+    def box_color(self):
+        return self.material.color
+
+    @box_color.setter
+    def box_color(self, color):
+        self.material.color = color
+
+    @property
+    def box_radius(self):
+        return self.radius[:][0]
+
+    @box_radius.setter
+    def box_radius(self, radius):
+        self.radius[:] = radius
 
 
 class Polygon(Geometry):
