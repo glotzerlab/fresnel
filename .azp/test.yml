@@ -5,8 +5,8 @@ trigger:
     - '*'
 
 variables:
-  image_root: glotzerlab/ci:2019.09
-  private_image_root: joaander/ci:2019.09
+  image_root: glotzerlab/ci:2019.10
+  private_image_root: joaander/ci:2019.10
 
 stages:
 - stage: build_test_cpu
@@ -22,52 +22,37 @@ stages:
     displayName: Linux
     strategy:
       matrix:
-        clang8_py37:
-          container_image: ubuntu19.04
-          cc: clang-8
-          cxx: clang++-8
-        clang7_py37:
-          container_image: ubuntu19.04
-          cc: clang-7
-          cxx: clang++-7
-        gcc9_py37:
-          container_image: ubuntu19.04
-          cc: gcc-9
-          cxx: g++-9
-        gcc8_py36:
-          container_image: ubuntu18.04
-          cc: gcc-8
-          cxx: g++-8
+        gcc9_py38:
+          unused: ""
+        clang9_py38:
+          unused: ""
+        clang8_py38:
+          unused: ""
+        clang7_py38:
+          unused: ""
+        gcc8_py37:
+          unused: ""
+        gcc7_py37:
+          unused: ""
+        gcc6_py37:
+          unused: ""
+        gcc5_py37:
+          unused: ""
+        gcc48_py37:
+          unused: ""
+        clang6_py37:
+          unused: ""
+        clang5_py37:
+          unused: ""
+        clang4_py37:
+          unused: ""
         gcc7_py36:
-          container_image: ubuntu18.04
-          cc: gcc-7
-          cxx: g++-7
-        gcc6_py36:
-          container_image: ubuntu18.04
-          cc: gcc-6
-          cxx: g++-6
-        gcc5_py36:
-          container_image: ubuntu18.04
-          cc: gcc-5
-          cxx: g++-5
-        gcc48_py36:
-          container_image: ubuntu18.04
-          cc: gcc-4.8
-          cxx: g++-4.8
-        clang6_py36:
-          container_image: ubuntu18.04
-          cc: clang-6.0
-          cxx: clang++-6.0
-        clang5_py36:
-          container_image: ubuntu18.04
-          cc: clang-5.0
-          cxx: clang++-5.0
-
+          unused: ""
     pool:
       vmImage: 'ubuntu-16.04'
 
     container:
-      image: $(image_root)-$(container_image)
+      image: $(image_root)-$(System.JobName)
       options: -u 0
 
     steps:
@@ -87,10 +72,19 @@ stages:
       vmImage: '$(mac_image)'
 
     steps:
-    - script: brew install python tbb embree cmake ninja pybind11 qhull numpy
+    - script: brew install python tbb embree cmake ninja qhull numpy
       displayName: Brew install prereqs
     - script: python3 -m pip install pytest pillow
       displayName: Pip install prereqs
+    # work around broken homebrew pybind11 package
+    - script: |
+        curl -sSL https://github.com/pybind/pybind11/archive/v2.4.2.tar.gz | tar -xzC ./ \
+        && cd pybind11-2.4.2 \
+        && mkdir build && cd build \
+        && cmake ../ -DCMAKE_INSTALL_PREFIX=/usr/local -DPYBIND11_TEST=off -DPYTHON_EXECUTABLE=/usr/local/bin/python3 \
+        && make install
+      displayName: Manually install pybind11
+      workingDirectory: $(Pipeline.Workspace)
     - template: templates/build_test.yml
 
 - stage: build_test_gpu
@@ -106,20 +100,13 @@ stages:
     displayName: Linux
     strategy:
       matrix:
-        cuda10_optix60:
-          container_image: cuda10-optix60
-          cc: gcc
-          cxx: g++
 
-        cuda10_optix51:
-          container_image: cuda10-optix51
-          cc: gcc
-          cxx: g++
-
-        cuda9_optix51:
-          container_image: cuda9-optix51
-          cc: gcc
-          cxx: g++
+        optix60_cuda10_py37:
+          unused: ""
+        optix51_cuda9_py37:
+          unused: ""
+        optix51_cuda10_py37:
+          unused: ""
 
     pool:
       name: 'GPU'
@@ -129,7 +116,7 @@ stages:
         - optix6
 
     container:
-       image: $(private_image_root)-$(container_image)
+       image: $(private_image_root)-$(System.JobName)
        # bind mount needed to load OpTiX driver: https://github.com/NVIDIA/nvidia-docker/issues/990
        options: -u 0 --mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --gpus=all --cpus=4 --memory=8g -e CUDA_VISIBLE_DEVICES
 
@@ -150,7 +137,7 @@ stages:
       vmImage: 'ubuntu-16.04'
 
     container:
-      image: $(image_root)-ubuntu18.04
+      image: $(image_root)-gcc7_py37
       options: -u 0
 
     workspace:

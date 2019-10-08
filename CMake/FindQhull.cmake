@@ -26,10 +26,10 @@ if(Qhull_r_LIBRARY AND Qhull_cpp_LIBRARY)
                                   q.runQhull(\"\", 3, 3, coords, \"\");\n\
                                   return 0;\n\
                                 }" can_link_libqhullcpp)
-    set(CMAKE_POSITION_INDEPENDENT_CODE "")
-    set(CMAKE_REQUIRED_LINK_OPTIONS "")
-    set(CMAKE_REQUIRED_INCLUDES "")
-    set (CMAKE_REQUIRED_LIBRARIES "")
+    unset(CMAKE_POSITION_INDEPENDENT_CODE)
+    unset(CMAKE_REQUIRED_LINK_OPTIONS)
+    unset(CMAKE_REQUIRED_INCLUDES)
+    unset (CMAKE_REQUIRED_LIBRARIES)
 
     if(can_link_libqhullcpp AND NOT TARGET QHull::qhull_cpp)
         add_library(QHull::qhull_cpp UNKNOWN IMPORTED)
@@ -91,15 +91,18 @@ if(NOT can_link_libqhullcpp)
         ${CMAKE_SOURCE_DIR}/extern/qhull/src/libqhullcpp/RoadLogEvent.cpp
         )
 
-    add_library(qhull_cpp STATIC ${libqhullcpp_SOURCES})
-    target_include_directories(qhull_cpp PUBLIC ${CMAKE_SOURCE_DIR}/extern/qhull/src)
-    target_compile_options(qhull_cpp PRIVATE "-Wno-all")
-    set_target_properties(qhull_cpp PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
-    add_library(QHull::qhull_cpp ALIAS qhull_cpp)
+    if(NOT TARGET QHull::qhull_cpp)
+        add_library(QHull::qhull_cpp INTERFACE IMPORTED)
+        set_target_properties(QHull::qhull_cpp PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/extern/qhull/src")
+    endif()
 
-    add_library(qhull_r STATIC ${libqhullr_SOURCES})
-    target_include_directories(qhull_r PUBLIC ${CMAKE_SOURCE_DIR}/extern/qhull/src)
-    target_compile_options(qhull_r PRIVATE "-Wno-all")
-    set_target_properties(qhull_r PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
-    add_library(QHull::qhull_r ALIAS qhull_r)
+    if(NOT TARGET QHull::qhull_r)
+        add_library(QHull::qhull_r INTERFACE IMPORTED)
+        set_target_properties(QHull::qhull_r PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/extern/qhull/src")
+    endif()
+    set(qhull_EMBED_SOURCE TRUE)
+else()
+    set(qhull_EMBED_SOURCE FALSE)
 endif()

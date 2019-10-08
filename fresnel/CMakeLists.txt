@@ -11,6 +11,11 @@ set(_common_sources
 
 find_package(Qhull)
 
+# work around broken libqhull installations
+if (qhull_EMBED_SOURCE)
+    list(APPEND _common_sources ${libqhullr_SOURCES} ${libqhullcpp_SOURCES})
+endif()
+
 pybind11_add_module(_common ${_common_sources})
 target_link_libraries(_common PRIVATE QHull::qhull_r QHull::qhull_cpp)
 install(TARGETS _common LIBRARY DESTINATION ${PYTHON_SITE_INSTALL_DIR})
