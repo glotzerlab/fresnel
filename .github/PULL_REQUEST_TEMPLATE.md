@@ -9,6 +9,9 @@ Resolves: #???
 
 <!-- Link to or attach a file that demonstrates the change (if applicable). -->
 
+<!--- Please build the sphinx documentation and check that any changes to
+      documentation display properly. -->
+
 ## Change log
 
 <!-- Propose a change log entry. -->
