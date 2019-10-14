@@ -1,4 +1,3 @@
-import math
 import os
 import pathlib
 from collections import namedtuple
@@ -16,11 +15,11 @@ dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 def scene_box(device):
     scene = fresnel.Scene(device, lights=conftest.test_lights())
 
-    geometry = fresnel.geometry.Box(
+    fresnel.geometry.Box(
         scene,
         [1, 2, 3, 0.4, 0.5, 0.6],
-        radius=0.2,
-        color=[1, 0, 1],
+        box_radius=0.2,
+        box_color=[1, 0, 1],
     )
 
     scene.camera = fresnel.camera.orthographic(
@@ -71,7 +70,7 @@ def test_color(scene_box_, generate=False):
     geometry = scene_box_.geometry[0]
     geometry.material.primitive_color_mix = 1.0
 
-    c = numpy.zeros((12,2,3), dtype=numpy.float32) + [1, 0, 0]
+    c = numpy.zeros((12, 2, 3), dtype=numpy.float32) + [1, 0, 0]
     geometry.color[:] = c
     numpy.testing.assert_array_equal(c, geometry.color[:])
 
@@ -109,7 +108,7 @@ def test_box_radius(scene_box_, generate=False):
 def test_box_color(scene_box_, generate=False):
     geometry = scene_box_.geometry[0]
 
-    c = numpy.array([1,0,1], dtype=numpy.float32)
+    c = numpy.array([1, 0, 1], dtype=numpy.float32)
     geometry.box_color = c
     numpy.testing.assert_array_equal(c, geometry.box_color)
 
@@ -143,7 +142,7 @@ def test_box_update(scene_box_, generate=False):
         geometry.box = update_box
 
         assert isinstance(geometry.box, tuple)
-        assert len(geometry.box) is 6
+        assert len(geometry.box) == 6
 
         buf_proxy = fresnel.preview(scene_box_, w=150, h=100)
 
@@ -158,7 +157,7 @@ def test_box_update(scene_box_, generate=False):
             conftest.assert_image_approx_equal(
                     buf_proxy[:],
                     dir_path / "reference" / f"test_geometry_box.test_render{box_index}.png",
-        )
+            )
 
 
 if __name__ == "__main__":
