@@ -88,7 +88,7 @@ if (ENABLE_EMBREE)
         add_library(EMBREE::embree UNKNOWN IMPORTED)
         set_target_properties(EMBREE::embree PROPERTIES
             IMPORTED_LOCATION "${EMBREE_LIBRARY}"
-            INTERFACE_INCLUDE_DIRECTORIES "${EMBREE_INCLUDE_DIR}"
+            INTERFACE_INCLUDE_DIRECTORIES "${EMBREE_INCLUDE_DIRS}"
             IMPORTED_LINK_INTERFACE_LIBRARIES "TBB::tbb")
     endif()
 
