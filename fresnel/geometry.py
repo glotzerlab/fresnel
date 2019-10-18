@@ -183,6 +183,182 @@ class Cylinder(Geometry):
     def color(self):
         return util.array(self._geometry.getColorBuffer(), geom=self)
 
+
+class Box(Cylinder):
+    R""" Box geometry.
+
+    Generate a triclinic box shape.
+
+    Args:
+        scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
+        box_radius (`numpy.ndarray` or `array_like`): (```1```, ```3```, or ```6``` : ``float32``) Assumes 1x1 is cubic, 1x3 is orthorhombic, and 1x6 is triclinic.
+        radius (`float`): Radius of box edges.
+        box_color (`numpy.ndarray` or `array_like`): (``1x3`` : ``float32``) Color of box edges.
+
+    .. seealso::
+
+        :doc:`examples/01-Primitives/05-Box-geometry`
+            Tutorial: defining and setting box geometry properties
+        :doc:`examples/02-Advanced-topics/05-GSD-visualization`
+            Tutorial: Visualizing GSD files
+
+
+    Note:
+        The constructor arguments ``radius`` and ``color`` are optional. If you do not provide them,
+        they are initialized to 0.5 and black, respectively.
+
+    Note:
+        The Box class is constructed from Cylinders, which can be modified invidually. The convenience attributes ``box_radius`` and ``box_color`` can be used to easily modify the thickness and color of the box. If the individual cylinders are modified, the getter for the ``box_radius`` will return the radius of the 0th element cylinder.
+
+    Attributes:
+        points (:py:class:`fresnel.util.array`): Read or modify the start and end points of the cylinders.
+        radius (:py:class:`fresnel.util.array`): Read or modify the radii of the cylinders.
+        color (:py:class:`fresnel.util.array`): Read or modify the colors of the start and end points of the cylinders.
+        box (`tuple`): Read or modify the box parameters. Boxes will be converted from any acceptable box type to a tuple (Lx, Ly, Lz, xy, xz, yz). Changing the box will update the points used to generate the cylinders.
+        box_radius (`float`): Read or modify the radii of all the cylinders.
+        box_color (`tuple`): Read or modify the color of the box material.
+    """
+
+    def __init__(self,
+                 scene,
+                 box,
+                 box_radius=0.5,
+                 box_color=[0, 0, 0]):
+
+        super().__init__(scene=scene, N=12, material=material.Material(solid=1.0))
+        self._box = self._from_box(box)
+        self.points[:] = self._generate_points(self._box)
+
+        self.box_radius = box_radius
+
+        self.box_color = box_color
+
+    def _from_box(self, box):
+        """Duck type the box from a valid input.
+        Boxes can be a number, list, dictionary, or object with attributes.
+        """
+        try:
+            # Handles freud.box.Box and namedtuple
+            Lx = box.Lx
+            Ly = box.Ly
+            Lz = getattr(box, 'Lz', 0)
+            xy = getattr(box, 'xy', 0)
+            xz = getattr(box, 'xz', 0)
+            yz = getattr(box, 'yz', 0)
+        except AttributeError:
+            try:
+                # Handle dictionary-like
+                Lx = box['Lx']
+                Ly = box['Ly']
+                Lz = box.get('Lz', 0)
+                xy = box.get('xy', 0)
+                xz = box.get('xz', 0)
+                yz = box.get('yz', 0)
+            except (IndexError, KeyError, TypeError):
+                try:
+                    if not len(box) in [1, 3, 6]:
+                        raise ValueError(
+                            "List-like objects must have length 1, 3, or 6 to be "
+                            "converted to a box.")
+                    # Handle list-like
+                    Lx = box[0]
+                    Ly = box[0] if len(box) == 1 else box[1]
+                    Lz = box[0] if len(box) == 1 else box[2]
+                    xy, xz, yz = box[3:6] if len(box) == 6 else (0, 0, 0)
+                except TypeError:
+                    if isinstance(box, int) or isinstance(box, float):
+                        # Handle int or float
+                        Lx = box
+                        Ly = box
+                        Lz = box
+                        xy = 0
+                        xz = 0
+                        yz = 0
+                    else:
+                        raise TypeError(f"unsupported box type {type(box)}")
+        return (Lx, Ly, Lz, xy, xz, yz)
+
+    def _generate_points(self, box):
+        '''
+        Helper function to take a box and calculate the 12 edges
+        '''
+        Lx = box[0]
+        Ly = box[1]
+        Lz = box[2]
+        xy = box[3]
+        xz = box[4]
+        yz = box[5]
+
+        # Follow hoomd convention
+        box_matrix = numpy.array([[Lx, xy*Ly, xz*Lz],
+                                  [0, Ly, yz*Lz],
+                                  [0, 0, Lz]])
+        a_1, a_2, a_3 = box_matrix.T
+        #           F--------------H
+        #          /|             /|
+        #         / |            / |
+        #        D--+-----------E  |
+        #        |  |           |  |
+        #        |  |           |  |
+        #        |  |           |  |
+        #        |  C-----------+--G
+        #        | /            | /
+        #        |/             |/
+        #        A--------------B
+        # Translate A so that 0, 0, 0 is the center of the box
+        A = -(a_1 + a_2 + a_3)/2
+        B = A + a_1
+        C = A + a_2
+        D = A + a_3
+        E = A + a_1 + a_3
+        F = A + a_2 + a_3
+        G = A + a_1 + a_2
+        H = A + a_1 + a_2 + a_3
+        # Define all edges
+        box_points = numpy.asarray(
+            [
+                [A, B],
+                [A, C],
+                [A, D],
+                [B, E],
+                [B, G],
+                [C, G],
+                [C, F],
+                [D, E],
+                [D, F],
+                [E, H],
+                [F, H],
+                [G, H]
+            ]
+        )
+        return box_points
+
+    @property
+    def box(self):
+        return self._box
+
+    @box.setter
+    def box(self, box):
+        self._box = self._from_box(box)
+        self.points[:] = self._generate_points(self._box)
+
+    @property
+    def box_color(self):
+        return self.material.color
+
+    @box_color.setter
+    def box_color(self, color):
+        self.material.color = color
+
+    @property
+    def box_radius(self):
+        return self.radius[:][0]
+
+    @box_radius.setter
+    def box_radius(self, radius):
+        self.radius[:] = radius
+
+
 class Polygon(Geometry):
     R""" Polygon geometry.
 
