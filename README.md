@@ -1,4 +1,4 @@
-# fresnel
+G# fresnel
 
 **fresnel** is a python library for path tracing publication quality images of soft matter simulations in real time.
 The fastest render performance is possible on NVIDIA GPUs using their [OptiX](https://developer.nvidia.com/optix)
@@ -59,3 +59,4 @@ out = fresnel.pathtrace(scene, samples=64,
                         w=580, h=580)
 PIL.Image.fromarray(out[:], mode='RGBA').save('sphere.png')
 ```
+
