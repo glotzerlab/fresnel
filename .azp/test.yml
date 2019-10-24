@@ -1,9 +1,3 @@
-trigger:
-  batch: true
-  branches:
-    include:
-    - '*'
-
 variables:
   image_root: glotzerlab/ci:2019.10
   private_image_root: joaander/ci:2019.10
