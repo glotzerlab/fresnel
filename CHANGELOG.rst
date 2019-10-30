@@ -12,12 +12,12 @@ v0.11.0 (2019-10-30)
 
 *Removed*
 
-* Support for Python 3.5.
+* Support for **Python** 3.5.
 
 *Fixed*
 
 * Compile on systems where ``libqhullcpp.a`` is missing or broken.
-* Find *Embree* headers when they are not in the same path as *TBB*.
+* Find **Embree** headers when they are not in the same path as **TBB**.
 
 v0.10.1 (2019-09-05)
 --------------------
@@ -31,11 +31,11 @@ v0.10.0 (2019-08-19)
 
 *Changed*
 
-* CMake >= 3.8 is required at build time.
-* pybind11 >= 2.2 is required at build time.
-* qhull >= 2015 is required.
-* install to the python ``site-packages`` directory by default.
-* CI tests execute on Microsoft Azure Pipelines.
+* **CMake** >= 3.8 is required at build time.
+* **pybind11** >= 2.2 is required at build time.
+* **qhull** >= 2015 is required.
+* install to the **Python** ``site-packages`` directory by default.
+* **CI** tests execute on Microsoft Azure Pipelines.
 
 *Fixed*
 
@@ -60,13 +60,13 @@ v0.8.0 (2019-03-05)
 v0.7.1 (2019-02-05)
 -------------------
 
-* Fix conda-forge build on mac
+* Fix **conda-forge** build on mac
 
 v0.7.0 (2019-02-05)
 -------------------
 * Add ``util.convex_polyhedron_from_vertices``: compute convex polyhedron plane origins and normals given a set of vertices
 * Improve documentation
-* Add ``interact.SceneView``: pyside2 widget for interactively rendering scenes with path tracing
+* Add ``interact.SceneView``: **pyside2** widget for interactively rendering scenes with path tracing
 * Add ``geometry.Mesh``: Arbitrary triangular mesh geometry, instanced with N positions and orientations
 * **fresnel** development is now hosted on github: https://github.com/glotzerlab/fresnel/
 * Improve ``light.lightbox`` lighting setup
@@ -83,9 +83,9 @@ v0.6.0 (2018-07-06)
 * Compile warning-free.
 * Fix sphere intersection test bugs on the GPU.
 * ``tracer.Path`` now correctly starts sampling over when resized.
-* Wrap C++ code with pybind 2.2
+* Wrap C++ code with **pybind** 2.2
 * Make documentation available on readthedocs: http://fresnel.readthedocs.io
-* Fresnel is now available on conda-forge: https://anaconda.org/conda-forge/fresnel
+* Fresnel is now available on **conda-forge**: https://anaconda.org/conda-forge/fresnel
 * embree >= 3.0 is now required for CPU support
 * Improve documentation
 
