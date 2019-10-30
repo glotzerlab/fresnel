@@ -3,46 +3,55 @@ Change log
 
 `fresnel <https://github.com/glotzerlab/fresnel>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
-v0.10.2 (not yet released)
---------------------------
+v0.11.0 (2019-10-30)
+--------------------
+
+*Added*
+
+*  Added box geometry convenience class `Box`.
+
+*Removed*
+
+* Support for Python 3.5.
 
 *Fixed*
 
-* Compile on systems where ``libqhullcpp.a`` is missing or broken
+* Compile on systems where ``libqhullcpp.a`` is missing or broken.
+* Find *Embree* headers when they are not in the same path as *TBB*.
 
 v0.10.1 (2019-09-05)
 --------------------
 
 *Fixed*
 
-* Restore missing examples on readthedocs
+* Restore missing examples on readthedocs.
 
 v0.10.0 (2019-08-19)
 --------------------
 
 *Changed*
 
-* CMake >= 3.8 is required at build time
-* pybind11 >= 2.2 is required at build time
-* qhull >= 2015 is required
-* install to the python ``site-packages`` directory by default
-* CI tests execute on Microsoft Azure Pipelines
+* CMake >= 3.8 is required at build time.
+* pybind11 >= 2.2 is required at build time.
+* qhull >= 2015 is required.
+* install to the python ``site-packages`` directory by default.
+* CI tests execute on Microsoft Azure Pipelines.
 
 *Fixed*
 
-* Improved installation documentation
+* Improved installation documentation.
 
 
 v0.9.0 (2019-04-30)
 -------------------
 
-* Added support for linearizing colors of shape (4,)
-* Improve examples
+* Added support for linearizing colors of shape (4,).
+* Improve examples.
 
 v0.8.0 (2019-03-05)
 -------------------
 
-* Documentation improvements
+* Documentation improvements.
 * Add ``geometry.Polygon``: Simple and/or rounded polygons in the *z=0* plane.
 * API breaking changes:
 
