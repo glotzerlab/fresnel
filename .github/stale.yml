@@ -1,0 +1,27 @@
+# Configuration for probot-stale - https://github.com/probot/stale
+
+staleLabel: wontfix
+
+pulls:
+  daysUntilStale: 30
+  daysUntilClose: 10
+
+  markComment: >
+    This pull request has been automatically marked as stale because it has not had
+    recent activity. It will be closed if no further activity occurs.
+
+  closeComment: >
+    This pull request has been automatically closed because it has not had
+    recent activity.
+
+issues:
+  daysUntilStale: 170
+  daysUntilClose: 10
+
+  markComment: >
+    This issue has been automatically marked as stale because it has not had
+    recent activity. It will be closed if no further activity occurs.
+
+  closeComment: >
+    This issue has been automatically closed because it has not had
+    recent activity.
