@@ -11,6 +11,7 @@ The following people contributed to **fresnel**.
 * Bryan VanSaders, University of Michigan
 * Mike Henry, Boise State University
 * Jenny Fothergill, Boise State University
+* Corwin Kerr, University of Michigan
 
 Libraries
 ---------
