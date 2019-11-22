@@ -136,7 +136,7 @@ def orthographic(position, look_at, up, height):
 def fit(scene, view='auto', margin=0.05):
     R""" Fit a camera to a :py:class:`Scene <fresnel.Scene>`
 
-    Create a camera that fits the entire hight of the scene in the image plane.
+    Create a camera that fits the entire height of the scene in the image plane.
 
     Args:
         scene (:py:class:`Scene <fresnel.Scene>`): The scene to fit the camera to.
