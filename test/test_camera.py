@@ -1,4 +1,12 @@
 import fresnel
+import pytest
+
+def test_camera_fit_no_geometry(device_):
+    scene = fresnel.Scene()
+
+    # fit cannot be called on a scene with no geometries
+    with pytest.raises(ValueError):
+        cam = fresnel.camera.fit(scene, view='front', margin=0)
 
 def test_camera_fit_front(device_):
     scene = fresnel.Scene()
