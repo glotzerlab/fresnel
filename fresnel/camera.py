@@ -157,6 +157,11 @@ def fit(scene, view='auto', margin=0.05):
                                  right = numpy.array([1, 0, -1])/math.sqrt(2))
               }
 
+    # raise error if the scene is empty
+    if len(scene.geometry) == 0:
+        raise ValueError('The camera cannot be fit because the scene has no geometries. '
+                         'Add geometries to the scene before calling fit.')
+
     # find the center of the scene
     extents = scene.get_extents();
 
