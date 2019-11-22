@@ -298,7 +298,7 @@ def preview(scene, w=600, h=370, anti_alias=True):
         scene (:py:class:`Scene`): Scene to render.
         w (int): Output image width.
         h (int): Output image height.
-        anti_alias (bool): Whether to perform anti-aliasing
+        anti_alias (bool): Whether to perform anti-aliasing.
 
     :py:func:`preview` is a shortcut to rendering output with the :py:class:`Preview <tracer.Preview>` tracer.
     See the :py:class:`Preview <tracer.Preview>` tracer for a complete description.
