@@ -19,7 +19,7 @@ def test_background_color(device_):
 
     assert scene.background_alpha == 0.5
 
-    buf_proxy = fresnel.preview(scene, w=100, h=100)
+    buf_proxy = fresnel.preview(scene, w=100, h=100, anti_alias=False)
     buf = buf_proxy[:]
 
     numpy.testing.assert_array_equal(buf[:,:,3], numpy.ones(shape=(100,100), dtype=buf.dtype)*128)
@@ -33,7 +33,7 @@ def test_camera(scene_hex_sphere_, generate=False):
     assert scene_hex_sphere_.camera.up == (0,1,0)
     assert scene_hex_sphere_.camera.height == 6
 
-    buf_proxy = fresnel.preview(scene_hex_sphere_, w=100, h=100)
+    buf_proxy = fresnel.preview(scene_hex_sphere_, w=100, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_scene.test_camera.png', 'wb'), 'png');
@@ -46,7 +46,7 @@ def test_light_dir(scene_hex_sphere_, generate=False):
     assert scene_hex_sphere_.lights[0].direction == (1, 0, 0)
     assert scene_hex_sphere_.lights[0].color == (0.5, 0.5, 0.5)
 
-    buf_proxy = fresnel.preview(scene_hex_sphere_, w=100, h=100)
+    buf_proxy = fresnel.preview(scene_hex_sphere_, w=100, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_scene.test_light_dir.png', 'wb'), 'png');
@@ -64,7 +64,7 @@ def test_multiple_geometries(device_, generate=False):
     geom2 = fresnel.geometry.Sphere(scene, position = [[4, 1, 0], [4, -1, 0], [2, 1, 0], [2, -1, 0]], radius=1.0)
     geom2.material = fresnel.material.Material(solid=0.0, color=fresnel.color.linear([1,0.874,0.169]))
 
-    buf_proxy = fresnel.preview(scene, w=200, h=100)
+    buf_proxy = fresnel.preview(scene, w=200, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_scene.test_multiple_geometries1.png', 'wb'), 'png');
@@ -73,7 +73,7 @@ def test_multiple_geometries(device_, generate=False):
 
     geom1.disable()
 
-    buf_proxy = fresnel.preview(scene, w=200, h=100)
+    buf_proxy = fresnel.preview(scene, w=200, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_scene.test_multiple_geometries2.png', 'wb'), 'png');
@@ -82,7 +82,7 @@ def test_multiple_geometries(device_, generate=False):
 
     geom1.enable()
 
-    buf_proxy = fresnel.preview(scene, w=200, h=100)
+    buf_proxy = fresnel.preview(scene, w=200, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_scene.test_multiple_geometries3.png', 'wb'), 'png');
@@ -91,7 +91,7 @@ def test_multiple_geometries(device_, generate=False):
 
     geom2.remove()
 
-    buf_proxy = fresnel.preview(scene, w=200, h=100)
+    buf_proxy = fresnel.preview(scene, w=200, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_scene.test_multiple_geometries4.png', 'wb'), 'png');

@@ -55,7 +55,7 @@ def scene_polygons_(device_):
     return scene_polygons(device_);
 
 def test_render(scene_polygons_, generate=False):
-    buf_proxy = fresnel.preview(scene_polygons_, w=150, h=100)
+    buf_proxy = fresnel.preview(scene_polygons_, w=150, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_polygon.test_render.png', 'wb'), 'png');
@@ -66,7 +66,7 @@ def test_rounded(scene_rounded_polygons_, generate=False):
     geometry = scene_rounded_polygons_.geometry[0]
     geometry.outline_width = 0.1
 
-    buf_proxy = fresnel.preview(scene_rounded_polygons_, w=150, h=100)
+    buf_proxy = fresnel.preview(scene_rounded_polygons_, w=150, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_polygon.test_rounded.png', 'wb'), 'png');
@@ -80,7 +80,7 @@ def test_angle(scene_polygons_, generate=False):
     geometry.angle[:] = a
     numpy.testing.assert_array_equal(a, geometry.angle[:])
 
-    buf_proxy = fresnel.preview(scene_polygons_, w=150, h=100)
+    buf_proxy = fresnel.preview(scene_polygons_, w=150, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_polygon.test_angle.png', 'wb'), 'png');
@@ -95,7 +95,7 @@ def test_position(scene_polygons_, generate=False):
     geometry.position[:] = p
     numpy.testing.assert_array_equal(p, geometry.position[:])
 
-    buf_proxy = fresnel.preview(scene_polygons_, w=150, h=100)
+    buf_proxy = fresnel.preview(scene_polygons_, w=150, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_polygon.test_position.png', 'wb'), 'png');
@@ -110,7 +110,7 @@ def test_color(scene_polygons_, generate=False):
     geometry.color[:] = c
     numpy.testing.assert_array_equal(c, geometry.color[:])
 
-    buf_proxy = fresnel.preview(scene_polygons_, w=150, h=100)
+    buf_proxy = fresnel.preview(scene_polygons_, w=150, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_polygon.test_color.png', 'wb'), 'png');
@@ -121,7 +121,7 @@ def test_outline(scene_polygons_, generate=False):
     geometry = scene_polygons_.geometry[0]
     geometry.outline_width = 0.1
 
-    buf_proxy = fresnel.preview(scene_polygons_, w=150, h=100)
+    buf_proxy = fresnel.preview(scene_polygons_, w=150, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_polygon.test_outline.png', 'wb'), 'png');

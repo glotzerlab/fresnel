@@ -35,7 +35,7 @@ def scene_box_(device_):
 
 
 def test_render(scene_box_, generate=False):
-    buf_proxy = fresnel.preview(scene_box_, w=150, h=100)
+    buf_proxy = fresnel.preview(scene_box_, w=150, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode="RGBA").save(
@@ -54,7 +54,7 @@ def test_radius(scene_box_, generate=False):
     geometry.radius[:] = r
     numpy.testing.assert_array_equal(r, geometry.radius[:])
 
-    buf_proxy = fresnel.preview(scene_box_, w=150, h=100)
+    buf_proxy = fresnel.preview(scene_box_, w=150, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode="RGBA").save(
@@ -74,7 +74,7 @@ def test_color(scene_box_, generate=False):
     geometry.color[:] = c
     numpy.testing.assert_array_equal(c, geometry.color[:])
 
-    buf_proxy = fresnel.preview(scene_box_, w=150, h=100)
+    buf_proxy = fresnel.preview(scene_box_, w=150, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode="RGBA").save(
@@ -93,7 +93,7 @@ def test_box_radius(scene_box_, generate=False):
     geometry.box_radius = r
     assert r == pytest.approx(geometry.box_radius)
 
-    buf_proxy = fresnel.preview(scene_box_, w=150, h=100)
+    buf_proxy = fresnel.preview(scene_box_, w=150, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode="RGBA").save(
@@ -112,7 +112,7 @@ def test_box_color(scene_box_, generate=False):
     geometry.box_color = c
     numpy.testing.assert_array_equal(c, geometry.box_color)
 
-    buf_proxy = fresnel.preview(scene_box_, w=150, h=100)
+    buf_proxy = fresnel.preview(scene_box_, w=150, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode="RGBA").save(
@@ -144,7 +144,7 @@ def test_box_update(scene_box_, generate=False):
         assert isinstance(geometry.box, tuple)
         assert len(geometry.box) == 6
 
-        buf_proxy = fresnel.preview(scene_box_, w=150, h=100)
+        buf_proxy = fresnel.preview(scene_box_, w=150, h=100, anti_alias=False)
 
         box_index = box_list.index(update_box)
 
