@@ -165,10 +165,6 @@ class Preview(Tracer):
     Different :py:attr:`seed <Tracer.seed>` values will result in different output images.
 
     TODO: show examples
-
-    .. tip::
-
-        Use :py:attr:`aa_level` = 3 when using the :py:class:`Preview` tracer to render production quality output.
     """
 
     def __init__(self, device, w, h, anti_alias=True):
