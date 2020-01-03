@@ -162,6 +162,7 @@ class Preview(Tracer):
     .. rubric:: Anti-aliasing
 
     The default value of :py:attr:`anti_alias` is True to smooth sharp edges in the image.
+    The anti-aliasing level corresponds to aa_level=3 in fresnel versions up to 0.11.0.
     Different :py:attr:`seed <Tracer.seed>` values will result in different output images.
 
     TODO: show examples
