@@ -33,7 +33,7 @@ def test_scene_auto(device_):
     geom1 = fresnel.geometry.Sphere(scene, position = [[-9, -2, 0], [-5, -1, 0], [4, 0, 0], [2, 1, 0]], radius=1.0)
     assert scene.camera == 'auto';
 
-    fresnel.preview(scene)
+    fresnel.preview(scene, anti_alias=False)
 
 def test_orthographic_attributes():
     cam = fresnel.camera.orthographic(position=(1, 0, 10), look_at=(1,0,0), up=(0,1,0), height=6)

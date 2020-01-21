@@ -290,7 +290,7 @@ class Scene(object):
             cam = camera.fit(self);
             self._scene.setCamera(cam._camera);
 
-def preview(scene, w=600, h=370, aa_level=0):
+def preview(scene, w=600, h=370, anti_alias=True):
     R""" Preview a scene.
 
     Args:
@@ -298,13 +298,13 @@ def preview(scene, w=600, h=370, aa_level=0):
         scene (:py:class:`Scene`): Scene to render.
         w (int): Output image width.
         h (int): Output image height.
-        aa_level (int): Amount of anti-aliasing to perform
+        anti_alias (bool): Whether to perform anti-aliasing.
 
     :py:func:`preview` is a shortcut to rendering output with the :py:class:`Preview <tracer.Preview>` tracer.
     See the :py:class:`Preview <tracer.Preview>` tracer for a complete description.
     """
 
-    t = tracer.Preview(scene.device, w=w, h=h, aa_level=aa_level);
+    t = tracer.Preview(scene.device, w=w, h=h, anti_alias=anti_alias);
     return t.render(scene);
 
 def pathtrace(scene, w=600, h=370, samples=64, light_samples=1):

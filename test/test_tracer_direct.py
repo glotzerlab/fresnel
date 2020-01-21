@@ -9,7 +9,7 @@ import pathlib
 dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 def test_render(scene_hex_sphere_, generate=False):
-    tracer = fresnel.tracer.Preview(device=scene_hex_sphere_.device, w=100, h=100)
+    tracer = fresnel.tracer.Preview(device=scene_hex_sphere_.device, w=100, h=100, anti_alias=False)
     buf = tracer.output[:]
     assert buf.shape == (100,100,4)
 
@@ -21,7 +21,7 @@ def test_render(scene_hex_sphere_, generate=False):
         conftest.assert_image_approx_equal(buf_proxy[:], dir_path / 'reference' / 'test_tracer_direct.test_render.png')
 
 def test_render_aa(scene_hex_sphere_, generate=False):
-    tracer = fresnel.tracer.Preview(device=scene_hex_sphere_.device, w=100, h=100, aa_level=3)
+    tracer = fresnel.tracer.Preview(device=scene_hex_sphere_.device, w=100, h=100, anti_alias=True)
     buf = tracer.output[:]
     assert buf.shape == (100,100,4)
 
@@ -33,7 +33,7 @@ def test_render_aa(scene_hex_sphere_, generate=False):
         conftest.assert_image_approx_equal(buf_proxy[:], dir_path / 'reference' / 'test_tracer_direct.test_render_aa.png')
 
 def test_resize(scene_hex_sphere_, generate=False):
-    tracer = fresnel.tracer.Preview(device=scene_hex_sphere_.device, w=100, h=100)
+    tracer = fresnel.tracer.Preview(device=scene_hex_sphere_.device, w=100, h=100, anti_alias=False)
     buf = tracer.output[:]
     assert buf.shape == (100,100,4)
 

@@ -65,7 +65,7 @@ def scene_eight_polyhedra_(device_):
     return scene_eight_polyhedra(device_)
 
 def test_render(scene_eight_polyhedra_, generate=False):
-    buf_proxy = fresnel.preview(scene_eight_polyhedra_, w=150, h=100)
+    buf_proxy = fresnel.preview(scene_eight_polyhedra_, w=150, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_convex_polyhedron.test_render.png', 'wb'), 'png');
@@ -77,7 +77,7 @@ def test_outline(scene_eight_polyhedra_, generate=False):
     geometry = scene_eight_polyhedra_.geometry[0]
     geometry.outline_width = 0.1
 
-    buf_proxy = fresnel.preview(scene_eight_polyhedra_, w=150, h=100)
+    buf_proxy = fresnel.preview(scene_eight_polyhedra_, w=150, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_convex_polyhedron.test_outline.png', 'wb'), 'png');
@@ -86,13 +86,13 @@ def test_outline(scene_eight_polyhedra_, generate=False):
 
 
 def test_face_color(scene_eight_polyhedra_, generate=False):
-    buf_proxy = fresnel.preview(scene_eight_polyhedra_, w=150, h=100)
+    buf_proxy = fresnel.preview(scene_eight_polyhedra_, w=150, h=100, anti_alias=False)
 
     geometry = scene_eight_polyhedra_.geometry[0]
     geometry.color_by_face = 1.0
     geometry.material.primitive_color_mix = 1.0
 
-    buf_proxy = fresnel.preview(scene_eight_polyhedra_, w=150, h=100)
+    buf_proxy = fresnel.preview(scene_eight_polyhedra_, w=150, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(open('output/test_geometry_convex_polyhedron.test_face_color.png', 'wb'), 'png');

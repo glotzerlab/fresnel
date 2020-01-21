@@ -149,11 +149,7 @@ class Preview(Tracer):
         device (:py:class:`Device <fresnel.Device>`): Device to use for rendering.
         w (int): Output image width.
         h (int): Output image height.
-        aa_level (int): Amount of anti-aliasing to perform
-
-    Attributes:
-
-        aa_level (int): Amount of anti-aliasing to perform
+        anti_alias (bool): Whether to perform anti-aliasing. If True, uses 8x8 subpixel grid.
 
     .. rubric:: Overview
 
@@ -165,33 +161,30 @@ class Preview(Tracer):
 
     .. rubric:: Anti-aliasing
 
-    Set :py:attr:`aa_level` to control the amount of anti-aliasing performed. The default value of 0 performs
-    no anti-aliasing to enable the fastest possible preview renders. A value of 1 samples 2x2 subpixels, a value of 2
-    samples 4x4 subpixels, a value of 3 samples 8x8 subpixels, etc ... Samples are jittered with random numbers.
+    The default value of :py:attr:`anti_alias` is True to smooth sharp edges in the image.
+    The anti-aliasing level corresponds to aa_level=3 in fresnel versions up to 0.11.0.
     Different :py:attr:`seed <Tracer.seed>` values will result in different output images.
 
     TODO: show examples
-
-    .. tip::
-
-        Use :py:attr:`aa_level` = 3 when using the :py:class:`Preview` tracer to render production quality output.
     """
 
-    def __init__(self, device, w, h, aa_level=0):
+    def __init__(self, device, w, h, anti_alias=True):
         self.device = device;
         self._tracer = device.module.TracerDirect(device._device, w, h);
-
-        self.aa_level = aa_level;
+        self.anti_alias = anti_alias
 
     @property
-    def aa_level(self):
-        aa_n = self._tracer.getAntialiasingN();
-        return int(math.log2(aa_n));
+    def anti_alias(self):
+        R""" Whether to perform anti-aliasing
+        """
+        return self._tracer.getAntialiasingN() > 1
 
-    @aa_level.setter
-    def aa_level(self, value):
-        aa_n = 2**(int(value))
-        self._tracer.setAntialiasingN(aa_n);
+    @anti_alias.setter
+    def anti_alias(self, value):
+        if value:
+            self._tracer.setAntialiasingN(8)
+        else:
+            self._tracer.setAntialiasingN(1)
 
 class Path(Tracer):
     R""" Path tracer.
