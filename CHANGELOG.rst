@@ -3,12 +3,15 @@ Change log
 
 `fresnel <https://github.com/glotzerlab/fresnel>`_ releases follow `semantic versioning <https://semver.org/>`_.
 
+v0.x
+----
+
 v0.11.0 (2019-10-30)
---------------------
+^^^^^^^^^^^^^^^^^^^^
 
 *Added*
 
-*  Added box geometry convenience class `Box`.
+*  Added box geometry convenience class ``Box``.
 
 *Removed*
 
@@ -20,14 +23,14 @@ v0.11.0 (2019-10-30)
 * Find **Embree** headers when they are not in the same path as **TBB**.
 
 v0.10.1 (2019-09-05)
---------------------
+^^^^^^^^^^^^^^^^^^^^
 
 *Fixed*
 
 * Restore missing examples on readthedocs.
 
 v0.10.0 (2019-08-19)
---------------------
+^^^^^^^^^^^^^^^^^^^^
 
 *Changed*
 
@@ -43,13 +46,13 @@ v0.10.0 (2019-08-19)
 
 
 v0.9.0 (2019-04-30)
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 * Added support for linearizing colors of shape (4,).
 * Improve examples.
 
 v0.8.0 (2019-03-05)
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 * Documentation improvements.
 * Add ``geometry.Polygon``: Simple and/or rounded polygons in the *z=0* plane.
@@ -58,12 +61,12 @@ v0.8.0 (2019-03-05)
   * Remove: ``geometry.Prism``
 
 v0.7.1 (2019-02-05)
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 * Fix **conda-forge** build on mac
 
 v0.7.0 (2019-02-05)
--------------------
+^^^^^^^^^^^^^^^^^^^
 * Add ``util.convex_polyhedron_from_vertices``: compute convex polyhedron plane origins and normals given a set of vertices
 * Improve documentation
 * Add ``interact.SceneView``: **pyside2** widget for interactively rendering scenes with path tracing
@@ -75,7 +78,7 @@ v0.7.0 (2019-02-05)
   * ``geometry.ConvexPolyhedron`` arguments changed. It now accepts polyhedron information as a dictionary.
 
 v0.6.0 (2018-07-06)
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 * Implement ``tracer.Path`` on the GPU.
 * Implement ``ConvexPolyhedron`` geometry on the GPU.
@@ -90,7 +93,7 @@ v0.6.0 (2018-07-06)
 * Improve documentation
 
 v0.5.0 (2017-07-27)
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 * Add new lighting setups
 
@@ -114,7 +117,7 @@ v0.5.0 (2017-07-27)
 CPU-only features will be implemented on the GPU in a future release.
 
 v0.4.0 (2017-04-03)
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 * Enforce requirement: Embree >= 2.10.0
 * Enforce requirement Pybind =1.8.1
@@ -136,13 +139,13 @@ v0.4.0 (2017-04-03)
   * ``Scene`` no longer has a ``light_direction`` member
 
 v0.3.0 (2017-03-09)
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 * Suppress "cannot import name" messages
 * Support Nx3 and Nx4 inputs to ``color.linear``
 
 v0.2.0 (2017-03-03)
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 * Parallel rendering on the CPU
 * Fix PTX file installation
@@ -151,7 +154,7 @@ v0.2.0 (2017-03-03)
 * Fix bug in sphere rendering on GPU
 
 v0.1.0 (2017-02-02)
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 * Prototype API
 * Sphere geometry

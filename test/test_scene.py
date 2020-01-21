@@ -19,6 +19,7 @@ def test_background_color(device_):
 
     assert scene.background_alpha == 0.5
 
+    scene.camera = fresnel.camera.orthographic(position=(0, 0, 10), look_at=(0,0,0), up=(0,1,0), height=7)
     buf_proxy = fresnel.preview(scene, w=100, h=100, anti_alias=False)
     buf = buf_proxy[:]
 

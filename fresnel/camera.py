@@ -136,7 +136,7 @@ def orthographic(position, look_at, up, height):
 def fit(scene, view='auto', margin=0.05):
     R""" Fit a camera to a :py:class:`Scene <fresnel.Scene>`
 
-    Create a camera that fits the entire hight of the scene in the image plane.
+    Create a camera that fits the entire height of the scene in the image plane.
 
     Args:
         scene (:py:class:`Scene <fresnel.Scene>`): The scene to fit the camera to.
@@ -156,6 +156,11 @@ def fit(scene, view='auto', margin=0.05):
                                  up = numpy.array([-1, 2, -1])/math.sqrt(6),
                                  right = numpy.array([1, 0, -1])/math.sqrt(2))
               }
+
+    # raise error if the scene is empty
+    if len(scene.geometry) == 0:
+        raise ValueError('The camera cannot be fit because the scene has no geometries. '
+                         'Add geometries to the scene before calling fit.')
 
     # find the center of the scene
     extents = scene.get_extents();
