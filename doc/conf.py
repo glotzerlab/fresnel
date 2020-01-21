@@ -52,7 +52,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'fresnel'
-copyright = '2016-2019, The Regents of the University of Michigan'
+copyright = '2016-2020, The Regents of the University of Michigan'
 author = 'The Regents of the University of Michigan'
 
 # The version info for the project you're documenting, acts as replacement for
