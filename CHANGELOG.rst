@@ -6,6 +6,25 @@ Change log
 v0.x
 ----
 
+v0.12.0 (not yet released)
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Added*
+
+* ``preview`` and ``tracer.Preview`` accept a boolean flag ``anti_alias`` to
+  enable or disable anti-aliasing.
+
+*Changed*
+
+* ``preview`` and ``tracer.Preview`` enable anti-alisasing by default.
+
+*Removed*
+
+* ``preview`` and ``tracer.Preview`` no longer accept the ``aa_level`` argument
+  - use ``anti_alias``.
+
+*Fixed*
+
 v0.11.0 (2019-10-30)
 ^^^^^^^^^^^^^^^^^^^^
 
