@@ -146,3 +146,44 @@ stages:
     - script: sphinx-build -b latex -d _build/doctrees -W -n . _build/latex
       displayName: (LaTeX)
       workingDirectory: doc
+
+- stage: style
+  displayName: Style checks
+  dependsOn: []
+
+  jobs:
+  - job: clang_format
+    displayName: clang-format
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    container:
+      image: $(image_root)-clang9_py38
+      options: -u 0
+
+    workspace:
+      clean: all
+
+    steps:
+    - checkout: self
+      submodules: true
+    - script: ./run-clang-format.py -r fresnel
+      displayName: Run clang-format
+
+  - job: flake8
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    container:
+      image: $(image_root)-clang9_py38
+      options: -u 0
+
+    workspace:
+      clean: all
+
+    steps:
+    - checkout: self
+      submodules: true
+
+    - script: flake8
+      displayName: Run flake8
