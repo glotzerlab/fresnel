@@ -1,3 +1,7 @@
+.. Copyright (c) 2016-2020 The Regents of the University of Michigan
+.. This file is part of the Fresnel project, released under the BSD 3-Clause
+.. License.
+
 Fresnel
 ++++++++++
 
@@ -65,6 +69,12 @@ Here are a few samples of what **fresnel** can do:
     :caption: Python API Reference
 
     package-fresnel
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Contributing
+
+    style
 
 .. toctree::
     :maxdepth: 1
