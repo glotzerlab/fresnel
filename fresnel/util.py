@@ -16,12 +16,12 @@ except ImportError:
     PIL_Image = None
 
 
-class array(object):
+class Array(object):
     R""" Map internal fresnel buffers as :py:class:`numpy.ndarray` objects.
 
-    :py:class:`fresnel.util.array` provides a python interface to access
+    :py:class:`fresnel.util.Array` provides a python interface to access
     internal data of memory buffers stored and managed by fresnel. You can
-    access a :py:class:`fresnel.util.array` as if it were a
+    access a :py:class:`fresnel.util.Array` as if it were a
     :py:class:`numpy.ndarray` (with limited operations). Below, *slice* is a
     :std:term:`slice` or array `indexing <numpy.doc.indexing>` mechanic that
     **numpy** understands.
@@ -75,10 +75,10 @@ class array(object):
         return data
 
 
-class image_array(array):
+class ImageArray(Array):
     R""" Map internal image buffers as :py:class:`numpy.ndarray` objects.
 
-    Inherits from :py:class:`array` and provides all of its functionality, plus
+    Inherits from :py:class:`Array` and provides all of its functionality, plus
     some additional convenience methods specific to working with images. Images
     are represented as ``WxHx4`` :py:class:`numpy.ndarray` of ``uint8`` values
     in **RGBA** format.

@@ -20,7 +20,7 @@ class UserCamera:
         pass
 
 
-class vec3f:
+class vec3f: # noqa
     def __init__(self, *args, **kwargs):
         pass
 

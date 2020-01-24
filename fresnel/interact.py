@@ -180,6 +180,9 @@ class SceneView(QtWidgets.QWidget):
 
         The interactive window will open on the system that *hosts* jupyter.
 
+    Attributes:
+        scene: The :py:class:`fresnel.Scene` rendered in this view.
+
     .. seealso::
         :doc:`examples/02-Advanced-topics/03-Interactive-scene-view`
             Tutorial: Interactive scene display
@@ -195,9 +198,9 @@ class SceneView(QtWidgets.QWidget):
         self.max_samples = max_samples
 
         # pick a default camera if one isn't already set
-        self.scene = scene
-        if isinstance(self.scene.camera, str):
-            self.scene.camera = camera.fit(self.scene)
+        self._scene = scene
+        if isinstance(self._scene.camera, str):
+            self._scene.camera = camera.fit(self._scene)
 
         # fire off a timer to repaint the window as often as possible
         self.repaint_timer = QtCore.QTimer(self)
@@ -217,34 +220,25 @@ class SceneView(QtWidgets.QWidget):
         self.camera_update_mode = None
         self.mouse_initial_pos = None
 
-        self.camera_controller = CameraController3D(self.scene.camera)
-
-    def _repr_html_(self):
-        self.show()
-        self.raise_()
-        self.activateWindow()
-        return "<p><i>scene view opened in a new window...</i></p>"
+        self.camera_controller = CameraController3D(self._scene.camera)
+        self.ipython_display_formatter = 'text'
 
     def minimumSizeHint(self): # noqa
         return QtCore.QSize(1610, 1000)
 
-    def setScene(self, scene):
-        R""" Set a new scene
+    @property
+    def scene(self):
+        return self._scene
 
-        Args:
-
-            scene (:py:class:`Scene <fresnel.Scene>`): The scene to render.
-
-        Also call setScene when you make any changes to the scene so that
-        SceneView window will re-render the scene with the changes.
-        """
-        self.scene = scene
+    @scene.setter
+    def scene(self, scene):
+        self._scene = scene
         self.start_rendering()
 
     def paintEvent(self, event): # noqa
         if self.rendering:
             # Render the scene
-            self.tracer.render(self.scene)
+            self.tracer.render(self._scene)
 
             self.samples += 1
             if self.samples >= self.max_samples:

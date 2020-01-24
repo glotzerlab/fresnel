@@ -298,11 +298,11 @@ class Scene(object):
 
     @property
     def lights(self):
-        return light._lightlist_proxy(self._scene.getLights())
+        return light._LightListProxy(self._scene.getLights())
 
     @lights.setter
     def lights(self, values):
-        tmp = light._lightlist_proxy()
+        tmp = light._LightListProxy()
         for v in values:
             tmp.append(v)
 

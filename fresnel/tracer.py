@@ -38,9 +38,9 @@ class Tracer(object):
 
     Attributes:
 
-        output (:py:class:`fresnel.util.image_array`): Reference to the current
+        output (:py:class:`fresnel.util.ImageArray`): Reference to the current
             output buffer (modified by :py:meth:`render`)
-        linear_output (:py:class:`fresnel.util.array`): Reference to the current
+        linear_output (:py:class:`fresnel.util.Array`): Reference to the current
             output buffer in linear color space (modified by :py:meth:`render`)
         seed (int): Random number seed.
 
@@ -72,7 +72,7 @@ class Tracer(object):
 
         Returns:
             A reference to the current output buffer as a
-            :py:class:`fresnel.util.image_array`.
+            :py:class:`fresnel.util.ImageArray`.
 
         Render the given scene and write the resulting pixels into the output
         buffer.
@@ -134,11 +134,11 @@ class Tracer(object):
 
     @property
     def output(self):
-        return util.image_array(self._tracer.getSRGBOutputBuffer(), geom=None)
+        return util.ImageArray(self._tracer.getSRGBOutputBuffer(), geom=None)
 
     @property
     def linear_output(self):
-        return util.array(self._tracer.getLinearOutputBuffer(), geom=None)
+        return util.Array(self._tracer.getLinearOutputBuffer(), geom=None)
 
     @property
     def seed(self):
@@ -236,7 +236,7 @@ class Path(Tracer):
 
         Returns:
             A reference to the current output buffer as a
-            :py:class:`fresnel.util.image_array`.
+            :py:class:`fresnel.util.ImageArray`.
 
         Note:
             When *reset* is False, subsequent calls to :py:meth:`sample()` will

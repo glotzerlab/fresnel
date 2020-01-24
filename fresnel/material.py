@@ -125,7 +125,7 @@ class Material(object):
         return self._material
 
 
-class _material_proxy(object):
+class _MaterialProxy(object):
     """ Proxy :py:class`Material` attached to a
     :py:class`fresnel.geometry.Geometry`
     """
@@ -217,7 +217,7 @@ class _material_proxy(object):
         return self._geometry.getMaterial()
 
 
-class _outline_material_proxy(object):
+class _OutlineMaterialProxy(object):
     """ Proxy outline :py:class`Material` attached to a Geometry.
     """
 

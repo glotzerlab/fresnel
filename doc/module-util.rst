@@ -10,9 +10,9 @@ fresnel.util
 .. autosummary::
     :nosignatures:
 
-    fresnel.util.array
+    fresnel.util.Array
     fresnel.util.convex_polyhedron_from_vertices
-    fresnel.util.image_array
+    fresnel.util.ImageArray
 
 .. rubric:: Details
 

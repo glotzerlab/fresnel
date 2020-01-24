@@ -52,7 +52,7 @@ class Light(object):
             self.direction, self.color)
 
 
-class _light_proxy(object):
+class _LightProxy(object):
     def __init__(self, light_list, idx):
         self._light_list = light_list
         self._idx = idx
@@ -90,7 +90,7 @@ class _light_proxy(object):
             self.direction, self.color)
 
 
-class _lightlist_proxy(object):
+class _LightListProxy(object):
     def __init__(self, _lights=None):
         if _lights is None:
             self._lights = _common.Lights()
@@ -118,7 +118,7 @@ class _lightlist_proxy(object):
         if idx >= self._lights.N:
             raise IndexError("Indexing past the end of the list")
 
-        return _light_proxy(self, idx)
+        return _LightProxy(self, idx)
 
 
 def butterfly():

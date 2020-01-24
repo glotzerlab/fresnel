@@ -77,7 +77,7 @@ class Geometry(object):
 
     @property
     def material(self):
-        return material._material_proxy(self)
+        return material._MaterialProxy(self)
 
     @material.setter
     def material(self, mat):
@@ -85,7 +85,7 @@ class Geometry(object):
 
     @property
     def outline_material(self):
-        return material._outline_material_proxy(self)
+        return material._OutlineMaterialProxy(self)
 
     @outline_material.setter
     def outline_material(self, mat):
@@ -135,11 +135,11 @@ class Cylinder(Geometry):
         and numpy will broadcast it to all elements of the array.
 
     Attributes:
-        points (:py:class:`fresnel.util.array`): Read or modify the start and
+        points (:py:class:`fresnel.util.Array`): Read or modify the start and
             end points of the cylinders.
-        radius (:py:class:`fresnel.util.array`): Read or modify the radii of
+        radius (:py:class:`fresnel.util.Array`): Read or modify the radii of
             the cylinders.
-        color (:py:class:`fresnel.util.array`): Read or modify the colors of the
+        color (:py:class:`fresnel.util.Array`): Read or modify the colors of the
             start and end points of the cylinders.
     """
 
@@ -191,15 +191,15 @@ class Cylinder(Geometry):
 
     @property
     def points(self):
-        return util.array(self._geometry.getPointsBuffer(), geom=self)
+        return util.Array(self._geometry.getPointsBuffer(), geom=self)
 
     @property
     def radius(self):
-        return util.array(self._geometry.getRadiusBuffer(), geom=self)
+        return util.Array(self._geometry.getRadiusBuffer(), geom=self)
 
     @property
     def color(self):
-        return util.array(self._geometry.getColorBuffer(), geom=self)
+        return util.Array(self._geometry.getColorBuffer(), geom=self)
 
 
 class Box(Cylinder):
@@ -237,11 +237,11 @@ class Box(Cylinder):
         ``box_radius` will return the radius of the 0th element cylinder.
 
     Attributes:
-        points (:py:class:`fresnel.util.array`): Read or modify the start and
+        points (:py:class:`fresnel.util.Array`): Read or modify the start and
             end points of the cylinders.
-        radius (:py:class:`fresnel.util.array`): Read or modify the radii of the
+        radius (:py:class:`fresnel.util.Array`): Read or modify the radii of the
             cylinders.
-        color (:py:class:`fresnel.util.array`): Read or modify the colors of the
+        color (:py:class:`fresnel.util.Array`): Read or modify the colors of the
             start and end points of the cylinders.
         box (`tuple`): Read or modify the box parameters. Boxes will be
             converted from any acceptable box type to a tuple (Lx, Ly, Lz, xy,
@@ -426,11 +426,11 @@ class Polygon(Geometry):
         primitive properties in the appropriate numpy array type.
 
     Attributes:
-        position (:py:class:`fresnel.util.array`): Read or modify the positions
+        position (:py:class:`fresnel.util.Array`): Read or modify the positions
             of the polygons.
-        angle (:py:class:`fresnel.util.array`): Read or modify the orientation
+        angle (:py:class:`fresnel.util.Array`): Read or modify the orientation
             angles of the polygons.
-        color (:py:class:`fresnel.util.array`): Read or modify the colors of the
+        color (:py:class:`fresnel.util.Array`): Read or modify the colors of the
             polygons.
 
     """
@@ -471,15 +471,15 @@ class Polygon(Geometry):
 
     @property
     def position(self):
-        return util.array(self._geometry.getPositionBuffer(), geom=self)
+        return util.Array(self._geometry.getPositionBuffer(), geom=self)
 
     @property
     def angle(self):
-        return util.array(self._geometry.getAngleBuffer(), geom=self)
+        return util.Array(self._geometry.getAngleBuffer(), geom=self)
 
     @property
     def color(self):
-        return util.array(self._geometry.getColorBuffer(), geom=self)
+        return util.Array(self._geometry.getColorBuffer(), geom=self)
 
     def get_extents(self):
         R""" Get the extents of the geometry
@@ -532,11 +532,11 @@ class Sphere(Geometry):
         numpy will broadcast it to all elements of the array.
 
     Attributes:
-        position (:py:class:`fresnel.util.array`): Read or modify the positions
+        position (:py:class:`fresnel.util.Array`): Read or modify the positions
             of the spheres.
-        radius (:py:class:`fresnel.util.array`): Read or modify the radii of the
+        radius (:py:class:`fresnel.util.Array`): Read or modify the radii of the
             spheres.
-        color (:py:class:`fresnel.util.array`): Read or modify the color of the
+        color (:py:class:`fresnel.util.Array`): Read or modify the color of the
             spheres.
     """
 
@@ -585,15 +585,15 @@ class Sphere(Geometry):
 
     @property
     def position(self):
-        return util.array(self._geometry.getPositionBuffer(), geom=self)
+        return util.Array(self._geometry.getPositionBuffer(), geom=self)
 
     @property
     def radius(self):
-        return util.array(self._geometry.getRadiusBuffer(), geom=self)
+        return util.Array(self._geometry.getRadiusBuffer(), geom=self)
 
     @property
     def color(self):
-        return util.array(self._geometry.getColorBuffer(), geom=self)
+        return util.Array(self._geometry.getColorBuffer(), geom=self)
 
 
 class Mesh(Geometry):
@@ -634,11 +634,11 @@ class Mesh(Geometry):
         primitive properties in the appropriate numpy array type.
 
     Attributes:
-        position (:py:class:`fresnel.util.array`): Read or modify the positions
+        position (:py:class:`fresnel.util.Array`): Read or modify the positions
             of the mesh instances.
-        orientation (:py:class:`fresnel.util.array`): Read or modify the
+        orientation (:py:class:`fresnel.util.Array`): Read or modify the
             orientations of the mesh instances.
-        color (:py:class:`fresnel.util.array`): Read or modify the color of the
+        color (:py:class:`fresnel.util.Array`): Read or modify the color of the
             vertices.
     """
 
@@ -679,15 +679,15 @@ class Mesh(Geometry):
 
     @property
     def position(self):
-        return util.array(self._geometry.getPositionBuffer(), geom=self)
+        return util.Array(self._geometry.getPositionBuffer(), geom=self)
 
     @property
     def orientation(self):
-        return util.array(self._geometry.getOrientationBuffer(), geom=self)
+        return util.Array(self._geometry.getOrientationBuffer(), geom=self)
 
     @property
     def color(self):
-        return util.array(self._geometry.getColorBuffer(), geom=self)
+        return util.Array(self._geometry.getColorBuffer(), geom=self)
 
     def get_extents(self):
         R""" Get the extents of the geometry
@@ -750,11 +750,11 @@ class ConvexPolyhedron(Geometry):
         primitive properties in the appropriate numpy array type.
 
     Attributes:
-        position (:py:class:`fresnel.util.array`): Read or modify the positions
+        position (:py:class:`fresnel.util.Array`): Read or modify the positions
             of the polyhedra.
-        orientation (:py:class:`fresnel.util.array`): Read or modify the
+        orientation (:py:class:`fresnel.util.Array`): Read or modify the
             orientations of the polyhedra.
-        color (:py:class:`fresnel.util.array`): Read or modify the color of the
+        color (:py:class:`fresnel.util.Array`): Read or modify the color of the
             polyhedra.
         color_by_face (float): Set to 0 to color particles by the per-particle
             color. Set to 1 to color faces by the per-face color. Set to a
@@ -813,15 +813,15 @@ class ConvexPolyhedron(Geometry):
 
     @property
     def position(self):
-        return util.array(self._geometry.getPositionBuffer(), geom=self)
+        return util.Array(self._geometry.getPositionBuffer(), geom=self)
 
     @property
     def orientation(self):
-        return util.array(self._geometry.getOrientationBuffer(), geom=self)
+        return util.Array(self._geometry.getOrientationBuffer(), geom=self)
 
     @property
     def color(self):
-        return util.array(self._geometry.getColorBuffer(), geom=self)
+        return util.Array(self._geometry.getColorBuffer(), geom=self)
 
     @property
     def color_by_face(self):
