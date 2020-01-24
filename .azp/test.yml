@@ -57,8 +57,6 @@ stages:
 
     strategy:
       matrix:
-        mac10_13:
-          mac_image: macOS-10.13
         mac10_14:
           mac_image: macOS-10.14
 
