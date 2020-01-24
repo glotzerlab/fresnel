@@ -4,6 +4,8 @@
 #ifndef GEOEMTRY_MATH_H__
 #define GEOEMTRY_MATH_H__
 
+#include "common/VectorMath.h"
+
 // need to declare these class methods with __device__ qualifiers when building in nvcc
 // DEVICE is __host__ __device__ when included in nvcc and blank when included into the host
 // compiler
@@ -13,8 +15,6 @@
 #else
 #define DEVICE
 #endif
-
-#include "common/VectorMath.h"
 
 namespace fresnel {
 

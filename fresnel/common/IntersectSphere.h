@@ -4,6 +4,9 @@
 #ifndef __INTERSECT_SPHERE_H__
 #define __INTERSECT_SPHERE_H__
 
+#include "common/VectorMath.h"
+#include <cmath>
+
 // need to declare these class methods with __device__ qualifiers when building in nvcc
 // DEVICE is __host__ __device__ when included in nvcc and blank when included into the host
 // compiler
@@ -13,8 +16,6 @@
 #else
 #define DEVICE
 #endif
-
-#include <cmath>
 
 namespace fresnel {
 
