@@ -1,4 +1,6 @@
-import fresnel, numpy, PIL
+import fresnel
+import numpy
+import PIL
 
 data = numpy.load('spheres.npz')
 
@@ -7,14 +9,14 @@ scene.lights = fresnel.light.cloudy()
 
 geometry = fresnel.geometry.Sphere(
     scene,
-    position = data['position'],
-    radius = 0.5,
-    outline_width = 0.1)
+    position=data['position'],
+    radius=0.5,
+    outline_width=0.1)
 
 geometry.material = fresnel.material.Material(
-    color = fresnel.color.linear([0.1, 0.8, 0.1]),
-    roughness = 0.8,
-    specular = 0.2)
+    color=fresnel.color.linear([0.1, 0.8, 0.1]),
+    roughness=0.8,
+    specular=0.2)
 
 out = fresnel.pathtrace(scene, samples=64,
                         light_samples=32,

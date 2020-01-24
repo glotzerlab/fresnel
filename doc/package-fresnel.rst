@@ -11,7 +11,10 @@ fresnel
     :nosignatures:
 
     fresnel.Device
+    fresnel.pathtrace
+    fresnel.preview
     fresnel.Scene
+
 
 .. rubric:: Details
 

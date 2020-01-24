@@ -1,5 +1,6 @@
 # Copyright (c) 2016-2020 The Regents of the University of Michigan
-# This file is part of the Fresnel project, released under the BSD 3-Clause License.
+# This file is part of the Fresnel project, released under the BSD 3-Clause
+# License.
 
 R"""
 Cameras.
@@ -10,12 +11,14 @@ import math
 
 from . import _common
 
+
 class Camera(object):
     R""" Camera
 
     Defines the view into the :py:class:`Scene <fresnel.Scene>`.
 
-    Use one of the creation functions to create a :py:class:`Camera <fresnel.camera.Camera>`:
+    Use one of the creation functions to create a
+    :py:class:`Camera <fresnel.camera.Camera>`:
 
         * :py:func:`orthographic`
 
@@ -23,115 +26,136 @@ class Camera(object):
         :doc:`examples/00-Basic-tutorials/04-Scene-properties`
             Tutorial: Setting scene properties
 
-        TODO:
-            More advanced camera tutorials (when more advance camera functions are available)
-
-    The camera is a property of the :py:class:`Scene <fresnel.Scene>`. You may read and modify any of these camera attributes.
+    The camera is a property of the :py:class:`Scene <fresnel.Scene>`. You may
+    read and modify any of these camera attributes.
 
     Attributes:
-        position (tuple[float, float, float]): the position of the camera (the center of projection).
-        look_at (tuple[float, float, float]): the point the camera looks at (the center of the focal plane).
+        position (tuple[float, float, float]): the position of the camera (the
+            center of projection).
+        look_at (tuple[float, float, float]): the point the camera looks at (the
+            center of the focal plane).
         up (tuple[float, float, float]): a vector pointing up.
         height (float): the height of the image plane.
-        basis: three orthonormal vectors defining the camera coordinate basis in the right-handed order right, look direction, up (read only)
+        basis: three orthonormal vectors defining the camera coordinate basis in
+            right-handed order: right, look direction, up (read only)
 
-    :py:class:`Camera <fresnel.camera.Camera>` space is a coordinate system centered on the camera's position.
-    Positive *x* points to the right in the image, positive *y* points up, and positive *z* points out of the screen.
-    :py:class:`Camera <fresnel.camera.Camera>` space shares units with :py:class:`Scene <fresnel.Scene>` space.
+    :py:class:`Camera <fresnel.camera.Camera>` space is a coordinate system
+    centered on the camera's position. Positive *x* points to the right in the
+    image, positive *y* points up, and positive *z* points out of the screen.
+    :py:class:`Camera <fresnel.camera.Camera>` space shares units with
+    :py:class:`Scene <fresnel.Scene>` space.
 
-    TODO: Move description of spaces to an overview page and create figures.
-    TODO: Use numpy arrays for camera vectors?
     """
+
     def __init__(self, _camera=None):
         if _camera is None:
-            self._camera = _common.UserCamera();
+            self._camera = _common.UserCamera()
         else:
-            self._camera = _camera;
+            self._camera = _camera
 
     @property
     def position(self):
-        return (self._camera.position.x, self._camera.position.y, self._camera.position.z);
+        return (self._camera.position.x,
+                self._camera.position.y,
+                self._camera.position.z)
 
     @position.setter
     def position(self, value):
         if len(value) != 3:
-            raise ValueError("position must have length 3");
-        self._camera.position = _common.vec3f(*value);
+            raise ValueError("position must have length 3")
+        self._camera.position = _common.vec3f(*value)
 
     @property
     def look_at(self):
-        return (self._camera.look_at.x, self._camera.look_at.y, self._camera.look_at.z);
+        return (self._camera.look_at.x,
+                self._camera.look_at.y,
+                self._camera.look_at.z)
 
     @look_at.setter
     def look_at(self, value):
         if len(value) != 3:
-            raise ValueError("look_at must have length 3");
-        self._camera.look_at = _common.vec3f(*value);
+            raise ValueError("look_at must have length 3")
+        self._camera.look_at = _common.vec3f(*value)
 
     @property
     def up(self):
-        return (self._camera.up.x, self._camera.up.y, self._camera.up.z);
+        return (self._camera.up.x, self._camera.up.y, self._camera.up.z)
 
     @up.setter
     def up(self, value):
         if len(value) != 3:
-            raise ValueError("up must have length 3");
-        self._camera.up = _common.vec3f(*value);
+            raise ValueError("up must have length 3")
+        self._camera.up = _common.vec3f(*value)
 
     @property
     def height(self):
-        return self._camera.h;
+        return self._camera.h
 
     @height.setter
     def height(self, value):
-        self._camera.h = float(value);
+        self._camera.h = float(value)
 
     @property
     def basis(self):
         b = _common.CameraBasis(self._camera)
-        return ( (b.r.x, b.r.y, b.r.z),
-                 (b.d.x, b.d.y, b.d.z),
-                 (b.u.x, b.u.y, b.u.z) )
+        return ((b.r.x, b.r.y, b.r.z),
+                (b.d.x, b.d.y, b.d.z),
+                (b.u.x, b.u.y, b.u.z))
 
     def __repr__(self):
-        return "fresnel.camera.orthographic(position={0}, look_at={1}, up={2}, height={3})".format(self.position, self.look_at, self.up, self.height)
+        s = "fresnel.camera.orthographic("
+        s += f"position={self.position}, "
+        s += f"look_at={self.look_at}, "
+        s += f"up={self.up}, "
+        s += f"height={self.height})"
+        return s
 
     def __str__(self):
-        return "<Camera object with position {0}>".format(self.position);
+        return "<Camera object with position {0}>".format(self.position)
+
 
 def orthographic(position, look_at, up, height):
     R""" Orthographic camera
 
     Args:
-        position (`numpy.ndarray` or `array_like`): (``3`` : ``float32``) - the position of the camera.
-        look_at (`numpy.ndarray` or `array_like`): (``3`` : ``float32``) - the point the camera looks at (the center of the focal plane).
-        up (`numpy.ndarray` or `array_like`): (``3`` : ``float32``) - a vector pointing up.
+        position (`numpy.ndarray` or `array_like`): (``3`` : ``float32``) - the
+            position of the camera.
+        look_at (`numpy.ndarray` or `array_like`): (``3`` : ``float32``) - the
+            point the camera looks at (the center of the focal plane).
+        up (`numpy.ndarray` or `array_like`): (``3`` : ``float32``) - a vector
+            pointing up.
         height (float): the height of the image plane.
 
-    An orthographic camera traces parallel rays from the image plane into the scene. Lines that are parallel in
-    the :py:class:`Scene <fresnel.Scene>` will remain parallel in the rendered image.
+    An orthographic camera traces parallel rays from the image plane into the
+    scene. Lines that are parallel in the :py:class:`Scene <fresnel.Scene>` will
+    remain parallel in the rendered image.
 
-    *position* is the center of the image plane in :py:class:`Scene <fresnel.Scene>` space. *look_at* is the point
-    in :py:class:`Scene <fresnel.Scene>` space that will be in the center of the image.  Together, these vectors define
-    the image plane which is perpendicular to the line from *position* to *look_at*. Objects in front of the plane will
-    appear in the rendered image, objects behind the plane will not.
+    *position* is the center of the image plane in
+    :py:class:`Scene <fresnel.Scene>` space. *look_at* is the point in
+    :py:class:`Scene <fresnel.Scene>` space that will be in the center of the
+    image.  Together, these vectors define the image plane which is
+    perpendicular to the line from *position* to *look_at*. Objects in front of
+    the plane will appear in the rendered image, objects behind the plane will
+    not.
 
-    *up* is a vector in :py:class:`Scene <fresnel.Scene>` space that defines which direction points up (+y direction in the image).
-    *up* does not need to be perpendicular to the line from *position* to *look_at*, but it must not be parallel to that
-    line. *height* sets the height of the image in :py:class:`Scene <fresnel.Scene>` units. The image width is determined by the
-    aspect ratio of the image. The area *width* by *height* about the *look_at* point will be included in the rendered
-    image.
+    *up* is a vector in :py:class:`Scene <fresnel.Scene>` space that defines
+    which direction points up (+y direction in the image). *up* does not need to
+    be perpendicular to the line from *position* to *look_at*, but it must not
+    be parallel to that line. *height* sets the height of the image in
+    :py:class:`Scene <fresnel.Scene>` units. The image width is determined by
+    the aspect ratio of the image. The area *width* by *height* about the
+    *look_at* point will be included in the rendered image.
 
-    TODO: show a figure
     """
 
-    cam = Camera();
-    cam.position = position;
-    cam.look_at = look_at;
-    cam.up = up;
-    cam.height = height;
+    cam = Camera()
+    cam.position = position
+    cam.look_at = look_at
+    cam.up = up
+    cam.height = height
 
     return cam
+
 
 def fit(scene, view='auto', margin=0.05):
     R""" Fit a camera to a :py:class:`Scene <fresnel.Scene>`
@@ -139,72 +163,76 @@ def fit(scene, view='auto', margin=0.05):
     Create a camera that fits the entire height of the scene in the image plane.
 
     Args:
-        scene (:py:class:`Scene <fresnel.Scene>`): The scene to fit the camera to.
+        scene (:py:class:`Scene <fresnel.Scene>`): Fit the camera to this scene.
         view (str): Select view
-        margin (float): Fraction of extra space to leave on the top and bottom of the scene.
+        margin (float): Fraction of extra space to leave on the top and bottom
+            of the scene.
 
     *view* may be 'auto', 'isometric', or 'front'.
 
-    The isometric view is an orthographic projection from a particular angle so that the x,y, and z directions
-    are equal lengths. The front view is an orthographic projection where +x points to the right, +y points up
-    and +z points out of the screen in the image plane. 'auto' automatically selects 'isometric' for 3D scenes
-    and 'front' for 2D scenes.
+    The isometric view is an orthographic projection from a particular angle so
+    that the x,y, and z directions are equal lengths. The front view is an
+    orthographic projection where +x points to the right, +y points up and +z
+    points out of the screen in the image plane. 'auto' automatically selects
+    'isometric' for 3D scenes and 'front' for 2D scenes.
     """
 
-    vectors = {'front': dict(v=numpy.array([0,0,1]), up = numpy.array([0,1,0]), right = numpy.array([1,0,0])),
-               'isometric': dict(v = numpy.array([1, 1, 1])/math.sqrt(3),
-                                 up = numpy.array([-1, 2, -1])/math.sqrt(6),
-                                 right = numpy.array([1, 0, -1])/math.sqrt(2))
-              }
+    vectors = {'front': dict(v=numpy.array([0, 0, 1]),
+                             up=numpy.array([0, 1, 0]),
+                             right=numpy.array([1, 0, 0])),
+               'isometric': dict(v=numpy.array([1, 1, 1]) / math.sqrt(3),
+                                 up=numpy.array([-1, 2, -1]) / math.sqrt(6),
+                                 right=numpy.array([1, 0, -1]) / math.sqrt(2))
+               }
 
     # raise error if the scene is empty
     if len(scene.geometry) == 0:
-        raise ValueError('The camera cannot be fit because the scene has no geometries. '
-                         'Add geometries to the scene before calling fit.')
+        raise ValueError('The camera cannot be fit because the scene has no '
+                         'geometries. Add geometries to the scene before '
+                         'calling fit.')
 
     # find the center of the scene
-    extents = scene.get_extents();
+    extents = scene.get_extents()
 
     # choose an appropriate view automatically
     if view == 'auto':
-        xw = extents[1,0] - extents[0,0];
-        yw = extents[1,1] - extents[0,1];
-        zw = extents[1,2] - extents[0,2];
+        xw = extents[1, 0] - extents[0, 0]
+        yw = extents[1, 1] - extents[0, 1]
+        zw = extents[1, 2] - extents[0, 2]
 
         if zw < 0.51 * max(xw, yw):
-            view = 'front';
+            view = 'front'
         else:
-            view = 'isometric';
+            view = 'isometric'
 
-    v = vectors[view]['v'];
-    up = vectors[view]['up'];
-    right = vectors[view]['right'];
+    v = vectors[view]['v']
+    up = vectors[view]['up']
+    # right = vectors[view]['right']
 
     # make a list of points of the cube surrounding the scene
-    points = numpy.array([[extents[0,0], extents[0,1], extents[0,2]],
-                          [extents[0,0], extents[0,1], extents[1,2]],
-                          [extents[0,0], extents[1,1], extents[0,2]],
-                          [extents[0,0], extents[1,1], extents[1,2]],
-                          [extents[1,0], extents[0,1], extents[0,2]],
-                          [extents[1,0], extents[0,1], extents[1,2]],
-                          [extents[1,0], extents[1,1], extents[0,2]],
-                          [extents[1,0], extents[1,1], extents[1,2]]]);
+    points = numpy.array([[extents[0, 0], extents[0, 1], extents[0, 2]],
+                          [extents[0, 0], extents[0, 1], extents[1, 2]],
+                          [extents[0, 0], extents[1, 1], extents[0, 2]],
+                          [extents[0, 0], extents[1, 1], extents[1, 2]],
+                          [extents[1, 0], extents[0, 1], extents[0, 2]],
+                          [extents[1, 0], extents[0, 1], extents[1, 2]],
+                          [extents[1, 0], extents[1, 1], extents[0, 2]],
+                          [extents[1, 0], extents[1, 1], extents[1, 2]]])
 
     # find the center of the box
-    center = (extents[0,:] + extents[1,:])  / 2;
-    points = points - center;
+    center = (extents[0, :] + extents[1, :]) / 2
+    points = points - center
 
     # determine the extent of the scene box in the up direction
-    up_projection = numpy.dot(points, up);
-    height = (1+margin)*numpy.max(numpy.abs(up_projection))*2;
+    up_projection = numpy.dot(points, up)
+    height = (1 + margin) * numpy.max(numpy.abs(up_projection)) * 2
 
     # determine the extent of the scene box in the view direction
-    view_projection = numpy.dot(points, v);
-    view_distance = numpy.max(view_projection) * 1.10;
+    view_projection = numpy.dot(points, v)
+    view_distance = numpy.max(view_projection) * 1.10
 
     # build the camera
-    return orthographic(position = center+view_distance*v,
-                        look_at = center,
-                        up = up,
-                        height = height);
-
+    return orthographic(position=center + view_distance * v,
+                        look_at=center,
+                        up=up,
+                        height=height)

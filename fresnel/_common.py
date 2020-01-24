@@ -2,26 +2,32 @@
 print("**** You are importing fresnel from the source directory.")
 print("**** This will not work, compile and import from the build directory")
 
+
 class Material:
     def __init__(self, *args, **kwargs):
         pass
 
+
 class RGBf:
     def __init__(self, *args, **kwargs):
-        self.r = args[0];
-        self.g = args[1];
-        self.b = args[2];
+        self.r = args[0]
+        self.g = args[1]
+        self.b = args[2]
+
 
 class UserCamera:
     def __init__(self, *args, **kwargs):
         pass
 
+
 class vec3f:
     def __init__(self, *args, **kwargs):
         pass
 
+
 def cpu_built():
     return False
+
 
 def gpu_built():
     return False

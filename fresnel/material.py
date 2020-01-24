@@ -1,11 +1,13 @@
 # Copyright (c) 2016-2020 The Regents of the University of Michigan
-# This file is part of the Fresnel project, released under the BSD 3-Clause License.
+# This file is part of the Fresnel project, released under the BSD 3-Clause
+# License.
 
 R"""
 Materials describe the way light interacts with surfaces.
 """
 
 from fresnel import _common
+
 
 class Material(object):
     R"""Define material properties.
@@ -14,15 +16,21 @@ class Material(object):
 
     Args:
 
-        solid (float): Set to 1 to pass through a solid color, regardless of the light and view angle.
-        color (`numpy.ndarray` or `array_like`): (``3``, ``float32``) - Linear RGB color of the material.
-        primitive_color_mix (float): Set to 1 to use the color provided in the Geometry, 0 to use the color
-          specified in the material, or a value in the range [0,1] to mix the two colors.
-        roughness (float): Roughness of the material. Nominally in the range [0.1,1].
-        specular (float): Control the strength of the specular highlights. Nominally in the range [0,1].
-        spec_trans (float): Control the amount of specular light transmission. In the range [0,1].
-        metal (float): Set to 0 for dielectric material, or 1 for metal. Intermediate values interpolate between
-                       the two.
+        solid (float): Set to 1 to pass through a solid color, regardless of the
+            light and view angle.
+        color (`numpy.ndarray` or `array_like`): (``3``, ``float32``) - Linear
+            RGB color of the material.
+        primitive_color_mix (float): Set to 1 to use the color provided in the
+            Geometry, 0 to use the color specified in the material, or a value
+            in the range [0,1] to mix the two colors.
+        roughness (float): Roughness of the material. Nominally in the range
+            [0.1,1].
+        specular (float): Control the strength of the specular highlights.
+            Nominally in the range [0,1].
+        spec_trans (float): Control the amount of specular light transmission.
+            In the range [0,1].
+        metal (float): Set to 0 for dielectric material, or 1 for metal.
+            Intermediate values interpolate between the two.
 
     .. seealso::
         :doc:`examples/00-Basic-tutorials/02-Material-properties`
@@ -30,256 +38,271 @@ class Material(object):
 
 
     Note:
-        Colors are in the linearized color space. Use :py:func:`fresnel.color.linear` to convert standard sRGB colors
-        into this space.
+        Colors are in the linearized color space. Use
+        :py:func:`fresnel.color.linear` to convert standard sRGB colors into
+        this space.
     """
 
-    def __init__(self, solid=0, color=(0,0,0), primitive_color_mix=0, roughness=0.3, specular=0.5, spec_trans=0, metal=0):
-        self._material = _common.Material();
+    def __init__(self,
+                 solid=0,
+                 color=(0, 0, 0),
+                 primitive_color_mix=0,
+                 roughness=0.3,
+                 specular=0.5,
+                 spec_trans=0,
+                 metal=0):
+        self._material = _common.Material()
 
-        self.solid = solid;
-        self.color = color;
-        self.roughness = roughness;
-        self.specular = specular;
-        self.metal = metal;
-        self.spec_trans = spec_trans;
-        self.primitive_color_mix = primitive_color_mix;
+        self.solid = solid
+        self.color = color
+        self.roughness = roughness
+        self.specular = specular
+        self.metal = metal
+        self.spec_trans = spec_trans
+        self.primitive_color_mix = primitive_color_mix
 
     @property
     def solid(self):
-        return self._material.solid;
+        return self._material.solid
 
     @solid.setter
     def solid(self, value):
-        self._material.solid = float(value);
+        self._material.solid = float(value)
 
     @property
     def primitive_color_mix(self):
-        return self._material.primitive_color_mix;
+        return self._material.primitive_color_mix
 
     @primitive_color_mix.setter
     def primitive_color_mix(self, value):
-        self._material.primitive_color_mix = float(value);
+        self._material.primitive_color_mix = float(value)
 
     @property
     def color(self):
-        return (self._material.color.r, self._material.color.g, self._material.color.b);
+        return (self._material.color.r,
+                self._material.color.g,
+                self._material.color.b)
 
     @color.setter
     def color(self, value):
         if len(value) != 3:
-            raise ValueError("colors must have length 3");
-        self._material.color = _common.RGBf(*value);
+            raise ValueError("colors must have length 3")
+        self._material.color = _common.RGBf(*value)
 
     @property
     def roughness(self):
-        return self._material.roughness;
+        return self._material.roughness
 
     @roughness.setter
     def roughness(self, value):
-        self._material.roughness = float(value);
+        self._material.roughness = float(value)
 
     @property
     def specular(self):
-        return self._material.specular;
+        return self._material.specular
 
     @specular.setter
     def specular(self, value):
-        self._material.specular = float(value);
+        self._material.specular = float(value)
 
     @property
     def spec_trans(self):
-        return self._material.spec_trans;
+        return self._material.spec_trans
 
     @spec_trans.setter
     def spec_trans(self, value):
-        self._material.spec_trans = float(value);
+        self._material.spec_trans = float(value)
 
     @property
     def metal(self):
-        return self._material.metal;
+        return self._material.metal
 
     @metal.setter
     def metal(self, value):
-        self._material.metal = float(value);
+        self._material.metal = float(value)
 
     def _get_cpp_material(self):
-        return self._material;
+        return self._material
+
 
 class _material_proxy(object):
-    """ Proxy :py:class`Material` attached to a :py:class`fresnel.geometry.Geometry`
+    """ Proxy :py:class`Material` attached to a
+    :py:class`fresnel.geometry.Geometry`
     """
+
     def __init__(self, geometry):
-        self._geometry = geometry._geometry;
+        self._geometry = geometry._geometry
 
     @property
     def solid(self):
-        m = self._geometry.getMaterial();
-        return m.solid;
+        m = self._geometry.getMaterial()
+        return m.solid
 
     @solid.setter
     def solid(self, value):
-        m = self._geometry.getMaterial();
-        m.solid = float(value);
-        self._geometry.setMaterial(m);
+        m = self._geometry.getMaterial()
+        m.solid = float(value)
+        self._geometry.setMaterial(m)
 
     @property
     def primitive_color_mix(self):
-        m = self._geometry.getMaterial();
-        return m.primitive_color_mix;
+        m = self._geometry.getMaterial()
+        return m.primitive_color_mix
 
     @primitive_color_mix.setter
     def primitive_color_mix(self, value):
-        m = self._geometry.getMaterial();
-        m.primitive_color_mix = float(value);
-        self._geometry.setMaterial(m);
+        m = self._geometry.getMaterial()
+        m.primitive_color_mix = float(value)
+        self._geometry.setMaterial(m)
 
     @property
     def color(self):
-        m = self._geometry.getMaterial();
-        return (m.color.r, m.color.g, m.color.b);
+        m = self._geometry.getMaterial()
+        return (m.color.r, m.color.g, m.color.b)
 
     @color.setter
     def color(self, value):
         if len(value) != 3:
-            raise ValueError("colors must have length 3");
+            raise ValueError("colors must have length 3")
 
-        m = self._geometry.getMaterial();
-        m.color = _common.RGBf(*value);
-        self._geometry.setMaterial(m);
+        m = self._geometry.getMaterial()
+        m.color = _common.RGBf(*value)
+        self._geometry.setMaterial(m)
 
     @property
     def roughness(self):
-        m = self._geometry.getMaterial();
-        return m.roughness;
+        m = self._geometry.getMaterial()
+        return m.roughness
 
     @roughness.setter
     def roughness(self, value):
-        m = self._geometry.getMaterial();
-        m.roughness = float(value);
-        self._geometry.setMaterial(m);
+        m = self._geometry.getMaterial()
+        m.roughness = float(value)
+        self._geometry.setMaterial(m)
 
     @property
     def specular(self):
-        m = self._geometry.getMaterial();
-        return m.specular;
+        m = self._geometry.getMaterial()
+        return m.specular
 
     @specular.setter
     def specular(self, value):
-        m = self._geometry.getMaterial();
-        m.specular = float(value);
-        self._geometry.setMaterial(m);
+        m = self._geometry.getMaterial()
+        m.specular = float(value)
+        self._geometry.setMaterial(m)
 
     @property
     def spec_trans(self):
-        m = self._geometry.getMaterial();
-        return m.spec_trans;
+        m = self._geometry.getMaterial()
+        return m.spec_trans
 
     @spec_trans.setter
     def spec_trans(self, value):
-        m = self._geometry.getMaterial();
-        m.spec_trans = float(value);
-        self._geometry.setMaterial(m);
+        m = self._geometry.getMaterial()
+        m.spec_trans = float(value)
+        self._geometry.setMaterial(m)
 
     @property
     def metal(self):
-        m = self._geometry.getMaterial();
-        return m.metal;
+        m = self._geometry.getMaterial()
+        return m.metal
 
     @metal.setter
     def metal(self, value):
-        m = self._geometry.getMaterial();
-        m.metal = float(value);
-        self._geometry.setMaterial(m);
+        m = self._geometry.getMaterial()
+        m.metal = float(value)
+        self._geometry.setMaterial(m)
 
     def _get_cpp_material(self):
-        return self._geometry.getMaterial();
+        return self._geometry.getMaterial()
+
 
 class _outline_material_proxy(object):
-    """ Proxy outline :py:class`Material` attached to a :py:class`fresnel.geometry.Geometry`
+    """ Proxy outline :py:class`Material` attached to a Geometry.
     """
+
     def __init__(self, geometry):
-        self._geometry = geometry._geometry;
+        self._geometry = geometry._geometry
 
     @property
     def solid(self):
-        m = self._geometry.getOutlineMaterial();
-        return m.solid;
+        m = self._geometry.getOutlineMaterial()
+        return m.solid
 
     @solid.setter
     def solid(self, value):
-        m = self._geometry.getOutlineMaterial();
-        m.solid = float(value);
-        self._geometry.setOutlineMaterial(m);
+        m = self._geometry.getOutlineMaterial()
+        m.solid = float(value)
+        self._geometry.setOutlineMaterial(m)
 
     @property
     def primitive_color_mix(self):
-        m = self._geometry.getOutlineMaterial();
-        return m.primitive_color_mix;
+        m = self._geometry.getOutlineMaterial()
+        return m.primitive_color_mix
 
     @primitive_color_mix.setter
     def primitive_color_mix(self, value):
-        m = self._geometry.getOutlineMaterial();
-        m.primitive_color_mix = float(value);
-        self._geometry.setOutlineMaterial(m);
+        m = self._geometry.getOutlineMaterial()
+        m.primitive_color_mix = float(value)
+        self._geometry.setOutlineMaterial(m)
 
     @property
     def color(self):
-        m = self._geometry.getOutlineMaterial();
-        return (m.color.r, m.color.g, m.color.b);
+        m = self._geometry.getOutlineMaterial()
+        return (m.color.r, m.color.g, m.color.b)
 
     @color.setter
     def color(self, value):
         if len(value) != 3:
-            raise ValueError("colors must have length 3");
+            raise ValueError("colors must have length 3")
 
-        m = self._geometry.getOutlineMaterial();
-        m.color = _common.RGBf(*value);
-        self._geometry.setOutlineMaterial(m);
+        m = self._geometry.getOutlineMaterial()
+        m.color = _common.RGBf(*value)
+        self._geometry.setOutlineMaterial(m)
 
     @property
     def roughness(self):
-        m = self._geometry.getOutlineMaterial();
-        return m.roughness;
+        m = self._geometry.getOutlineMaterial()
+        return m.roughness
 
     @roughness.setter
     def roughness(self, value):
-        m = self._geometry.getOutlineMaterial();
-        m.roughness = float(value);
-        self._geometry.setOutlineMaterial(m);
+        m = self._geometry.getOutlineMaterial()
+        m.roughness = float(value)
+        self._geometry.setOutlineMaterial(m)
 
     @property
     def specular(self):
-        m = self._geometry.getOutlineMaterial();
-        return m.specular;
+        m = self._geometry.getOutlineMaterial()
+        return m.specular
 
     @specular.setter
     def specular(self, value):
-        m = self._geometry.getOutlineMaterial();
-        m.specular = float(value);
-        self._geometry.setOutlineMaterial(m);
+        m = self._geometry.getOutlineMaterial()
+        m.specular = float(value)
+        self._geometry.setOutlineMaterial(m)
 
     @property
     def spec_trans(self):
-        m = self._geometry.getOutlineMaterial();
-        return m.spec_trans;
+        m = self._geometry.getOutlineMaterial()
+        return m.spec_trans
 
     @spec_trans.setter
     def spec_trans(self, value):
-        m = self._geometry.getOutlineMaterial();
-        m.spec_trans = float(value);
-        self._geometry.setOutlineMaterial(m);
+        m = self._geometry.getOutlineMaterial()
+        m.spec_trans = float(value)
+        self._geometry.setOutlineMaterial(m)
 
     @property
     def metal(self):
-        m = self._geometry.getOutlineMaterial();
-        return m.metal;
+        m = self._geometry.getOutlineMaterial()
+        return m.metal
 
     @metal.setter
     def metal(self, value):
-        m = self._geometry.getOutlineMaterial();
-        m.metal = float(value);
-        self._geometry.setOutlineMaterial(m);
+        m = self._geometry.getOutlineMaterial()
+        m.metal = float(value)
+        self._geometry.setOutlineMaterial(m)
 
     def _get_cpp_material(self):
-        return self._geometry.getOutlineMaterial();
+        return self._geometry.getOutlineMaterial()

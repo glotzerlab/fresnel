@@ -1,27 +1,29 @@
-import fresnel, numpy, math, PIL
+import fresnel
+import numpy
+import PIL
 
 data = numpy.load('cuboids.npz')
 
 scene = fresnel.Scene(fresnel.Device(mode='cpu'))
 scene.lights = fresnel.light.lightbox()
-W,H,D = data['width']
+W, H, D = data['width']
 poly_info = fresnel.util.convex_polyhedron_from_vertices(
-    [[-W,-H,-D], [-W,-H, D], [-W, H,-D], [-W, H, D],
-     [ W,-H,-D], [ W,-H, D], [ W, H,-D], [ W, H, D]])
+    [[-W, -H, -D], [-W, -H, D], [-W, H, -D], [-W, H, D],
+     [W, -H, -D], [W, -H, D], [W, H, -D], [W, H, D]])
 
 geometry = fresnel.geometry.ConvexPolyhedron(
     scene, poly_info,
-    position = data['position'],
-    orientation = data['orientation'],
-    outline_width = 0.015)
+    position=data['position'],
+    orientation=data['orientation'],
+    outline_width=0.015)
 geometry.material = fresnel.material.Material(
-    color = fresnel.color.linear([0.1, 0.1, 0.6]),
-    roughness = 0.1,
-    specular = 1)
+    color=fresnel.color.linear([0.1, 0.1, 0.6]),
+    roughness=0.1,
+    specular=1)
 geometry.outline_material = fresnel.material.Material(
-    color = (0.95,0.93,0.88),
-    roughness = 0.1,
-    metal = 1.0)
+    color=(0.95, 0.93, 0.88),
+    roughness=0.1,
+    metal=1.0)
 
 scene.camera = fresnel.camera.fit(scene, view='front')
 out = fresnel.pathtrace(scene, samples=64,

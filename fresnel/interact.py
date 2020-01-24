@@ -1,5 +1,6 @@
 # Copyright (c) 2016-2020 The Regents of the University of Michigan
-# This file is part of the Fresnel project, released under the BSD 3-Clause License.
+# This file is part of the Fresnel project, released under the BSD 3-Clause
+# License.
 
 R"""
 Interactive Qt widgets.
@@ -13,15 +14,12 @@ try:
     import IPython.external.qt_loaders
     if type(sys.meta_path[0]) == IPython.external.qt_loaders.ImportDenier:
         del sys.meta_path[0]
-except:
+except: # noqa
     pass
 
 from PySide2 import QtGui
 from PySide2 import QtWidgets
 from PySide2 import QtCore
-import numpy
-import time
-import collections
 import math
 
 from . import tracer, camera
@@ -29,9 +27,10 @@ from . import tracer, camera
 # initialize QApplication
 # but not in sphinx
 if 'sphinx' not in sys.modules:
-    app = QtCore.QCoreApplication.instance();
+    app = QtCore.QCoreApplication.instance()
     if app is None:
         app = QtWidgets.QApplication(['fresnel'])
+
 
 def q_mult(q1, q2):
     w1, x1, y1, z1 = q1
@@ -42,13 +41,16 @@ def q_mult(q1, q2):
     z = w1 * z2 + z1 * w2 + x1 * y2 - y1 * x2
     return w, x, y, z
 
+
 def q_conjugate(q):
     w, x, y, z = q
     return (w, -x, -y, -z)
 
+
 def qv_mult(q1, v1):
     q2 = (0.0,) + v1
     return q_mult(q_mult(q1, q2), q_conjugate(q1))[1:]
+
 
 def axisangle_to_q(v, theta):
     x, y, z = v
@@ -59,23 +61,24 @@ def axisangle_to_q(v, theta):
     z = z * math.sin(theta)
     return w, x, y, z
 
+
 class CameraController3D:
     def __init__(self, camera):
-        self.camera = camera;
-        if type(self.camera) == type('str'):
-            raise RuntimeError("Cannot control an auto camera");
+        self.camera = camera
+        if isinstance(self.camera, str):
+            raise RuntimeError("Cannot control an auto camera")
 
     def orbit(self, yaw=0, pitch=0, roll=0, factor=-0.0025, slight=False):
         if slight:
-            factor = factor * 0.1;
+            factor = factor * 0.1
 
         r, d, u = self.camera.basis
 
         q1 = axisangle_to_q(u, factor * yaw)
         q2 = axisangle_to_q(r, factor * pitch)
         q3 = axisangle_to_q(d, factor * roll)
-        q = q_mult(q1, q2);
-        q = q_mult(q, q3);
+        q = q_mult(q1, q2)
+        q = q_mult(q, q3)
 
         px, py, pz = self.camera.position
         ax, ay, az = self.camera.look_at
@@ -90,19 +93,21 @@ class CameraController3D:
         factor = self.camera.height
 
         if slight:
-            factor = factor * 0.1;
+            factor = factor * 0.1
 
         r, d, u = self.camera.basis
 
         rx, ry, rz = r
         ux, uy, uz = u
-        delta_x, delta_y, delta_z = factor*(x*rx + y*ux), factor*(x*ry + y*uy), factor*(x*rz + y*uz)
+        delta_x = factor * (x * rx + y * ux)
+        delta_y = factor * (x * ry + y * uy)
+        delta_z = factor * (x * rz + y * uz)
 
         px, py, pz = self.camera.position
         ax, ay, az = self.camera.look_at
 
-        self.camera.position = px+delta_x, py+delta_y, pz+delta_z
-        self.camera.look_at = ax+delta_x, ay+delta_y, az+delta_z
+        self.camera.position = px + delta_x, py + delta_y, pz + delta_z
+        self.camera.look_at = ax + delta_x, ay + delta_y, az + delta_z
 
     def zoom(self, s, slight=False):
         R""" Zoom the view in or out
@@ -110,16 +115,18 @@ class CameraController3D:
         factor = 0.0015
 
         if slight:
-            factor = factor * 0.1;
+            factor = factor * 0.1
 
         # TODO: different types of zoom for perspective cameras
-        self.camera.height = self.camera.height * (1 - s*factor)
+        self.camera.height = self.camera.height * (1 - s * factor)
+
 
 class SceneView(QtWidgets.QWidget):
     R""" View a fresnel Scene in real time
 
-    :py:class:`SceneView` is a PySide2 widget that displays a :py:class:`fresnel.Scene`, rendering it with
-    :py:class:`fresnel.tracer.Path` interactively. Use the mouse to rotate the camera view.
+    :py:class:`SceneView` is a PySide2 widget that displays a
+    :py:class:`fresnel.Scene`, rendering it with :py:class:`fresnel.tracer.Path`
+    interactively. Use the mouse to rotate the camera view.
 
     Args:
 
@@ -133,8 +140,10 @@ class SceneView(QtWidgets.QWidget):
 
     .. rubric:: Using in a standalone script
 
-    To use SceneView in a standalone script, import the :py:mod:`fresnel.interact` module, create your :py:class:`fresnel.Scene`, instantiate the
-    :py:class:`SceneView`, show it, and start the app event loop.
+    To use SceneView in a standalone script, import the
+    :py:mod:`fresnel.interact` module, create your :py:class:`fresnel.Scene`,
+    instantiate the :py:class:`SceneView`, show it, and start the app event
+    loop.
 
     .. code-block:: python
 
@@ -146,7 +155,8 @@ class SceneView(QtWidgets.QWidget):
 
     .. rubric:: Using with jupyter notebooks
 
-    To use SceneView in a jupyter notebook, import PySide2.QtCore and activate jupyter's qt5 integration.
+    To use SceneView in a jupyter notebook, import PySide2.QtCore and activate
+    Jupyter's qt5 integration.
 
     .. code-block:: python
 
@@ -154,9 +164,11 @@ class SceneView(QtWidgets.QWidget):
         % gui qt
 
 
-    Import the :py:mod:`fresnel.interact` module, create your :py:class:`fresnel.Scene`, and instantiate the
-    :py:class:`SceneView`. Do not call the app event loop, jupyter is already running the event loop in the background.
-    When the SceneView object is the result of a cell, it will automatically show and activate focus.
+    Import the :py:mod:`fresnel.interact` module, create your
+    :py:class:`fresnel.Scene`, and instantiate the :py:class:`SceneView`. Do
+    not call the app event loop, jupyter is already running the event loop in
+    the background. When the SceneView object is the result of a cell, it will
+    automatically show and activate focus.
 
     .. code-block:: python
 
@@ -173,18 +185,19 @@ class SceneView(QtWidgets.QWidget):
             Tutorial: Interactive scene display
 
     """
+
     def __init__(self, scene, max_samples=2000):
         super().__init__()
         self.setWindowTitle("fresnel: scene viewer")
 
-        self.setMinimumSize(10,10)
+        self.setMinimumSize(10, 10)
 
-        self.max_samples = max_samples;
+        self.max_samples = max_samples
 
         # pick a default camera if one isn't already set
         self.scene = scene
-        if type(self.scene.camera) == type('str'):
-            self.scene.camera = camera.fit(self.scene);
+        if isinstance(self.scene.camera, str):
+            self.scene.camera = camera.fit(self.scene)
 
         # fire off a timer to repaint the window as often as possible
         self.repaint_timer = QtCore.QTimer(self)
@@ -201,18 +214,18 @@ class SceneView(QtWidgets.QWidget):
         self.initial_resize = True
 
         # flag to notify view rotation
-        self.camera_update_mode = None;
-        self.mouse_initial_pos = None;
+        self.camera_update_mode = None
+        self.mouse_initial_pos = None
 
         self.camera_controller = CameraController3D(self.scene.camera)
 
     def _repr_html_(self):
-        self.show();
-        self.raise_();
-        self.activateWindow();
+        self.show()
+        self.raise_()
+        self.activateWindow()
         return "<p><i>scene view opened in a new window...</i></p>"
 
-    def minimumSizeHint(self):
+    def minimumSizeHint(self): # noqa
         return QtCore.QSize(1610, 1000)
 
     def setScene(self, scene):
@@ -222,106 +235,111 @@ class SceneView(QtWidgets.QWidget):
 
             scene (:py:class:`Scene <fresnel.Scene>`): The scene to render.
 
-        Also call setScene when you make any changes to the scene so that SceneView window will re-render the scene
-        with the changes.
+        Also call setScene when you make any changes to the scene so that
+        SceneView window will re-render the scene with the changes.
         """
-        self.scene = scene;
+        self.scene = scene
         self.start_rendering()
 
-    def paintEvent(self, event):
+    def paintEvent(self, event): # noqa
         if self.rendering:
             # Render the scene
             self.tracer.render(self.scene)
 
-            self.samples += 1;
+            self.samples += 1
             if self.samples >= self.max_samples:
                 self.stop_rendering()
 
         # Display
-        image_array = self.tracer.output;
+        image_array = self.tracer.output
 
         # display the rendered scene in the widget
-        image_array.buf.map();
-        img = QtGui.QImage(image_array.buf,image_array.shape[1],image_array.shape[0],QtGui.QImage.Format_RGBA8888)
+        image_array.buf.map()
+        img = QtGui.QImage(image_array.buf,
+                           image_array.shape[1],
+                           image_array.shape[0],
+                           QtGui.QImage.Format_RGBA8888)
         qp = QtGui.QPainter(self)
-        target = QtCore.QRectF(0, 0, self.width(), self.height());
-        source = QtCore.QRectF(0.0, 0.0, image_array.shape[1], image_array.shape[0]);
-        #qp.drawImage(0,0,img);
-        qp.drawImage(target, img, source);
+        target = QtCore.QRectF(0, 0, self.width(), self.height())
+        source = QtCore.QRectF(0.0,
+                               0.0,
+                               image_array.shape[1],
+                               image_array.shape[0])
+
+        qp.drawImage(target, img, source)
         qp.end()
-        image_array.buf.unmap();
+        image_array.buf.unmap()
 
-    def resizeEvent(self, event):
-        delta = event.size() - event.oldSize();
-        r = max(delta.width() / event.size().width(), delta.height() / event.size().height())
-
+    def resizeEvent(self, event): # noqa
         # for the initial window size, resize immediately
         if self.initial_resize:
             self.resize_done()
-            self.initial_resize = False;
+            self.initial_resize = False
         else:
-            # otherwise, defer resizing the tracer until the window sits still for a bit
+            # otherwise, defer resizing the tracer until the window sits still
+            # for a bit
             self.resize_timer.start(300)
 
     def resize_done(self):
         # resize the tracer
-        self.tracer.resize(w=self.width(), h=self.height());
+        self.tracer.resize(w=self.width(), h=self.height())
         self.start_rendering()
 
     def stop_rendering(self):
         self.repaint_timer.stop()
-        self.rendering = False;
+        self.rendering = False
 
     def start_rendering(self):
-        self.rendering = True;
-        self.samples = 0;
+        self.rendering = True
+        self.samples = 0
         self.tracer.reset()
         self.repaint_timer.start()
 
-
-    def mouseMoveEvent(self, event):
-        delta = event.pos() - self.mouse_initial_pos;
-        self.mouse_initial_pos = event.pos();
+    def mouseMoveEvent(self, event): # noqa
+        delta = event.pos() - self.mouse_initial_pos
+        self.mouse_initial_pos = event.pos()
 
         if self.camera_update_mode == 'pitch/yaw':
-             self.camera_controller.orbit(yaw=delta.x(),
-                                          pitch=delta.y(),
-                                          slight=event.modifiers() & QtCore.Qt.ControlModifier)
+            self.camera_controller.orbit(yaw=delta.x(),
+                                         pitch=delta.y(),
+                                         slight=event.modifiers()
+                                         & QtCore.Qt.ControlModifier)
 
         elif self.camera_update_mode == 'roll':
             self.camera_controller.orbit(roll=delta.x(),
-                                         slight=event.modifiers() & QtCore.Qt.ControlModifier)
+                                         slight=event.modifiers()
+                                         & QtCore.Qt.ControlModifier)
 
         elif self.camera_update_mode == 'pan':
             h = self.height()
-            self.camera_controller.pan(x=-delta.x()/h,
-                                       y=delta.y()/h,
-                                       slight=event.modifiers() & QtCore.Qt.ControlModifier)
-
+            self.camera_controller.pan(x=-delta.x() / h,
+                                       y=delta.y() / h,
+                                       slight=event.modifiers()
+                                       & QtCore.Qt.ControlModifier)
 
         self.start_rendering()
         self.update()
-        event.accept();
+        event.accept()
 
-
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, event):  # noqa
         self.mouse_initial_pos = event.pos()
-        event.accept();
+        event.accept()
 
         if event.button() == QtCore.Qt.LeftButton:
-            self.camera_update_mode = 'pitch/yaw';
+            self.camera_update_mode = 'pitch/yaw'
         elif event.button() == QtCore.Qt.RightButton:
-            self.camera_update_mode = 'roll';
+            self.camera_update_mode = 'roll'
         elif event.button() == QtCore.Qt.MiddleButton:
-            self.camera_update_mode = 'pan';
+            self.camera_update_mode = 'pan'
 
-    def mouseReleaseEvent(self, event):
+    def mouseReleaseEvent(self, event): # noqa
         if self.camera_update_mode is not None:
-            self.camera_update_mode = None;
+            self.camera_update_mode = None
             event.accept()
 
-    def wheelEvent(self, event):
+    def wheelEvent(self, event): # noqa
         self.camera_controller.zoom(event.angleDelta().y(),
-                                    slight=event.modifiers() & QtCore.Qt.ControlModifier)
+                                    slight=event.modifiers()
+                                    & QtCore.Qt.ControlModifier)
         self.start_rendering()
         event.accept()
