@@ -33,7 +33,7 @@ their pull request can be merged.
 
 ## Use a consistent style
 
-[SourceConventions.md](SourceConventions.md) defines the style guidelines for **fresnel** code.
+[style.rst](doc/style.rst) defines the style guidelines for **fresnel** code.
 
 ## Document code with comments
 
