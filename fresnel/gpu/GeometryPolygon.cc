@@ -15,14 +15,16 @@ namespace fresnel { namespace gpu {
 
     Initialize the polygon.
 */
-GeometryPolygon::GeometryPolygon(std::shared_ptr<Scene> scene,
-                             pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast> vertices,
-                             float rounding_radius,
-                             unsigned int N)
+GeometryPolygon::GeometryPolygon(
+    std::shared_ptr<Scene> scene,
+    pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast> vertices,
+    float rounding_radius,
+    unsigned int N)
     : Geometry(scene)
-    {
+{
     // create the geometry
-    // intersection and bounding programs are not stored for later destruction, as Device will destroy its program cache
+    // intersection and bounding programs are not stored for later destruction, as Device will
+    // destroy its program cache
     optix::Program intersection_program;
     optix::Program bounding_box_program;
 
@@ -32,7 +34,7 @@ GeometryPolygon::GeometryPolygon(std::shared_ptr<Scene> scene,
     m_geometry->setPrimitiveCount(N);
 
     // load bounding and intresection programs
-    const char * path_to_ptx = "GeometryPolygon.ptx";
+    const char* path_to_ptx = "GeometryPolygon.ptx";
     bounding_box_program = device->getProgram(path_to_ptx, "bounds");
     m_geometry->setBoundingBoxProgram(bounding_box_program);
 
@@ -48,7 +50,7 @@ GeometryPolygon::GeometryPolygon(std::shared_ptr<Scene> scene,
     if (info.shape[1] != 2)
         throw std::runtime_error("vertices must be a Nvert by 2 array");
 
-    float *verts_f = (float *)info.ptr;
+    float* verts_f = (float*)info.ptr;
 
     // set up OptiX data buffers
     m_vertices = context->createBuffer(RT_BUFFER_INPUT_OUTPUT, RT_FORMAT_FLOAT2, info.shape[0]);
@@ -56,14 +58,14 @@ GeometryPolygon::GeometryPolygon(std::shared_ptr<Scene> scene,
     vec2<float>* optix_vertices = (vec2<float>*)m_vertices->map();
 
     for (unsigned int i = 0; i < info.shape[0]; i++)
-        {
-        vec2<float> p0(verts_f[i*2], verts_f[i*2+1]);
+    {
+        vec2<float> p0(verts_f[i * 2], verts_f[i * 2 + 1]);
 
         optix_vertices[i] = p0;
 
         // precompute radius in the xy plane
-        m_radius = std::max(m_radius, sqrtf(dot(p0,p0)));
-        }
+        m_radius = std::max(m_radius, sqrtf(dot(p0, p0)));
+    }
 
     m_vertices->unmap();
 
@@ -75,7 +77,8 @@ GeometryPolygon::GeometryPolygon(std::shared_ptr<Scene> scene,
     m_geometry["polygon_rounding_radius"]->setFloat(rounding_radius);
     m_geometry["polygon_vertices"]->setBuffer(m_vertices);
 
-    optix::Buffer optix_position = context->createBuffer(RT_BUFFER_INPUT_OUTPUT, RT_FORMAT_FLOAT2, N);
+    optix::Buffer optix_position
+        = context->createBuffer(RT_BUFFER_INPUT_OUTPUT, RT_FORMAT_FLOAT2, N);
     optix::Buffer optix_angle = context->createBuffer(RT_BUFFER_INPUT_OUTPUT, RT_FORMAT_FLOAT, N);
     optix::Buffer optix_color = context->createBuffer(RT_BUFFER_INPUT_OUTPUT, RT_FORMAT_FLOAT3, N);
 
@@ -84,33 +87,34 @@ GeometryPolygon::GeometryPolygon(std::shared_ptr<Scene> scene,
     m_geometry["polygon_color"]->setBuffer(optix_color);
 
     // intialize python access to buffers
-    m_position = std::make_shared< Array< vec2<float> > >(1, optix_position);
-    m_angle = std::make_shared< Array< float > >(1, optix_angle);
-    m_color = std::make_shared< Array< RGB<float> > >(1, optix_color);
+    m_position = std::make_shared<Array<vec2<float>>>(1, optix_position);
+    m_angle = std::make_shared<Array<float>>(1, optix_angle);
+    m_color = std::make_shared<Array<RGB<float>>>(1, optix_color);
     setupInstance();
 
     m_valid = true;
-    }
+}
 
 GeometryPolygon::~GeometryPolygon()
-    {
+{
     m_vertices->destroy();
-    }
+}
 
 /*! \param m Python module to export in
  */
 void export_GeometryPolygon(pybind11::module& m)
-    {
-    pybind11::class_<GeometryPolygon, Geometry, std::shared_ptr<GeometryPolygon> >(m, "GeometryPolygon")
-        .def(pybind11::init<std::shared_ptr<Scene>,
+{
+    pybind11::class_<GeometryPolygon, Geometry, std::shared_ptr<GeometryPolygon>>(m,
+                                                                                  "GeometryPolygon")
+        .def(pybind11::init<
+             std::shared_ptr<Scene>,
              pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast>,
              float,
              unsigned int>())
         .def("getPositionBuffer", &GeometryPolygon::getPositionBuffer)
         .def("getAngleBuffer", &GeometryPolygon::getAngleBuffer)
         .def("getColorBuffer", &GeometryPolygon::getColorBuffer)
-        .def("getRadius", &GeometryPolygon::getRadius)
-        ;
-    }
+        .def("getRadius", &GeometryPolygon::getRadius);
+}
 
-} } // end namespace fresnel::gpu
+}} // end namespace fresnel::gpu
