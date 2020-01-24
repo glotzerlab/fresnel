@@ -184,8 +184,9 @@ class SceneView(QtWidgets.QWidget):
         scene: The :py:class:`fresnel.Scene` rendered in this view.
 
     .. seealso::
-        :doc:`examples/02-Advanced-topics/03-Interactive-scene-view`
-            Tutorial: Interactive scene display
+        Tutorials:
+
+        - :doc:`examples/02-Advanced-topics/03-Interactive-scene-view`
 
     """
 

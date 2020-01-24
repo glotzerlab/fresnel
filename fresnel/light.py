@@ -10,12 +10,10 @@ of quality lighting setups for your use, and you can always define custom
 lights.
 
 .. seealso::
+    Tutorials:
 
-    :doc:`examples/00-Basic-tutorials/04-Scene-properties`
-        Tutorial: Setting scene properties.
-
-    :doc:`examples/00-Basic-tutorials/05-Lighting-setups`
-        Tutorial: Using lighting setups with scenes.
+    - :doc:`examples/00-Basic-tutorials/04-Scene-properties`
+    - :doc:`examples/00-Basic-tutorials/05-Lighting-setups`
 """
 
 import math

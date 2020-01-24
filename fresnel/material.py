@@ -33,8 +33,9 @@ class Material(object):
             Intermediate values interpolate between the two.
 
     .. seealso::
-        :doc:`examples/00-Basic-tutorials/02-Material-properties`
-            Tutorial: Modifying material properties.
+        Tutorials:
+
+        - :doc:`examples/00-Basic-tutorials/02-Material-properties`
 
 
     Note:

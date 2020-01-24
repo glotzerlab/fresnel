@@ -9,17 +9,12 @@ Geometric primitives.
 specific geometry class to add objects to the :py:class:`fresnel.Scene`.
 
 .. seealso::
-    :doc:`examples/00-Basic-tutorials/01-Primitive-properties`
-        Tutorial: Modifying primitive properties.
+    Tutorials:
 
-    :doc:`examples/00-Basic-tutorials/02-Material-properties`
-        Tutorial: Modifying material properties.
-
-    :doc:`examples/00-Basic-tutorials/03-Outline-materials`
-        Tutorial: Applying outline materials.
-
-    :doc:`examples/02-Advanced-topics/00-Multiple-geometries`
-        Tutorial: Displaying multiple geometries in a scene.
+    - :doc:`examples/00-Basic-tutorials/01-Primitive-properties`
+    - :doc:`examples/00-Basic-tutorials/02-Material-properties`
+    - :doc:`examples/00-Basic-tutorials/03-Outline-materials`
+    - :doc:`examples/02-Advanced-topics/00-Multiple-geometries`
 """
 
 from . import material
@@ -118,9 +113,9 @@ class Cylinder(Geometry):
             ``N`` from *points*.
 
     .. seealso::
+        Tutorials:
 
-        :doc:`examples/01-Primitives/01-Cylinder-geometry`
-            Tutorial: defining and setting cylinder geometry properties
+        - :doc:`examples/01-Primitives/01-Cylinder-geometry`
 
     Note:
         The constructor arguments ``points``, ``radius``, and ``color`` are
@@ -177,7 +172,7 @@ class Cylinder(Geometry):
 
         Returns:
             [[minimum x, minimum y, minimum z],
-             [maximum x, maximum y, maximum z]]
+            [maximum x, maximum y, maximum z]]
         """
         A = self.points[:, 0]
         B = self.points[:, 1]
@@ -217,11 +212,10 @@ class Box(Cylinder):
             Color of box edges.
 
     .. seealso::
+        Tutorials:
 
-        :doc:`examples/01-Primitives/05-Box-geometry`
-            Tutorial: defining and setting box geometry properties
-        :doc:`examples/02-Advanced-topics/05-GSD-visualization`
-            Tutorial: Visualizing GSD files
+        - :doc:`examples/01-Primitives/05-Box-geometry`
+        - :doc:`examples/02-Advanced-topics/05-GSD-visualization`
 
     Note:
         The constructor arguments ``radius`` and ``color`` are optional. If you
@@ -413,8 +407,9 @@ class Polygon(Geometry):
             ``N`` from ``position``.
 
     .. seealso::
-        :doc:`examples/01-Primitives/04-Polygon-geometry`
-            Tutorial: defining and setting polygon geometry properties
+        Tutorials:
+
+        - :doc:`examples/01-Primitives/04-Polygon-geometry`
 
     Note:
         The constructor arguments ``position``, ``angle``, and ``color`` are
@@ -485,7 +480,7 @@ class Polygon(Geometry):
 
         Returns:
             [[minimum x, minimum y, minimum z],
-             [maximum x, maximum y, maximum z]]
+            [maximum x, maximum y, maximum z]]
         """
         pos = self.position[:]
         r = self._geometry.getRadius()
@@ -515,8 +510,9 @@ class Sphere(Geometry):
             from ``position``.
 
     .. seealso::
-        :doc:`examples/01-Primitives/00-Sphere-geometry`
-            Tutorial: Defining and setting sphere geometry properties.
+        Tutorials:
+
+        - :doc:`examples/01-Primitives/00-Sphere-geometry`
 
     Note:
         The constructor arguments ``position``, ``radius``, and ``color`` are
@@ -573,7 +569,7 @@ class Sphere(Geometry):
 
         Returns:
             [[minimum x, minimum y, minimum z],
-             [maximum x, maximum y, maximum z]]
+            [maximum x, maximum y, maximum z]]
         """
         pos = self.position[:]
         r = self.radius[:]
@@ -615,8 +611,9 @@ class Mesh(Geometry):
             determine ``N`` from ``position``.
 
     .. seealso::
-        :doc:`examples/01-Primitives/03-Mesh-geometry`
-            Tutorial: Defining and setting mesh geometry properties.
+        Tutorials:
+
+        - :doc:`examples/01-Primitives/03-Mesh-geometry`
 
     Note:
         The constructor arguments ``position``, ``orientation``, and ``color``
@@ -693,7 +690,7 @@ class Mesh(Geometry):
 
         Returns:
             [[minimum x, minimum y, minimum z],
-             [maximum x, maximum y, maximum z]]
+            [maximum x, maximum y, maximum z]]
         """
         a = self.vertices[:, 0]
         b = self.vertices[:, 1]
@@ -736,9 +733,9 @@ class ConvexPolyhedron(Geometry):
             from ``position``.
 
     .. seealso::
-        :doc:`examples/01-Primitives/02-Convex-polyhedron-geometry`
-            Tutorial: Defining and setting convex polyhedron geometry
-            properties.
+        Tutorials:
+
+        - :doc:`examples/01-Primitives/02-Convex-polyhedron-geometry`
 
     Note:
         The constructor arguments ``position``, ``orientation``, and ``color``
@@ -802,7 +799,7 @@ class ConvexPolyhedron(Geometry):
 
         Returns:
             [[minimum x, minimum y, minimum z],
-             [maximum x, maximum y, maximum z]]
+            [maximum x, maximum y, maximum z]]
         """
         pos = self.position[:]
         r = self._radius

@@ -43,11 +43,10 @@ class Device(object):
     tracers to a single :py:class:`Device`.
 
     .. seealso::
-        :doc:`examples/02-Advanced-topics/01-Devices`
-            Tutorial: Using devices.
+        Tutorials:
 
-        :doc:`examples/02-Advanced-topics/02-Tracer-methods`
-            Tutorial: Using tracers with devices.
+        - :doc:`examples/02-Advanced-topics/01-Devices`
+        - :doc:`examples/02-Advanced-topics/02-Tracer-methods`
 
     When mode is ``auto``, the default, :py:class:`Device` GPU rendering and
     fall back on CPU rendering if there is no GPU available or GPU support was
@@ -173,17 +172,12 @@ class Scene(object):
     *None*. If you want a non-default device, you must create it explicitly.
 
     .. seealso::
-        :doc:`examples/00-Basic-tutorials/00-Introduction`
-            Tutorial: Introduction to scenes
+        Tutorials:
 
-        :doc:`examples/00-Basic-tutorials/04-Scene-properties`
-            Tutorial: Setting scene properties.
-
-        :doc:`examples/00-Basic-tutorials/05-Lighting-setups`
-            Tutorial: Using lighting setups with scenes.
-
-        :doc:`examples/02-Advanced-topics/01-Devices`
-            Tutorial: Using devices.
+        - :doc:`examples/00-Basic-tutorials/00-Introduction`
+        - :doc:`examples/00-Basic-tutorials/04-Scene-properties`
+        - :doc:`examples/00-Basic-tutorials/05-Lighting-setups`
+        - :doc:`examples/02-Advanced-topics/01-Devices`
 
     .. rubric:: Lights
 

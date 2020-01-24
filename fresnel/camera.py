@@ -23,8 +23,9 @@ class Camera(object):
         * :py:func:`orthographic`
 
     .. seealso::
-        :doc:`examples/00-Basic-tutorials/04-Scene-properties`
-            Tutorial: Setting scene properties
+        Tutorials:
+
+        - :doc:`examples/00-Basic-tutorials/04-Scene-properties`
 
     The camera is a property of the :py:class:`Scene <fresnel.Scene>`. You may
     read and modify any of these camera attributes.

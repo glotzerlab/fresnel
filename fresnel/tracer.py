@@ -10,12 +10,10 @@ render and :py:class:`Path` which provides soft shadows, reflections, and other
 effects.
 
 .. seealso::
-    :doc:`examples/00-Basic-tutorials/00-Introduction`
-        Tutorial: Introduction to tracers
+    Tutorials:
 
-    :doc:`examples/02-Advanced-topics/02-Tracer-methods`
-        Tutorial: Configuring tracer parameters.
-
+    - :doc:`examples/00-Basic-tutorials/00-Introduction`
+    - :doc:`examples/02-Advanced-topics/02-Tracer-methods`
 """
 
 import numpy
