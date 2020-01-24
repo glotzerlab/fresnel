@@ -5,7 +5,8 @@
 #define __INTERSECT_SPHERE_H__
 
 // need to declare these class methods with __device__ qualifiers when building in nvcc
-// DEVICE is __host__ __device__ when included in nvcc and blank when included into the host compiler
+// DEVICE is __host__ __device__ when included in nvcc and blank when included into the host
+// compiler
 #undef DEVICE
 #ifdef __CUDACC__
 #define DEVICE __host__ __device__
@@ -40,49 +41,49 @@ DEVICE inline bool intersect_ray_sphere(float& t,
                                         const vec3<float>& d,
                                         const vec3<float>& p,
                                         const float r)
-    {
+{
     // vector from sphere to ray origin
-    vec3<float> v = p-o;
+    vec3<float> v = p - o;
 
     // solve intersection via quadratic formula
-    float b = dot(v,d);
-    float det = b*b - dot(v,v) + r*r;
+    float b = dot(v, d);
+    float det = b * b - dot(v, v) + r * r;
 
     // no solution when determinant is negative
     if (det < 0)
         return false;
 
     // the ray intersects the sphere, compute the distance in the viewing plane
-    const vec3<float> w = cross(v,d);
-    const float Dsq = dot(w,w); // assumes ray direction is normalized
+    const vec3<float> w = cross(v, d);
+    const float Dsq = dot(w, w); // assumes ray direction is normalized
     // The distance of the hit position from the edge of the sphere,
     // projected into the plane which has the ray as it's normal
     d_edge = r - fast::sqrt(Dsq);
 
     // solve the quadratic equation
-    det=fast::sqrt(det);
+    det = fast::sqrt(det);
 
     // first case
     t = b - det;
     if (t > sphere_epsilon)
-        {
-        N = o+t*d-p;
+    {
+        N = o + t * d - p;
         return true;
-        }
+    }
 
     // second case (origin is inside the sphere)
     t = b + det;
     if (t > sphere_epsilon)
-        {
-        N = -(o+t*d-p);
+    {
+        N = -(o + t * d - p);
         return true;
-        }
+    }
 
     // both cases intersect the sphere behind the origin
     return false;
-    }
-
 }
+
+} // namespace fresnel
 
 #undef DEVICE
 

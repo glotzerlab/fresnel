@@ -8,7 +8,8 @@
 #include <iostream>
 
 // need to declare these class methods with __device__ qualifiers when building in nvcc
-// DEVICE is __host__ __device__ when included in nvcc and blank when included into the host compiler
+// DEVICE is __host__ __device__ when included in nvcc and blank when included into the host
+// compiler
 #undef DEVICE
 #ifdef __CUDACC__
 #define DEVICE __host__ __device__
@@ -39,10 +40,18 @@ triangle and if so, also returns the barycentric coordinates (u,v,w)
 of the intersection point
 Note: the triangle is assumed to be oriented counter-clockwise when viewed from the direction of p
 */
-DEVICE inline bool intersect_ray_triangle(float &u, float &v, float &w, float &t, float &d_edge,
-                                          vec3<float>& n, const vec3<float>& p, const vec3<float>& q,
-                                          const vec3<float>& a, const vec3<float>& b, const vec3<float>& c)
-    {
+DEVICE inline bool intersect_ray_triangle(float& u,
+                                          float& v,
+                                          float& w,
+                                          float& t,
+                                          float& d_edge,
+                                          vec3<float>& n,
+                                          const vec3<float>& p,
+                                          const vec3<float>& q,
+                                          const vec3<float>& a,
+                                          const vec3<float>& b,
+                                          const vec3<float>& c)
+{
     vec3<float> ab = b - a;
     vec3<float> ac = c - a;
     vec3<float> qp = p - q;
@@ -54,22 +63,26 @@ DEVICE inline bool intersect_ray_triangle(float &u, float &v, float &w, float &t
     // Compute denominator d. If d <= 0, segment is parallel to or points
     // away from triangle, so exit early
     float d = dot(qp, n);
-    if (d <= float(0.0)) return false;
+    if (d <= float(0.0))
+        return false;
 
     // Compute intersection t value of pq with plane of triangle. A ray
     // intersects iff 0 <= t. Segment intersects iff 0 <= t <= 1. Delay
     // dividing by d until intersection has been found to pierce triangle
     vec3<float> ap = p - a;
     t = dot(ap, n);
-    if (t < float(0.0)) return false;
-//    if (t > d) return false; // For segment; exclude this code line for a ray test
+    if (t < float(0.0))
+        return false;
+    //    if (t > d) return false; // For segment; exclude this code line for a ray test
 
     // Compute barycentric coordinate components and test if within bounds
     vec3<float> e = cross(qp, ap);
     v = dot(ac, e);
-    if (v < float(0.0) || v > d) return false;
+    if (v < float(0.0) || v > d)
+        return false;
     w = -dot(ab, e);
-    if (w < float(0.0) || v + w > d) return false;
+    if (w < float(0.0) || v + w > d)
+        return false;
 
     // Segment/ray intersects triangle. Perform delayed division and
     // compute the last barycentric coordinate component
@@ -83,42 +96,42 @@ DEVICE inline bool intersect_ray_triangle(float &u, float &v, float &w, float &t
     vec3<float> edge;
     vec3<float> pt;
     if (u < v)
-        {
+    {
         if (u < w)
-            {
+        {
             edge = c - b;
             pt = b;
-            }
-        else
-            {
-            edge =  b - a;
-            pt = a;
-            }
         }
-    else
-        {
-        if (v < w)
-            {
-            edge = a - c;
-            pt = c;
-            }
         else
-            {
+        {
             edge = b - a;
             pt = a;
-            }
         }
+    }
+    else
+    {
+        if (v < w)
+        {
+            edge = a - c;
+            pt = c;
+        }
+        else
+        {
+            edge = b - a;
+            pt = a;
+        }
+    }
 
     // find the distance from the hit point to the line
-    vec3<float> r_hit = p + t * (q-p);
+    vec3<float> r_hit = p + t * (q - p);
     vec3<float> vec = cross(edge, r_hit - pt);
-    float dsq = dot(vec, vec) / dot(edge,edge);
+    float dsq = dot(vec, vec) / dot(edge, edge);
     d_edge = sqrt(dsq);
 
     return true;
-    }
-
 }
+
+} // namespace fresnel
 
 #undef DEVICE
 
