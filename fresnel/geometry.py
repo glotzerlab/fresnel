@@ -223,7 +223,6 @@ class Box(Cylinder):
         :doc:`examples/02-Advanced-topics/05-GSD-visualization`
             Tutorial: Visualizing GSD files
 
-
     Note:
         The constructor arguments ``radius`` and ``color`` are optional. If you
         do not provide them, they are initialized to 0.5 and black,
@@ -234,7 +233,7 @@ class Box(Cylinder):
         individually. The convenience attributes ``box_radius`` and
         ``box_color`` can be used to easily modify the thickness and color of
         the box. If the individual cylinders are modified, the getter for the
-        ``box_radius` will return the radius of the 0th element cylinder.
+        ``box_radius`` will return the radius of the 0th element cylinder.
 
     Attributes:
         points (:py:class:`fresnel.util.Array`): Read or modify the start and

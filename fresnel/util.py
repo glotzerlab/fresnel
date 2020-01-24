@@ -83,7 +83,7 @@ class ImageArray(Array):
     are represented as ``WxHx4`` :py:class:`numpy.ndarray` of ``uint8`` values
     in **RGBA** format.
 
-    When a :py:class:`image_array` is the result of an image in a Jupyter
+    When a :py:class:`ImageArray` is the result of an image in a Jupyter
     notebook cell, Jupyter will display the image.
     """
 
