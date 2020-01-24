@@ -15,16 +15,15 @@ dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 def scene_box(device):
     scene = fresnel.Scene(device, lights=conftest.test_lights())
 
-    fresnel.geometry.Box(
-        scene,
-        [1, 2, 3, 0.4, 0.5, 0.6],
-        box_radius=0.2,
-        box_color=[1, 0, 1],
-    )
+    fresnel.geometry.Box(scene,
+                         [1, 2, 3, 0.4, 0.5, 0.6],
+                         box_radius=0.2,
+                         box_color=[1, 0, 1])
 
-    scene.camera = fresnel.camera.orthographic(
-        position=(10, 10, 10), look_at=(0, 0, 0), up=(0, 1, 0), height=4
-    )
+    scene.camera = fresnel.camera.orthographic(position=(10, 10, 10),
+                                               look_at=(0, 0, 0),
+                                               up=(0, 1, 0),
+                                               height=4)
 
     return scene
 
@@ -39,12 +38,11 @@ def test_render(scene_box_, generate=False):
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode="RGBA").save(
-            open("output/test_geometry_box.test_render.png", "wb"), "png"
-        )
+            open("output/test_geometry_box.test_render.png", "wb"), "png")
     else:
         conftest.assert_image_approx_equal(
-            buf_proxy[:], dir_path / "reference" / "test_geometry_box.test_render.png"
-        )
+            buf_proxy[:],
+            dir_path / "reference" / "test_geometry_box.test_render.png")
 
 
 def test_radius(scene_box_, generate=False):
@@ -58,12 +56,11 @@ def test_radius(scene_box_, generate=False):
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode="RGBA").save(
-            open("output/test_geometry_box.test_radius.png", "wb"), "png"
-        )
+            open("output/test_geometry_box.test_radius.png", "wb"), "png")
     else:
         conftest.assert_image_approx_equal(
-            buf_proxy[:], dir_path / "reference" / "test_geometry_box.test_radius.png"
-        )
+            buf_proxy[:],
+            dir_path / "reference" / "test_geometry_box.test_radius.png")
 
 
 def test_color(scene_box_, generate=False):
@@ -78,12 +75,11 @@ def test_color(scene_box_, generate=False):
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode="RGBA").save(
-            open("output/test_geometry_box.test_color.png", "wb"), "png"
-        )
+            open("output/test_geometry_box.test_color.png", "wb"), "png")
     else:
         conftest.assert_image_approx_equal(
-            buf_proxy[:], dir_path / "reference" / "test_geometry_box.test_color.png"
-        )
+            buf_proxy[:],
+            dir_path / "reference" / "test_geometry_box.test_color.png")
 
 
 def test_box_radius(scene_box_, generate=False):
@@ -97,12 +93,11 @@ def test_box_radius(scene_box_, generate=False):
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode="RGBA").save(
-            open("output/test_geometry_box.test_box_radius.png", "wb"), "png"
-        )
+            open("output/test_geometry_box.test_box_radius.png", "wb"), "png")
     else:
         conftest.assert_image_approx_equal(
-            buf_proxy[:], dir_path / "reference" / "test_geometry_box.test_box_radius.png"
-        )
+            buf_proxy[:],
+            dir_path / "reference" / "test_geometry_box.test_box_radius.png")
 
 
 def test_box_color(scene_box_, generate=False):
@@ -116,12 +111,11 @@ def test_box_color(scene_box_, generate=False):
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode="RGBA").save(
-            open("output/test_geometry_box.test_box_color.png", "wb"), "png"
-        )
+            open("output/test_geometry_box.test_box_color.png", "wb"), "png")
     else:
         conftest.assert_image_approx_equal(
-            buf_proxy[:], dir_path / "reference" / "test_geometry_box.test_box_color.png"
-        )
+            buf_proxy[:],
+            dir_path / "reference" / "test_geometry_box.test_box_color.png")
 
 
 def test_box_update(scene_box_, generate=False):
@@ -133,7 +127,7 @@ def test_box_update(scene_box_, generate=False):
         [1, 1.2, 2, 0.2, 0, 0.9],
         box_tuple(2, 2, 3, 0.5, 0.5, 0.7),
         {"Lx": 1, "Ly": 2, "Lz": 1, "xy": 0.4, "xz": 0.5, "yz": 0.3},
-    ]
+        ]
 
     for update_box in box_list:
 
@@ -150,14 +144,15 @@ def test_box_update(scene_box_, generate=False):
 
         if generate:
             PIL.Image.fromarray(buf_proxy[:], mode="RGBA").save(
-                open(f"output/test_geometry_box.test_render{box_index}.png", "wb"),
-                "png",
-            )
+                open(f"output/test_geometry_box.test_render{box_index}.png",
+                     "wb"),
+                "png")
         else:
             conftest.assert_image_approx_equal(
-                    buf_proxy[:],
-                    dir_path / "reference" / f"test_geometry_box.test_render{box_index}.png",
-            )
+                buf_proxy[:],
+                dir_path
+                / "reference"
+                / f"test_geometry_box.test_render{box_index}.png")
 
 
 if __name__ == "__main__":
