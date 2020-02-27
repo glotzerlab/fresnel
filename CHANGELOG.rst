@@ -6,8 +6,8 @@ Change log
 v0.x
 ----
 
-v0.12.0 (not yet released)
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+v0.12.0 (2020-02-27)
+^^^^^^^^^^^^^^^^^^^^
 
 *Added*
 
@@ -18,7 +18,7 @@ v0.12.0 (not yet released)
 
 * ``preview`` and ``tracer.Preview`` enable anti-alisasing by default.
 * Python, Cython, and C code must follow strict style guidelines.
-* Renamed ``util.Array`` to ``util.Array``
+* Renamed ``util.array`` to ``util.Array``
 * Renamed ``util.image_array`` to ``util.ImageArray``
 * Converted ``interact.SceneView.setScene`` to a property: ``scene``
 

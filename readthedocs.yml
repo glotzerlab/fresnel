@@ -11,3 +11,6 @@ submodules:
     recursive: true
 
 formats: all
+
+build:
+  image: stable
