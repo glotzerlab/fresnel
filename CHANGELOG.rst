@@ -27,8 +27,6 @@ v0.12.0 (2020-02-27)
 * ``preview`` and ``tracer.Preview`` no longer accept the ``aa_level`` argument
   - use ``anti_alias``.
 
-*Fixed*
-
 v0.11.0 (2019-10-30)
 ^^^^^^^^^^^^^^^^^^^^
 
