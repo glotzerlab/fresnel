@@ -60,6 +60,9 @@ stages:
         mac10_14:
           mac_image: macOS-10.14
 
+        mac10_15:
+          mac_image: macOS-10.15
+
     pool:
       vmImage: '$(mac_image)'
 
