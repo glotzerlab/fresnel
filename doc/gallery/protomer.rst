@@ -5,7 +5,7 @@ Protomer
     :width: 690px
     :alt: Protomer
 
-Protomer on the cover of `nature chemistry volume 11, issue 3 <https://www.nature.com/nchem/volumes/11/issues/3>`_:
+Protomer on the cover of `Nature Chemistry volume 11, issue 3 <https://www.nature.com/nchem/volumes/11/issues/3>`_:
 
 * Ribbon geometry: :py:class:`geometry.Mesh <fresnel.geometry.Mesh>`
 
