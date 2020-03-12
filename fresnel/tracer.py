@@ -231,6 +231,24 @@ class Path(Tracer):
             scene (:py:class:`Scene <fresnel.Scene>`): The scene to render.
             samples (int): The number of samples to take per pixel.
             reset (bool): When True, call :py:meth:`reset()` before sampling
+            light_samples (int): The number of light samples per primary camera
+                ray.
+
+        As an unbiased renderer, the sampling noise will scale as
+        :math:`\frac{1}{\sqrt{\text{total_samples}}}`, where ``total_samples``
+        is ``samples*light_samples``.
+
+        The ``samples`` parameter controls the number of antialiasing samples
+        from the camera. ``light_samples`` is the number of rays shot from the
+        first intersection of the primary camera ray.
+
+        Using ``(samples=N, light_samples=1)`` would have an equal number of
+        camera and lighting samples and would produce an excellent image. Using
+        ``(samples=N // M, light_samples=M)`` (where ``M`` is some integer
+        10-100) will similarly produce a similarly good image, provided ``N >>
+        M``, and may have better performance. On the GPU, using ``light_samples
+        > 1`` can boost performance moderately. On the CPU, it can boost
+        performance slightly due to improved cache coherency.
 
         Returns:
             A reference to the current output buffer as a
