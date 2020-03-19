@@ -20,6 +20,11 @@ Gallery
     :alt: Spheres
     :target: gallery/sphere.html
 
+.. image:: gallery/gumballs.png
+    :width: 220px
+    :alt: Gumballs
+    :target: gallery/gumballs.html
+
 Research
 =========
 
@@ -34,3 +39,4 @@ Features
 
     gallery/cuboid.rst
     gallery/sphere.rst
+    gallery/gumballs.rst
