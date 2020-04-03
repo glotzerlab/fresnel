@@ -88,8 +88,7 @@ RT_PROGRAM void path_ray_gen()
     {
         prd.attenuation = RGB<float>(1.0f, 1.0f, 1.0f);
         prd.done = false;
-        prd.origin = cam.origin(sample_loc);
-        prd.direction = cam.direction(sample_loc);
+        cam.generateRay(prd.origin, prd.direction, sample_loc, launch_index.x, launch_index.y, n_samples);
 
         for (prd.depth = 0;; prd.depth++)
         {

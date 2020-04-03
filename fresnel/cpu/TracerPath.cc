@@ -7,7 +7,7 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "tbb/tbb.h"
+#include "tbb/parallel_for.h"
 
 using namespace tbb;
 
@@ -51,7 +51,7 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
     const RGB<float> background_color = scene->getBackgroundColor();
     const float background_alpha = scene->getBackgroundAlpha();
 
-    const Camera cam(scene->getCamera());
+    const Camera cam(scene->getCamera(), m_linear_out->getW(), m_linear_out->getH(), m_seed);
     const Lights lights(scene->getLights(), cam);
     Tracer::render(scene);
 
@@ -105,12 +105,12 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                             RTCRayHit ray_hit_initial;
                             RTCRay& ray_initial = ray_hit_initial.ray;
 
-                            const vec3<float>& org = cam.origin(sample_loc);
+                            vec3<float> org, dir;
+                            cam.generateRay(org, dir, sample_loc, i, j, m_n_samples); // TODO: AA importance sampling in Camera
                             ray_initial.org_x = org.x;
                             ray_initial.org_y = org.y;
                             ray_initial.org_z = org.z;
 
-                            const vec3<float>& dir = cam.direction(sample_loc);
                             ray_initial.dir_x = dir.x;
                             ray_initial.dir_y = dir.y;
                             ray_initial.dir_z = dir.z;

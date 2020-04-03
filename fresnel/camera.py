@@ -51,6 +51,11 @@ class Camera(object):
     def __init__(self, _camera=None):
         if _camera is None:
             self._camera = _common.UserCamera()
+            self.position = (0, 0, 0)
+            self.look_at = (0, 0, 1)
+            self.up = (0, 1, 0)
+            self.height = 1
+            self.mode = 'orthographic'
         else:
             self._camera = _camera
 
@@ -97,11 +102,135 @@ class Camera(object):
         self._camera.h = float(value)
 
     @property
+    def focal_length(self):
+        """Focal length of the camera lens.
+
+        note:
+            `focal_length` is only used with the `pinhole` and `thin_lens`
+            models.
+        """
+        return self._camera.f
+
+    @focal_length.setter
+    def focal_length(self, value):
+        self._camera.f = value
+
+    @property
+    def f_stop(self):
+        """F-stop value for the lens.
+
+        Set the aperture of the opening into the lens in f-stops. This controls
+        the depth of field in the ``thin_lens`` model.
+
+        Note:
+            :py:attr:`f_stop` is only used with the ``thin_lens``
+            :py:attr:`model`.
+
+        See:
+            :py:attr:`depth_of_field`
+        """
+        return self._camera.f_stop
+
+    @f_stop.setter
+    def f_stop(self, value):
+        self._camera.f_stop = value
+
+    @property
     def basis(self):
+        # TODO: use a more normal basis set
         b = _common.CameraBasis(self._camera)
         return ((b.r.x, b.r.y, b.r.z),
                 (b.d.x, b.d.y, b.d.z),
                 (b.u.x, b.u.y, b.u.z))
+
+    @property
+    def model(self):
+        """The camera type to model.
+
+        Valid values are:
+
+        * "orthographic"
+        * "pinhole"
+        * "thin_lens"
+        """
+        return self._camera.model.name
+
+    @model.setter
+    def model(self, value):
+        self._camera.model = getattr(_common.CameraModel, value)
+
+    @property
+    def subject_distance(self):
+        """Distance to the subject.
+
+        The subject distance is the distance from the camera position
+        (:py:attr:`position`) to the center of thefocal plane
+        (:py:attr:`look_at`).
+
+        Setting :py:attr:`subject_distance` will modify :py:attr:`look_at`
+        to match the given distance.
+        """
+        look = numpy.array(self.look_at) - numpy.array(self.position)
+        return numpy.sqrt(numpy.dot(look, look))
+
+    @subject_distance.setter
+    def subject_distance(self, value):
+        look_at = numpy.array(self.look_at)
+        position = numpy.array(self.position)
+
+        # form a normal vector in the direction of the camera
+        look = look_at - position
+        look /= numpy.sqrt(numpy.dot(look, look))
+
+        # move look_at to the new distance
+        self.look_at = position + value * look
+
+    @property
+    def depth_of_field(self):
+        """The distance about the focal plane in sharp focus.
+
+        Note:
+            Depth of field only applies when using the ``thin_lens`` model.
+
+        The area of sharp focus is centered at the :py:attr:`look_at` point
+        and extends in front of and behind the focal plane. The distance
+        between the front and back areas of sharp focus is the depth of field.
+
+        The depth of field is a function of by the subject distance (the
+        distance between :py:attr:`position` and :py:attr:`look_at`), the focal
+        length of the lens (:py:attr:`focal_length`), the size of the aperture
+        (:py:attr:`f_stop`), and the height of the image plane
+        (:py:attr:`height`).
+
+        Note:
+            Changing any one of these parameters can lead to a dramatic change
+            in the depth of field.
+
+        Setting :py:attr:`depth_of_field` sets :py:attr:`f_stop` to obtain
+        the desired depth of field as a function of the current values of the
+        other parameter values. If you later change the other camera properties,
+        the depth of field will change as well.
+        """
+
+        f = self.focal_length
+        N = self.f_stop
+        c = self.height / 720
+        s = self.subject_distance
+
+        H = f**2 / (N * c)
+        return s * H * (1 / (H - (s - f)) - 1 / (H + (s - f)))
+
+    @depth_of_field.setter
+    def depth_of_field(self, value):
+        f = self.focal_length
+        c = self.height / 720
+        d = value
+        s = self.subject_distance
+
+        N = (math.sqrt(c**2 * f**4 * (d**2 + s**2) * (f - s)**2)
+            + c * f**2 * s * (f - s))/(c**2 * d * (f - s)**2)
+        self.f_stop = N
+
 
     def __repr__(self):
         s = "fresnel.camera.orthographic("
@@ -154,6 +283,7 @@ def orthographic(position, look_at, up, height):
     cam.look_at = look_at
     cam.up = up
     cam.height = height
+    cam.model = "orthographic"
 
     return cam
 

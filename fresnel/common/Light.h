@@ -57,7 +57,8 @@ struct Lights
             v *= 1.0f / sqrtf(dot(v, v));
 
             // put direction into scene coordinates
-            direction[i] = v.x * cam.basis.r + v.y * cam.basis.u - v.z * cam.basis.d;
+            const CameraBasis& basis = cam.getBasis();
+            direction[i] = v.x * basis.u + v.y * basis.v + v.z * basis.w;
 
             // copy the angle
             theta[i] = lights.theta[i];

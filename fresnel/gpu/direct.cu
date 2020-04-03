@@ -92,8 +92,11 @@ RT_PROGRAM void direct_ray_gen()
             vec2<float> sample_loc = ray_gen.jitterSampleAA(aa_factor, si, sj, aa_n);
 
             // trace a ray into the scene
-            optix::Ray ray(cam.origin(sample_loc),
-                           cam.direction(sample_loc),
+            vec3<float> org, dir;
+            cam.generateRay(org, dir, sample_loc, launch_index.x, launch_index.y, 0); // TODO: jitter sampling in Camera
+
+            optix::Ray ray(org,
+                           dir,
                            TRACER_PREVIEW_RAY_ID,
                            scene_epsilon);
 
