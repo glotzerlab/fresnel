@@ -137,11 +137,10 @@ class Camera(object):
 
     @property
     def basis(self):
-        # TODO: use a more normal basis set
         b = _common.CameraBasis(self._camera)
-        return ((b.r.x, b.r.y, b.r.z),
-                (b.d.x, b.d.y, b.d.z),
-                (b.u.x, b.u.y, b.u.z))
+        return ((b.u.x, b.u.y, b.u.z),
+                (b.v.x, b.v.y, b.v.z),
+                (b.w.x, b.w.y, b.w.z))
 
     @property
     def model(self):
