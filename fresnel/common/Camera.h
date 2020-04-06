@@ -101,7 +101,7 @@ struct CameraBasis
     vec3<float> u, v, w;
 };
 
-/** Implenatation of the camera models.
+/** Implementation of the camera models.
 
     RayGen generates image sample locations in fractional coordinates that range from -0.5 to 0.5 in
     the y direction and from -0.5*aspect to 0.5*aspect in the x direction, where aspect is the
