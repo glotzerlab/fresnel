@@ -44,7 +44,7 @@ enum class CameraModel
     * up: A vector pointing up.
     * h: The height of the image plane.
 
-    Perspective and thin lens models also use:
+    Pinhole and thin lens models also use:
 
     * f: The focal length of modelled lens.
 
