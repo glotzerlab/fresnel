@@ -163,7 +163,7 @@ class Camera(object):
         """Distance to the subject.
 
         The subject distance is the distance from the camera position
-        (:py:attr:`position`) to the center of thefocal plane
+        (:py:attr:`position`) to the center of the focal plane
         (:py:attr:`look_at`).
 
         Setting :py:attr:`subject_distance` will modify :py:attr:`look_at`
