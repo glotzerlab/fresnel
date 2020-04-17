@@ -204,10 +204,10 @@ class Box(Cylinder):
 
     Args:
         scene (:py:class:`fresnel.Scene`): Add the geometry to this scene
-        box_radius (`numpy.ndarray` or `array_like`): (```1```, ```3```, or
+        box (`numpy.ndarray` or `array_like`): (```1```, ```3```, or
             ```6``` : ``float32``) Assumes 1x1 is cubic, 1x3 is orthorhombic,
             and 1x6 is triclinic.
-        radius (`float`): Radius of box edges.
+        box_radius (`float`): Radius of box edges.
         box_color (`numpy.ndarray` or `array_like`): (``1x3`` : ``float32``) -
             Color of box edges.
 
