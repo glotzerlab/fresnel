@@ -76,7 +76,6 @@ class Tracer(object):
         buffer.
         """
 
-        scene._prepare()
         self._tracer.render(scene._scene)
         return self.output
 

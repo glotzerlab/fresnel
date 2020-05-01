@@ -86,12 +86,12 @@ PYBIND11_MODULE(_common, m)
         .def_readwrite("h", &UserCamera::h)
         .def_readwrite("f", &UserCamera::f)
         .def_readwrite("f_stop", &UserCamera::f_stop)
+        .def_readwrite("focus_distance", &UserCamera::focus_distance)
         .def_readwrite("model", &UserCamera::model);
 
     pybind11::enum_<CameraModel>(m, "CameraModel")
         .value("orthographic", CameraModel::orthographic)
-        .value("pinhole", CameraModel::pinhole)
-        .value("thin_lens", CameraModel::thin_lens);
+        .value("perspective", CameraModel::perspective);
 
     pybind11::class_<CameraBasis>(m, "CameraBasis")
         .def(pybind11::init<const UserCamera&>())

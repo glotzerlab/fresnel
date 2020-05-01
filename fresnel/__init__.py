@@ -225,7 +225,13 @@ class Scene(object):
         lights (list[light.Light]): Globals lights in the scene.
     """
 
-    def __init__(self, device=None, camera='auto', lights=light.rembrandt()):
+    def __init__(self,
+                 device=None,
+                 camera=camera.Orthographic(position=(0, 0, -1),
+                                            look_at=(0, 0, 0),
+                                            up=(0, 1, 0),
+                                            height=1),
+                 lights=light.rembrandt()):
         if device is None:
             device = Device()
 
@@ -260,18 +266,11 @@ class Scene(object):
 
     @property
     def camera(self):
-        if self.auto_camera:
-            return 'auto'
-        else:
-            return camera.Camera(self._scene.getCamera())
+        return camera._from_cpp(self._scene.getCamera())
 
     @camera.setter
     def camera(self, value):
-        if value == 'auto':
-            self.auto_camera = True
-        else:
-            self._scene.setCamera(value._camera)
-            self.auto_camera = False
+        self._scene.setCamera(value._camera)
 
     @property
     def background_color(self):
@@ -301,11 +300,6 @@ class Scene(object):
             tmp.append(v)
 
         self._scene.setLights(tmp._lights)
-
-    def _prepare(self):
-        if self.auto_camera:
-            cam = camera.fit(self)
-            self._scene.setCamera(cam._camera)
 
 
 def preview(scene, w=600, h=370, anti_alias=True):

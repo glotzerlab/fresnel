@@ -2,7 +2,7 @@
 # This file is part of the Fresnel project, released under the BSD 3-Clause
 # License.
 
-R"""
+"""
 Cameras.
 """
 
@@ -13,57 +13,37 @@ from . import _common
 
 
 class Camera(object):
-    R""" Camera
+    """Camera.
 
-    Defines the view into the :py:class:`Scene <fresnel.Scene>`.
+    A `Camera` defines the view into the `Scene`.
 
-    Use one of the creation functions to create a
-    :py:class:`Camera <fresnel.camera.Camera>`:
+    `Camera` space is a coordinate system centered on the camera's position.
+    Positive *x* points to the right in the image, positive *y* points up, and
+    positive *z* points out of the screen. `Camera` space shares units with
+    `Scene` space.
 
-        * :py:func:`orthographic`
+    `Camera` provides common methods and properties for all camera
+    implementations. `Camera` cannot be used directly, use one of the
+    subclasses.
 
-    .. seealso::
-        Tutorials:
-
-        - :doc:`examples/00-Basic-tutorials/04-Scene-properties`
-
-    The camera is a property of the :py:class:`Scene <fresnel.Scene>`. You may
-    read and modify any of these camera attributes.
-
-    Attributes:
-        position (tuple[float, float, float]): the position of the camera (the
-            center of projection).
-        look_at (tuple[float, float, float]): the point the camera looks at (the
-            center of the focal plane).
-        up (tuple[float, float, float]): a vector pointing up.
-        height (float): the height of the image plane.
-        basis: three orthonormal vectors defining the camera coordinate basis in
-            right-handed order: right, look direction, up (read only)
-
-    :py:class:`Camera <fresnel.camera.Camera>` space is a coordinate system
-    centered on the camera's position. Positive *x* points to the right in the
-    image, positive *y* points up, and positive *z* points out of the screen.
-    :py:class:`Camera <fresnel.camera.Camera>` space shares units with
-    :py:class:`Scene <fresnel.Scene>` space.
-
+    See:
+        * `Orthographic`
+        * `Perspective`
     """
 
-    def __init__(self, _camera=None):
-        if _camera is None:
-            self._camera = _common.UserCamera()
-            self.position = (0, 0, 0)
-            self.look_at = (0, 0, 1)
-            self.up = (0, 1, 0)
-            self.height = 1
-            self.mode = 'orthographic'
-        else:
-            self._camera = _camera
+    def __init__(self, _camera):
+        # The Python level `Camera` class keeps a reference to a C++
+        # `UserCamera` class up to date with all parameter changes.
+        self._camera = _camera
 
     @property
     def position(self):
-        return (self._camera.position.x,
+        """(`numpy.ndarray` or `array_like`): (``3`` : ``float32``):
+                The position of the camera.
+        """
+        return numpy.array([self._camera.position.x,
                 self._camera.position.y,
-                self._camera.position.z)
+                self._camera.position.z], dtype=numpy.float32)
 
     @position.setter
     def position(self, value):
@@ -73,9 +53,14 @@ class Camera(object):
 
     @property
     def look_at(self):
-        return (self._camera.look_at.x,
+        """(`numpy.ndarray` or `array_like`): (``3`` : ``float32``):
+                The point the camera looks at.
+
+        `position` - `look_at` defines the +z direction in camera space.
+        """
+        return numpy.array([self._camera.look_at.x,
                 self._camera.look_at.y,
-                self._camera.look_at.z)
+                self._camera.look_at.z], dtype=numpy.float32)
 
     @look_at.setter
     def look_at(self, value):
@@ -85,6 +70,11 @@ class Camera(object):
 
     @property
     def up(self):
+        """(`numpy.ndarray` or `array_like`): (``3`` : ``float32``):
+                A vector that points up.
+
+        `up` defines the +y direction in camera space.
+        """
         return (self._camera.up.x, self._camera.up.y, self._camera.up.z)
 
     @up.setter
@@ -95,6 +85,8 @@ class Camera(object):
 
     @property
     def height(self):
+        """float: The height of the image plane.
+        """
         return self._camera.h
 
     @height.setter
@@ -102,149 +94,22 @@ class Camera(object):
         self._camera.h = float(value)
 
     @property
-    def focal_length(self):
-        """Focal length of the camera lens.
-
-        note:
-            `focal_length` is only used with the `pinhole` and `thin_lens`
-            models.
-        """
-        return self._camera.f
-
-    @focal_length.setter
-    def focal_length(self, value):
-        self._camera.f = value
-
-    @property
-    def f_stop(self):
-        """F-stop value for the lens.
-
-        Set the aperture of the opening into the lens in f-stops. This controls
-        the depth of field in the ``thin_lens`` model.
-
-        Note:
-            :py:attr:`f_stop` is only used with the ``thin_lens``
-            :py:attr:`model`.
-
-        See:
-            :py:attr:`depth_of_field`
-        """
-        return self._camera.f_stop
-
-    @f_stop.setter
-    def f_stop(self, value):
-        self._camera.f_stop = value
-
-    @property
     def basis(self):
+        """(`numpy.ndarray` or `array_like`): (``3x3`` : ``float32``):
+                Orthonormal camera basis.
+
+        `basis` is computed from `position`, `look_at`, and `up`. The 3 vectors
+        of the basis define the +x, +y, and +z camera space directions in
+        scene space.
+        """
         b = _common.CameraBasis(self._camera)
-        return ((b.u.x, b.u.y, b.u.z),
+        return numpy.array([(b.u.x, b.u.y, b.u.z),
                 (b.v.x, b.v.y, b.v.z),
-                (b.w.x, b.w.y, b.w.z))
-
-    @property
-    def model(self):
-        """The camera type to model.
-
-        Valid values are:
-
-        * "orthographic"
-        * "pinhole"
-        * "thin_lens"
-        """
-        return self._camera.model.name
-
-    @model.setter
-    def model(self, value):
-        self._camera.model = getattr(_common.CameraModel, value)
-
-    @property
-    def subject_distance(self):
-        """Distance to the subject.
-
-        The subject distance is the distance from the camera position
-        (:py:attr:`position`) to the center of the focal plane
-        (:py:attr:`look_at`).
-
-        Setting :py:attr:`subject_distance` will modify :py:attr:`look_at`
-        to match the given distance.
-        """
-        look = numpy.array(self.look_at) - numpy.array(self.position)
-        return numpy.sqrt(numpy.dot(look, look))
-
-    @subject_distance.setter
-    def subject_distance(self, value):
-        look_at = numpy.array(self.look_at)
-        position = numpy.array(self.position)
-
-        # form a normal vector in the direction of the camera
-        look = look_at - position
-        look /= numpy.sqrt(numpy.dot(look, look))
-
-        # move look_at to the new distance
-        self.look_at = position + value * look
-
-    @property
-    def depth_of_field(self):
-        """The distance about the focal plane in sharp focus.
-
-        Note:
-            Depth of field only applies when using the ``thin_lens`` model.
-
-        The area of sharp focus is centered at the :py:attr:`look_at` point
-        and extends in front of and behind the focal plane. The distance
-        between the front and back areas of sharp focus is the depth of field.
-
-        The depth of field is a function of by the subject distance (the
-        distance between :py:attr:`position` and :py:attr:`look_at`), the focal
-        length of the lens (:py:attr:`focal_length`), the size of the aperture
-        (:py:attr:`f_stop`), and the height of the image plane
-        (:py:attr:`height`).
-
-        Note:
-            Changing any one of these parameters can lead to a dramatic change
-            in the depth of field.
-
-        Setting :py:attr:`depth_of_field` sets :py:attr:`f_stop` to obtain
-        the desired depth of field as a function of the current values of the
-        other parameter values. If you later change the other camera properties,
-        the depth of field will change as well.
-        """
-
-        f = self.focal_length
-        N = self.f_stop
-        c = self.height / 720
-        s = self.subject_distance
-
-        H = f**2 / (N * c)
-        return s * H * (1 / (H - (s - f)) - 1 / (H + (s - f)))
-
-    @depth_of_field.setter
-    def depth_of_field(self, value):
-        f = self.focal_length
-        c = self.height / 720
-        d = value
-        s = self.subject_distance
-
-        N = (math.sqrt(c**2 * f**4 * (d**2 + s**2) * (f - s)**2)
-            + c * f**2 * s * (f - s))/(c**2 * d * (f - s)**2)
-        self.f_stop = N
+                (b.w.x, b.w.y, b.w.z)], dtype=numpy.float32)
 
 
-    def __repr__(self):
-        s = "fresnel.camera.orthographic("
-        s += f"position={self.position}, "
-        s += f"look_at={self.look_at}, "
-        s += f"up={self.up}, "
-        s += f"height={self.height})"
-        return s
-
-    def __str__(self):
-        return "<Camera object with position {0}>".format(self.position)
-
-
-def orthographic(position, look_at, up, height):
-    R""" Orthographic camera
+class Orthographic(Camera):
+    """Orthographic camera.
 
     Args:
         position (`numpy.ndarray` or `array_like`): (``3`` : ``float32``) - the
@@ -256,113 +121,336 @@ def orthographic(position, look_at, up, height):
         height (float): the height of the image plane.
 
     An orthographic camera traces parallel rays from the image plane into the
-    scene. Lines that are parallel in the :py:class:`Scene <fresnel.Scene>` will
-    remain parallel in the rendered image.
+    scene. Lines that are parallel in the `Scene` will remain parallel in the
+    rendered image.
 
-    *position* is the center of the image plane in
-    :py:class:`Scene <fresnel.Scene>` space. *look_at* is the point in
-    :py:class:`Scene <fresnel.Scene>` space that will be in the center of the
-    image.  Together, these vectors define the image plane which is
-    perpendicular to the line from *position* to *look_at*. Objects in front of
-    the plane will appear in the rendered image, objects behind the plane will
-    not.
+    `position` is the center of the image plane in `Scene` space. `look_at` is
+    the point in `Scene` space that will be in the center of the image.
+    Together, these vectors define the image plane which is perpendicular to the
+    line from `position` to `look_at`. Objects in front of the plane will appear
+    in the rendered image, objects behind the plane will not.
 
-    *up* is a vector in :py:class:`Scene <fresnel.Scene>` space that defines
-    which direction points up (+y direction in the image). *up* does not need to
-    be perpendicular to the line from *position* to *look_at*, but it must not
-    be parallel to that line. *height* sets the height of the image in
-    :py:class:`Scene <fresnel.Scene>` units. The image width is determined by
-    the aspect ratio of the image. The area *width* by *height* about the
-    *look_at* point will be included in the rendered image.
-
+    `up` is a vector in `Scene` space that defines which direction points up (+y
+    direction in the camera space). `up` does not need to be perpendicular to
+    the line from *position* to *look_at*, but it must not be parallel to that
+    line. `height` sets the height of the image in `Scene` units. The image
+    width is determined by the aspect ratio of the image.
     """
 
-    cam = Camera()
-    cam.position = position
-    cam.look_at = look_at
-    cam.up = up
-    cam.height = height
-    cam.model = "orthographic"
+    def __init__(self, position, look_at, up, height):
+        cam = _common.UserCamera()
+        cam.model = _common.CameraModel.orthographic
 
-    return cam
+        super().__init__(cam)
+
+        self.position = position
+        self.look_at = look_at
+        self.up = up
+        self.height = height
+
+    def __repr__(self):
+        s = "fresnel.camera.Orthographic("
+        s += f"position={self.position}, "
+        s += f"look_at={self.look_at}, "
+        s += f"up={self.up}, "
+        s += f"height={self.height})"
+        return s
+
+    @classmethod
+    def fit(cls, scene, view='auto', margin=0.05):
+        """Fit a camera to a `Scene`
+
+        Create a camera that fits the entire height of the scene in the image
+        plane.
+
+        Args:
+            scene (`Scene`): Fit the camera to this scene.
+            view (str): Select view
+            margin (float): Fraction of extra space to leave on the top and
+                bottom of the scene.
+
+        *view* may be 'auto', 'isometric', or 'front'.
+
+        The isometric view is an orthographic projection from a particular angle
+        so that the x,y, and z directions are equal lengths. The front view is
+        an orthographic projection where +x points to the right, +y points up
+        and +z points out of the screen in the image plane. 'auto' automatically
+        selects 'isometric' for 3D scenes and 'front' for 2D scenes.
+        """
+
+        vectors = {'front': dict(v=numpy.array([0, 0, 1]),
+                                up=numpy.array([0, 1, 0]),
+                                right=numpy.array([1, 0, 0])),
+                'isometric': dict(v=numpy.array([1, 1, 1]) / math.sqrt(3),
+                                    up=numpy.array([-1, 2, -1]) / math.sqrt(6),
+                                    right=numpy.array([1, 0, -1]) / math.sqrt(2))
+                }
+
+        # raise error if the scene is empty
+        if len(scene.geometry) == 0:
+            raise ValueError('The camera cannot be fit because the scene has no'
+                             ' geometries. Add geometries to the scene before'
+                             ' calling fit.')
+
+        # find the center of the scene
+        extents = scene.get_extents()
+
+        # choose an appropriate view automatically
+        if view == 'auto':
+            xw = extents[1, 0] - extents[0, 0]
+            yw = extents[1, 1] - extents[0, 1]
+            zw = extents[1, 2] - extents[0, 2]
+
+            if zw < 0.51 * max(xw, yw):
+                view = 'front'
+            else:
+                view = 'isometric'
+
+        v = vectors[view]['v']
+        up = vectors[view]['up']
+
+        # make a list of points of the cube surrounding the scene
+        points = numpy.array([[extents[0, 0], extents[0, 1], extents[0, 2]],
+                            [extents[0, 0], extents[0, 1], extents[1, 2]],
+                            [extents[0, 0], extents[1, 1], extents[0, 2]],
+                            [extents[0, 0], extents[1, 1], extents[1, 2]],
+                            [extents[1, 0], extents[0, 1], extents[0, 2]],
+                            [extents[1, 0], extents[0, 1], extents[1, 2]],
+                            [extents[1, 0], extents[1, 1], extents[0, 2]],
+                            [extents[1, 0], extents[1, 1], extents[1, 2]]])
+
+        # find the center of the box
+        center = (extents[0, :] + extents[1, :]) / 2
+        points = points - center
+
+        # determine the extent of the scene box in the up direction
+        up_projection = numpy.dot(points, up)
+        height = (1 + margin) * numpy.max(numpy.abs(up_projection)) * 2
+
+        # determine the extent of the scene box in the view direction
+        view_projection = numpy.dot(points, v)
+        view_distance = numpy.max(view_projection) * 1.10
+
+        # build the camera
+        return cls(position=center + view_distance * v,
+                            look_at=center,
+                            up=up,
+                            height=height)
 
 
-def fit(scene, view='auto', margin=0.05):
-    R""" Fit a camera to a :py:class:`Scene <fresnel.Scene>`
+class Perspective(Camera):
+    """Perspective camera.
 
-    Create a camera that fits the entire height of the scene in the image plane.
-
-    Args:
-        scene (:py:class:`Scene <fresnel.Scene>`): Fit the camera to this scene.
-        view (str): Select view
-        margin (float): Fraction of extra space to leave on the top and bottom
-            of the scene.
-
-    *view* may be 'auto', 'isometric', or 'front'.
-
-    The isometric view is an orthographic projection from a particular angle so
-    that the x,y, and z directions are equal lengths. The front view is an
-    orthographic projection where +x points to the right, +y points up and +z
-    points out of the screen in the image plane. 'auto' automatically selects
-    'isometric' for 3D scenes and 'front' for 2D scenes.
+    TODO:
     """
 
-    vectors = {'front': dict(v=numpy.array([0, 0, 1]),
-                             up=numpy.array([0, 1, 0]),
-                             right=numpy.array([1, 0, 0])),
-               'isometric': dict(v=numpy.array([1, 1, 1]) / math.sqrt(3),
-                                 up=numpy.array([-1, 2, -1]) / math.sqrt(6),
-                                 right=numpy.array([1, 0, -1]) / math.sqrt(2))
-               }
+    def __init__(self,
+                 position,
+                 look_at,
+                 up,
+                 focus_distance=10,
+                 focal_length=.5,
+                 f_stop=math.inf,
+                 height=0.24):
+        cam = _common.UserCamera()
+        cam.model = _common.CameraModel.perspective
 
-    # raise error if the scene is empty
-    if len(scene.geometry) == 0:
-        raise ValueError('The camera cannot be fit because the scene has no '
-                         'geometries. Add geometries to the scene before '
-                         'calling fit.')
+        super().__init__(cam)
 
-    # find the center of the scene
-    extents = scene.get_extents()
+        self.position = position
+        self.look_at = look_at
+        self.up = up
+        self.focus_distance = focus_distance
+        self.focal_length = focal_length
+        self.f_stop = f_stop
+        self.height = height
 
-    # choose an appropriate view automatically
-    if view == 'auto':
-        xw = extents[1, 0] - extents[0, 0]
-        yw = extents[1, 1] - extents[0, 1]
-        zw = extents[1, 2] - extents[0, 2]
+    def __repr__(self):
+        s = "fresnel.camera.Perspective("
+        s += f"position={self.position}, "
+        s += f"look_at={self.look_at}, "
+        s += f"up={self.up}, "
+        s += f"focus_distance={self.focus_distance}, "
+        s += f"focal_length={self.focal_length}, "
+        s += f"f_stop={self.f_stop}, "
+        s += f"height={self.height})"
+        return s
 
-        if zw < 0.51 * max(xw, yw):
-            view = 'front'
-        else:
-            view = 'isometric'
+    @property
+    def focal_length(self):
+        """Focal length of the camera lens.
 
-    v = vectors[view]['v']
-    up = vectors[view]['up']
-    # right = vectors[view]['right']
+        The focal length relative to the image `height` sets the field of view.
+        Given a fixed `height`, a larger `focal_length` gives a narrower field
+        of view.
 
-    # make a list of points of the cube surrounding the scene
-    points = numpy.array([[extents[0, 0], extents[0, 1], extents[0, 2]],
-                          [extents[0, 0], extents[0, 1], extents[1, 2]],
-                          [extents[0, 0], extents[1, 1], extents[0, 2]],
-                          [extents[0, 0], extents[1, 1], extents[1, 2]],
-                          [extents[1, 0], extents[0, 1], extents[0, 2]],
-                          [extents[1, 0], extents[0, 1], extents[1, 2]],
-                          [extents[1, 0], extents[1, 1], extents[0, 2]],
-                          [extents[1, 0], extents[1, 1], extents[1, 2]]])
+        Tip:
+            With the default height of 0.24, typical focal lengths range from
+            .18 (wide angle) to 0.5 (normal) to 6.0 (telephoto).
 
-    # find the center of the box
-    center = (extents[0, :] + extents[1, :]) / 2
-    points = points - center
+        See:
+            `vertical_field_of_view`
+        """
+        return self._camera.f
 
-    # determine the extent of the scene box in the up direction
-    up_projection = numpy.dot(points, up)
-    height = (1 + margin) * numpy.max(numpy.abs(up_projection)) * 2
+    @focal_length.setter
+    def focal_length(self, value):
+        self._camera.f = value
 
-    # determine the extent of the scene box in the view direction
-    view_projection = numpy.dot(points, v)
-    view_distance = numpy.max(view_projection) * 1.10
+    @property
+    def f_stop(self):
+        """F-stop ratio for the lens.
 
-    # build the camera
-    return orthographic(position=center + view_distance * v,
-                        look_at=center,
-                        up=up,
-                        height=height)
+        Set the aperture of the opening into the lens in f-stops. This sets the
+        range of the scene that is in sharp focus. Smaller values of `f_stop`
+        result in more background blur.
+
+        Tip:
+            Use `depth_of_field` to set the range of sharp focus in `Scene`
+            distance units.
+        """
+        return self._camera.f_stop
+
+    @f_stop.setter
+    def f_stop(self, value):
+        self._camera.f_stop = value
+
+    @property
+    def focus_distance(self):
+        """Distance to the focal plane.
+
+        The focus distance is the distance from the camera position to
+        the center of focal plane.
+
+        Tip:
+            Use `focus_on` to compute the focus distance to a particular point
+            in the `Scene`.
+        """
+        return self._camera.focus_distance
+
+    @focus_distance.setter
+    def focus_distance(self, value):
+        self._camera.focus_distance = value
+
+    @property
+    def depth_of_field(self):
+        """The distance about the focal plane in sharp focus.
+
+        The area of sharp focus extends in front and behind the focal plane. The
+        distance between the front and back areas of sharp focus is the depth
+        of field.
+
+        The depth of field is a function of `focus_distance`, `focal_length`,
+        `f_stop`, and `height`.
+
+        Setting `depth_of_field` computes `f_stop` to obtain the desired depth
+        of field as a function of `focus_distance`, `focal_length`, and
+        `height`.
+
+        Note:
+            `depth_of_field` does not remain fixed after setting it.
+        """
+
+        f = self.focal_length
+        N = self.f_stop
+        s = self.focus_distance
+
+        # c is the circle of confusion. A commonly accepted value for 35 mm
+        # cameras is 0.03mm. 35mm film is 24mm high, so c = h/(0.03 mm / 24 mm)
+        # => c = h/800
+        c = self.height / 800
+
+        H = f**2 / (N * c)
+
+        # the depth of field is infinite when focusing past the hyperfocal
+        # distance
+        if H - (s - f) <= 0 or H + (s - f) <= 0:
+            return math.inf
+
+        return s * H * (1 / (H - (s - f)) - 1 / (H + (s - f)))
+
+    @depth_of_field.setter
+    def depth_of_field(self, value):
+        f = self.focal_length
+        d = value
+        s = self.focus_distance
+
+        # c is the circle of confusion. A commonly accepted value for 35 mm
+        # cameras is 0.03mm. 35mm film is 24mm high, so c = h/(0.03 mm / 24 mm)
+        # => c = h/800
+        c = self.height / 800
+
+        N = (math.sqrt(c**2 * f**4 * (d**2 + s**2) * (f - s)**2)
+            + c * f**2 * s * (f - s))/(c**2 * d * (f - s)**2)
+        self.f_stop = N
+
+    @property
+    def focus_on(self):
+        """(`numpy.ndarray` or `array_like`): (``3`` : ``float32``):
+                A point in the focal plane.
+
+        The area of sharp focus extends in front and behind the focal plane.
+
+        The focal plane is a function of `focus_distance`, `position`, and
+        `look_at`.
+
+        Setting `focus_on` computes `focus_distance` so that the given point
+        is on the focal plane.
+
+        Note:
+            `focus_on` does not remain fixed after setting it.
+        """
+        d = -self.basis[2, :]
+        return self.position + d * self.focus_distance
+
+    @focus_on.setter
+    def focus_on(self, value):
+        if len(value) != 3:
+            raise ValueError("focus_on must have length 3")
+
+        d = -self.basis[2, :]
+        self.focus_distance = numpy.dot(d, value - self.position)
+
+    @property
+    def vertical_field_of_view(self):
+        """float: Vertical field of view.
+
+        The vertical field of view is the angle (in radians) that the camera
+        covers in the +y direction. It is a function of `focal_length`
+        and `height`.
+
+        Setting `vertical_field_of_view` computes `focal_length` to achieve
+        the given field of view.
+
+        Note:
+            `vertical_field_of_view` does not remain fixed after setting it.
+        """
+        return 2 * math.atan(self.height / (2 * self.focal_length))
+
+    @vertical_field_of_view.setter
+    def vertical_field_of_view(self, value):
+        self.focal_length = self.height / (2 * math.tan(value/2))
+
+
+def _from_cpp(cam):
+    """Make a Python camera object from a C++ UserCamera.
+
+    There is only one UserCamera class with mode flags at the C++ level while
+    we expose them as separate classes at the Python level.
+    """
+    if cam.model == _common.CameraModel.orthographic:
+        result = Orthographic(position=(0,0,0),
+                              look_at=(0,0,1),
+                              up=(0,1,0),
+                              height=1)
+        result._camera = cam
+    elif cam.model == _common.CameraModel.perspective:
+        result = Perspective(position=(0,0,0),
+                             look_at=(0,0,1),
+                             up=(0,1,0),
+                             focus_distance=1)
+        result._camera = cam
+    else:
+        raise RuntimeError("Invalid camera model")
+
+    return result

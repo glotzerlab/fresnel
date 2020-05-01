@@ -27,7 +27,7 @@ namespace fresnel {
 */
 enum class CameraModel
     {
-    orthographic, pinhole, thin_lens
+    orthographic, perspective
     };
 
 /** Store user provided camera properties.
@@ -44,24 +44,34 @@ enum class CameraModel
     * up: A vector pointing up.
     * h: The height of the image plane.
 
-    Pinhole and thin lens models also use:
+    Perspective models also use:
 
     * f: The focal length of modelled lens.
-
-    And the thin lens model uses:
-
     * f_stop: Set the aperture diameter to `f/f_stop`.
 
     All convenience methods and derived properties are implemented in Python.
 */
 struct UserCamera
 {
+    UserCamera()
+        {
+        position = vec3<float>(0,0,0);
+        look_at = vec3<float>(0,0,1);
+        up = vec3<float>(0,1,0);
+        h = 1;
+        f = 1;
+        f_stop = 1;
+        focus_distance = 1;
+        model = CameraModel::orthographic;
+        }
+
     vec3<float> position;
     vec3<float> look_at;
     vec3<float> up;
     float h;
     float f;
     float f_stop;
+    float focus_distance;
     CameraModel model;
 };
 
@@ -133,12 +143,10 @@ class Camera
                     unsigned int width,
                     unsigned int height,
                     unsigned int seed)
-        : m_p(user.position), m_basis(user), m_a(user.f/user.f_stop),
-        m_model(user.model), m_width(width), m_height(height),m_seed(seed)
+        : m_p(user.position), m_basis(user), m_focal_d(user.focus_distance),
+        m_a(user.f/user.f_stop), m_model(user.model),
+        m_width(width), m_height(height), m_seed(seed)
         {
-        vec3<float> direction = user.look_at - user.position;
-        m_focal_d = sqrtf(dot(direction, direction));
-
         // precompute focal plane height
         if (m_model == CameraModel::orthographic)
             {
@@ -178,11 +186,7 @@ class Camera
         // compute the point of convergence for rays passing through this pixel
         vec3<float> C = F + (s.y * m_basis.v + s.x * m_basis.u) * m_focal_h;
 
-        if (m_model == CameraModel::pinhole)
-        {
-            origin = m_p;
-        }
-        else if (m_model == CameraModel::thin_lens)
+        if (m_model == CameraModel::perspective)
         {
             // create the philox unique key for this RNG which includes the pixel ID and the random seed
             unsigned int pixel = j * m_width + i;
