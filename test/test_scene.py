@@ -21,7 +21,7 @@ def test_background_color(device_):
 
     assert scene.background_alpha == 0.5
 
-    scene.camera = fresnel.camera.orthographic(position=(0, 0, 10),
+    scene.camera = fresnel.camera.Orthographic(position=(0, 0, 10),
                                                look_at=(0, 0, 0),
                                                up=(0, 1, 0),
                                                height=7)
@@ -38,14 +38,14 @@ def test_background_color(device_):
 
 
 def test_camera(scene_hex_sphere_, generate=False):
-    scene_hex_sphere_.camera = fresnel.camera.orthographic(position=(1, 0, 10),
+    scene_hex_sphere_.camera = fresnel.camera.Orthographic(position=(1, 0, 10),
                                                            look_at=(1, 0, 0),
                                                            up=(0, 1, 0),
                                                            height=6)
 
-    assert scene_hex_sphere_.camera.position == (1, 0, 10)
-    assert scene_hex_sphere_.camera.look_at == (1, 0, 0)
-    assert scene_hex_sphere_.camera.up == (0, 1, 0)
+    numpy.testing.assert_array_equal(scene_hex_sphere_.camera.position, (1, 0, 10))
+    numpy.testing.assert_array_equal(scene_hex_sphere_.camera.look_at, (1, 0, 0))
+    numpy.testing.assert_array_equal(scene_hex_sphere_.camera.up, (0, 1, 0))
     assert scene_hex_sphere_.camera.height == 6
 
     buf_proxy = fresnel.preview(scene_hex_sphere_,
@@ -83,7 +83,7 @@ def test_light_dir(scene_hex_sphere_, generate=False):
 
 def test_multiple_geometries(device_, generate=False):
     scene = fresnel.Scene(lights=conftest.test_lights())
-    scene.camera = fresnel.camera.orthographic(position=(0, 0, 10),
+    scene.camera = fresnel.camera.Orthographic(position=(0, 0, 10),
                                                look_at=(0, 0, 0),
                                                up=(0, 1, 0),
                                                height=7)

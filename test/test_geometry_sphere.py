@@ -32,7 +32,7 @@ def scene_four_spheres(device):
                                    [0, 0, 1], [1, 0, 1]]
                             )
 
-    scene.camera = fresnel.camera.orthographic(position=(10, 10, 10),
+    scene.camera = fresnel.camera.Orthographic(position=(10, 10, 10),
                                                look_at=(0, 0, 0),
                                                up=(0, 1, 0),
                                                height=4)

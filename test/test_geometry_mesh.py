@@ -35,7 +35,7 @@ def scene_one_triangle(device):
 
     geometry.orientation[:] = [1, 0, 0, 0]
 
-    scene.camera = fresnel.camera.orthographic(position=(0, 0, 20),
+    scene.camera = fresnel.camera.Orthographic(position=(0, 0, 20),
                                                look_at=(0, 0, 0),
                                                up=(0, 1, 0),
                                                height=2.1)
@@ -81,7 +81,7 @@ def scene_tetrahedra(device):
         [0.25624845, 0.32632096, -0.11995704, -0.9019211],
         [-0.78025512, -0.12102377, 0.24947819, 0.56063877]]
 
-    scene.camera = fresnel.camera.orthographic(
+    scene.camera = fresnel.camera.Orthographic(
         position=(0, 0, -20), look_at=(0, 0, 0), up=(0, 1, 0), height=7.5)
 
     return scene

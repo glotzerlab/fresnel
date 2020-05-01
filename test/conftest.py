@@ -72,7 +72,7 @@ def scene_hex_sphere(device):
         solid=0.0, color=fresnel.color.linear([1, 0.874, 0.169]))
     geometry.outline_width = 0.12
 
-    scene.camera = fresnel.camera.orthographic(
+    scene.camera = fresnel.camera.Orthographic(
         position=(0, 0, 10), look_at=(0, 0, 0), up=(0, 1, 0), height=6)
 
     return scene

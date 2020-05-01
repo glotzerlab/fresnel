@@ -27,7 +27,7 @@ def scene_four_cylinders(device):
                                       [0.42, 0.267, 1])),
                               )
 
-    scene.camera = fresnel.camera.orthographic(position=(0, 2, 10),
+    scene.camera = fresnel.camera.Orthographic(position=(0, 2, 10),
                                                look_at=(0, 0, 0),
                                                up=(0, 1, 0),
                                                height=15)

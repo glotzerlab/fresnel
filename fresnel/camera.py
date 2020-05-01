@@ -75,7 +75,9 @@ class Camera(object):
 
         `up` defines the +y direction in camera space.
         """
-        return (self._camera.up.x, self._camera.up.y, self._camera.up.z)
+        return numpy.array(
+            [self._camera.up.x, self._camera.up.y, self._camera.up.z],
+            dtype=numpy.float32)
 
     @up.setter
     def up(self, value):
@@ -150,9 +152,9 @@ class Orthographic(Camera):
 
     def __repr__(self):
         s = "fresnel.camera.Orthographic("
-        s += f"position={self.position}, "
-        s += f"look_at={self.look_at}, "
-        s += f"up={self.up}, "
+        s += f"position={tuple(self.position)}, "
+        s += f"look_at={tuple(self.look_at)}, "
+        s += f"up={tuple(self.up)}, "
         s += f"height={self.height})"
         return s
 
