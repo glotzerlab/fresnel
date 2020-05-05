@@ -67,9 +67,9 @@ stages:
       vmImage: '$(mac_image)'
 
     steps:
-    - script: brew install python tbb embree cmake ninja qhull numpy
+    - script: brew install python tbb embree cmake ninja qhull
       displayName: Brew install prereqs
-    - script: python3 -m pip install pytest pillow
+    - script: python3 -m pip install pytest pillow numpy
       displayName: Pip install prereqs
     # work around broken homebrew pybind11 package
     - script: |
