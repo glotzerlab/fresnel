@@ -17,16 +17,20 @@ class Camera(object):
 
     A `Camera` defines the view into the `Scene`.
 
+    .. image:: camera.svg
+
     `Camera` space is a coordinate system centered on the camera's position.
     Positive *x* points to the right in the image, positive *y* points up, and
-    positive *z* points out of the screen. `Camera` space shares units with
-    `Scene` space.
+    positive *z* points out of the screen. The visible area in the image plane
+    is centered on `look_at` with the given `height`. `Camera` space shares
+    units with `Scene` space.
 
     `Camera` provides common methods and properties for all camera
     implementations. `Camera` cannot be used directly, use one of the
     subclasses.
 
-    See:
+    .. seealso::
+
         * `Orthographic`
         * `Perspective`
     """
@@ -38,8 +42,7 @@ class Camera(object):
 
     @property
     def position(self):
-        """(`numpy.ndarray` or `array_like`): (``3`` : ``float32``):
-                The position of the camera.
+        """((3, ) `numpy.ndarray` of ``numpy.float32``): Camera position.
         """
         return numpy.array([self._camera.position.x,
                 self._camera.position.y,
@@ -53,10 +56,10 @@ class Camera(object):
 
     @property
     def look_at(self):
-        """(`numpy.ndarray` or `array_like`): (``3`` : ``float32``):
-                The point the camera looks at.
+        """((3, ) `numpy.ndarray` of ``numpy.float32``): The point the camera
+        looks at.
 
-        `position` - `look_at` defines the +z direction in camera space.
+        ``position - look_at`` defines the *+z* direction in camera space.
         """
         return numpy.array([self._camera.look_at.x,
                 self._camera.look_at.y,
@@ -70,10 +73,11 @@ class Camera(object):
 
     @property
     def up(self):
-        """(`numpy.ndarray` or `array_like`): (``3`` : ``float32``):
-                A vector that points up.
+        """((3, ) `numpy.ndarray` of ``numpy.float32``): A vector pointing
+        toward the *+y* direction in camera space.
 
-        `up` defines the +y direction in camera space.
+        The component of `up` perpendicular to ``look_at - position`` defines
+        the *+y* direction in camera space.
         """
         return numpy.array(
             [self._camera.up.x, self._camera.up.y, self._camera.up.z],
@@ -97,12 +101,12 @@ class Camera(object):
 
     @property
     def basis(self):
-        """(`numpy.ndarray` or `array_like`): (``3x3`` : ``float32``):
-                Orthonormal camera basis.
+        """((3, 3) `numpy.ndarray` of ``numpy.float32``): Orthonormal camera
+        basis.
 
-        `basis` is computed from `position`, `look_at`, and `up`. The 3 vectors
-        of the basis define the +x, +y, and +z camera space directions in
-        scene space.
+        `basis` is computed from `position <Camera.position>`, `look_at`, and
+        `up`. The 3 vectors of the basis define the *+x*, *+y*, and *+z* camera
+        space directions in scene space.
         """
         b = _common.CameraBasis(self._camera)
         return numpy.array([(b.u.x, b.u.y, b.u.z),
@@ -114,29 +118,37 @@ class Orthographic(Camera):
     """Orthographic camera.
 
     Args:
-        position (`numpy.ndarray` or `array_like`): (``3`` : ``float32``) - the
-            position of the camera.
-        look_at (`numpy.ndarray` or `array_like`): (``3`` : ``float32``) - the
+        position ((3, ) `numpy.ndarray` of ``numpy.float32``): Camera position.
+        look_at ((3, ) `numpy.ndarray` of ``numpy.float32``): The
             point the camera looks at (the center of the focal plane).
-        up (`numpy.ndarray` or `array_like`): (``3`` : ``float32``) - a vector
-            pointing up.
-        height (float): the height of the image plane.
+        up ((3, ) `numpy.ndarray` of ``numpy.float32``): A vector pointing
+            toward the *+y* direction in camera space.
+        height (float): The height of the image plane.
 
     An orthographic camera traces parallel rays from the image plane into the
     scene. Lines that are parallel in the `Scene` will remain parallel in the
     rendered image.
 
-    `position` is the center of the image plane in `Scene` space. `look_at` is
-    the point in `Scene` space that will be in the center of the image.
-    Together, these vectors define the image plane which is perpendicular to the
-    line from `position` to `look_at`. Objects in front of the plane will appear
-    in the rendered image, objects behind the plane will not.
+    .. image:: orthographic.svg
 
-    `up` is a vector in `Scene` space that defines which direction points up (+y
-    direction in the camera space). `up` does not need to be perpendicular to
-    the line from *position* to *look_at*, but it must not be parallel to that
-    line. `height` sets the height of the image in `Scene` units. The image
-    width is determined by the aspect ratio of the image.
+    `position <Camera.position>` is the center of the image plane in `Scene`
+    space. `look_at` is the point in `Scene` space that will be in the center of
+    the image. Together, these vectors define the image plane which is
+    perpendicular to the line from `position <Camera.position>` to `look_at`.
+    Objects in front of the image plane will appear in the rendered image,
+    objects behind the plane will not.
+
+    `up` is a vector in `Scene` space that defines the (*+y*) direction in the
+    camera space). `up` does not need to be perpendicular to the line from
+    *position* to *look_at*, but it must not be parallel to that line. `height`
+    sets the height of the image in `Scene` units. The image width is determined
+    by the aspect ratio of the image.
+
+    .. tip::
+
+        Place the camera `position <Camera.position>` outside the geometry of
+        the `Scene`. Decrease `height` to zoom in and increase `height` to zoom
+        out.
     """
 
     def __init__(self, position, look_at, up, height):
@@ -162,8 +174,8 @@ class Orthographic(Camera):
     def fit(cls, scene, view='auto', margin=0.05):
         """Fit a camera to a `Scene`
 
-        Create a camera that fits the entire height of the scene in the image
-        plane.
+        Create an orthographic camera that fits the entire height of the scene
+        in the image plane.
 
         Args:
             scene (`Scene`): Fit the camera to this scene.
@@ -243,15 +255,88 @@ class Orthographic(Camera):
 class Perspective(Camera):
     """Perspective camera.
 
-    TODO:
+    Args:
+        position ((3, ) `numpy.ndarray` of ``numpy.float32``): Camera position.
+        look_at ((3, ) `numpy.ndarray` of ``numpy.float32``): The
+            point the camera looks at (the center of the focal plane).
+        up ((3, ) `numpy.ndarray` of ``numpy.float32``): A vector pointing
+            toward the *+y* direction in camera space.
+        focal_length (float): Focal length of the camera lens.
+        focus_distance (float): Distance to the focal plane.
+        f_stop (float): F-stop ratio for the lens.
+        height (float): The height of the image plane.
+
+    An perspective camera traces diverging rays from the camera position
+    through the image plane into the scene. Lines that are parallel in the
+    `Scene` will converge rendered image.
+
+    .. image:: perspective.svg
+
+    `position <Camera.position>` is the center of projection `Scene`
+    space. `look_at` is the point in `Scene` space that will be in the center of
+    the image. Together, these vectors define the image plane which is
+    perpendicular to the line from `position <Camera.position>` to `look_at`.
+
+    `up` is a vector in `Scene` space that defines the (*+y*) direction in the
+    camera space). `up` does not need to be perpendicular to the line from
+    *position* to *look_at*, but it must not be parallel to that line.
+
+    `Perspective` models an ideal thin lens camera system. `height` sets the
+    height of the image in `Scene` units. `focal_length` sets the distance
+    between `position <Camera.position>` and the image plane. The image plane is
+    like the sensor on a digital camera and is the location where the pixels in
+    the resulting image will be captured. The image width is determined by the
+    aspect ratio of the image.
+
+    Note:
+        The camera `height` should be small relative to the objects in the
+        `Scene` with those objects in front of the image plane. If the scene
+        units are decimeters, the default `height` of 0.24 is 24 mm, the height
+        of a 35 mm camera sensor.
+
+    Tip:
+        There are two ways to zoom a perspective camera. 1) Move the position
+        of the camera while keeping the focal length fixed. Photographers call
+        this "zooming with your feet" and it maintains a fixed field of view.
+        2) Increase the `focal_length` to zoom in or decrease it to zoom out
+        while keeping position fixed. This is the the equivalent of rotating
+        the focal length setting on a zoom lens. Changing `focal_length`
+        changes the field of view and the amount of distance compression.
+
+    Like a digital camera, the `Perspective` camera must be focused. The focal
+    plane is parallel to the image plane at a distance `focus_distance` from the
+    camera `position <Camera.position>`. Objects on the focal plane will be in
+    sharp focus. Objects in front of and behind the plane will be out of focus.
+    Out of focus areas in an image are called **bokeh** and can be used to draw
+    the viewer's attention to the subject that is in clear focus. The space in
+    front of and behind the focal plane that appears to be in focus is the
+    **depth of field**. Set `f_stop` to control the amount of depth of field.
+    Small, non-zero values will lead to very little depth of field and a value
+    of *inf* will extend the depth of field to infinity.
+
+    Note:
+        There are convenience methods to set the camera parameters:
+
+        * `focus_on` takes a point and computes the `focus_distance` to put that
+          point on the focal plane.
+        * `depth_of_field` computes the `f_stop` needed to achieve a given
+          depth of field.
+        * `vertical_field_of_view` computes the `focal_length` needed to achieve
+          a given field of view angle.
+
+    Tip:
+        The default `height` of 0.24 works well for scene objects that are size
+        ~1 or larger. If the typical objects in your scene are much smaller,
+        decrease `height` by an appropriate fraction.
+
     """
 
     def __init__(self,
                  position,
                  look_at,
                  up,
-                 focus_distance=10,
                  focal_length=.5,
+                 focus_distance=10,
                  f_stop=math.inf,
                  height=0.24):
         cam = _common.UserCamera()
@@ -280,7 +365,7 @@ class Perspective(Camera):
 
     @property
     def focal_length(self):
-        """Focal length of the camera lens.
+        """float: Focal length of the camera lens.
 
         The focal length relative to the image `height` sets the field of view.
         Given a fixed `height`, a larger `focal_length` gives a narrower field
@@ -301,7 +386,7 @@ class Perspective(Camera):
 
     @property
     def f_stop(self):
-        """F-stop ratio for the lens.
+        """float: F-stop ratio for the lens.
 
         Set the aperture of the opening into the lens in f-stops. This sets the
         range of the scene that is in sharp focus. Smaller values of `f_stop`
@@ -319,7 +404,7 @@ class Perspective(Camera):
 
     @property
     def focus_distance(self):
-        """Distance to the focal plane.
+        """float: Distance to the focal plane.
 
         The focus distance is the distance from the camera position to
         the center of focal plane.
@@ -336,7 +421,7 @@ class Perspective(Camera):
 
     @property
     def depth_of_field(self):
-        """The distance about the focal plane in sharp focus.
+        """float: The distance about the focal plane in sharp focus.
 
         The area of sharp focus extends in front and behind the focal plane. The
         distance between the front and back areas of sharp focus is the depth
@@ -388,13 +473,13 @@ class Perspective(Camera):
 
     @property
     def focus_on(self):
-        """(`numpy.ndarray` or `array_like`): (``3`` : ``float32``):
-                A point in the focal plane.
+        """(3, ) `numpy.ndarray` of ``numpy.float32``): A point in the focal
+        plane.
 
         The area of sharp focus extends in front and behind the focal plane.
 
-        The focal plane is a function of `focus_distance`, `position`, and
-        `look_at`.
+        The focal plane is a function of `focus_distance`,
+        `position <Camera.position>`, and `look_at`.
 
         Setting `focus_on` computes `focus_distance` so that the given point
         is on the focal plane.

@@ -31,3 +31,6 @@ def cpu_built():
 
 def gpu_built():
     return False
+
+class CameraModel():
+    orthographic=1
