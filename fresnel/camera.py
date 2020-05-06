@@ -13,7 +13,7 @@ from . import _common
 
 
 class Camera(object):
-    """Camera.
+    """Camera base class.
 
     A `Camera` defines the view into the `Scene`.
 
@@ -22,8 +22,10 @@ class Camera(object):
     `Camera` space is a coordinate system centered on the camera's position.
     Positive *x* points to the right in the image, positive *y* points up, and
     positive *z* points out of the screen. The visible area in the image plane
-    is centered on `look_at` with the given `height`. `Camera` space shares
-    units with `Scene` space.
+    is centered on `look_at` with the given `height`. The visible width is
+    ``height * aspect`` where *aspect* is the aspect ratio determined by the
+    resolution of the image in `Tracer` (``aspect = tracer.w / tracer.h``).
+    `Camera` space shares units with `Scene` space.
 
     `Camera` provides common methods and properties for all camera
     implementations. `Camera` cannot be used directly, use one of the
@@ -135,14 +137,22 @@ class Orthographic(Camera):
     space. `look_at` is the point in `Scene` space that will be in the center of
     the image. Together, these vectors define the image plane which is
     perpendicular to the line from `position <Camera.position>` to `look_at`.
-    Objects in front of the image plane will appear in the rendered image,
-    objects behind the plane will not.
 
     `up` is a vector in `Scene` space that defines the (*+y*) direction in the
     camera space). `up` does not need to be perpendicular to the line from
     *position* to *look_at*, but it must not be parallel to that line. `height`
-    sets the height of the image in `Scene` units. The image width is determined
-    by the aspect ratio of the image.
+    sets the height of the image sensor in `Scene` units. The width is ``height
+    * aspect`` where *aspect* is the aspect ratio determined by the resolution
+    of the image in `Tracer` (``aspect = tracer.w / tracer.h``).
+
+    Note:
+
+        Only objects inside the rectangular cuboid defined by corners of the
+        image sensor and the focal plane (extended to infinite height) will
+        appear in the image.
+
+        Objects in front of the image plane will appear in the rendered image,
+        objects behind the plane will not.
 
     .. tip::
 
@@ -266,7 +276,7 @@ class Perspective(Camera):
         f_stop (float): F-stop ratio for the lens.
         height (float): The height of the image plane.
 
-    An perspective camera traces diverging rays from the camera position
+    A perspective camera traces diverging rays from the camera position
     through the image plane into the scene. Lines that are parallel in the
     `Scene` will converge rendered image.
 
@@ -281,12 +291,19 @@ class Perspective(Camera):
     camera space). `up` does not need to be perpendicular to the line from
     *position* to *look_at*, but it must not be parallel to that line.
 
-    `Perspective` models an ideal thin lens camera system. `height` sets the
-    height of the image in `Scene` units. `focal_length` sets the distance
-    between `position <Camera.position>` and the image plane. The image plane is
-    like the sensor on a digital camera and is the location where the pixels in
-    the resulting image will be captured. The image width is determined by the
-    aspect ratio of the image.
+    Note:
+
+        Only objects inside the rectangular pyramid defined by the position and
+        corners of the image sensor (extended to infinite height) will appear in
+        the image.
+
+    `Perspective` models an ideal camera system with a sensor and a thin lens.
+    The sensor lies in the image plane and is the location where the pixels in
+    the rendered image will be captured. `height` sets the height of the sensor
+    in `Scene` units. The width is ``height * aspect`` where *aspect* is the
+    aspect ratio determined by the resolution of the image in `Tracer` (``aspect
+    = tracer.w / tracer.h``). `focal_length` sets the distance between `position
+    <Camera.position>` and the image plane.
 
     Note:
         The camera `height` should be small relative to the objects in the
@@ -301,7 +318,7 @@ class Perspective(Camera):
         2) Increase the `focal_length` to zoom in or decrease it to zoom out
         while keeping position fixed. This is the the equivalent of rotating
         the focal length setting on a zoom lens. Changing `focal_length`
-        changes the field of view and the amount of distance compression.
+        changes the field of view.
 
     Like a digital camera, the `Perspective` camera must be focused. The focal
     plane is parallel to the image plane at a distance `focus_distance` from the
@@ -327,7 +344,7 @@ class Perspective(Camera):
     Tip:
         The default `height` of 0.24 works well for scene objects that are size
         ~1 or larger. If the typical objects in your scene are much smaller,
-        decrease `height` by an appropriate fraction.
+        adjust `height` by an appropriate fraction.
 
     """
 
