@@ -142,10 +142,12 @@ class Camera
     explicit Camera(const UserCamera& user,
                     unsigned int width,
                     unsigned int height,
-                    unsigned int seed)
+                    unsigned int seed,
+                    bool sample_aa=true)
         : m_p(user.position), m_basis(user), m_focal_d(user.focus_distance),
         m_a(user.f/user.f_stop), m_model(user.model),
-        m_width(width), m_height(height), m_seed(seed)
+        m_width(width), m_height(height), m_seed(seed),
+        m_sample_aa(sample_aa)
         {
         // precompute focal plane height
         if (m_model == CameraModel::orthographic)
@@ -162,18 +164,18 @@ class Camera
 
         @param origin [out] Origin of the generated ray.
         @param direction [out] Normalized direction of the generated ray.
-        @param s Sample location in fractional image space
-        @param i Pixel index in the x direction
-        @param j Pixel index in the y direction
-        @param sample Index of the sample to generate
+        @param i Pixel index in the x direction.
+        @param j Pixel index in the y direction.
+        @param sample Index of the sample to generate.
     */
     DEVICE void generateRay(vec3<float> &origin,
                             vec3<float> &direction,
-                            const vec2<float>& s,
                             unsigned int i,
                             unsigned int j,
                             unsigned int sample) const
     {
+        vec2<float> s = importanceSampleAA(i, j, sample);
+
         if (m_model == CameraModel::orthographic)
             {
             origin = m_p + (s.y * m_basis.v + s.x * m_basis.u) * m_focal_h;
@@ -215,6 +217,59 @@ class Camera
 
 
     private:
+
+    /** Importance sample pixel locations for anti-aliasing
+
+        @param i Pixel index in the x direction.
+        @param j Pixel index in the y direction.
+        @param sample Index of the sample to generate.
+
+        Given the sample index, importance sample the tent filter to produce anti-aliased output.
+    */
+    DEVICE vec2<float> importanceSampleAA(unsigned int i, unsigned int j, unsigned int sample) const
+    {
+        float i_f, j_f;
+
+        if (m_sample_aa)
+            {
+            // create the philox unique key for this RNG which includes the pixel ID and the random seed
+            unsigned int pixel = j * m_width + i;
+            r123::Philox4x32::ukey_type rng_uk = {{pixel, m_seed}};
+
+            // generate 2 random numbers from 0 to 2
+            r123::Philox4x32 rng;
+            r123::Philox4x32::ctr_type rng_counter = {{0, 0, sample, rng_val_aa}};
+            r123::Philox4x32::ctr_type rng_u = rng(rng_counter, rng_uk);
+            float r1 = r123::u01<float>(rng_u[0]) * 2.0f;
+            float r2 = r123::u01<float>(rng_u[1]) * 2.0f;
+
+            // use important sampling to sample the tent filter
+            float dx, dy;
+            if (r1 < 1.0f)
+                dx = sqrtf(r1) - 1.0f;
+            else
+                dx = 1.0f - sqrtf(2.0f - r1);
+
+            if (r2 < 1.0f)
+                dy = sqrtf(r2) - 1.0f;
+            else
+                dy = 1.0f - sqrtf(2.0f - r2);
+
+            i_f = float(i) + 0.5f + dx * m_aa_w;
+            j_f = float(j) + 0.5f + dy * m_aa_w;
+            }
+        else
+            {
+            i_f = float(i) + 0.5f;
+            j_f = float(j) + 0.5f;
+            }
+
+        // determine the viewing plane relative coordinates
+        float ys = -1.0f * (j_f / float(m_height) - 0.5f);
+        float xs = i_f / float(m_height) - 0.5f * float(m_width) / float(m_height);
+        return vec2<float>(xs, ys);
+    }
+
     /// Center of projection
     vec3<float> m_p;
 
@@ -233,9 +288,6 @@ class Camera
     /// Camera model
     CameraModel m_model;
 
-    /// Counter for aperture sample placement
-    static const unsigned int rng_val_aperture = 0x983abc12;
-
     /// Width of the output image (in pixels)
     unsigned int m_width;
 
@@ -244,6 +296,18 @@ class Camera
 
     /// Random number seed
     unsigned int m_seed;
+
+    /// Flag to enable antialiasing samples
+    bool m_sample_aa;
+
+    /// Counter for aperture sample placement
+    static constexpr unsigned int rng_val_aperture = 0x983abc12;
+
+    /// Counter for anti-aliasing samples
+    static constexpr unsigned int rng_val_aa = 0x22ab5871;
+
+    /// Width of the anti-aliasing filter (in pixels)
+    static constexpr float m_aa_w = 0.707106781f;
 };
 
 } // namespace fresnel

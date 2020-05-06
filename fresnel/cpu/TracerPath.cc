@@ -93,9 +93,6 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                             // create the ray generator for this pixel
                             RayGen ray_gen(i, j, width, height, m_seed);
 
-                            // determine the viewing plane relative coordinates of this pixel
-                            vec2<float> sample_loc = ray_gen.importanceSampleAA(m_n_samples);
-
                             // per ray data
                             PRDpath prd;
                             prd.result = RGB<float>(0, 0, 0);
@@ -106,7 +103,7 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                             RTCRay& ray_initial = ray_hit_initial.ray;
 
                             vec3<float> org, dir;
-                            cam.generateRay(org, dir, sample_loc, i, j, m_n_samples); // TODO: AA importance sampling in Camera
+                            cam.generateRay(org, dir, i, j, m_n_samples);
                             ray_initial.org_x = org.x;
                             ray_initial.org_y = org.y;
                             ray_initial.org_z = org.z;

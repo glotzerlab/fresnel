@@ -41,7 +41,14 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
     const RGB<float> background_color = scene->getBackgroundColor();
     const float background_alpha = scene->getBackgroundAlpha();
 
-    const Camera camera(scene->getCamera(), m_w, m_h, m_seed);
+    // direct tracers do not support depth of field
+    UserCamera user_camera = scene->getCamera();
+    user_camera.f_stop = std::numeric_limits<float>::infinity();
+
+    // disable aa sampling with m_aa_n is 1
+    bool sample_aa = (m_aa_n != 1);
+
+    const Camera camera(user_camera, m_w, m_h, m_seed, sample_aa);
     const Lights lights(scene->getLights(), camera);
 
     Tracer::render(scene);
