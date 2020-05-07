@@ -122,10 +122,8 @@ struct CameraBasis
     the camera model. Camera preprocesses some of these inputs into values usable when generating
     rays.
 
-    Some camera models (such as thin lens) utilize random sampling. The generate() method takes a
+    Some camera models (such as perspective) utilize random sampling. The generate() method takes a
     pixel location, a user random number seed value, and a sample index.
-
-    TODO: refactor AA sampling from RayGen into the Camera class.
 */
 class Camera
 {

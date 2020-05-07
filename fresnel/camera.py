@@ -371,9 +371,9 @@ class Perspective(Camera):
 
     def __repr__(self):
         s = "fresnel.camera.Perspective("
-        s += f"position={self.position}, "
-        s += f"look_at={self.look_at}, "
-        s += f"up={self.up}, "
+        s += f"position={tuple(self.position)}, "
+        s += f"look_at={tuple(self.look_at)}, "
+        s += f"up={tuple(self.up)}, "
         s += f"focus_distance={self.focus_distance}, "
         s += f"focal_length={self.focal_length}, "
         s += f"f_stop={self.f_stop}, "
