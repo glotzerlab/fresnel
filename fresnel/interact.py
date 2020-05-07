@@ -2,7 +2,7 @@
 # This file is part of the Fresnel project, released under the BSD 3-Clause
 # License.
 
-R"""
+"""
 Interactive Qt widgets.
 """
 
@@ -111,7 +111,7 @@ class CameraController3D:
         self.camera.look_at = ax + delta_x, ay + delta_y, az + delta_z
 
     def zoom(self, s, slight=False):
-        R""" Zoom the view in or out
+        """ Zoom the view in or out
         """
         factor = 0.0015
 
@@ -123,7 +123,7 @@ class CameraController3D:
 
 
 class SceneView(QtWidgets.QWidget):
-    R""" View a fresnel Scene in real time
+    """ View a fresnel Scene in real time
 
     :py:class:`SceneView` is a PySide2 widget that displays a
     :py:class:`fresnel.Scene`, rendering it with :py:class:`fresnel.tracer.Path`

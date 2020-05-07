@@ -7,16 +7,18 @@ fresnel.light
 
 .. rubric:: Overview
 
+.. py:currentmodule:: fresnel.light
+
 .. autosummary::
     :nosignatures:
 
-    fresnel.light.Light
-    fresnel.light.butterfly
-    fresnel.light.cloudy
-    fresnel.light.lightbox
-    fresnel.light.loop
-    fresnel.light.rembrandt
-    fresnel.light.ring
+    Light
+    butterfly
+    cloudy
+    lightbox
+    loop
+    rembrandt
+    ring
 
 .. rubric:: Details
 

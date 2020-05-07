@@ -2,9 +2,7 @@
 # This file is part of the Fresnel project, released under the BSD 3-Clause
 # License.
 
-"""
-Cameras.
-"""
+"""Cameras."""
 
 import numpy
 import math
@@ -31,8 +29,7 @@ class Camera(object):
     implementations. `Camera` cannot be used directly, use one of the
     subclasses.
 
-    .. seealso::
-
+    See Also:
         * `Orthographic`
         * `Perspective`
     """
@@ -44,8 +41,7 @@ class Camera(object):
 
     @property
     def position(self):
-        """((3, ) `numpy.ndarray` of ``numpy.float32``): Camera position.
-        """
+        """((3, ) `numpy.ndarray` of ``numpy.float32``): Camera position."""
         return numpy.array([
             self._camera.position.x, self._camera.position.y,
             self._camera.position.z
@@ -60,8 +56,8 @@ class Camera(object):
 
     @property
     def look_at(self):
-        """((3, ) `numpy.ndarray` of ``numpy.float32``): The point the camera
-        looks at.
+        """((3, ) `numpy.ndarray` of ``numpy.float32``): The point the camera\
+            looks at.
 
         ``position - look_at`` defines the *+z* direction in camera space.
         """
@@ -79,8 +75,8 @@ class Camera(object):
 
     @property
     def up(self):
-        """((3, ) `numpy.ndarray` of ``numpy.float32``): A vector pointing
-        toward the *+y* direction in camera space.
+        """((3, ) `numpy.ndarray` of ``numpy.float32``): A vector pointing\
+            toward the *+y* direction in camera space.
 
         The component of `up` perpendicular to ``look_at - position`` defines
         the *+y* direction in camera space.
@@ -97,8 +93,7 @@ class Camera(object):
 
     @property
     def height(self):
-        """float: The height of the image plane.
-        """
+        """float: The height of the image plane."""
         return self._camera.h
 
     @height.setter
@@ -107,8 +102,8 @@ class Camera(object):
 
     @property
     def basis(self):
-        """((3, 3) `numpy.ndarray` of ``numpy.float32``): Orthonormal camera
-        basis.
+        """((3, 3) `numpy.ndarray` of ``numpy.float32``): Orthonormal camera\
+            basis.
 
         `basis` is computed from `position <Camera.position>`, `look_at`, and
         `up`. The 3 vectors of the basis define the *+x*, *+y*, and *+z* camera
@@ -125,10 +120,13 @@ class Orthographic(Camera):
 
     Args:
         position ((3, ) `numpy.ndarray` of ``numpy.float32``): Camera position.
+
         look_at ((3, ) `numpy.ndarray` of ``numpy.float32``): The
             point the camera looks at (the center of the focal plane).
+
         up ((3, ) `numpy.ndarray` of ``numpy.float32``): A vector pointing
             toward the *+y* direction in camera space.
+
         height (float): The height of the image plane.
 
     An orthographic camera traces parallel rays from the image plane into the
@@ -150,7 +148,6 @@ class Orthographic(Camera):
     of the image in `Tracer` (``aspect = tracer.w / tracer.h``).
 
     Note:
-
         Only objects inside the rectangular cuboid defined by corners of the
         image sensor and the focal plane (extended to infinite height) will
         appear in the image.
@@ -158,8 +155,7 @@ class Orthographic(Camera):
         Objects in front of the image plane will appear in the rendered image,
         objects behind the plane will not.
 
-    .. tip::
-
+    Tip:
         Place the camera `position <Camera.position>` outside the geometry of
         the `Scene`. Decrease `height` to zoom in and increase `height` to zoom
         out.
@@ -177,6 +173,7 @@ class Orthographic(Camera):
         self.height = height
 
     def __repr__(self):
+        """str: Representation of the camera."""
         s = "fresnel.camera.Orthographic("
         s += f"position={tuple(self.position)}, "
         s += f"look_at={tuple(self.look_at)}, "
@@ -186,14 +183,16 @@ class Orthographic(Camera):
 
     @classmethod
     def fit(cls, scene, view='auto', margin=0.05):
-        """Fit a camera to a `Scene`
+        """Fit a camera to a `Scene`.
 
         Create an orthographic camera that fits the entire height of the scene
         in the image plane.
 
         Args:
             scene (`Scene`): Fit the camera to this scene.
+
             view (str): Select view
+
             margin (float): Fraction of extra space to leave on the top and
                 bottom of the scene.
 
@@ -205,7 +204,6 @@ class Orthographic(Camera):
         and +z points out of the screen in the image plane. 'auto' automatically
         selects 'isometric' for 3D scenes and 'front' for 2D scenes.
         """
-
         vectors = {
             'front':
                 dict(v=numpy.array([0, 0, 1]),
@@ -274,13 +272,19 @@ class Perspective(Camera):
 
     Args:
         position ((3, ) `numpy.ndarray` of ``numpy.float32``): Camera position.
+
         look_at ((3, ) `numpy.ndarray` of ``numpy.float32``): The
             point the camera looks at (the center of the focal plane).
+
         up ((3, ) `numpy.ndarray` of ``numpy.float32``): A vector pointing
             toward the *+y* direction in camera space.
+
         focal_length (float): Focal length of the camera lens.
+
         focus_distance (float): Distance to the focal plane.
+
         f_stop (float): F-stop ratio for the lens.
+
         height (float): The height of the image plane.
 
     A perspective camera traces diverging rays from the camera position
@@ -299,7 +303,6 @@ class Perspective(Camera):
     *position* to *look_at*, but it must not be parallel to that line.
 
     Note:
-
         Only objects inside the rectangular pyramid defined by the position and
         corners of the image sensor (extended to infinite height) will appear in
         the image.
@@ -377,6 +380,7 @@ class Perspective(Camera):
         self.height = height
 
     def __repr__(self):
+        """str: Representation of the camera."""
         s = "fresnel.camera.Perspective("
         s += f"position={tuple(self.position)}, "
         s += f"look_at={tuple(self.look_at)}, "
@@ -399,7 +403,7 @@ class Perspective(Camera):
             With the default height of 0.24, typical focal lengths range from
             .18 (wide angle) to 0.5 (normal) to 6.0 (telephoto).
 
-        See:
+        See Also:
             `vertical_field_of_view`
         """
         return self._camera.f
@@ -461,7 +465,6 @@ class Perspective(Camera):
         Note:
             `depth_of_field` does not remain fixed after setting it.
         """
-
         f = self.focal_length
         N = self.f_stop
         s = self.focus_distance
@@ -491,15 +494,16 @@ class Perspective(Camera):
         # => c = h/800
         c = self.height / 800
 
-        N = (math.sqrt(c**2 * f**4 * (d**2 + s**2) *
-                       (f - s)**2) + c * f**2 * s * (f - s)) / (c**2 * d *
-                                                                (f - s)**2)
-        self.f_stop = N
+        a = math.sqrt(c**2 * f**4 * (d**2 + s**2) * (f - s)**2)
+        b = c * f**2 * s * (f - s)
+        numerator = a + b
+        denominator = c**2 * d * (f - s)**2
+        self.f_stop = numerator / denominator
 
     @property
     def focus_on(self):
-        """(3, ) `numpy.ndarray` of ``numpy.float32``): A point in the focal
-        plane.
+        """(3, ) `numpy.ndarray` of ``numpy.float32``): A point in the focal\
+            plane.
 
         The area of sharp focus extends in front and behind the focal plane.
 

@@ -2,7 +2,7 @@
 # This file is part of the Fresnel project, released under the BSD 3-Clause
 # License.
 
-R"""
+"""
 Geometric primitives.
 
 :py:class:`Geometry` provides operations common to all geometry classes. Use a
@@ -23,7 +23,7 @@ import numpy
 
 
 class Geometry(object):
-    R""" Base class for all geometry.
+    """ Base class for all geometry.
 
     :py:class:`Geometry` provides operations common to all geometry classes.
 
@@ -45,7 +45,7 @@ class Geometry(object):
         raise RuntimeError("Use a specific geometry class")
 
     def enable(self):
-        R""" Enable the geometry.
+        """ Enable the geometry.
 
         When enabled, the geometry will be present when rendering the scene.
         """
@@ -53,7 +53,7 @@ class Geometry(object):
         self._geometry.enable()
 
     def disable(self):
-        R""" Disable the geometry.
+        """ Disable the geometry.
 
         When disabled, the geometry will not be present in the scene.
         """
@@ -61,7 +61,7 @@ class Geometry(object):
         self._geometry.disable()
 
     def remove(self):
-        R""" Remove the geometry from the scene.
+        """ Remove the geometry from the scene.
 
         After calling remove, the geometry is no longer part of the scene. It
         cannot be added back into the scene. Use :py:meth:`disable` if you want
@@ -96,7 +96,7 @@ class Geometry(object):
 
 
 class Cylinder(Geometry):
-    R""" Cylinder geometry.
+    """ Cylinder geometry.
 
     Define a set of spherocylinder primitives with start and end positions,
     radii, and individual colors.
@@ -168,7 +168,7 @@ class Cylinder(Geometry):
         self.scene.geometry.append(self)
 
     def get_extents(self):
-        R""" Get the extents of the geometry
+        """ Get the extents of the geometry
 
         Returns:
             [[minimum x, minimum y, minimum z],
@@ -202,7 +202,7 @@ class Cylinder(Geometry):
 
 
 class Box(Cylinder):
-    R""" Box geometry.
+    """ Box geometry.
 
     Generate a triclinic box shape.
 
@@ -384,7 +384,7 @@ class Box(Cylinder):
 
 
 class Polygon(Geometry):
-    R""" Polygon geometry.
+    """ Polygon geometry.
 
     Define a set of simple polygon primitives. Each polygon face is always in
     the xy plane. Each polygon may have a different color and rotation angle.
@@ -471,7 +471,7 @@ class Polygon(Geometry):
         return util.Array(self._geometry.getColorBuffer(), geom=self)
 
     def get_extents(self):
-        R""" Get the extents of the geometry
+        """ Get the extents of the geometry
 
         Returns:
             [[minimum x, minimum y, minimum z],
@@ -489,7 +489,7 @@ class Polygon(Geometry):
 
 
 class Sphere(Geometry):
-    R""" Sphere geometry.
+    """ Sphere geometry.
 
     Define a set of sphere primitives with positions, radii, and individual
     colors.
@@ -561,7 +561,7 @@ class Sphere(Geometry):
         self.scene.geometry.append(self)
 
     def get_extents(self):
-        R""" Get the extents of the geometry
+        """ Get the extents of the geometry
 
         Returns:
             [[minimum x, minimum y, minimum z],
@@ -589,7 +589,7 @@ class Sphere(Geometry):
 
 
 class Mesh(Geometry):
-    R""" Mesh geometry.
+    """ Mesh geometry.
 
     Define a set of triangle mesh primitives.
 
@@ -682,7 +682,7 @@ class Mesh(Geometry):
         return util.Array(self._geometry.getColorBuffer(), geom=self)
 
     def get_extents(self):
-        R""" Get the extents of the geometry
+        """ Get the extents of the geometry
 
         Returns:
             [[minimum x, minimum y, minimum z],
@@ -714,7 +714,7 @@ class Mesh(Geometry):
 
 
 class ConvexPolyhedron(Geometry):
-    R""" Convex polyhedron geometry.
+    """ Convex polyhedron geometry.
 
     Define a set of convex polyhedron primitives. A convex polyhedron is defined
     by *P* outward facing planes (origin and normal vector) and a radius that
@@ -798,7 +798,7 @@ class ConvexPolyhedron(Geometry):
         self.scene.geometry.append(self)
 
     def get_extents(self):
-        R""" Get the extents of the geometry
+        """ Get the extents of the geometry
 
         Returns:
             [[minimum x, minimum y, minimum z],

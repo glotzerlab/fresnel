@@ -7,12 +7,14 @@ fresnel.camera
 
 .. rubric:: Overview
 
+.. py:currentmodule:: fresnel.camera
+
 .. autosummary::
     :nosignatures:
 
-    fresnel.camera.Camera
-    fresnel.camera.Orthographic
-    fresnel.camera.Perspective
+    Camera
+    Orthographic
+    Perspective
 
 .. rubric:: Details
 

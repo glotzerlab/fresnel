@@ -14,8 +14,8 @@ def test_background_color(device_):
 
     scene.background_color = fresnel.color.linear((0.125, 0.75, 0.375))
 
-    assert scene.background_color == tuple(
-        fresnel.color.linear((0.125, 0.75, 0.375)))
+    numpy.testing.assert_array_equal(scene.background_color,
+                                     fresnel.color.linear((0.125, 0.75, 0.375)))
 
     scene.background_alpha = 0.5
 

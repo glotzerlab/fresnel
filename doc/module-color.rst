@@ -7,10 +7,12 @@ fresnel.color
 
 .. rubric:: Overview
 
+.. py:currentmodule:: fresnel.color
+
 .. autosummary::
     :nosignatures:
 
-    fresnel.color.linear
+    linear
 
 .. rubric:: Details
 

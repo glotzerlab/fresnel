@@ -7,16 +7,19 @@ fresnel.util
 
 .. rubric:: Overview
 
+.. py:currentmodule:: fresnel.util
+
 .. autosummary::
     :nosignatures:
 
-    fresnel.util.Array
-    fresnel.util.convex_polyhedron_from_vertices
-    fresnel.util.ImageArray
+    Array
+    convex_polyhedron_from_vertices
+    ImageArray
 
 .. rubric:: Details
 
 .. automodule:: fresnel.util
     :synopsis: Utility classes.
     :members:
+    :show-inheritance:
 

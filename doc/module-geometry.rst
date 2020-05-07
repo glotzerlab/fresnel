@@ -7,15 +7,17 @@ fresnel.geometry
 
 .. rubric:: Overview
 
+.. py:currentmodule:: fresnel.geometry
+
 .. autosummary::
     :nosignatures:
 
-    fresnel.geometry.Geometry
-    fresnel.geometry.ConvexPolyhedron
-    fresnel.geometry.Cylinder
-    fresnel.geometry.Box
-    fresnel.geometry.Polygon
-    fresnel.geometry.Sphere
+    Geometry
+    ConvexPolyhedron
+    Cylinder
+    Box
+    Polygon
+    Sphere
 
 .. rubric:: Details
 

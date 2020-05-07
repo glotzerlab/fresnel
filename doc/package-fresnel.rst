@@ -7,13 +7,15 @@ fresnel
 
 .. rubric:: Overview
 
+.. py:currentmodule:: fresnel
+
 .. autosummary::
     :nosignatures:
 
-    fresnel.Device
-    fresnel.pathtrace
-    fresnel.preview
-    fresnel.Scene
+    Device
+    pathtrace
+    preview
+    Scene
 
 
 .. rubric:: Details

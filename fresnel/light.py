@@ -2,7 +2,7 @@
 # This file is part of the Fresnel project, released under the BSD 3-Clause
 # License.
 
-R"""
+"""
 Lights provide light to a :py:class:`fresnel.Scene`.
 
 Without lights, nothing will be visible in the scene. Fresnel provides a number
@@ -22,7 +22,7 @@ from . import _common
 
 
 class Light(object):
-    R""" Define a single light
+    """ Define a single light
 
     Args:
 
@@ -122,7 +122,7 @@ class _LightListProxy(object):
 
 
 def butterfly():
-    R""" Create a butterfly lighting setup.
+    """ Create a butterfly lighting setup.
 
     The butterfly portrait lighting setup is front lighting with the key light
     (index 0) placed high above the camera and the fill light (index 1) below
@@ -148,7 +148,7 @@ def butterfly():
 
 
 def loop(side='right'):
-    R""" Create a loop lighting setup.
+    """ Create a loop lighting setup.
 
     The loop portrait lighting setup places the key light slightly to one side
     of the camera and slightly up (index 0). The fill light is on the other side
@@ -185,7 +185,7 @@ def loop(side='right'):
 
 
 def rembrandt(side='right'):
-    R""" Create a Rembrandt lighting setup.
+    """ Create a Rembrandt lighting setup.
 
     The Rembrandt portrait lighting setup places the key light  45 degrees to
     one side of the camera and slightly up (index 0). The fill light is on the
@@ -222,7 +222,7 @@ def rembrandt(side='right'):
 
 
 def lightbox():
-    R""" Create a light box lighting setup.
+    """ Create a light box lighting setup.
 
     The light box lighting setup places a single massive area light that covers
     the top, bottom, left, and right. Use path tracing for best results with
@@ -239,7 +239,7 @@ def lightbox():
 
 
 def cloudy():
-    R""" Create a cloudy day lighting setup.
+    """ Create a cloudy day lighting setup.
 
     The cloudy lighting setup mimics a cloudy day. A strong light comes from all
     directions above. A weaker light comes from all directions below (accounting
@@ -260,7 +260,7 @@ def cloudy():
 
 
 def ring():
-    R""" Create a ring lighting setup.
+    """ Create a ring lighting setup.
 
     The ring lighting setup provides a strong front area light. This type of
     lighting is common in fashion photography. Use path tracing for best results
