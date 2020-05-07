@@ -113,23 +113,36 @@ def assert_image_approx_equal(a, ref_file, tolerance=1.0):
     assert msd < tolerance
 
 
-def _validate_or_generate_image(buf, name, generate):
+def _validate_or_generate_image(buf, name, generate, tolerance):
     if generate:
-        PIL.Image.fromarray(buf[:], mode='RGBA').save(
-            open(f'output/{name}.png', 'wb'), 'png')
+        PIL.Image.fromarray(buf[:],
+                            mode='RGBA').save(open(f'output/{name}.png', 'wb'),
+                                              'png')
     else:
-        assert_image_approx_equal(
-            buf[:],
-            dir_path / 'reference' / f'{name}.png')
+        assert_image_approx_equal(buf[:],
+                                  dir_path / 'reference' / f'{name}.png',
+                                  tolerance)
 
 
-def check_preview_render(scene, name, w=150, h=100, anti_alias=False, generate=False):
+def check_preview_render(scene,
+                         name,
+                         w=150,
+                         h=100,
+                         tolerance=2,
+                         anti_alias=False,
+                         generate=False):
     buf_proxy = fresnel.preview(scene, w=w, h=h, anti_alias=anti_alias)
 
-    _validate_or_generate_image(buf_proxy, name, generate)
+    _validate_or_generate_image(buf_proxy, name, generate, tolerance)
 
 
-def check_pathtrace_render(scene, name, w=150, h=100, samples=64*40, generate=False):
+def check_pathtrace_render(scene,
+                           name,
+                           w=150,
+                           h=100,
+                           tolerance=2,
+                           samples=64 * 40,
+                           generate=False):
     buf_proxy = fresnel.pathtrace(scene, w=w, h=h, samples=samples)
 
-    _validate_or_generate_image(buf_proxy, name, generate)
+    _validate_or_generate_image(buf_proxy, name, generate, tolerance)
