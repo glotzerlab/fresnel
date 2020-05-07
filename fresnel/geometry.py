@@ -178,10 +178,14 @@ class Cylinder(Geometry):
         B = self.points[:, 1]
         r = self.radius[:]
         r = r.reshape(len(r), 1)
-        res = numpy.array([numpy.min([numpy.min(A - r, axis=0),
-                                      numpy.min(B - r, axis=0)], axis=0),
-                           numpy.max([numpy.max(A + r, axis=0),
-                                      numpy.max(B + r, axis=0)], axis=0)])
+        res = numpy.array([
+            numpy.min([numpy.min(A - r, axis=0),
+                       numpy.min(B - r, axis=0)],
+                      axis=0),
+            numpy.max([numpy.max(A + r, axis=0),
+                       numpy.max(B + r, axis=0)],
+                      axis=0)
+        ])
         return res
 
     @property
@@ -244,11 +248,7 @@ class Box(Cylinder):
         box_color (`tuple`): Read or modify the color of the box material.
     """
 
-    def __init__(self,
-                 scene,
-                 box,
-                 box_radius=0.5,
-                 box_color=[0, 0, 0]):
+    def __init__(self, scene, box, box_radius=0.5, box_color=[0, 0, 0]):
 
         super().__init__(scene=scene,
                          N=12,
@@ -317,8 +317,7 @@ class Box(Cylinder):
         yz = box[5]
 
         # Follow hoomd convention
-        box_matrix = numpy.array([[Lx, xy * Ly, xz * Lz],
-                                  [0, Ly, yz * Lz],
+        box_matrix = numpy.array([[Lx, xy * Ly, xz * Lz], [0, Ly, yz * Lz],
                                   [0, 0, Lz]])
         a_1, a_2, a_3 = box_matrix.T
         #           F--------------H
@@ -342,22 +341,20 @@ class Box(Cylinder):
         G = A + a_1 + a_2
         H = A + a_1 + a_2 + a_3
         # Define all edges
-        box_points = numpy.asarray(
-            [
-                [A, B],
-                [A, C],
-                [A, D],
-                [B, E],
-                [B, G],
-                [C, G],
-                [C, F],
-                [D, E],
-                [D, F],
-                [E, H],
-                [F, H],
-                [G, H]
-                ]
-            )
+        box_points = numpy.asarray([
+            [A, B],
+            [A, C],
+            [A, D],
+            [B, E],
+            [B, G],
+            [C, G],
+            [C, F],
+            [D, E],
+            [D, F],
+            [E, H],
+            [F, H],
+            [G, H],
+        ])
         return box_points
 
     @property
@@ -443,10 +440,8 @@ class Polygon(Geometry):
         if N is None:
             N = len(position)
 
-        self._geometry = scene.device.module.GeometryPolygon(scene._scene,
-                                                             vertices,
-                                                             rounding_radius,
-                                                             N)
+        self._geometry = scene.device.module.GeometryPolygon(
+            scene._scene, vertices, rounding_radius, N)
         self.material = material
         self.outline_material = outline_material
         self.outline_width = outline_width
@@ -484,8 +479,9 @@ class Polygon(Geometry):
         """
         pos = self.position[:]
         r = self._geometry.getRadius()
-        res2d = numpy.array([numpy.min(pos - r, axis=0),
-                             numpy.max(pos + r, axis=0)])
+        res2d = numpy.array(
+            [numpy.min(pos - r, axis=0),
+             numpy.max(pos + r, axis=0)])
         res = numpy.array([[res2d[0][0], res2d[0][1], -1e-5],
                            [res2d[1][0], res2d[1][1], 1e-5]])
 
@@ -574,8 +570,9 @@ class Sphere(Geometry):
         pos = self.position[:]
         r = self.radius[:]
         r = r.reshape(len(r), 1)
-        res = numpy.array([numpy.min(pos - r, axis=0),
-                           numpy.max(pos + r, axis=0)])
+        res = numpy.array(
+            [numpy.min(pos - r, axis=0),
+             numpy.max(pos + r, axis=0)])
         return res
 
     @property
@@ -652,9 +649,8 @@ class Mesh(Geometry):
             N = len(position)
 
         self.vertices = numpy.asarray(vertices, dtype=numpy.float32)
-        self._geometry = scene.device.module.GeometryMesh(scene._scene,
-                                                          self.vertices,
-                                                          N)
+        self._geometry = scene.device.module.GeometryMesh(
+            scene._scene, self.vertices, N)
         self.material = material
         self.outline_material = outline_material
         self.outline_width = outline_width
@@ -695,18 +691,25 @@ class Mesh(Geometry):
         a = self.vertices[:, 0]
         b = self.vertices[:, 1]
         c = self.vertices[:, 2]
-        r = numpy.array([numpy.min([numpy.min(a, axis=0),
-                                    numpy.min(b, axis=0),
-                                    numpy.min(c, axis=0)],
-                                   axis=0),
-                         numpy.max([numpy.max(a, axis=0),
-                                    numpy.max(b, axis=0),
-                                    numpy.max(c, axis=0)],
-                                   axis=0)])
+        r = numpy.array([
+            numpy.min([
+                numpy.min(a, axis=0),
+                numpy.min(b, axis=0),
+                numpy.min(c, axis=0)
+            ],
+                      axis=0),
+            numpy.max([
+                numpy.max(a, axis=0),
+                numpy.max(b, axis=0),
+                numpy.max(c, axis=0)
+            ],
+                      axis=0)
+        ])
 
         pos = self.position[:]
-        res = numpy.array([numpy.min(pos + r[0], axis=0),
-                           numpy.max(pos + r[1], axis=0)])
+        res = numpy.array(
+            [numpy.min(pos + r[0], axis=0),
+             numpy.max(pos + r[1], axis=0)])
         return res
 
 
@@ -803,8 +806,9 @@ class ConvexPolyhedron(Geometry):
         """
         pos = self.position[:]
         r = self._radius
-        res = numpy.array([numpy.min(pos - r, axis=0),
-                           numpy.max(pos + r, axis=0)])
+        res = numpy.array(
+            [numpy.min(pos - r, axis=0),
+             numpy.max(pos + r, axis=0)])
         return res
 
     @property

@@ -80,8 +80,7 @@ class Material(object):
 
     @property
     def color(self):
-        return (self._material.color.r,
-                self._material.color.g,
+        return (self._material.color.r, self._material.color.g,
                 self._material.color.b)
 
     @color.setter

@@ -9,7 +9,6 @@ Utilities.
 import numpy
 import io
 
-
 try:
     import PIL.Image as PIL_Image
 except ImportError:

@@ -14,7 +14,7 @@ try:
     import IPython.external.qt_loaders
     if type(sys.meta_path[0]) == IPython.external.qt_loaders.ImportDenier:
         del sys.meta_path[0]
-except: # noqa
+except:  # noqa
     pass
 
 from PySide2 import QtGui
@@ -63,6 +63,7 @@ def axisangle_to_q(v, theta):
 
 
 class CameraController3D:
+
     def __init__(self, camera):
         self.camera = camera
         if isinstance(self.camera, str):
@@ -224,7 +225,7 @@ class SceneView(QtWidgets.QWidget):
         self.camera_controller = CameraController3D(self._scene.camera)
         self.ipython_display_formatter = 'text'
 
-    def minimumSizeHint(self): # noqa
+    def minimumSizeHint(self):  # noqa
         return QtCore.QSize(1610, 1000)
 
     @property
@@ -236,7 +237,7 @@ class SceneView(QtWidgets.QWidget):
         self._scene = scene
         self.start_rendering()
 
-    def paintEvent(self, event): # noqa
+    def paintEvent(self, event):  # noqa
         if self.rendering:
             # Render the scene
             self.tracer.render(self._scene)
@@ -250,22 +251,18 @@ class SceneView(QtWidgets.QWidget):
 
         # display the rendered scene in the widget
         image_array.buf.map()
-        img = QtGui.QImage(image_array.buf,
-                           image_array.shape[1],
-                           image_array.shape[0],
-                           QtGui.QImage.Format_RGBA8888)
+        img = QtGui.QImage(image_array.buf, image_array.shape[1],
+                           image_array.shape[0], QtGui.QImage.Format_RGBA8888)
         qp = QtGui.QPainter(self)
         target = QtCore.QRectF(0, 0, self.width(), self.height())
-        source = QtCore.QRectF(0.0,
-                               0.0,
-                               image_array.shape[1],
+        source = QtCore.QRectF(0.0, 0.0, image_array.shape[1],
                                image_array.shape[0])
 
         qp.drawImage(target, img, source)
         qp.end()
         image_array.buf.unmap()
 
-    def resizeEvent(self, event): # noqa
+    def resizeEvent(self, event):  # noqa
         # for the initial window size, resize immediately
         if self.initial_resize:
             self.resize_done()
@@ -290,7 +287,7 @@ class SceneView(QtWidgets.QWidget):
         self.tracer.reset()
         self.repaint_timer.start()
 
-    def mouseMoveEvent(self, event): # noqa
+    def mouseMoveEvent(self, event):  # noqa
         delta = event.pos() - self.mouse_initial_pos
         self.mouse_initial_pos = event.pos()
 
@@ -327,12 +324,12 @@ class SceneView(QtWidgets.QWidget):
         elif event.button() == QtCore.Qt.MiddleButton:
             self.camera_update_mode = 'pan'
 
-    def mouseReleaseEvent(self, event): # noqa
+    def mouseReleaseEvent(self, event):  # noqa
         if self.camera_update_mode is not None:
             self.camera_update_mode = None
             event.accept()
 
-    def wheelEvent(self, event): # noqa
+    def wheelEvent(self, event):  # noqa
         self.camera_controller.zoom(event.angleDelta().y(),
                                     slight=event.modifiers()
                                     & QtCore.Qt.ControlModifier)

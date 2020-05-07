@@ -46,9 +46,11 @@ class Camera(object):
     def position(self):
         """((3, ) `numpy.ndarray` of ``numpy.float32``): Camera position.
         """
-        return numpy.array([self._camera.position.x,
-                self._camera.position.y,
-                self._camera.position.z], dtype=numpy.float32)
+        return numpy.array([
+            self._camera.position.x, self._camera.position.y,
+            self._camera.position.z
+        ],
+                           dtype=numpy.float32)
 
     @position.setter
     def position(self, value):
@@ -63,9 +65,11 @@ class Camera(object):
 
         ``position - look_at`` defines the *+z* direction in camera space.
         """
-        return numpy.array([self._camera.look_at.x,
-                self._camera.look_at.y,
-                self._camera.look_at.z], dtype=numpy.float32)
+        return numpy.array([
+            self._camera.look_at.x, self._camera.look_at.y,
+            self._camera.look_at.z
+        ],
+                           dtype=numpy.float32)
 
     @look_at.setter
     def look_at(self, value):
@@ -111,9 +115,9 @@ class Camera(object):
         space directions in scene space.
         """
         b = _common.CameraBasis(self._camera)
-        return numpy.array([(b.u.x, b.u.y, b.u.z),
-                (b.v.x, b.v.y, b.v.z),
-                (b.w.x, b.w.y, b.w.z)], dtype=numpy.float32)
+        return numpy.array([(b.u.x, b.u.y, b.u.z), (b.v.x, b.v.y, b.v.z),
+                            (b.w.x, b.w.y, b.w.z)],
+                           dtype=numpy.float32)
 
 
 class Orthographic(Camera):
@@ -202,13 +206,16 @@ class Orthographic(Camera):
         selects 'isometric' for 3D scenes and 'front' for 2D scenes.
         """
 
-        vectors = {'front': dict(v=numpy.array([0, 0, 1]),
-                                up=numpy.array([0, 1, 0]),
-                                right=numpy.array([1, 0, 0])),
-                'isometric': dict(v=numpy.array([1, 1, 1]) / math.sqrt(3),
-                                    up=numpy.array([-1, 2, -1]) / math.sqrt(6),
-                                    right=numpy.array([1, 0, -1]) / math.sqrt(2))
-                }
+        vectors = {
+            'front':
+                dict(v=numpy.array([0, 0, 1]),
+                     up=numpy.array([0, 1, 0]),
+                     right=numpy.array([1, 0, 0])),
+            'isometric':
+                dict(v=numpy.array([1, 1, 1]) / math.sqrt(3),
+                     up=numpy.array([-1, 2, -1]) / math.sqrt(6),
+                     right=numpy.array([1, 0, -1]) / math.sqrt(2))
+        }
 
         # raise error if the scene is empty
         if len(scene.geometry) == 0:
@@ -235,13 +242,13 @@ class Orthographic(Camera):
 
         # make a list of points of the cube surrounding the scene
         points = numpy.array([[extents[0, 0], extents[0, 1], extents[0, 2]],
-                            [extents[0, 0], extents[0, 1], extents[1, 2]],
-                            [extents[0, 0], extents[1, 1], extents[0, 2]],
-                            [extents[0, 0], extents[1, 1], extents[1, 2]],
-                            [extents[1, 0], extents[0, 1], extents[0, 2]],
-                            [extents[1, 0], extents[0, 1], extents[1, 2]],
-                            [extents[1, 0], extents[1, 1], extents[0, 2]],
-                            [extents[1, 0], extents[1, 1], extents[1, 2]]])
+                              [extents[0, 0], extents[0, 1], extents[1, 2]],
+                              [extents[0, 0], extents[1, 1], extents[0, 2]],
+                              [extents[0, 0], extents[1, 1], extents[1, 2]],
+                              [extents[1, 0], extents[0, 1], extents[0, 2]],
+                              [extents[1, 0], extents[0, 1], extents[1, 2]],
+                              [extents[1, 0], extents[1, 1], extents[0, 2]],
+                              [extents[1, 0], extents[1, 1], extents[1, 2]]])
 
         # find the center of the box
         center = (extents[0, :] + extents[1, :]) / 2
@@ -257,9 +264,9 @@ class Orthographic(Camera):
 
         # build the camera
         return cls(position=center + view_distance * v,
-                            look_at=center,
-                            up=up,
-                            height=height)
+                   look_at=center,
+                   up=up,
+                   height=height)
 
 
 class Perspective(Camera):
@@ -484,8 +491,9 @@ class Perspective(Camera):
         # => c = h/800
         c = self.height / 800
 
-        N = (math.sqrt(c**2 * f**4 * (d**2 + s**2) * (f - s)**2)
-            + c * f**2 * s * (f - s))/(c**2 * d * (f - s)**2)
+        N = (math.sqrt(c**2 * f**4 * (d**2 + s**2) *
+                       (f - s)**2) + c * f**2 * s * (f - s)) / (c**2 * d *
+                                                                (f - s)**2)
         self.f_stop = N
 
     @property
@@ -533,7 +541,7 @@ class Perspective(Camera):
 
     @vertical_field_of_view.setter
     def vertical_field_of_view(self, value):
-        self.focal_length = self.height / (2 * math.tan(value/2))
+        self.focal_length = self.height / (2 * math.tan(value / 2))
 
 
 def _from_cpp(cam):
@@ -543,15 +551,15 @@ def _from_cpp(cam):
     we expose them as separate classes at the Python level.
     """
     if cam.model == _common.CameraModel.orthographic:
-        result = Orthographic(position=(0,0,0),
-                              look_at=(0,0,1),
-                              up=(0,1,0),
+        result = Orthographic(position=(0, 0, 0),
+                              look_at=(0, 0, 1),
+                              up=(0, 1, 0),
                               height=1)
         result._camera = cam
     elif cam.model == _common.CameraModel.perspective:
-        result = Perspective(position=(0,0,0),
-                             look_at=(0,0,1),
-                             up=(0,1,0),
+        result = Perspective(position=(0, 0, 0),
+                             look_at=(0, 0, 1),
+                             up=(0, 1, 0),
                              focus_distance=1)
         result._camera = cam
     else:

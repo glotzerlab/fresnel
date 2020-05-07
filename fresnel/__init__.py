@@ -12,17 +12,17 @@ Attributes:
 import os
 import numpy
 
-from . import geometry # noqa
+from . import geometry  # noqa
 from . import tracer
 from . import camera
-from . import color # noqa
+from . import color  # noqa
 from . import light
 
 from . import _common
 if _common.cpu_built():
     from . import _cpu
 if _common.gpu_built():
-    from .import _gpu
+    from . import _gpu
 
 __version__ = "0.12.0"
 
@@ -255,12 +255,10 @@ class Scene(object):
         scene_extents = self.geometry[0].get_extents()
         for geom in self.geometry[1:]:
             extents = geom.get_extents()
-            scene_extents[0, :] = numpy.min([scene_extents[0, :],
-                                             extents[0, :]],
-                                            axis=0)
-            scene_extents[1, :] = numpy.max([scene_extents[1, :],
-                                             extents[1, :]],
-                                            axis=0)
+            scene_extents[0, :] = numpy.min(
+                [scene_extents[0, :], extents[0, :]], axis=0)
+            scene_extents[1, :] = numpy.max(
+                [scene_extents[1, :], extents[1, :]], axis=0)
 
         return scene_extents
 

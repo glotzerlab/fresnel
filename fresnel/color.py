@@ -2,22 +2,19 @@
 # This file is part of the Fresnel project, released under the BSD 3-Clause
 # License.
 
-R"""
-Color utilities.
-"""
+"""Color utilities."""
 
 import numpy
 
 
 def linear(color):
-    R""" Convert a `sRGB <https://en.wikipedia.org/wiki/SRGB>`_ color (or array
-    of such colors) from the gamma corrected color space into the linear space.
+    """Convert a sRGB color (or colors) into the linear space.
 
-    Standard tools for working with sRGB colors provide gamma corrected values.
-    fresnel needs to perform calculations in a linear color space. This method
-    converts from sRGB to the linear space. Use :py:func:`linear` when
-    specifying material or particle colors with sRGB inputs (such as you find in
-    a color picker).
+    Standard tools for working with `sRGB <https://en.wikipedia.org/wiki/SRGB>`_
+    colors provide gamma corrected values. fresnel needs to perform calculations
+    in a linear color space. This method converts from sRGB to the linear space.
+    Use :py:func:`linear` when specifying material or particle colors with sRGB
+    inputs (such as you find in a color picker).
 
     :py:func:`linear` accepts
     `RGBA <https://en.wikipedia.org/wiki/RGBA_color_space>`_ input (such as from
@@ -27,17 +24,14 @@ def linear(color):
     array.
 
     Args:
+        color ((3, ), (4, ), (N, 3), or (N, 4) `numpy.ndarray` of\
+            ``numpy.float32``): ``RGB`` or ``RGBA`` colors.
 
-        color (`numpy.ndarray` or `array_like`): (``3``, ``4``, ``Nx3``, or
-            ``Nx4`` : ``float32``) - ``RGB`` or ``RGBA``
-            color in the range [0,1].
+    Color components are in the range [0,1].
 
     Returns:
-
-        :py:class:`numpy.ndarray` with the linearized color(s), same shape as
-        ``color``.
+        `numpy.ndarray` with the linearized color(s), same shape as ``color``.
     """
-
     c = numpy.ascontiguousarray(color)
     if c.shape == (3,) or c.shape == (4,):
         out = numpy.zeros(3, dtype=numpy.float32)
