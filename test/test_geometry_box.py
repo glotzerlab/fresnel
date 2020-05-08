@@ -1,3 +1,5 @@
+"""Test the Box geometry."""
+
 import os
 import pathlib
 from collections import namedtuple
@@ -13,6 +15,7 @@ dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 
 def scene_box(device):
+    """Create a test scene."""
     scene = fresnel.Scene(device, lights=conftest.test_lights())
 
     fresnel.geometry.Box(scene,
@@ -30,10 +33,12 @@ def scene_box(device):
 
 @pytest.fixture(scope="function")
 def scene_box_(device_):
+    """Pytest fixture to create a test scene."""
     return scene_box(device_)
 
 
 def test_render(scene_box_, generate=False):
+    """Test that Box renders properly."""
     buf_proxy = fresnel.preview(scene_box_, w=150, h=100, anti_alias=False)
 
     if generate:
@@ -46,6 +51,7 @@ def test_render(scene_box_, generate=False):
 
 
 def test_radius(scene_box_, generate=False):
+    """Test the radius property."""
     geometry = scene_box_.geometry[0]
 
     r = numpy.array(0.1, dtype=numpy.float32)
@@ -64,6 +70,7 @@ def test_radius(scene_box_, generate=False):
 
 
 def test_color(scene_box_, generate=False):
+    """Test the color property."""
     geometry = scene_box_.geometry[0]
     geometry.material.primitive_color_mix = 1.0
 
@@ -83,6 +90,7 @@ def test_color(scene_box_, generate=False):
 
 
 def test_box_radius(scene_box_, generate=False):
+    """Test the box_radius property."""
     geometry = scene_box_.geometry[0]
 
     r = 0.1
@@ -101,6 +109,7 @@ def test_box_radius(scene_box_, generate=False):
 
 
 def test_box_color(scene_box_, generate=False):
+    """Test the box_color property."""
     geometry = scene_box_.geometry[0]
 
     c = numpy.array([1, 0, 1], dtype=numpy.float32)
@@ -119,6 +128,7 @@ def test_box_color(scene_box_, generate=False):
 
 
 def test_box_update(scene_box_, generate=False):
+    """Test the box property."""
     box_tuple = namedtuple("box_tuple", "Lx Ly Lz xy xz yz")
     box_list = [
         2,

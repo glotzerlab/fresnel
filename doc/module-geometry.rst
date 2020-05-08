@@ -12,10 +12,10 @@ fresnel.geometry
 .. autosummary::
     :nosignatures:
 
-    Geometry
+    Box
     ConvexPolyhedron
     Cylinder
-    Box
+    Geometry
     Polygon
     Sphere
 

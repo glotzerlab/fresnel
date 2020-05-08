@@ -1,3 +1,5 @@
+"""Test the Scene class."""
+
 import fresnel
 import numpy
 from collections import namedtuple
@@ -10,6 +12,7 @@ dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 
 def test_background_color(device_):
+    """Test the background_color property."""
     scene = fresnel.Scene(device=device_)
 
     scene.background_color = fresnel.color.linear((0.125, 0.75, 0.375))
@@ -28,23 +31,25 @@ def test_background_color(device_):
     buf_proxy = fresnel.preview(scene, w=100, h=100, anti_alias=False)
     buf = buf_proxy[:]
 
-    numpy.testing.assert_array_equal(buf[:, :, 3],
-                                     numpy.ones(shape=(100, 100),
-                                                dtype=buf.dtype) * 128)
-    numpy.testing.assert_array_equal(buf[:, :, 0:3],
-                                     numpy.ones(shape=(100, 100, 3),
-                                                dtype=buf.dtype)
-                                     * (32, 191, 96))
+    numpy.testing.assert_array_equal(
+        buf[:, :, 3],
+        numpy.ones(shape=(100, 100), dtype=buf.dtype) * 128)
+    numpy.testing.assert_array_equal(
+        buf[:, :, 0:3],
+        numpy.ones(shape=(100, 100, 3), dtype=buf.dtype) * (32, 191, 96))
 
 
 def test_camera(scene_hex_sphere_, generate=False):
+    """Test the camera property."""
     scene_hex_sphere_.camera = fresnel.camera.Orthographic(position=(1, 0, 10),
                                                            look_at=(1, 0, 0),
                                                            up=(0, 1, 0),
                                                            height=6)
 
-    numpy.testing.assert_array_equal(scene_hex_sphere_.camera.position, (1, 0, 10))
-    numpy.testing.assert_array_equal(scene_hex_sphere_.camera.look_at, (1, 0, 0))
+    numpy.testing.assert_array_equal(scene_hex_sphere_.camera.position,
+                                     (1, 0, 10))
+    numpy.testing.assert_array_equal(scene_hex_sphere_.camera.look_at,
+                                     (1, 0, 0))
     numpy.testing.assert_array_equal(scene_hex_sphere_.camera.up, (0, 1, 0))
     assert scene_hex_sphere_.camera.height == 6
 
@@ -62,6 +67,7 @@ def test_camera(scene_hex_sphere_, generate=False):
 
 
 def test_light_dir(scene_hex_sphere_, generate=False):
+    """Test the lights property."""
     scene_hex_sphere_.lights[0].direction = (1, 0, 0)
     scene_hex_sphere_.lights[0].color = (0.5, 0.5, 0.5)
     assert scene_hex_sphere_.lights[0].direction == (1, 0, 0)
@@ -82,6 +88,7 @@ def test_light_dir(scene_hex_sphere_, generate=False):
 
 
 def test_multiple_geometries(device_, generate=False):
+    """Test multiple geometries."""
     scene = fresnel.Scene(lights=conftest.test_lights())
     scene.camera = fresnel.camera.Orthographic(position=(0, 0, 10),
                                                look_at=(0, 0, 0),
@@ -89,10 +96,8 @@ def test_multiple_geometries(device_, generate=False):
                                                height=7)
 
     geom1 = fresnel.geometry.Sphere(scene,
-                                    position=[[-4, 1, 0],
-                                              [-4, -1, 0],
-                                              [-2, 1, 0],
-                                              [-2, -1, 0]],
+                                    position=[[-4, 1, 0], [-4, -1, 0],
+                                              [-2, 1, 0], [-2, -1, 0]],
                                     radius=1.0)
     geom1.material = fresnel.material.Material(solid=1.0,
                                                color=fresnel.color.linear(
@@ -100,13 +105,12 @@ def test_multiple_geometries(device_, generate=False):
     geom1.outline_width = 0.12
 
     geom2 = fresnel.geometry.Sphere(scene,
-                                    position=[[4, 1, 0],
-                                              [4, -1, 0],
-                                              [2, 1, 0],
+                                    position=[[4, 1, 0], [4, -1, 0], [2, 1, 0],
                                               [2, -1, 0]],
                                     radius=1.0)
-    geom2.material = fresnel.material.Material(
-        solid=0.0, color=fresnel.color.linear([1, 0.874, 0.169]))
+    geom2.material = fresnel.material.Material(solid=0.0,
+                                               color=fresnel.color.linear(
+                                                   [1, 0.874, 0.169]))
 
     buf_proxy = fresnel.preview(scene, w=200, h=100, anti_alias=False)
 

@@ -1,3 +1,5 @@
+"""Test the Polygon geometry."""
+
 import fresnel
 import numpy
 from collections import namedtuple
@@ -11,6 +13,7 @@ dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 
 def scene_rounded_polygons(device):
+    """Create a test scene with polygons."""
     scene = fresnel.Scene(device, lights=conftest.test_lights())
 
     mat = fresnel.material.Material(
@@ -38,10 +41,12 @@ def scene_rounded_polygons(device):
 
 @pytest.fixture(scope='function')
 def scene_rounded_polygons_(device_):
+    """Pytest fixture to create test scene."""
     return scene_rounded_polygons(device_)
 
 
 def scene_polygons(device):
+    """Create a test scene with polygons."""
     scene = fresnel.Scene(device, lights=conftest.test_lights())
 
     mat = fresnel.material.Material(
@@ -69,10 +74,12 @@ def scene_polygons(device):
 
 @pytest.fixture(scope='function')
 def scene_polygons_(device_):
+    """Pytest fixture to create test scene."""
     return scene_polygons(device_)
 
 
 def test_render(scene_polygons_, generate=False):
+    """Test that Polygons render properly."""
     buf_proxy = fresnel.preview(scene_polygons_, w=150, h=100, anti_alias=False)
 
     if generate:
@@ -86,6 +93,7 @@ def test_render(scene_polygons_, generate=False):
 
 
 def test_rounded(scene_rounded_polygons_, generate=False):
+    """Test that rounded polygons render properly."""
     geometry = scene_rounded_polygons_.geometry[0]
     geometry.outline_width = 0.1
 
@@ -104,6 +112,7 @@ def test_rounded(scene_rounded_polygons_, generate=False):
 
 
 def test_angle(scene_polygons_, generate=False):
+    """Test that polygons can be rotated."""
     geometry = scene_polygons_.geometry[0]
 
     a = numpy.array([-0.8, 0.5], dtype=numpy.float32)
@@ -122,6 +131,7 @@ def test_angle(scene_polygons_, generate=False):
 
 
 def test_position(scene_polygons_, generate=False):
+    """Test the position property."""
     geometry = scene_polygons_.geometry[0]
 
     p = numpy.array([[-2, 0],
@@ -141,6 +151,7 @@ def test_position(scene_polygons_, generate=False):
 
 
 def test_color(scene_polygons_, generate=False):
+    """Test the color property."""
     geometry = scene_polygons_.geometry[0]
     geometry.material.primitive_color_mix = 1.0
 
@@ -161,6 +172,7 @@ def test_color(scene_polygons_, generate=False):
 
 
 def test_outline(scene_polygons_, generate=False):
+    """Test that outlines render properly."""
     geometry = scene_polygons_.geometry[0]
     geometry.outline_width = 0.1
 

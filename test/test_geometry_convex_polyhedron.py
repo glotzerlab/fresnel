@@ -1,3 +1,5 @@
+"""Test the ConvexPolyhedron geometry."""
+
 import fresnel
 import numpy
 from collections import namedtuple
@@ -13,6 +15,7 @@ dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 
 def scene_eight_polyhedra(device):
+    """Create a test scene with eight polyhedra."""
     scene = fresnel.Scene(device, lights=conftest.test_lights())
 
     # place eight polyhedra
@@ -67,10 +70,12 @@ def scene_eight_polyhedra(device):
 
 @pytest.fixture(scope='function')
 def scene_eight_polyhedra_(device_):
+    """Pytest fixture to create a test scene."""
     return scene_eight_polyhedra(device_)
 
 
 def test_render(scene_eight_polyhedra_, generate=False):
+    """Test that convex polyhedra render properly."""
     buf_proxy = fresnel.preview(
         scene_eight_polyhedra_, w=150, h=100, anti_alias=False)
 
@@ -88,6 +93,7 @@ def test_render(scene_eight_polyhedra_, generate=False):
 
 
 def test_outline(scene_eight_polyhedra_, generate=False):
+    """Test that face outlines render properly."""
     geometry = scene_eight_polyhedra_.geometry[0]
     geometry.outline_width = 0.1
 
@@ -110,6 +116,7 @@ def test_outline(scene_eight_polyhedra_, generate=False):
 
 
 def test_face_color(scene_eight_polyhedra_, generate=False):
+    """Test that faces can be colored individually."""
     buf_proxy = fresnel.preview(scene_eight_polyhedra_,
                                 w=150,
                                 h=100,
@@ -138,9 +145,7 @@ def test_face_color(scene_eight_polyhedra_, generate=False):
 
 
 def test_convert_cube():
-    """Sanity checks on converting vertices to origins and normals
-
-    """
+    """Sanity checks on converting vertices to origins and normals."""
     pms = [+1, -1]
     cube_verts = numpy.array([x for x in itertools.product(pms, repeat=3)])
 
@@ -153,9 +158,7 @@ def test_convert_cube():
 
 
 def test_face_merge_cube():
-    """Add a point into the middle of one of the faces and make sure no new
-    faces are created
-    """
+    """Add a point into the middle and make sure no new faces are created."""
     pms = [+1, -1]
     cube_verts = numpy.array([x for x in itertools.product(pms, repeat=3)])
 

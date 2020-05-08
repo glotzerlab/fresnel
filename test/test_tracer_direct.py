@@ -1,3 +1,5 @@
+"""Test the Direct tracer."""
+
 import fresnel
 from collections import namedtuple
 import PIL
@@ -9,6 +11,7 @@ dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 
 def test_render(scene_hex_sphere_, generate=False):
+    """Test rendering a scene with 6 spheres."""
     tracer = fresnel.tracer.Preview(device=scene_hex_sphere_.device,
                                     w=100,
                                     h=100,
@@ -28,6 +31,7 @@ def test_render(scene_hex_sphere_, generate=False):
 
 
 def test_render_aa(scene_hex_sphere_, generate=False):
+    """Test rendering with anti-aliasing."""
     tracer = fresnel.tracer.Preview(device=scene_hex_sphere_.device,
                                     w=100,
                                     h=100,
@@ -47,6 +51,7 @@ def test_render_aa(scene_hex_sphere_, generate=False):
 
 
 def test_resize(scene_hex_sphere_, generate=False):
+    """Test the resize() method."""
     tracer = fresnel.tracer.Preview(device=scene_hex_sphere_.device,
                                     w=100,
                                     h=100,

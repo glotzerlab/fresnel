@@ -1,3 +1,5 @@
+"""Sphere example scene."""
+
 import fresnel
 import numpy
 import PIL

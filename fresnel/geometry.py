@@ -118,10 +118,6 @@ class Cylinder(Geometry):
 
         - :doc:`examples/01-Primitives/01-Cylinder-geometry`
 
-    Note:
-        The constructor arguments ``points``, ``radius``, and ``color`` are
-        optional. If you do not provide them, they are initialized to 0's.
-
     Hint:
         Avoid costly memory allocations and type conversions by specifying
         primitive properties in the appropriate array type.
@@ -130,11 +126,12 @@ class Cylinder(Geometry):
         When all cylinders are the same size or color, pass a single value
         and NumPy will broadcast it to all elements of the array.
     """
+
     def __init__(self,
                  scene,
-                 points=None,
-                 radius=None,
-                 color=None,
+                 points=((0, 0, 0), (0, 0, 0)),
+                 radius=0.5,
+                 color=(0, 0, 0),
                  N=None,
                  material=material.Material(solid=1.0, color=(1, 0, 1)),
                  outline_material=material.Material(solid=1.0, color=(0, 0, 0)),
@@ -147,14 +144,9 @@ class Cylinder(Geometry):
         self.outline_material = outline_material
         self.outline_width = outline_width
 
-        if points is not None:
-            self.points[:] = points
-
-        if radius is not None:
-            self.radius[:] = radius
-
-        if color is not None:
-            self.color[:] = color
+        self.points[:] = points
+        self.radius[:] = radius
+        self.color[:] = color
 
         self.scene = scene
         self.scene.geometry.append(self)
@@ -163,7 +155,7 @@ class Cylinder(Geometry):
         """Get the extents of the geometry.
 
         Returns:
-            (3,2) `numpy.ndarray` of ``numpy.float32``: The lower left and\
+            (3,2) `numpy.ndarray` of ``float32``: The lower left and\
                 upper right corners of the scene.
         """
         A = self.points[:, 0]
@@ -199,7 +191,7 @@ class Cylinder(Geometry):
 class Box(Cylinder):
     """Box geometry.
 
-    Generate a triclinic box outline made of `spherocylinders <Cylinder>`.
+    Generate a triclinic box outline with `spherocylinders <Cylinder>`.
 
     Args:
         scene (Scene): Add the geometry to this scene.
@@ -209,7 +201,7 @@ class Box(Cylinder):
 
         radius (float): Radius of box edges.
 
-        box_color ((3, ) `numpy.ndarray` of ``numpy.float32``): Color of the box
+        box_color ((3, ) `numpy.ndarray` of ``float32``): Color of the box
             edges.
 
     Note:
@@ -227,8 +219,8 @@ class Box(Cylinder):
     Note:
         The Box class is constructed from `spherocylinders <Cylinder>`, which
         can be modified individually. The convenience attributes ``box_radius``
-        and ``box_color`` can be used to easily set the thickness and color of
-        the entire box.
+        and ``box_color`` can be used to set the thickness and color of the
+        entire box.
     """
 
     def __init__(self, scene, box, box_radius=0.5, box_color=[0, 0, 0]):
@@ -355,10 +347,10 @@ class Box(Cylinder):
 
     @property
     def box_color(self):
-        """(3, ) `numpy.ndarray` of ``numpy.float32``: Color of the box edges.
+        """(3, ) `numpy.ndarray` of ``float32``: Color of the box edges.
 
         Note:
-            This property sets the color of the `material`.
+            This property sets the color of the `material <Geometry.material>`.
         """
         return self.material.color
 
@@ -405,11 +397,7 @@ class Polygon(Geometry):
 
         - :doc:`examples/01-Primitives/04-Polygon-geometry`
 
-    Note:
-        The constructor arguments ``position``, ``angle``, and ``color`` are
-        optional. If you do not provide them, they are initialized to 0's.
-
-    Hint
+    Hint:
         Avoid costly memory allocations and type conversions by specifying
         primitive properties in the appropriate array type.
     """
@@ -417,9 +405,9 @@ class Polygon(Geometry):
     def __init__(self,
                  scene,
                  vertices,
-                 position=None,
-                 angle=None,
-                 color=None,
+                 position=(0, 0, 0),
+                 angle=0,
+                 color=(0, 0, 0),
                  rounding_radius=0,
                  N=None,
                  material=material.Material(solid=1.0, color=(1, 0, 1)),
@@ -434,14 +422,9 @@ class Polygon(Geometry):
         self.outline_material = outline_material
         self.outline_width = outline_width
 
-        if position is not None:
-            self.position[:] = position
-
-        if angle is not None:
-            self.angle[:] = angle
-
-        if color is not None:
-            self.color[:] = color
+        self.position[:] = position
+        self.angle[:] = angle
+        self.color[:] = color
 
         self.scene = scene
         self.scene.geometry.append(self)
@@ -465,7 +448,7 @@ class Polygon(Geometry):
         """Get the extents of the geometry.
 
         Returns:
-            (3,2) `numpy.ndarray` of ``numpy.float32``: The lower left and\
+            (3,2) `numpy.ndarray` of ``float32``: The lower left and\
                 upper right corners of the scene.
         """
         pos = self.position[:]
@@ -504,10 +487,6 @@ class Sphere(Geometry):
 
         - :doc:`examples/01-Primitives/00-Sphere-geometry`
 
-    Note:
-        The constructor arguments ``position``, ``radius``, and ``color`` are
-        optional. If you do not provide them, they are initialized to 0's.
-
     Hint:
         Avoid costly memory allocations and type conversions by specifying
         primitive properties in the appropriate array type.
@@ -515,21 +494,13 @@ class Sphere(Geometry):
     Tip:
         When all spheres are the same size, pass a single value for *radius* and
         numpy will broadcast it to all elements of the array.
-
-    Attributes:
-        position (:py:class:`fresnel.util.Array`): Read or modify the positions
-            of the spheres.
-        radius (:py:class:`fresnel.util.Array`): Read or modify the radii of the
-            spheres.
-        color (:py:class:`fresnel.util.Array`): Read or modify the color of the
-            spheres.
     """
 
     def __init__(self,
                  scene,
-                 position=None,
-                 radius=None,
-                 color=None,
+                 position=(0, 0, 0),
+                 radius=0.5,
+                 color=(0, 0, 0),
                  N=None,
                  material=material.Material(solid=1.0, color=(1, 0, 1)),
                  outline_material=material.Material(solid=1.0, color=(0, 0, 0)),
@@ -542,14 +513,9 @@ class Sphere(Geometry):
         self.outline_material = outline_material
         self.outline_width = outline_width
 
-        if position is not None:
-            self.position[:] = position
-
-        if radius is not None:
-            self.radius[:] = radius
-
-        if color is not None:
-            self.color[:] = color
+        self.position[:] = position
+        self.radius[:] = radius
+        self.color[:] = color
 
         self.scene = scene
         self.scene.geometry.append(self)
@@ -558,7 +524,7 @@ class Sphere(Geometry):
         """Get the extents of the geometry.
 
         Returns:
-            (3,2) `numpy.ndarray` of ``numpy.float32``: The lower left and\
+            (3,2) `numpy.ndarray` of ``float32``: The lower left and\
                 upper right corners of the scene.
         """
         pos = self.position[:]
@@ -615,12 +581,7 @@ class Mesh(Geometry):
 
         - :doc:`examples/01-Primitives/03-Mesh-geometry`
 
-    Note:
-        The constructor arguments ``position``, ``orientation``, and ``color``
-        are optional, and just short-hand for assigning the attribute after
-        construction.
-
-     Hint:
+    Hint:
         Avoid costly memory allocations and type conversions by specifying
         primitive properties in the appropriate array type.
     """
@@ -628,9 +589,9 @@ class Mesh(Geometry):
     def __init__(self,
                  scene,
                  vertices,
-                 position=None,
-                 orientation=None,
-                 color=None,
+                 position=(0, 0, 0),
+                 orientation=(1, 0, 0, 0),
+                 color=(0, 0, 0),
                  N=None,
                  material=material.Material(solid=1.0, color=(1, 0, 1)),
                  outline_material=material.Material(solid=1.0, color=(0, 0, 0)),
@@ -645,16 +606,9 @@ class Mesh(Geometry):
         self.outline_material = outline_material
         self.outline_width = outline_width
 
-        if position is not None:
-            self.position[:] = position
-
-        if orientation is not None:
-            self.orientation[:] = orientation
-        else:
-            self.orientation[:] = [1, 0, 0, 0]
-
-        if color is not None:
-            self.color[:] = color
+        self.position[:] = position
+        self.orientation[:] = orientation
+        self.color[:] = color
 
         self.scene = scene
         self.scene.geometry.append(self)
@@ -678,7 +632,7 @@ class Mesh(Geometry):
         """Get the extents of the geometry.
 
         Returns:
-            (3,2) `numpy.ndarray` of ``numpy.float32``: The lower left and\
+            (3,2) `numpy.ndarray` of ``float32``: The lower left and\
                 upper right corners of the scene.
         """
         a = self.vertices[:, 0]
@@ -741,10 +695,6 @@ class ConvexPolyhedron(Geometry):
 
         - :doc:`examples/01-Primitives/02-Convex-polyhedron-geometry`
 
-    Note:
-        The constructor arguments ``position``, ``orientation``, and ``color``
-        are optional. If you do not provide them, they are initialized to 0's.
-
     Hint:
         Avoid costly memory allocations and type conversions by specifying
         primitive properties in the appropriate array type.
@@ -753,9 +703,9 @@ class ConvexPolyhedron(Geometry):
     def __init__(self,
                  scene,
                  polyhedron_info,
-                 position=None,
-                 orientation=None,
-                 color=None,
+                 position=(0, 0, 0),
+                 orientation=(1, 0, 0, 0),
+                 color=(0, 0, 0),
                  N=None,
                  material=material.Material(solid=1.0, color=(1, 0, 1)),
                  outline_material=material.Material(solid=1.0, color=(0, 0, 0)),
@@ -774,14 +724,9 @@ class ConvexPolyhedron(Geometry):
         self.outline_width = outline_width
         self._radius = r
 
-        if position is not None:
-            self.position[:] = position
-
-        if orientation is not None:
-            self.orientation[:] = orientation
-
-        if color is not None:
-            self.color[:] = color
+        self.position[:] = position
+        self.orientation[:] = orientation
+        self.color[:] = color
 
         self.scene = scene
         self.scene.geometry.append(self)
@@ -790,7 +735,7 @@ class ConvexPolyhedron(Geometry):
         """Get the extents of the geometry.
 
         Returns:
-            (3,2) `numpy.ndarray` of ``numpy.float32``: The lower left and\
+            (3,2) `numpy.ndarray` of ``float32``: The lower left and\
                 upper right corners of the scene.
         """
         pos = self.position[:]

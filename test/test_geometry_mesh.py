@@ -1,3 +1,5 @@
+"""Test the Mesh geometry."""
+
 import fresnel
 from collections import namedtuple
 import PIL
@@ -10,6 +12,7 @@ dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 
 def scene_one_triangle(device):
+    """Create a test scene with one triangle."""
     scene = fresnel.Scene(device, lights=conftest.test_lights())
 
     geometry = fresnel.geometry.Mesh(scene,
@@ -45,10 +48,12 @@ def scene_one_triangle(device):
 
 @pytest.fixture(scope='function')
 def scene_one_triangle_(device_):
+    """Pytest fixture to create a test scene."""
     return scene_one_triangle(device_)
 
 
 def scene_tetrahedra(device):
+    """Create a test scene with a tetrahedron."""
     scene = fresnel.Scene(device, lights=conftest.test_lights())
 
     verts = [(1, 1, 1), (1, -1, -1), (-1, 1, -1), (-1, -1, 1)]
@@ -89,10 +94,12 @@ def scene_tetrahedra(device):
 
 @pytest.fixture(scope='function')
 def scene_tetrahedra_(device_):
+    """Pytest fixture to create a test scene."""
     return scene_tetrahedra(device_)
 
 
 def test_render(scene_one_triangle_, generate=False):
+    """Test that Mesh renders properly."""
     buf_proxy = fresnel.preview(
         scene_one_triangle_, w=100, h=100, anti_alias=False)
 
@@ -106,6 +113,7 @@ def test_render(scene_one_triangle_, generate=False):
 
 
 def test_outline(scene_one_triangle_, generate=False):
+    """Test that outlines render properly."""
     geometry = scene_one_triangle_.geometry[0]
     geometry.outline_width = 0.1
 
@@ -122,6 +130,7 @@ def test_outline(scene_one_triangle_, generate=False):
 
 
 def test_color_interp(scene_one_triangle_, generate=False):
+    """Test that colors are interpolated between vertices."""
     geometry = scene_one_triangle_.geometry[0]
     geometry.material.primitive_color_mix = 1.0
 
@@ -139,6 +148,7 @@ def test_color_interp(scene_one_triangle_, generate=False):
 
 
 def test_multiple(scene_tetrahedra_, generate=False):
+    """Test that Mesh supports multiple instances."""
     buf_proxy = fresnel.preview(
         scene_tetrahedra_, w=100, h=100, anti_alias=False)
 

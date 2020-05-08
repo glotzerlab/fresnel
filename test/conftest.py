@@ -1,3 +1,5 @@
+"""Pytest fixtures and methods used across all fresnel tests."""
+
 import pytest
 import fresnel
 import math
@@ -19,6 +21,7 @@ if 'gpu' in fresnel.Device.available_modes:
 
 
 def test_lights():
+    """Create a set of lights to use in most tests."""
     lights = []
     phi1 = 1 * 45 * math.pi / 180
     theta1 = (90 - 20) * math.pi / 180
@@ -40,6 +43,7 @@ def test_lights():
 
 
 def device(request):
+    """Create a Device object for use in the tests."""
     mode = request.param[0]
     limit = request.param[1]
 
@@ -49,6 +53,7 @@ def device(request):
 
 
 def device_name(device):
+    """Generate a string name for the device fixture."""
     name = device[0]
     if device[1] is None:
         name += '(all)'
@@ -61,10 +66,12 @@ def device_name(device):
                 params=devices,
                 ids=device_name)
 def device_(request):
+    """Pytest fixture parameterized over several devices."""
     return device(request)
 
 
 def scene_hex_sphere(device):
+    """Create a scene with six spheres arranged in a hexagon."""
     scene = fresnel.Scene(device, lights=test_lights())
 
     position = []
@@ -85,10 +92,16 @@ def scene_hex_sphere(device):
 
 @pytest.fixture(scope='function')
 def scene_hex_sphere_(device_):
+    """Pytest fixture to create a scene with six spheres."""
     return scene_hex_sphere(device_)
 
 
 def assert_image_approx_equal(a, ref_file, tolerance=1.0):
+    """Validate a rendered image.
+
+    Check the output buffer *a* from fresnel matches the saved png file
+    in *ref_file*.
+    """
     im = PIL.Image.open(ref_file)
     im_arr = numpy.frombuffer(im.tobytes(), dtype=numpy.uint8)
     im_arr = im_arr.reshape((im.size[1], im.size[0], 4))
@@ -114,6 +127,12 @@ def assert_image_approx_equal(a, ref_file, tolerance=1.0):
 
 
 def _validate_or_generate_image(buf, name, generate, tolerance):
+    """Validate or generate an image.
+
+    When generate is True, save the image in *buf* to ``output/{name}.png``.
+    When generate is False, compare the image in *buf* against
+    the file ``reference/{name}.png``.
+    """
     if generate:
         PIL.Image.fromarray(buf[:],
                             mode='RGBA').save(open(f'output/{name}.png', 'wb'),
@@ -131,6 +150,7 @@ def check_preview_render(scene,
                          tolerance=2,
                          anti_alias=False,
                          generate=False):
+    """Preview render the given scene and check the image matches the ref."""
     buf_proxy = fresnel.preview(scene, w=w, h=h, anti_alias=anti_alias)
 
     _validate_or_generate_image(buf_proxy, name, generate, tolerance)
@@ -143,6 +163,7 @@ def check_pathtrace_render(scene,
                            tolerance=2,
                            samples=64 * 40,
                            generate=False):
+    """Pathtrace render the given scene and check the image matches the ref."""
     buf_proxy = fresnel.pathtrace(scene, w=w, h=h, samples=samples)
 
     _validate_or_generate_image(buf_proxy, name, generate, tolerance)

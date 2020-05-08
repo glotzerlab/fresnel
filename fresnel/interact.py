@@ -16,8 +16,8 @@ except:  # noqa
     pass
 
 from PySide2 import QtGui
-from PySide2 import QtWidgets
 from PySide2 import QtCore
+from PySide2 import QtWidgets
 import math
 
 from . import tracer, camera
@@ -25,9 +25,15 @@ from . import tracer, camera
 # initialize QApplication
 # but not in sphinx
 if 'sphinx' not in sys.modules:
+    import PySide2.QtWidgets.QWidget as QWidget
+
     app = QtCore.QCoreApplication.instance()
     if app is None:
         app = QtWidgets.QApplication(['fresnel'])
+else:
+    # work around bug where sphinx does not find classes that have QWidget
+    # as a parent
+    QWidget = object
 
 
 def _q_mult(q1, q2):
@@ -119,12 +125,11 @@ class _CameraController3D:
         self.camera.height = self.camera.height * (1 - s * factor)
 
 
-class SceneView(QtWidgets.QWidget):
+class SceneView(QWidget):
     """View a fresnel Scene in real time.
 
-    `SceneView` is a PySide2 widget that displays a `fresnel.Scene`, rendering
-    it with `fresnel.tracer.Path` interactively. Use the mouse to rotate the
-    camera view.
+    `SceneView` is a PySide2 widget that displays a `Scene`, rendering it with
+    `Path` interactively. Use the mouse to rotate the camera view.
 
     Args:
         scene (`Scene`): The scene to display.
@@ -137,22 +142,21 @@ class SceneView(QtWidgets.QWidget):
 
     .. rubric:: Using in a standalone script
 
-    To use SceneView in a standalone script, import the
-    :py:mod:`fresnel.interact` module, create your `fresnel.Scene`,
-    instantiate the `SceneView`, show it, and start the app event
-    loop.
+    To use SceneView in a standalone script, import the `fresnel.interact`
+    module, create a `Scene`, instantiate the `SceneView`, show it, and start
+    the app event loop.
 
     .. code-block:: python
 
         import fresnel, fresnel.interact
-        # build Scene
+        # build scene
         view = fresnel.interact.SceneView(scene)
         view.show()
         fresnel.interact.app.exec_();
 
-    .. rubric:: Using with jupyter notebooks
+    .. rubric:: Using with Jupyter notebooks
 
-    To use SceneView in a jupyter notebook, import PySide2.QtCore and activate
+    To use SceneView in a Jupyter notebook, import PySide2.QtCore and activate
     Jupyter's qt5 integration.
 
     .. code-block:: python
@@ -161,11 +165,10 @@ class SceneView(QtWidgets.QWidget):
         % gui qt
 
 
-    Import the :py:mod:`fresnel.interact` module, create your
-    `fresnel.Scene`, and instantiate the `SceneView`. Do
-    not call the app event loop, jupyter is already running the event loop in
-    the background. When the SceneView object is the result of a cell, it will
-    automatically show and activate focus.
+    Import the :py:mod:`fresnel.interact` module, create a `Scene`, and
+    instantiate the `SceneView`. Do not call the app event loop, Jupyter is
+    already running the event loop in the background. When the SceneView object
+    is the result of a cell, it will automatically show and activate focus.
 
     .. code-block:: python
 
@@ -174,14 +177,12 @@ class SceneView(QtWidgets.QWidget):
         fresnel.interact.SceneView(scene)
 
     Note:
-
-        The interactive window will open on the system that *hosts* jupyter.
+        The interactive window will open on the system that *hosts* Jupyter.
 
     See Also:
         Tutorials:
 
         - :doc:`examples/02-Advanced-topics/03-Interactive-scene-view`
-
     """
 
     def __init__(self, scene, max_samples=2000):

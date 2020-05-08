@@ -1,8 +1,11 @@
+"""Test lights."""
+
 import fresnel
 import pytest
 
 
 def test_lightlist(device_):
+    """Test that lightlist allows getting and setting lights."""
     scene = fresnel.Scene(device_, lights=[])
     l = scene.lights  # noqa
     assert(len(l) == 0)

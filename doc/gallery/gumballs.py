@@ -1,3 +1,5 @@
+"""Gumballs example scene."""
+
 import fresnel
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap

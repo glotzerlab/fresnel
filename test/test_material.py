@@ -1,3 +1,5 @@
+"""Test the Material class."""
+
 import fresnel
 from collections import namedtuple
 import PIL
@@ -9,6 +11,7 @@ dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 
 def test_set_material(scene_hex_sphere_, generate=False):
+    """Test the geometry material property."""
     geometry = scene_hex_sphere_.geometry[0]
     geometry.material = fresnel.material.Material(solid=0.0,
                                                   color=fresnel.color.linear(
@@ -33,6 +36,7 @@ def test_set_material(scene_hex_sphere_, generate=False):
 
 
 def test_solid(scene_hex_sphere_, generate=False):
+    """Test solid materials."""
     geometry = scene_hex_sphere_.geometry[0]
     geometry.material.solid = 1.0
     assert geometry.material.solid == 1.0
@@ -52,6 +56,7 @@ def test_solid(scene_hex_sphere_, generate=False):
 
 
 def test_color(scene_hex_sphere_, generate=False):
+    """Test the material color property."""
     geometry = scene_hex_sphere_.geometry[0]
     geometry.material.color = fresnel.color.linear([0, 0, 1])
     assert geometry.material.color == tuple(fresnel.color.linear([0, 0, 1]))
@@ -71,6 +76,7 @@ def test_color(scene_hex_sphere_, generate=False):
 
 
 def test_specular(scene_hex_sphere_, generate=False):
+    """Test the specular property."""
     geometry = scene_hex_sphere_.geometry[0]
     geometry.material.specular = 1.0
     assert geometry.material.specular == 1.0
@@ -90,6 +96,7 @@ def test_specular(scene_hex_sphere_, generate=False):
 
 
 def test_roughness(scene_hex_sphere_, generate=False):
+    """Test the roughness property."""
     geometry = scene_hex_sphere_.geometry[0]
     geometry.material.roughness = 1.0
     assert geometry.material.roughness == 1.0
@@ -109,6 +116,7 @@ def test_roughness(scene_hex_sphere_, generate=False):
 
 
 def test_metal(scene_hex_sphere_, generate=False):
+    """Test the metal property."""
     geometry = scene_hex_sphere_.geometry[0]
     geometry.material.metal = 1.0
     assert geometry.material.metal == 1.0
@@ -128,6 +136,7 @@ def test_metal(scene_hex_sphere_, generate=False):
 
 
 def test_primitive_color_mix(scene_hex_sphere_, generate=False):
+    """Test the primitive_color_mix property."""
     geometry = scene_hex_sphere_.geometry[0]
     geometry.material = fresnel.material.Material(solid=1.0,
                                                   color=fresnel.color.linear(

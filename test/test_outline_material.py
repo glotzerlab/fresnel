@@ -1,3 +1,5 @@
+"""Test outline materials."""
+
 import fresnel
 from collections import namedtuple
 import PIL
@@ -9,6 +11,7 @@ dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 
 def test_set_material(scene_hex_sphere_, generate=False):
+    """Test that outline materials render properly."""
     geometry = scene_hex_sphere_.geometry[0]
     geometry.outline_width = 0.3
     geometry.outline_material = fresnel.material.Material(
@@ -38,6 +41,7 @@ def test_set_material(scene_hex_sphere_, generate=False):
 
 
 def test_solid(scene_hex_sphere_, generate=False):
+    """Test the solid property."""
     geometry = scene_hex_sphere_.geometry[0]
     geometry.outline_width = 0.3
     geometry.outline_material.solid = 1.0
@@ -58,6 +62,7 @@ def test_solid(scene_hex_sphere_, generate=False):
 
 
 def test_color(scene_hex_sphere_, generate=False):
+    """Test the color property."""
     geometry = scene_hex_sphere_.geometry[0]
     geometry.outline_width = 0.3
     geometry.outline_material.color = fresnel.color.linear([0, 0, 1])
@@ -79,6 +84,7 @@ def test_color(scene_hex_sphere_, generate=False):
 
 
 def test_primitive_color_mix(scene_hex_sphere_, generate=False):
+    """Test the color mix property."""
     geometry = scene_hex_sphere_.geometry[0]
     geometry.outline_width = 0.3
     geometry.outline_material = fresnel.material.Material(

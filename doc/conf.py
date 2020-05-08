@@ -26,14 +26,12 @@ extensions = [
     'IPython.sphinxext.ipython_console_highlighting'
 ]
 
-napoleon_use_param = False;
-
 intersphinx_mapping = {'python': ('https://docs.python.org/3', None), 'numpy': ('https://docs.scipy.org/doc/numpy', None)}
-autodoc_docstring_signature = True;
+autodoc_docstring_signature = True
 # autodoc_default_flags = ['inherited-members'];
 autodoc_mock_imports = ['numpy',
                         'PySide2',
-                        'fresnel._common'];
+                        'fresnel._common']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

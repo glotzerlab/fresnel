@@ -1,3 +1,5 @@
+"""Test the Path tracer."""
+
 import fresnel
 from collections import namedtuple
 import PIL
@@ -9,6 +11,7 @@ dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 
 def test_render(scene_hex_sphere_, generate=False):
+    """Test that the path tracer renders properly."""
     tracer = fresnel.tracer.Path(device=scene_hex_sphere_.device, w=100, h=100)
     tracer.seed = 11
     buf = tracer.output[:]

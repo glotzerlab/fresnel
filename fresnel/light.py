@@ -23,13 +23,13 @@ class Light(object):
 
     Args:
         direction ((3, ) `numpy.ndarray` of ``float32``):
-            Vector direction the light points (*in `Camera` space*).
+            Vector direction the light points (in `Camera` space).
 
-        color ((3, ) `numpy.ndarray` of ``float32``): - Linear
-            RGB color and intensity of the light.
+        color ((3, ) `numpy.ndarray` of ``float32``):
+            Linear RGB color and intensity of the light.
 
         theta (float): Half angle of the cone that defines the area of the light
-            (*in radians*).
+            (in radians).
 
     In fresnel, lights are area lights at an infinite distance away in the
     given *direction* and are circular with the size set by *theta*. *color*

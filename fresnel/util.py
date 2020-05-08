@@ -39,6 +39,7 @@ class Array(object):
         shape (Tuple[int, [int]]): Dimensions of the array.
         dtype: Numpy data type
     """
+
     def __init__(self, buf, geom):
         self.buf = buf
         # geom stores a pointer to the owning geometry, so array writes trigger

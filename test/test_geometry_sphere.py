@@ -1,10 +1,11 @@
+"""Test the Sphere geometry."""
+
 import fresnel
 import numpy
 from collections import namedtuple
 import PIL
 import conftest
 import pytest
-import math
 import os
 import pathlib
 
@@ -12,6 +13,7 @@ dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 
 def scene_four_spheres(device):
+    """Create a test scene with four spheres."""
     scene = fresnel.Scene(device, lights=conftest.test_lights())
 
     mat = fresnel.material.Material(
@@ -37,10 +39,12 @@ def scene_four_spheres(device):
 
 @pytest.fixture(scope='function')
 def scene_four_spheres_(device_):
+    """Pytest fixture to create a test scene."""
     return scene_four_spheres(device_)
 
 
 def test_render(scene_four_spheres_, generate=False):
+    """Test that spheres render properly."""
     buf_proxy = fresnel.preview(scene_four_spheres_,
                                 w=150,
                                 h=100,
@@ -56,6 +60,7 @@ def test_render(scene_four_spheres_, generate=False):
 
 
 def test_radius(scene_four_spheres_, generate=False):
+    """Test the radius property."""
     geometry = scene_four_spheres_.geometry[0]
 
     r = numpy.array([0.5, 0.6, 0.8, 1.0], dtype=numpy.float32)
@@ -77,6 +82,7 @@ def test_radius(scene_four_spheres_, generate=False):
 
 
 def test_position(scene_four_spheres_, generate=False):
+    """Test the position property."""
     geometry = scene_four_spheres_.geometry[0]
 
     p = numpy.array([[1.5, 0, 1],
@@ -101,6 +107,7 @@ def test_position(scene_four_spheres_, generate=False):
 
 
 def test_color(scene_four_spheres_, generate=False):
+    """Test the color property."""
     geometry = scene_four_spheres_.geometry[0]
     geometry.material.primitive_color_mix = 1.0
 
@@ -126,6 +133,7 @@ def test_color(scene_four_spheres_, generate=False):
 
 
 def test_outline(scene_four_spheres_, generate=False):
+    """Test that outlines render properly."""
     geometry = scene_four_spheres_.geometry[0]
     geometry.outline_width = 0.1
 
