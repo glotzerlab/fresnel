@@ -2,9 +2,7 @@
 # This file is part of the Fresnel project, released under the BSD 3-Clause
 # License.
 
-"""
-Interactive Qt widgets.
-"""
+"""Interactive Qt widgets."""
 
 import sys
 
@@ -32,7 +30,7 @@ if 'sphinx' not in sys.modules:
         app = QtWidgets.QApplication(['fresnel'])
 
 
-def q_mult(q1, q2):
+def _q_mult(q1, q2):
     w1, x1, y1, z1 = q1
     w2, x2, y2, z2 = q2
     w = w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2
@@ -42,17 +40,17 @@ def q_mult(q1, q2):
     return w, x, y, z
 
 
-def q_conjugate(q):
+def _q_conjugate(q):
     w, x, y, z = q
     return (w, -x, -y, -z)
 
 
-def qv_mult(q1, v1):
+def _qv_mult(q1, v1):
     q2 = (0.0,) + v1
-    return q_mult(q_mult(q1, q2), q_conjugate(q1))[1:]
+    return _q_mult(_q_mult(q1, q2), _q_conjugate(q1))[1:]
 
 
-def axisangle_to_q(v, theta):
+def _axisangle_to_q(v, theta):
     x, y, z = v
     theta /= 2
     w = math.cos(theta)
@@ -62,7 +60,7 @@ def axisangle_to_q(v, theta):
     return w, x, y, z
 
 
-class CameraController3D:
+class _CameraController3D:
 
     def __init__(self, camera):
         self.camera = camera
@@ -75,19 +73,19 @@ class CameraController3D:
 
         r, d, u = self.camera.basis
 
-        q1 = axisangle_to_q(u, factor * yaw)
-        q2 = axisangle_to_q(r, factor * pitch)
-        q3 = axisangle_to_q(d, factor * roll)
-        q = q_mult(q1, q2)
-        q = q_mult(q, q3)
+        q1 = _axisangle_to_q(u, factor * yaw)
+        q2 = _axisangle_to_q(r, factor * pitch)
+        q3 = _axisangle_to_q(d, factor * roll)
+        q = _q_mult(q1, q2)
+        q = _q_mult(q, q3)
 
         px, py, pz = self.camera.position
         ax, ay, az = self.camera.look_at
         v = (px - ax, py - ay, pz - az)
-        vx, vy, vz = qv_mult(q, v)
+        vx, vy, vz = _qv_mult(q, v)
 
         self.camera.position = (vx + ax, vy + ay, vz + az)
-        self.camera.up = qv_mult(q, u)
+        self.camera.up = _qv_mult(q, u)
 
     def pan(self, x, y, slight=False):
         # TODO: this should be the height at the focal plane
@@ -111,8 +109,7 @@ class CameraController3D:
         self.camera.look_at = ax + delta_x, ay + delta_y, az + delta_z
 
     def zoom(self, s, slight=False):
-        """ Zoom the view in or out
-        """
+        """Zoom the view."""
         factor = 0.0015
 
         if slight:
@@ -123,16 +120,15 @@ class CameraController3D:
 
 
 class SceneView(QtWidgets.QWidget):
-    """ View a fresnel Scene in real time
+    """View a fresnel Scene in real time.
 
-    :py:class:`SceneView` is a PySide2 widget that displays a
-    :py:class:`fresnel.Scene`, rendering it with :py:class:`fresnel.tracer.Path`
-    interactively. Use the mouse to rotate the camera view.
+    `SceneView` is a PySide2 widget that displays a `fresnel.Scene`, rendering
+    it with `fresnel.tracer.Path` interactively. Use the mouse to rotate the
+    camera view.
 
     Args:
-
-        scene (:py:class:`Scene <fresnel.Scene>`): The scene to display.
-        max_samples (int): Sample until ``max_samples`` have been averaged.
+        scene (`Scene`): The scene to display.
+        max_samples (int): Sample a total of ``max_samples``.
 
     * Left click to pitch and yaw
     * Right click to roll
@@ -142,8 +138,8 @@ class SceneView(QtWidgets.QWidget):
     .. rubric:: Using in a standalone script
 
     To use SceneView in a standalone script, import the
-    :py:mod:`fresnel.interact` module, create your :py:class:`fresnel.Scene`,
-    instantiate the :py:class:`SceneView`, show it, and start the app event
+    :py:mod:`fresnel.interact` module, create your `fresnel.Scene`,
+    instantiate the `SceneView`, show it, and start the app event
     loop.
 
     .. code-block:: python
@@ -166,7 +162,7 @@ class SceneView(QtWidgets.QWidget):
 
 
     Import the :py:mod:`fresnel.interact` module, create your
-    :py:class:`fresnel.Scene`, and instantiate the :py:class:`SceneView`. Do
+    `fresnel.Scene`, and instantiate the `SceneView`. Do
     not call the app event loop, jupyter is already running the event loop in
     the background. When the SceneView object is the result of a cell, it will
     automatically show and activate focus.
@@ -181,10 +177,7 @@ class SceneView(QtWidgets.QWidget):
 
         The interactive window will open on the system that *hosts* jupyter.
 
-    Attributes:
-        scene: The :py:class:`fresnel.Scene` rendered in this view.
-
-    .. seealso::
+    See Also:
         Tutorials:
 
         - :doc:`examples/02-Advanced-topics/03-Interactive-scene-view`
@@ -211,7 +204,7 @@ class SceneView(QtWidgets.QWidget):
         # initialize a single-shot timer to delay resizing
         self.resize_timer = QtCore.QTimer(self)
         self.resize_timer.setSingleShot(True)
-        self.resize_timer.timeout.connect(self.resize_done)
+        self.resize_timer.timeout.connect(self._resize_done)
 
         # initialize the tracer
         self.tracer = tracer.Path(device=scene.device, w=10, h=10)
@@ -222,7 +215,7 @@ class SceneView(QtWidgets.QWidget):
         self.camera_update_mode = None
         self.mouse_initial_pos = None
 
-        self.camera_controller = CameraController3D(self._scene.camera)
+        self.camera_controller = _CameraController3D(self._scene.camera)
         self.ipython_display_formatter = 'text'
 
     def minimumSizeHint(self):  # noqa
@@ -230,12 +223,13 @@ class SceneView(QtWidgets.QWidget):
 
     @property
     def scene(self):
+        """Scene: The scene rendered in this view."""
         return self._scene
 
     @scene.setter
     def scene(self, scene):
         self._scene = scene
-        self.start_rendering()
+        self._start_rendering()
 
     def paintEvent(self, event):  # noqa
         if self.rendering:
@@ -244,7 +238,7 @@ class SceneView(QtWidgets.QWidget):
 
             self.samples += 1
             if self.samples >= self.max_samples:
-                self.stop_rendering()
+                self._stop_rendering()
 
         # Display
         image_array = self.tracer.output
@@ -265,23 +259,23 @@ class SceneView(QtWidgets.QWidget):
     def resizeEvent(self, event):  # noqa
         # for the initial window size, resize immediately
         if self.initial_resize:
-            self.resize_done()
+            self._resize_done()
             self.initial_resize = False
         else:
             # otherwise, defer resizing the tracer until the window sits still
             # for a bit
             self.resize_timer.start(300)
 
-    def resize_done(self):
+    def _resize_done(self):
         # resize the tracer
         self.tracer.resize(w=self.width(), h=self.height())
-        self.start_rendering()
+        self._start_rendering()
 
-    def stop_rendering(self):
+    def _stop_rendering(self):
         self.repaint_timer.stop()
         self.rendering = False
 
-    def start_rendering(self):
+    def _start_rendering(self):
         self.rendering = True
         self.samples = 0
         self.tracer.reset()
@@ -309,7 +303,7 @@ class SceneView(QtWidgets.QWidget):
                                        slight=event.modifiers()
                                        & QtCore.Qt.ControlModifier)
 
-        self.start_rendering()
+        self._start_rendering()
         self.update()
         event.accept()
 
@@ -333,5 +327,5 @@ class SceneView(QtWidgets.QWidget):
         self.camera_controller.zoom(event.angleDelta().y(),
                                     slight=event.modifiers()
                                     & QtCore.Qt.ControlModifier)
-        self.start_rendering()
+        self._start_rendering()
         event.accept()

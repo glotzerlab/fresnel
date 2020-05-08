@@ -19,7 +19,6 @@ Cuboid example script:
 .. rubric:: Source code
 
 .. literalinclude:: cuboid.py
-    :lines: 3-29
 
 .. rubric:: Author
 
