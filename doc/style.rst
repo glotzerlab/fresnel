@@ -97,5 +97,5 @@ Editor configuration
 --------------------
 
 `Visual Studio Code <https://code.visualstudio.com/>`_ users: Open the provided
-workspace file (``gsd.code-workspace``) which provides configuration settings
-for these style guidelines.
+workspace file (``fresnel.code-workspace``) which provides configuration
+settings for these style guidelines.
