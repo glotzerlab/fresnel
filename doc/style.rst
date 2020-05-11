@@ -12,37 +12,50 @@ can automatically validate and format files.
 Python
 ------
 
-Python code in fresnel should follow `PEP8
-<https://www.python.org/dev/peps/pep-0008>`_ with the following choices:
-
-* 80 character line widths.
-* Hang closing brackets.
-* Break before binary operators.
+Python code in GSD should follow `PEP8
+<https://www.python.org/dev/peps/pep-0008>`_ with the formatting performed by
+`yapf <https://github.com/google/yapf>`_ (configuration in ``setup.cfg``).
+Code should pass all **flake8** tests and formatted by **yapf**.
 
 Tools
 ^^^^^
 
-* Linter: `flake8 <http://flake8.pycqa.org/en/latest/>`_ with
-  `pep8-naming <https://pypi.org/project/pep8-naming/>`_
-* Autoformatter: `autopep8 <https://pypi.org/project/autopep8/>`_
-* Run: ``flake8`` to see a list of violations.
-* See ``setup.cfg`` for the **flake8** configuration (also used by
-  **autopep8**).
+* Linter: `flake8 <http://flake8.pycqa.org/en/latest/>`_
+
+  * With these plugins:
+
+    * `pep8-naming <https://github.com/PyCQA/pep8-naming>`_
+    * `flake8-docstrings <https://gitlab.com/pycqa/flake8-docstrings>`_
+    * `flake8-rst-docstrings <https://github.com/peterjc/flake8-rst-docstrings>`_
+
+  * Run: ``flake8`` to see a list of linter violations.
+
+* Autoformatter: `yapf <https://github.com/google/yapf>`_
+
+  * Run: ``yapf -d -r .`` to see needed style changes.
+  * Run: ``yapf -i file.py`` to apply style changes to a whole file, or use
+    your IDE to apply **yapf** to a selection.
 
 Documentation
 ^^^^^^^^^^^^^
 
 Python code should be documented with docstrings and added to the Sphinx
-documentation index in ``doc/``. Docstrings should follow Google style
+documentation index in ``doc/``. Docstrings should follow `Google style
+<https://www.sphinx-doc.org/en/master/usage/extensions/example_google.html#example-google>`_
 formatting for use in `Napoleon
 <https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html>`_.
 
 C++/CUDA
 --------
 
-* 100 character line width.
-* Indent only with spaces.
-* 4 spaces per indent level.
+* Style is set by clang-format >= 10
+
+  * Whitesmith's indentation style.
+  * 100 character line width.
+  * Indent only with spaces.
+  * 4 spaces per indent level.
+  * See :file:`.clang-format` for the full **clang-format** configuration.
+
 * Naming conventions:
 
     * Namespaces: All lowercase ``somenamespace``
@@ -58,13 +71,9 @@ Tools
 ^^^^^
 
 * Autoformatter: `clang-format <https://clang.llvm.org/docs/ClangFormat.html>`_.
-* Run: ``./run-clang-format.py -r fresnel`` to see needed changes.
-* Run: ``clang-format -i file.cc`` to apply the changes to a specific file.
-* Style configuration: See ``.clang-format``.
 
-.. note::
-
-    We plan to provide change the style once **clang-format** 10 is available.
+  * Run: ``./run-clang-format.py -r .`` to see needed changes.
+  * Run: ``clang-format -i file.c`` to apply the changes.
 
 Documentation
 ^^^^^^^^^^^^^
@@ -77,10 +86,16 @@ documentation comment blocks start with ``/**`` and single line ones start with
 Other file types
 ----------------
 
-Use your best judgment and follow existing patterns when styling CMake,
-restructured text, markdown, and other files. The following general guidelines
-apply:
+Use your best judgment and follow existing patterns when styling CMake and other
+files types. The following general guidelines apply:
 
 * 100 character line width.
 * 4 spaces per indent level.
 * 4 space indent.
+
+Editor configuration
+--------------------
+
+`Visual Studio Code <https://code.visualstudio.com/>`_ users: Open the provided
+workspace file (``gsd.code-workspace``) which provides configuration settings
+for these style guidelines.
