@@ -14,8 +14,8 @@
 #include "libqhullcpp/QhullVertexSet.h"
 #include "libqhullcpp/RboxPoints.h"
 
-namespace fresnel {
-
+namespace fresnel
+    {
 /*! \param verts Vertices of the convex polyhedron
 
     Compute the convex hull of a set of vertices and return a python dictionary containing the face
@@ -23,7 +23,7 @@ namespace fresnel {
 */
 pybind11::dict find_polyhedron_faces(
     pybind11::array_t<double, pybind11::array::c_style | pybind11::array::forcecast> verts)
-{
+    {
     // access the vertex data
     pybind11::buffer_info info_verts = verts.request();
 
@@ -48,7 +48,7 @@ pybind11::dict find_polyhedron_faces(
     std::vector<unsigned int> face_sides;
 
     for (orgQhull::QhullFacet& f : facets)
-    {
+        {
         orgQhull::QhullPoint o = f.getCenter();
         orgQhull::QhullHyperplane n = f.hyperplane();
         orgQhull::QhullVertexSet f_verts = f.vertices();
@@ -57,16 +57,16 @@ pybind11::dict find_polyhedron_faces(
         face_normal.push_back(vec3<float>(n[0], n[1], n[2]));
         face_color.push_back(RGB<float>(0.9f, 0.9f, 0.9f));
         face_sides.push_back(f_verts.count());
-    }
+        }
 
     // determine radius
     vec3<double>* v = (vec3<double>*)info_verts.ptr;
     double radius = 0;
     for (unsigned int i = 0; i < N; i++)
-    {
+        {
         double r = sqrt(dot(v[i], v[i]));
         radius = std::max(radius, r);
-    }
+        }
 
     // pack return values in a python dict
     pybind11::dict retval;
@@ -79,5 +79,5 @@ pybind11::dict find_polyhedron_faces(
     retval["face_sides"] = pybind11::array_t<unsigned int>(face_sides.size(), &face_sides[0]);
     retval["radius"] = radius;
     return retval;
-}
-} // namespace fresnel
+    }
+    } // namespace fresnel

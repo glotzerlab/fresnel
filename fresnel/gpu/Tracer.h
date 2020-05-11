@@ -12,8 +12,10 @@
 #include "common/Camera.h"
 #include "common/ColorMath.h"
 
-namespace fresnel { namespace gpu {
-
+namespace fresnel
+    {
+namespace gpu
+    {
 //! Base class for the GPU ray tracer
 /*! Provides common methods for ray tracing matching the API of cpu::Tracer. The base class does not
    render a scene, derived classes must implement rendering methods and load program objects. The
@@ -26,7 +28,7 @@ namespace fresnel { namespace gpu {
       - m_ray_gen_entry is the entry point index in the context for m_ray_gen.
 */
 class Tracer
-{
+    {
     public:
     //! Constructor
     Tracer(std::shared_ptr<Device> device, unsigned int w, unsigned int h);
@@ -42,39 +44,39 @@ class Tracer
 
     //! Get the linear output pixel buffer
     virtual std::shared_ptr<Array<RGBA<float>>> getLinearOutputBuffer()
-    {
+        {
         return m_linear_out_py;
-    }
+        }
 
     //! Get the linear output pixel buffer
     virtual std::shared_ptr<Array<RGBA<unsigned char>>> getSRGBOutputBuffer()
-    {
+        {
         return m_srgb_out_py;
-    }
+        }
 
     //! Enable highlight warnings
     void enableHighlightWarning(const RGB<float>& color)
-    {
+        {
         m_highlight_warning = true;
         m_highlight_warning_color = color;
-    }
+        }
 
     void disableHighlightWarning()
-    {
+        {
         m_highlight_warning = false;
-    }
+        }
 
     //! Set the random number seed
     void setSeed(unsigned int seed)
-    {
+        {
         m_seed = seed;
-    }
+        }
 
     //! Get the random number seed
     unsigned int getSeed() const
-    {
+        {
         return m_seed;
-    }
+        }
 
     protected:
     std::shared_ptr<Device> m_device; //!< The device the Scene is attached to
@@ -94,11 +96,12 @@ class Tracer
     bool m_highlight_warning; //!< Set to true to enable highlight warnings in sRGB output
     RGB<float> m_highlight_warning_color; //!< The highlight warning color
     unsigned int m_seed = 0;              //!< Random number seed
-};
+    };
 
 //! Export Tracer to python
 void export_Tracer(pybind11::module& m);
 
-}} // end namespace fresnel::gpu
+    } // namespace gpu
+    } // namespace fresnel
 
 #endif

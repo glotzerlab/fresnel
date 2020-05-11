@@ -5,8 +5,10 @@
 
 #include "GeometryPolygon.h"
 
-namespace fresnel { namespace gpu {
-
+namespace fresnel
+    {
+namespace gpu
+    {
 /*! \param scene Scene to attach the Geometry to
     \param vertices vertices of the polygon (in counterclockwise order)
     \param position position of each polygon
@@ -21,7 +23,7 @@ GeometryPolygon::GeometryPolygon(
     float rounding_radius,
     unsigned int N)
     : Geometry(scene)
-{
+    {
     // create the geometry
     // intersection and bounding programs are not stored for later destruction, as Device will
     // destroy its program cache
@@ -58,14 +60,14 @@ GeometryPolygon::GeometryPolygon(
     vec2<float>* optix_vertices = (vec2<float>*)m_vertices->map();
 
     for (unsigned int i = 0; i < info.shape[0]; i++)
-    {
+        {
         vec2<float> p0(verts_f[i * 2], verts_f[i * 2 + 1]);
 
         optix_vertices[i] = p0;
 
         // precompute radius in the xy plane
         m_radius = std::max(m_radius, sqrtf(dot(p0, p0)));
-    }
+        }
 
     m_vertices->unmap();
 
@@ -93,17 +95,17 @@ GeometryPolygon::GeometryPolygon(
     setupInstance();
 
     m_valid = true;
-}
+    }
 
 GeometryPolygon::~GeometryPolygon()
-{
+    {
     m_vertices->destroy();
-}
+    }
 
 /*! \param m Python module to export in
  */
 void export_GeometryPolygon(pybind11::module& m)
-{
+    {
     pybind11::class_<GeometryPolygon, Geometry, std::shared_ptr<GeometryPolygon>>(m,
                                                                                   "GeometryPolygon")
         .def(pybind11::init<
@@ -115,6 +117,7 @@ void export_GeometryPolygon(pybind11::module& m)
         .def("getAngleBuffer", &GeometryPolygon::getAngleBuffer)
         .def("getColorBuffer", &GeometryPolygon::getColorBuffer)
         .def("getRadius", &GeometryPolygon::getRadius);
-}
+    }
 
-}} // end namespace fresnel::gpu
+    } // namespace gpu
+    } // namespace fresnel

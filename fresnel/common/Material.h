@@ -17,20 +17,20 @@
 #define DEVICE
 #endif
 
-namespace fresnel {
-
+namespace fresnel
+    {
 //! Compute schlick approximation to fresnel
 /*! This function computes the (1-(cos(theta))**5 term only
     \param x cos(theta)
 */
 DEVICE inline float schlick(float x)
-{
+    {
     float v = 1.0f - x;
     float v_sq = v * v;
     float v_fifth = v_sq * v_sq * v;
 
     return v_fifth;
-}
+    }
 
 //! Material properties
 /*! Material is a plain old data struct that holds material properties, and a few methods for
@@ -45,7 +45,7 @@ DEVICE inline float schlick(float x)
     Material stores all colors in a linearized sRGB color space.
 */
 struct Material
-{
+    {
     float solid;               //!< Set to 1 to pass through solid color
     RGB<float> color;          //!< Color of the material
     float primitive_color_mix; //!< Set to 0 to force material color, 1 to use geometry color
@@ -55,17 +55,18 @@ struct Material
     float spec_trans;          //!< Set to 0 for solid materials, 1 for fully transmissive
 
     //! Default constructor gives uninitialized material
-    DEVICE Material() {}
+    DEVICE Material() { }
 
     //! Set material parameters
     DEVICE explicit Material(const RGB<float> _color, float _solid = 0.0f)
         : solid(_solid), color(_color), primitive_color_mix(0.0f), roughness(0.1f), specular(0.5f),
           metal(0.0f)
-    {}
+        {
+        }
 
     DEVICE RGB<float>
     brdf(vec3<float> l, vec3<float> v, vec3<float> n, const RGB<float>& shading_color) const
-    {
+        {
         // BRDF is 0 when behind the surface
         float ndotv = dot(n, v); // cos(theta_v)
         if (ndotv <= 0)
@@ -118,11 +119,11 @@ struct Material
         RGB<float> f_s = D * F * V;
 
         return f_d * (1.0f - metal) + f_s;
-    }
+        }
 
     DEVICE RGB<float>
     brdf_diffuse(vec3<float> l, vec3<float> v, vec3<float> n, const RGB<float>& shading_color) const
-    {
+        {
         // diffuse BRDF is 0 when behind the surface or metal is 1.0f
         float ndotv = dot(n, v); // cos(theta_v)
         if (ndotv <= 0 || metal == 1.0f)
@@ -149,14 +150,14 @@ struct Material
               * ((1.0f - 0.5f * FL) * (1.0f - 0.5f * FV) + RR * (FL + FV + FL * FV * (RR - 1.0f)));
 
         return f_d * (1.0f - metal);
-    }
+        }
 
     DEVICE RGB<float> brdf_specular(vec3<float> l,
                                     vec3<float> v,
                                     vec3<float> n,
                                     const RGB<float>& shading_color,
                                     float light_half_angle = 0.0f) const
-    {
+        {
         // specular BRDF is 0 when behind the surface
         float ndotv = dot(n, v); // cos(theta_v)
         if (ndotv <= 0)
@@ -187,12 +188,12 @@ struct Material
             light_half_angle = 0.99f * float(M_PI) / 2.0f;
 
         if (light_half_angle > 0.0f)
-        {
+            {
             alpha_prime = alpha + 0.5f * tanf(light_half_angle);
             if (alpha_prime > 1.0f)
                 alpha_prime = 1.0f;
             D = D * alpha_sq / (alpha_prime * alpha_prime);
-        }
+            }
 
         // F(theta_d)
         RGB<float> F0_dielectric(0.08f * specular, 0.08f * specular, 0.08f * specular);
@@ -214,20 +215,20 @@ struct Material
         RGB<float> f_s = D * F * V;
 
         return f_s;
-    }
+        }
 
     DEVICE bool isSolid() const
-    {
+        {
         return (solid > 0.5f);
-    }
+        }
 
     DEVICE RGB<float> getColor(const RGB<float>& shading_color) const
-    {
+        {
         return lerp(primitive_color_mix, color, shading_color);
-    }
+        }
 
     DEVICE vec3<float> importanceSampleGGX(vec2<float> xi, vec3<float> v, vec3<float> n) const
-    {
+        {
         // use eq 9 from "Physically based shading at Disney" to compute the random direction to
         // sample
         float alpha = roughness * roughness;
@@ -252,10 +253,10 @@ struct Material
         // convert from half vector to l vector
         vec3<float> l = 2.0f * dot(v, h) * h - v;
         return l;
-    }
+        }
 
     DEVICE float pdfGGX(vec3<float> l, vec3<float> v, vec3<float> n) const
-    {
+        {
         // compute h vector and cosines of relevant angles
         vec3<float> h = l + v;
         h /= sqrtf(dot(h, h));
@@ -276,10 +277,10 @@ struct Material
             return pdf_l;
         else
             return 0.0f;
-    }
+        }
 
     DEVICE vec3<float> importanceSampleDiffuse(vec2<float> xi, vec3<float> v, vec3<float> n) const
-    {
+        {
         const float r = sqrtf(xi.x);
         const float theta = 2 * float(M_PI) * xi.y;
 
@@ -300,19 +301,19 @@ struct Material
         vec3<float> l = t_x * v_t.x + t_y * v_t.y + n * v_t.z;
 
         return l;
-    }
+        }
 
     DEVICE float pdfDiffuse(vec3<float> l, vec3<float> v, vec3<float> n) const
-    {
+        {
         float ndotl = dot(n, l);
         if (ndotl > 0.0f)
             return ndotl / float(M_PI);
         else
             return 0.0f;
-    }
-};
+        }
+    };
 
-} // namespace fresnel
+    } // namespace fresnel
 
 #undef DEVICE
 

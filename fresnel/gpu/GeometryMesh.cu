@@ -21,7 +21,7 @@ rtDeclareVariable(RGB<float>, shading_color, attribute shading_color, );
 rtDeclareVariable(optix::Ray, ray, rtCurrentRay, );
 
 RT_PROGRAM void intersect(int primIdx)
-{
+    {
     const unsigned int n_faces = mesh_vertices.size() / 3;
     const unsigned int i_poly = primIdx / n_faces;
     const unsigned int i_face = primIdx % n_faces;
@@ -68,18 +68,18 @@ RT_PROGRAM void intersect(int primIdx)
         return;
 
     if (rtPotentialIntersection(t))
-    {
+        {
         vec3<float> n_world = rotate(q_world, n);
         shading_normal = n_world;
         shading_distance = d;
         shading_color = RGB<float>(mesh_color[i_face * 3 + 0] * u + mesh_color[i_face * 3 + 1] * v
                                    + mesh_color[i_face * 3 + 2] * w);
         rtReportIntersection(0);
+        }
     }
-}
 
 RT_PROGRAM void bounds(int primIdx, float result[6])
-{
+    {
     const unsigned int n_faces = mesh_vertices.size() / 3;
     const unsigned int i_poly = primIdx / n_faces;
     const unsigned int i_face = primIdx % n_faces;
@@ -103,4 +103,4 @@ RT_PROGRAM void bounds(int primIdx, float result[6])
     aabb->m_max.x = fmaxf(v0_world.x, fmaxf(v1_world.x, v2_world.x));
     aabb->m_max.y = fmaxf(v0_world.y, fmaxf(v1_world.y, v2_world.y));
     aabb->m_max.z = fmaxf(v0_world.z, fmaxf(v1_world.z, v2_world.z));
-}
+    }

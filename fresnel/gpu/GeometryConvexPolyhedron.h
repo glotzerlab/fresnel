@@ -12,8 +12,10 @@
 #include "Array.h"
 #include "Geometry.h"
 
-namespace fresnel { namespace gpu {
-
+namespace fresnel
+    {
+namespace gpu
+    {
 //! Convex polyhedron geometry
 /*! Define a convex polyhedron geometry.
 
@@ -21,7 +23,7 @@ namespace fresnel { namespace gpu {
    re-implements that using OptiX.
 */
 class GeometryConvexPolyhedron : public Geometry
-{
+    {
     public:
     //! Constructor
     GeometryConvexPolyhedron(
@@ -39,33 +41,33 @@ class GeometryConvexPolyhedron : public Geometry
 
     //! Get the position buffer
     std::shared_ptr<Array<vec3<float>>> getPositionBuffer()
-    {
+        {
         return m_position;
-    }
+        }
 
     //! Get the orientation buffer
     std::shared_ptr<Array<quat<float>>> getOrientationBuffer()
-    {
+        {
         return m_orientation;
-    }
+        }
 
     //! Get the color buffer
     std::shared_ptr<Array<RGB<float>>> getColorBuffer()
-    {
+        {
         return m_color;
-    }
+        }
 
     //! Set the color by face option
     void setColorByFace(float f)
-    {
+        {
         m_geometry["convex_polyhedron_color_by_face"]->setFloat(f);
-    }
+        }
 
     //! Get the color by face option
     float getColorByFace()
-    {
+        {
         return m_geometry["convex_polyhedron_color_by_face"]->getFloat();
-    }
+        }
 
     protected:
     optix::Buffer m_plane_origin; //!< Buffer containing plane origins
@@ -75,11 +77,12 @@ class GeometryConvexPolyhedron : public Geometry
     std::shared_ptr<Array<vec3<float>>> m_position;    //!< Position of each polyhedron
     std::shared_ptr<Array<quat<float>>> m_orientation; //!< Orientation of each polyhedron
     std::shared_ptr<Array<RGB<float>>> m_color;        //!< Per-particle color
-};
+    };
 
 //! Export GeometryConvexPolyhedron to python
 void export_GeometryConvexPolyhedron(pybind11::module& m);
 
-}} // end namespace fresnel::gpu
+    } // namespace gpu
+    } // namespace fresnel
 
 #endif

@@ -9,8 +9,10 @@
 #include <pybind11/pybind11.h>
 #include <stdexcept>
 
-namespace fresnel { namespace gpu {
-
+namespace fresnel
+    {
+namespace gpu
+    {
 //! Thin wrapper for optix::Context
 /*! Handle construction and deletion of the optix context, and python lifetime as an exported class.
 
@@ -46,7 +48,7 @@ namespace fresnel { namespace gpu {
     TODO: test the performance impact of this.
 */
 class Device
-{
+    {
     public:
     //! Constructor
     Device(const std::string& ptx_root, int n);
@@ -56,9 +58,9 @@ class Device
 
     //! Access the context
     optix::Context& getContext()
-    {
+        {
         return m_context;
-    }
+        }
 
     //! Get information about this device
     std::string describe();
@@ -74,9 +76,9 @@ class Device
 
     //! Get the tracer material
     optix::Material getMaterial()
-    {
+        {
         return m_material;
-    }
+        }
 
     private:
     optix::Context m_context;   //!< Store the context
@@ -87,11 +89,12 @@ class Device
         m_program_cache; //!< The program cache
     std::map<std::tuple<std::string, std::string>, unsigned int>
         m_entrypoint_cache; //!< The entry point cache
-};
+    };
 
 //! Export Device to python
 void export_Device(pybind11::module& m);
 
-}} // end namespace fresnel::gpu
+    } // namespace gpu
+    } // namespace fresnel
 
 #endif

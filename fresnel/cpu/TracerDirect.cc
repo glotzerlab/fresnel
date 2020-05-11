@@ -10,18 +10,21 @@
 
 using namespace tbb;
 
-namespace fresnel { namespace cpu {
-
+namespace fresnel
+    {
+namespace cpu
+    {
 /*! \param device Device to attach the raytracer to
  */
 TracerDirect::TracerDirect(std::shared_ptr<Device> device, unsigned int w, unsigned int h)
     : Tracer(device, w, h)
-{}
+    {
+    }
 
-TracerDirect::~TracerDirect() {}
+TracerDirect::~TracerDirect() { }
 
 void TracerDirect::render(std::shared_ptr<Scene> scene)
-{
+    {
     std::shared_ptr<tbb::task_arena> arena = scene->getDevice()->getTBBArena();
 
     const RGB<float> background_color = scene->getBackgroundColor();
@@ -59,7 +62,7 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
             blocked_range<size_t>(0, numTilesX * numTilesY),
             [=](const blocked_range<size_t>& r) {
                 for (size_t tile = r.begin(); tile != r.end(); ++tile)
-                {
+                    {
                     const unsigned int tileY = tile / numTilesX;
                     const unsigned int tileX = tile - tileY * numTilesX;
                     const unsigned int x0 = tileX * TILE_SIZE_X;
@@ -69,7 +72,7 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
 
                     for (unsigned int j = y0; j < y1; j++)
                         for (unsigned int i = x0; i < x1; i++)
-                        {
+                            {
                             // create the ray generator for this pixel
                             RayGen ray_gen(i, j, width, height, m_seed);
 
@@ -109,10 +112,10 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
                                 float a = background_alpha;
 
                                 if (ray_hit.hit.geomID != RTC_INVALID_GEOMETRY_ID)
-                                {
+                                    {
                                     vec3<float> n(ray_hit.hit.Ng_x,
-                                                    ray_hit.hit.Ng_y,
-                                                    ray_hit.hit.Ng_z);
+                                                  ray_hit.hit.Ng_y,
+                                                  ray_hit.hit.Ng_z);
                                     n /= std::sqrt(dot(n, n));
                                     vec3<float> v = -dir / std::sqrt(dot(dir, dir));
                                     Material m;
@@ -125,15 +128,15 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
                                         m = scene->getOutlineMaterial(ray_hit.hit.geomID);
 
                                     if (m.isSolid())
-                                    {
+                                        {
                                         c = m.getColor(context.shading_color);
-                                    }
+                                        }
                                     else
-                                    {
+                                        {
                                         c = RGB<float>(0, 0, 0);
                                         for (unsigned int light_id = 0; light_id < lights.N;
-                                                light_id++)
-                                        {
+                                             light_id++)
+                                            {
                                             vec3<float> l = lights.direction[light_id];
 
                                             // find the representative point, a vector pointing
@@ -146,7 +149,7 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
                                             float cos_half_angle = cosf(half_angle);
                                             float ldotr = dot(l, r);
                                             if (ldotr < cos_half_angle)
-                                            {
+                                                {
                                                 vec3<float> a = cross(l, r);
                                                 a = a / sqrtf(dot(a, a));
 
@@ -156,44 +159,40 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
                                                     a,
                                                     -acosf(ldotr) + half_angle);
                                                 r = rotate(q, r);
-                                            }
+                                                }
                                             else
-                                            {
+                                                {
                                                 // hit the light, no modification necessary to r
-                                            }
+                                                }
 
                                             // only apply brdf when the light faces the surface
                                             RGB<float> f_d;
                                             float ndotl = dot(n, l);
                                             if (ndotl >= 0.0f)
-                                                f_d = m.brdf_diffuse(l,
-                                                                        v,
-                                                                        n,
-                                                                        context.shading_color)
-                                                        * ndotl;
+                                                f_d = m.brdf_diffuse(l, v, n, context.shading_color)
+                                                      * ndotl;
                                             else
                                                 f_d = RGB<float>(0.0f, 0.0f, 0.0f);
 
                                             RGB<float> f_s;
                                             if (dot(n, r) >= 0.0f)
-                                            {
+                                                {
                                                 f_s = m.brdf_specular(r,
-                                                                        v,
-                                                                        n,
-                                                                        context.shading_color,
-                                                                        half_angle)
-                                                        * dot(n, r);
-                                            }
+                                                                      v,
+                                                                      n,
+                                                                      context.shading_color,
+                                                                      half_angle)
+                                                      * dot(n, r);
+                                                }
                                             else
                                                 f_s = RGB<float>(0.0f, 0.0f, 0.0f);
 
-                                            c += (f_d + f_s) * float(M_PI)
-                                                    * lights.color[light_id];
+                                            c += (f_d + f_s) * float(M_PI) * lights.color[light_id];
+                                            }
                                         }
-                                    }
 
                                     a = 1.0;
-                                }
+                                    }
 
                                 // accumulate importance sampled average
                                 output_avg += RGBA<float>(c, a);
@@ -211,23 +210,24 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
                             else
                                 srgb_output[pixel]
                                     = sRGB(RGBA<float>(m_highlight_warning_color, output_pixel.a));
-                        } // end loop over pixels in the tile
-                }         // loop over tiles in this region
+                            } // end loop over pixels in the tile
+                    }         // loop over tiles in this region
             });           // end parallel loop over tiles
     });                   // end parallel arena
 
     m_linear_out->unmap();
     m_srgb_out->unmap();
-}
+    }
 
 /*! \param m Python module to export in
  */
 void export_TracerDirect(pybind11::module& m)
-{
+    {
     pybind11::class_<TracerDirect, Tracer, std::shared_ptr<TracerDirect>>(m, "TracerDirect")
         .def(pybind11::init<std::shared_ptr<Device>, unsigned int, unsigned int>())
         .def("setAntialiasingN", &TracerDirect::setAntialiasingN)
         .def("getAntialiasingN", &TracerDirect::getAntialiasingN);
-}
+    }
 
-}} // end namespace fresnel::cpu
+    } // namespace cpu
+    } // namespace fresnel

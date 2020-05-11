@@ -6,8 +6,10 @@
 #include "GeometryPolygon.h"
 #include "common/GeometryMath.h"
 
-namespace fresnel { namespace cpu {
-
+namespace fresnel
+    {
+namespace cpu
+    {
 /*! \param scene Scene to attach the Geometry to
     \param vertices vertices of the polygon (in counterclockwise order)
     \param rounding_radius The rounding radius of the spheropolygon
@@ -21,7 +23,7 @@ GeometryPolygon::GeometryPolygon(
     float rounding_radius,
     unsigned int N)
     : Geometry(scene), m_rounding_radius(rounding_radius)
-{
+    {
     // create the geometry
     m_geometry = rtcNewGeometry(m_device->getRTCDevice(), RTC_GEOMETRY_TYPE_USER);
     m_device->checkError();
@@ -51,14 +53,14 @@ GeometryPolygon::GeometryPolygon(
     float* verts_f = (float*)info.ptr;
 
     for (unsigned int i = 0; i < info.shape[0]; i++)
-    {
+        {
         vec2<float> p0(verts_f[i * 2], verts_f[i * 2 + 1]);
 
         m_vertices.push_back(p0);
 
         // precompute radius in the xy plane
         m_radius = std::max(m_radius, sqrtf(dot(p0, p0)));
-    }
+        }
     // pad the radius with the rounding radius
     m_radius += m_rounding_radius;
 
@@ -74,9 +76,9 @@ GeometryPolygon::GeometryPolygon(
     m_device->checkError();
 
     m_valid = true;
-}
+    }
 
-GeometryPolygon::~GeometryPolygon() {}
+GeometryPolygon::~GeometryPolygon() { }
 
 /*! Compute the bounding box of a given primitive
 
@@ -85,7 +87,7 @@ GeometryPolygon::~GeometryPolygon() {}
     \param bounds_o Output bounding box
 */
 void GeometryPolygon::bounds(const struct RTCBoundsFunctionArguments* args)
-{
+    {
     GeometryPolygon* geom = (GeometryPolygon*)args->geometryUserPtr;
     vec2<float> p2 = geom->m_position->get(args->primID);
     vec3<float> p(p2.x, p2.y, 0.0f);
@@ -98,7 +100,7 @@ void GeometryPolygon::bounds(const struct RTCBoundsFunctionArguments* args)
     bounds_o.upper_x = p.x + geom->m_radius;
     bounds_o.upper_y = p.y + geom->m_radius;
     bounds_o.upper_z = p.z + 1e-5;
-}
+    }
 
 //! Test if a point is inside a polygon
 /*! \param min_d  [out] minimum distance from p to the polygon edge
@@ -112,7 +114,7 @@ void GeometryPolygon::bounds(const struct RTCBoundsFunctionArguments* args)
     \ingroup overlap
 */
 inline bool is_inside(float& min_d, const vec2<float>& p, const std::vector<vec2<float>>& verts)
-{
+    {
     // code for concave test from: http://alienryderflex.com/polygon/
     unsigned int nvert = verts.size();
     min_d = FLT_MAX;
@@ -121,23 +123,23 @@ inline bool is_inside(float& min_d, const vec2<float>& p, const std::vector<vec2
     bool oddNodes = false;
 
     for (i = 0; i < nvert; i++)
-    {
+        {
         min_d = fast::min(min_d, point_line_segment_distance(p, verts[i], verts[j]));
 
         if ((verts[i].y < p.y && verts[j].y >= p.y) || (verts[j].y < p.y && verts[i].y >= p.y))
-        {
+            {
             if (verts[i].x
                     + (p.y - verts[i].y) / (verts[j].y - verts[i].y) * (verts[j].x - verts[i].x)
                 < p.x)
-            {
+                {
                 oddNodes = !oddNodes;
+                }
             }
-        }
         j = i;
-    }
+        }
 
     return oddNodes;
-}
+    }
 
 /*! Compute the intersection of a ray with the given primitive
 
@@ -146,7 +148,7 @@ inline bool is_inside(float& min_d, const vec2<float>& p, const std::vector<vec2
     \param item Index of the primitive to compute the bounding box of
 */
 void GeometryPolygon::intersect(const struct RTCIntersectFunctionNArguments* args)
-{
+    {
     GeometryPolygon* geom = (GeometryPolygon*)args->geometryUserPtr;
 
     const vec2<float> p2 = geom->m_position->get(args->primID);
@@ -170,9 +172,9 @@ void GeometryPolygon::intersect(const struct RTCIntersectFunctionNArguments* arg
 
     // if the ray is parallel to the plane, there is no intersection
     if (fabs(denom) < 1e-5)
-    {
+        {
         return;
-    }
+        }
 
     // see if the intersection point is inside the polygon
     vec3<float> r_hit = ray_org_local + t_hit * ray_dir_local;
@@ -184,15 +186,15 @@ void GeometryPolygon::intersect(const struct RTCIntersectFunctionNArguments* arg
     // spheropolygon (equivalent to sharp polygon when rounding radius is 0
     // make distance signed (negative is inside)
     if (inside)
-    {
+        {
         d_edge = -d_edge;
-    }
+        }
 
     // exit if outside
     if (d_edge > geom->m_rounding_radius)
-    {
+        {
         return;
-    }
+        }
     min_d = geom->m_rounding_radius - d_edge;
 
     // if we get here, we hit the inside of the polygon
@@ -200,7 +202,7 @@ void GeometryPolygon::intersect(const struct RTCIntersectFunctionNArguments* arg
     RTCRayHit& rh = *(RTCRayHit*)args->rayhit;
     FresnelRTCIntersectContext& context = *(FresnelRTCIntersectContext*)args->context;
     if ((ray.tnear < t_hit) & (t_hit < ray.tfar))
-    {
+        {
         ray.tfar = t_hit;
         rh.hit.geomID = geom->m_geom_id;
         rh.hit.primID = args->primID;
@@ -208,13 +210,13 @@ void GeometryPolygon::intersect(const struct RTCIntersectFunctionNArguments* arg
         // make polygons double sided
         vec3<float> n_flip;
         if (dot(n, ray_dir_local) < 0.0f)
-        {
+            {
             n_flip = n;
-        }
+            }
         else
-        {
+            {
             n_flip = -n;
-        }
+            }
 
         vec3<float> Ng = rotate(q_world, n_flip);
 
@@ -223,13 +225,13 @@ void GeometryPolygon::intersect(const struct RTCIntersectFunctionNArguments* arg
         rh.hit.Ng_z = Ng.z;
         context.shading_color = geom->m_color->get(args->primID);
         context.d = min_d;
+        }
     }
-}
 
 /*! \param m Python module to export in
  */
 void export_GeometryPolygon(pybind11::module& m)
-{
+    {
     pybind11::class_<GeometryPolygon, Geometry, std::shared_ptr<GeometryPolygon>>(m,
                                                                                   "GeometryPolygon")
         .def(pybind11::init<
@@ -241,6 +243,7 @@ void export_GeometryPolygon(pybind11::module& m)
         .def("getAngleBuffer", &GeometryPolygon::getAngleBuffer)
         .def("getColorBuffer", &GeometryPolygon::getColorBuffer)
         .def("getRadius", &GeometryPolygon::getRadius);
-}
+    }
 
-}} // end namespace fresnel::cpu
+    } // namespace cpu
+    } // namespace fresnel

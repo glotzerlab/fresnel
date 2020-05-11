@@ -19,15 +19,16 @@
 #define DEVICE
 #endif
 
-namespace fresnel {
-
+namespace fresnel
+    {
 /** Camera models.
 
     Used to select the camera model in Camera.
 */
 enum class CameraModel
     {
-    orthographic, perspective
+    orthographic,
+    perspective
     };
 
 /** Store user provided camera properties.
@@ -52,12 +53,12 @@ enum class CameraModel
     All convenience methods and derived properties are implemented in Python.
 */
 struct UserCamera
-{
+    {
     UserCamera()
         {
-        position = vec3<float>(0,0,0);
-        look_at = vec3<float>(0,0,1);
-        up = vec3<float>(0,1,0);
+        position = vec3<float>(0, 0, 0);
+        look_at = vec3<float>(0, 0, 1);
+        up = vec3<float>(0, 1, 0);
         h = 1;
         f = 1;
         f_stop = 1;
@@ -73,7 +74,7 @@ struct UserCamera
     float f_stop;
     float focus_distance;
     CameraModel model;
-};
+    };
 
 /** Store an orthonormal basis u,v,w.
 
@@ -86,10 +87,10 @@ struct UserCamera
     These are computed from position, look_at, and up from UserCamera.
 */
 struct CameraBasis
-{
-    CameraBasis() {}
-    explicit CameraBasis(const UserCamera& user) : v(user.up)
     {
+    CameraBasis() { }
+    explicit CameraBasis(const UserCamera& user) : v(user.up)
+        {
         vec3<float> d = user.look_at - user.position;
 
         // normalize inputs
@@ -106,10 +107,10 @@ struct CameraBasis
 
         // w points opposite the direction the camera faces
         w = -d;
-    }
+        }
 
     vec3<float> u, v, w;
-};
+    };
 
 /** Implementation of the camera models.
 
@@ -126,9 +127,9 @@ struct CameraBasis
     pixel location, a user random number seed value, and a sample index.
 */
 class Camera
-{
+    {
     public:
-    Camera() {}
+    Camera() { }
 
     /** Construct from a UserCamera.
 
@@ -141,11 +142,10 @@ class Camera
                     unsigned int width,
                     unsigned int height,
                     unsigned int seed,
-                    bool sample_aa=true)
+                    bool sample_aa = true)
         : m_p(user.position), m_basis(user), m_focal_d(user.focus_distance),
-        m_a(user.f/user.f_stop), m_model(user.model),
-        m_width(width), m_height(height), m_seed(seed),
-        m_sample_aa(sample_aa)
+          m_a(user.f / user.f_stop), m_model(user.model), m_width(width), m_height(height),
+          m_seed(seed), m_sample_aa(sample_aa)
         {
         // precompute focal plane height
         if (m_model == CameraModel::orthographic)
@@ -166,12 +166,12 @@ class Camera
         @param j Pixel index in the y direction.
         @param sample Index of the sample to generate.
     */
-    DEVICE void generateRay(vec3<float> &origin,
-                            vec3<float> &direction,
+    DEVICE void generateRay(vec3<float>& origin,
+                            vec3<float>& direction,
                             unsigned int i,
                             unsigned int j,
                             unsigned int sample) const
-    {
+        {
         vec2<float> s = importanceSampleAA(i, j, sample);
 
         if (m_model == CameraModel::orthographic)
@@ -187,8 +187,9 @@ class Camera
         vec3<float> C = F + (s.y * m_basis.v + s.x * m_basis.u) * m_focal_h;
 
         if (m_model == CameraModel::perspective)
-        {
-            // create the philox unique key for this RNG which includes the pixel ID and the random seed
+            {
+            // create the philox unique key for this RNG which includes the pixel ID and the random
+            // seed
             unsigned int pixel = j * m_width + i;
             r123::Philox4x32::ukey_type rng_key = {{pixel, m_seed}};
 
@@ -201,11 +202,11 @@ class Camera
 
             vec3<float> offset = r * cosf(theta) * m_basis.u + r * sinf(theta) * m_basis.v;
             origin = m_p + offset;
-        }
+            }
 
         direction = C - origin;
         direction *= 1.0f / sqrtf(dot(direction, direction));
-    }
+        }
 
     /// Get the camera basis.
     const CameraBasis& getBasis() const
@@ -213,9 +214,7 @@ class Camera
         return m_basis;
         }
 
-
     private:
-
     /** Importance sample pixel locations for anti-aliasing
 
         @param i Pixel index in the x direction.
@@ -225,12 +224,13 @@ class Camera
         Given the sample index, importance sample the tent filter to produce anti-aliased output.
     */
     DEVICE vec2<float> importanceSampleAA(unsigned int i, unsigned int j, unsigned int sample) const
-    {
+        {
         float i_f, j_f;
 
         if (m_sample_aa)
             {
-            // create the philox unique key for this RNG which includes the pixel ID and the random seed
+            // create the philox unique key for this RNG which includes the pixel ID and the random
+            // seed
             unsigned int pixel = j * m_width + i;
             r123::Philox4x32::ukey_type rng_uk = {{pixel, m_seed}};
 
@@ -266,7 +266,7 @@ class Camera
         float ys = -1.0f * (j_f / float(m_height) - 0.5f);
         float xs = i_f / float(m_height) - 0.5f * float(m_width) / float(m_height);
         return vec2<float>(xs, ys);
-    }
+        }
 
     /// Center of projection
     vec3<float> m_p;
@@ -306,9 +306,9 @@ class Camera
 
     /// Width of the anti-aliasing filter (in pixels)
     static constexpr float m_aa_w = 0.707106781f;
-};
+    };
 
-} // namespace fresnel
+    } // namespace fresnel
 
 #undef DEVICE
 

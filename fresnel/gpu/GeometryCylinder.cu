@@ -19,7 +19,7 @@ rtDeclareVariable(RGB<float>, shading_color, attribute shading_color, );
 rtDeclareVariable(optix::Ray, ray, rtCurrentRay, );
 
 RT_PROGRAM void intersect(int primIdx)
-{
+    {
     const vec3<float> A(cylinder_points[make_size_t2(0, primIdx)]);
     const vec3<float> B(cylinder_points[make_size_t2(1, primIdx)]);
     const float radius = cylinder_radius[primIdx];
@@ -41,16 +41,16 @@ RT_PROGRAM void intersect(int primIdx)
         return;
 
     if (rtPotentialIntersection(t))
-    {
+        {
         shading_normal = N;
         shading_distance = d;
         shading_color = RGB<float>(cylinder_color[make_size_t2(color_index, primIdx)]);
         rtReportIntersection(0);
+        }
     }
-}
 
 RT_PROGRAM void bounds(int primIdx, float result[6])
-{
+    {
     const vec3<float> A(cylinder_points[make_size_t2(0, primIdx)]);
     const vec3<float> B(cylinder_points[make_size_t2(1, primIdx)]);
     const float radius = cylinder_radius[primIdx];
@@ -58,16 +58,16 @@ RT_PROGRAM void bounds(int primIdx, float result[6])
     optix::Aabb* aabb = (optix::Aabb*)result;
 
     if (radius > 0.0f && !isinf(radius))
-    {
+        {
         aabb->m_min.x = min(A.x - radius, B.x - radius);
         aabb->m_min.y = min(A.y - radius, B.y - radius);
         aabb->m_min.z = min(A.z - radius, B.z - radius);
         aabb->m_max.x = max(A.x + radius, B.x + radius);
         aabb->m_max.y = max(A.y + radius, B.y + radius);
         aabb->m_max.z = max(A.z + radius, B.z + radius);
-    }
+        }
     else
-    {
+        {
         aabb->invalidate();
+        }
     }
-}

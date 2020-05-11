@@ -7,13 +7,15 @@
 
 #include "GeometryCylinder.h"
 
-namespace fresnel { namespace gpu {
-
+namespace fresnel
+    {
+namespace gpu
+    {
 /*! \param scene Scene to attach the Geometry to
     \param N number of spheres in the geometry
 */
 GeometryCylinder::GeometryCylinder(std::shared_ptr<Scene> scene, unsigned int N) : Geometry(scene)
-{
+    {
     // Declared initial variables
     optix::Program intersection_program;
     optix::Program bounding_box_program;
@@ -45,12 +47,12 @@ GeometryCylinder::GeometryCylinder(std::shared_ptr<Scene> scene, unsigned int N)
     m_radius = std::shared_ptr<Array<float>>(new Array<float>(1, optix_radius));
     m_color = std::shared_ptr<Array<RGB<float>>>(new Array<RGB<float>>(2, optix_color));
     setupInstance();
-}
+    }
 
-GeometryCylinder::~GeometryCylinder() {}
+GeometryCylinder::~GeometryCylinder() { }
 
 void export_GeometryCylinder(pybind11::module& m)
-{
+    {
     pybind11::class_<GeometryCylinder, Geometry, std::shared_ptr<GeometryCylinder>>(
         m,
         "GeometryCylinder")
@@ -58,6 +60,7 @@ void export_GeometryCylinder(pybind11::module& m)
         .def("getPointsBuffer", &GeometryCylinder::getPointsBuffer)
         .def("getRadiusBuffer", &GeometryCylinder::getRadiusBuffer)
         .def("getColorBuffer", &GeometryCylinder::getColorBuffer);
-}
+    }
 
-}} // end namespace fresnel::gpu
+    } // namespace gpu
+    } // namespace fresnel

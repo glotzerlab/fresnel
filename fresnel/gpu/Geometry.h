@@ -10,8 +10,10 @@
 #include "Scene.h"
 #include "common/Material.h"
 
-namespace fresnel { namespace gpu {
-
+namespace fresnel
+    {
+namespace gpu
+    {
 //! Create and modify geometry instances
 /*! Geometry tracks OptiX GeometryInstance objects that belong to a given Scene.
 
@@ -36,7 +38,7 @@ namespace fresnel { namespace gpu {
     Each Geometry has one Material and one outline Material.
 */
 class Geometry
-{
+    {
     public:
     //! Constructor
     Geometry(std::shared_ptr<Scene> scene);
@@ -54,21 +56,21 @@ class Geometry
 
     //! Get the material
     const Material& getMaterial()
-    {
+        {
         return m_mat;
-    }
+        }
 
     //! Get the material
     const Material& getOutlineMaterial()
-    {
+        {
         return m_outline_mat;
-    }
+        }
 
     //! Get the outline width
     float getOutlineWidth()
-    {
+        {
         return m_outline_width;
-    }
+        }
 
     //! Set the material
     void setMaterial(const Material& material);
@@ -81,10 +83,10 @@ class Geometry
 
     //! Notify the geometry that changes have been made to the buffers
     void update()
-    {
+        {
         // notify the scene that its acceleration structure needs to be rebuilt
         m_scene->update();
-    }
+        }
 
     protected:
     optix::GeometryInstance m_instance; //!< The geometry instance object
@@ -101,11 +103,12 @@ class Geometry
 
     //! Set up m_instance
     void setupInstance();
-};
+    };
 
 //! Export Geometry to python
 void export_Geometry(pybind11::module& m);
 
-}} // end namespace fresnel::gpu
+    } // namespace gpu
+    } // namespace fresnel
 
 #endif

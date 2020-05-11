@@ -39,7 +39,7 @@ rtDeclareVariable(optix::Ray, ray, rtCurrentRay, );
     \ingroup overlap
 */
 static __device__ bool is_inside(float& min_d, const vec2<float>& p)
-{
+    {
     // code for concave test from: http://alienryderflex.com/polygon/
     unsigned int nvert = polygon_vertices.size();
     min_d = FLT_MAX;
@@ -48,7 +48,7 @@ static __device__ bool is_inside(float& min_d, const vec2<float>& p)
     bool oddNodes = false;
 
     for (i = 0; i < nvert; i++)
-    {
+        {
         min_d = fast::min(min_d,
                           point_line_segment_distance(p,
                                                       vec2<float>(polygon_vertices[i]),
@@ -56,24 +56,24 @@ static __device__ bool is_inside(float& min_d, const vec2<float>& p)
 
         if ((polygon_vertices[i].y < p.y && polygon_vertices[j].y >= p.y)
             || (polygon_vertices[j].y < p.y && polygon_vertices[i].y >= p.y))
-        {
+            {
             if (polygon_vertices[i].x
                     + (p.y - polygon_vertices[i].y)
                           / (polygon_vertices[j].y - polygon_vertices[i].y)
                           * (polygon_vertices[j].x - polygon_vertices[i].x)
                 < p.x)
-            {
+                {
                 oddNodes = !oddNodes;
+                }
             }
-        }
         j = i;
-    }
+        }
 
     return oddNodes;
-}
+    }
 
 RT_PROGRAM void intersect(int item)
-{
+    {
     const vec2<float> p2 = vec2<float>(polygon_position[item]);
     const vec3<float> pos_world(p2.x, p2.y, 0.0f);
     const float angle = polygon_angle[item];
@@ -93,9 +93,9 @@ RT_PROGRAM void intersect(int item)
 
     // if the ray is parallel to the plane, there is no intersection
     if (fabs(denom) < 1e-5)
-    {
+        {
         return;
-    }
+        }
 
     // see if the intersection point is inside the polygon
     vec3<float> r_hit = ray_org_local + t_hit * ray_dir_local;
@@ -107,40 +107,40 @@ RT_PROGRAM void intersect(int item)
     // spheropolygon (equivalent to sharp polygon when rounding radius is 0
     // make distance signed (negative is inside)
     if (inside)
-    {
+        {
         d_edge = -d_edge;
-    }
+        }
 
     // exit if outside
     if (d_edge > polygon_rounding_radius)
-    {
+        {
         return;
-    }
+        }
     min_d = polygon_rounding_radius - d_edge;
 
     // if we get here, we hit the inside of the polygon
     if (rtPotentialIntersection(t_hit))
-    {
+        {
         // make polygons double sided
         vec3<float> n_flip;
         if (dot(n, ray_dir_local) < 0.0f)
-        {
+            {
             n_flip = n;
-        }
+            }
         else
-        {
+            {
             n_flip = -n;
-        }
+            }
 
         shading_normal = rotate(q_world, n_flip);
         shading_color = RGB<float>(polygon_color[item]);
         shading_distance = min_d;
         rtReportIntersection(0);
+        }
     }
-}
 
 RT_PROGRAM void bounds(int item, float result[6])
-{
+    {
     optix::Aabb* aabb = (optix::Aabb*)result;
 
     vec2<float> p2 = vec2<float>(polygon_position[item]);
@@ -153,4 +153,4 @@ RT_PROGRAM void bounds(int item, float result[6])
     aabb->m_max.x = p.x + polygon_radius;
     aabb->m_max.y = p.y + polygon_radius;
     aabb->m_max.z = p.z + 1e-5;
-}
+    }

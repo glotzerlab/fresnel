@@ -14,8 +14,10 @@
 #include "common/Camera.h"
 #include "common/ColorMath.h"
 
-namespace fresnel { namespace cpu {
-
+namespace fresnel
+    {
+namespace cpu
+    {
 //! Base class for the raytracer
 /*! The base class Tracer specifies common methods used for all tracers. This includes output buffer
    management, and defining the rendering API.
@@ -28,7 +30,7 @@ namespace fresnel { namespace cpu {
     The rendering methods themselves do nothing. Derived classes must implement them.
 */
 class Tracer
-{
+    {
     public:
     //! Constructor
     Tracer(std::shared_ptr<Device> device, unsigned int w, unsigned int h);
@@ -44,39 +46,39 @@ class Tracer
 
     //! Get the SRGB output pixel buffer
     virtual std::shared_ptr<Array<RGBA<unsigned char>>> getSRGBOutputBuffer()
-    {
+        {
         return m_srgb_out;
-    }
+        }
 
     //! Get the SRGB output pixel buffer
     virtual std::shared_ptr<Array<RGBA<float>>> getLinearOutputBuffer()
-    {
+        {
         return m_linear_out;
-    }
+        }
 
     //! Enable highlight warnings
     void enableHighlightWarning(const RGB<float>& color)
-    {
+        {
         m_highlight_warning = true;
         m_highlight_warning_color = color;
-    }
+        }
 
     void disableHighlightWarning()
-    {
+        {
         m_highlight_warning = false;
-    }
+        }
 
     //! Set the random number seed
     void setSeed(unsigned int seed)
-    {
+        {
         m_seed = seed;
-    }
+        }
 
     //! Get the random number seed
     unsigned int getSeed() const
-    {
+        {
         return m_seed;
-    }
+        }
 
     protected:
     std::shared_ptr<Device> m_device;                       //!< The device the Scene is attached to
@@ -85,11 +87,12 @@ class Tracer
     bool m_highlight_warning; //!< Set to true to enable highlight warnings in sRGB output
     RGB<float> m_highlight_warning_color; //!< The highlight warning color
     unsigned int m_seed = 0;              //!< Random number seed
-};
+    };
 
 //! Export Tracer to python
 void export_Tracer(pybind11::module& m);
 
-}} // end namespace fresnel::cpu
+    } // namespace cpu
+    } // namespace fresnel
 
 #endif

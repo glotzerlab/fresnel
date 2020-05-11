@@ -11,8 +11,10 @@
 #include "Array.h"
 #include "Geometry.h"
 
-namespace fresnel { namespace gpu {
-
+namespace fresnel
+    {
+namespace gpu
+    {
 //! Cylinder geometry
 /*! Define a cylinder geometry
 
@@ -21,7 +23,7 @@ namespace fresnel { namespace gpu {
 */
 
 class GeometryCylinder : public Geometry
-{
+    {
     public:
     //! Constructor
     GeometryCylinder(std::shared_ptr<Scene> scene, unsigned int N);
@@ -31,31 +33,32 @@ class GeometryCylinder : public Geometry
 
     //! Get the end points buffer
     std::shared_ptr<Array<vec3<float>>> getPointsBuffer()
-    {
+        {
         return m_points;
-    }
+        }
 
     //! Get the radius buffer
     std::shared_ptr<Array<float>> getRadiusBuffer()
-    {
+        {
         return m_radius;
-    }
+        }
 
     //! Get the color buffer
     std::shared_ptr<Array<RGB<float>>> getColorBuffer()
-    {
+        {
         return m_color;
-    }
+        }
 
     protected:
     std::shared_ptr<Array<vec3<float>>> m_points; //!< Position the start and end of each cylinder
     std::shared_ptr<Array<float>> m_radius;       //!< Per-particle radii
     std::shared_ptr<Array<RGB<float>>> m_color;   //!< Color for each start and end point
-};
+    };
 
 //! Export GeometryCylinder to python
 void export_GeometryCylinder(pybind11::module& m);
 
-}} // end namespace fresnel::gpu
+    } // namespace gpu
+    } // namespace fresnel
 
 #endif

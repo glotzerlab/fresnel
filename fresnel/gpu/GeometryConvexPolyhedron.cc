@@ -5,8 +5,10 @@
 
 #include "GeometryConvexPolyhedron.h"
 
-namespace fresnel { namespace gpu {
-
+namespace fresnel
+    {
+namespace gpu
+    {
 /*! \param scene Scene to attach the Geometry to
     \param plane_origins Origins of the planes that make up the polyhedron
     \param plane_normals Normals of the planes that make up the polyhedron
@@ -22,7 +24,7 @@ GeometryConvexPolyhedron::GeometryConvexPolyhedron(
     unsigned int N,
     float r)
     : Geometry(scene)
-{
+    {
     // create the geometry
     // intersection and bounding programs are not stored for later destruction, as Device will
     // destroy its program cache
@@ -96,7 +98,7 @@ GeometryConvexPolyhedron::GeometryConvexPolyhedron(
 
     // construct planes in C++ data structures
     for (unsigned int i = 0; i < info_normal.shape[0]; i++)
-    {
+        {
         vec3<float> n(normal_f[i * 3], normal_f[i * 3 + 1], normal_f[i * 3 + 2]);
         n = n / sqrtf(dot(n, n));
 
@@ -104,7 +106,7 @@ GeometryConvexPolyhedron::GeometryConvexPolyhedron(
             = vec3<float>(origin_f[i * 3], origin_f[i * 3 + 1], origin_f[i * 3 + 2]);
         optix_plane_normal[i] = n;
         optix_plane_color[i] = RGB<float>(color_f[i * 3], color_f[i * 3 + 1], color_f[i * 3 + 2]);
-    }
+        }
 
     m_plane_origin->unmap();
     m_plane_normal->unmap();
@@ -131,19 +133,19 @@ GeometryConvexPolyhedron::GeometryConvexPolyhedron(
     setupInstance();
 
     m_valid = true;
-}
+    }
 
 GeometryConvexPolyhedron::~GeometryConvexPolyhedron()
-{
+    {
     m_plane_origin->destroy();
     m_plane_normal->destroy();
     m_plane_color->destroy();
-}
+    }
 
 /*! \param m Python module to export in
  */
 void export_GeometryConvexPolyhedron(pybind11::module& m)
-{
+    {
     pybind11::class_<GeometryConvexPolyhedron, Geometry, std::shared_ptr<GeometryConvexPolyhedron>>(
         m,
         "GeometryConvexPolyhedron")
@@ -159,6 +161,7 @@ void export_GeometryConvexPolyhedron(pybind11::module& m)
         .def("getColorBuffer", &GeometryConvexPolyhedron::getColorBuffer)
         .def("setColorByFace", &GeometryConvexPolyhedron::setColorByFace)
         .def("getColorByFace", &GeometryConvexPolyhedron::getColorByFace);
-}
+    }
 
-}} // namespace fresnel::gpu
+    } // namespace gpu
+    } // namespace fresnel

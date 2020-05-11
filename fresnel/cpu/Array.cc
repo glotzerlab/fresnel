@@ -3,10 +3,12 @@
 
 #include "Array.h"
 
-namespace fresnel { namespace cpu {
-
+namespace fresnel
+    {
+namespace cpu
+    {
 void export_Array(pybind11::module& m)
-{
+    {
     pybind11::class_<Array<RGBA<float>>, std::shared_ptr<Array<RGBA<float>>>>(
         m,
         "ArrayRGBAf",
@@ -71,6 +73,7 @@ void export_Array(pybind11::module& m)
         .def_buffer([](Array<float>& t) -> pybind11::buffer_info { return t.getBuffer(); })
         .def("map", &Array<float>::map_py)
         .def("unmap", &Array<float>::unmap);
-}
+    }
 
-}} // namespace fresnel::cpu
+    } // namespace cpu
+    } // namespace fresnel

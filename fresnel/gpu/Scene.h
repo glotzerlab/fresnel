@@ -11,8 +11,10 @@
 #include "common/Camera.h"
 #include "common/Light.h"
 
-namespace fresnel { namespace gpu {
-
+namespace fresnel
+    {
+namespace gpu
+    {
 //! Manage the root scene graph object
 /*! OptiX does not define a concrete notion of a scene. We create one in Fresnel by managing the
    root object of the scene graph as a Scene, for compatibility with the cpu::Scene API. The root
@@ -33,7 +35,7 @@ namespace fresnel { namespace gpu {
    generation program.
 */
 class Scene
-{
+    {
     public:
     //! Constructor
     Scene(std::shared_ptr<Device> device);
@@ -42,91 +44,91 @@ class Scene
 
     //! Access the root object
     optix::GeometryGroup& getRoot()
-    {
+        {
         return m_root;
-    }
+        }
 
     //! Access the acceleration structure
     optix::Acceleration& getAccel()
-    {
+        {
         return m_accel;
-    }
+        }
 
     //! Access the Device
     std::shared_ptr<Device> getDevice()
-    {
+        {
         return m_device;
-    }
+        }
 
     //! Add a geometry instance to the scene
     void addGeometry(optix::GeometryInstance inst)
-    {
+        {
         m_root->addChild(inst);
         m_accel->markDirty();
-    }
+        }
 
     //! Remove a geometry instance from the scene
     void removeGeometry(optix::GeometryInstance inst)
-    {
+        {
         m_root->removeChild(inst);
         m_accel->markDirty();
-    }
+        }
 
     //! Update acceleration structures
     /*! Call when any geometry in this scene is modified
      */
     void update()
-    {
+        {
         m_accel->markDirty();
-    }
+        }
 
     //! Set the camera
     void setCamera(const UserCamera& camera)
-    {
+        {
         m_camera = camera;
-    }
+        }
 
     //! Get the camera
     UserCamera& getCamera()
-    {
+        {
         return m_camera;
-    }
+        }
 
     //! Set the background color
     void setBackgroundColor(const RGB<float>& c)
-    {
+        {
         m_background_color = c;
-    }
+        }
 
     //! Get the background color
     RGB<float> getBackgroundColor() const
-    {
+        {
         return m_background_color;
-    }
+        }
 
     //! Set the background alpha
     void setBackgroundAlpha(float a)
-    {
+        {
         m_background_alpha = a;
-    }
+        }
 
     //! Get the background alpha
     float getBackgroundAlpha() const
-    {
+        {
         return m_background_alpha;
-    }
+        }
 
     //! Get the lights
     Lights& getLights()
-    {
+        {
         return m_lights;
-    }
+        }
 
     //! Set the lights
     void setLights(const Lights& lights)
-    {
+        {
         m_lights = lights;
-    }
+        }
 
     private:
     optix::GeometryGroup m_root;      //!< Store the scene root object
@@ -137,11 +139,12 @@ class Scene
     float m_background_alpha;      //!< Background alpha
     UserCamera m_camera;           //!< The camera
     Lights m_lights;               //!< The lights
-};
+    };
 
 //! Export Scene to python
 void export_Scene(pybind11::module& m);
 
-}} // end namespace fresnel::gpu
+    } // namespace gpu
+    } // namespace fresnel
 
 #endif

@@ -9,15 +9,17 @@
 
 #include "Tracer.h"
 
-namespace fresnel { namespace gpu {
-
+namespace fresnel
+    {
+namespace gpu
+    {
 //! Basic Direct ray tracer using OptiX
 /*! GPU code for the tracer is in direct.cu
 
     TracerDirect loads the direct ray generation program and adds it to the Device.
 */
 class TracerDirect : public Tracer
-{
+    {
     public:
     //! Constructor
     TracerDirect(std::shared_ptr<Device> device, unsigned int w, unsigned int h);
@@ -32,24 +34,25 @@ class TracerDirect : public Tracer
 
     //! Set the number of AA samples in each direction
     void setAntialiasingN(unsigned int n)
-    {
+        {
         m_aa_n = n;
-    }
+        }
 
     //! Get the number of AA samples in each direction
     unsigned int getAntialiasingN() const
-    {
+        {
         return m_aa_n;
-    }
+        }
 
     protected:
     //! Number of AA samples in each direction
     unsigned int m_aa_n = 8;
-};
+    };
 
 //! Export TracerDirect to python
 void export_TracerDirect(pybind11::module& m);
 
-}} // end namespace fresnel::gpu
+    } // namespace gpu
+    } // namespace fresnel
 
 #endif

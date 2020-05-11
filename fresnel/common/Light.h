@@ -18,8 +18,8 @@
 #define DEVICE
 #endif
 
-namespace fresnel {
-
+namespace fresnel
+    {
 //! User Lights
 /*! Store user provided light properties. These properties are convenient parameters for users to
    think about and set. The actual device camera properties are derived from these and stored in
@@ -34,21 +34,21 @@ namespace fresnel {
     All of these parameters are directly modifiable as this is a plain old data structure.
 */
 struct Lights
-{
+    {
     vec3<float> direction[4]; //!< Light directions
     RGB<float> color[4];      //!< Color of each light (linearized sRGB color space)
     float theta[4];           //!< Half angle of the area light
     unsigned int N;           //!< Number of lights
 
     //! Default constructor leaves memory uninitialized to support OptiX variables
-    Lights() {}
+    Lights() { }
 
     //! Put lights into scene coordinates given the camera
     explicit Lights(const Lights& lights, const Camera& cam)
-    {
+        {
         N = lights.N;
         for (unsigned int i = 0; i < N; i++)
-        {
+            {
             // copy over the color
             color[i] = lights.color[i];
 
@@ -62,41 +62,41 @@ struct Lights
 
             // copy the angle
             theta[i] = lights.theta[i];
+            }
         }
-    }
 
     vec3<float> getDirection(unsigned int i)
-    {
+        {
         return direction[i];
-    }
+        }
 
     void setDirection(unsigned int i, const vec3<float>& v)
-    {
+        {
         direction[i] = v;
-    }
+        }
 
     RGB<float> getColor(unsigned int i)
-    {
+        {
         return color[i];
-    }
+        }
 
     void setColor(unsigned int i, const RGB<float>& v)
-    {
+        {
         color[i] = v;
-    }
+        }
 
     float getTheta(unsigned int i)
-    {
+        {
         return theta[i];
-    }
+        }
 
     void setTheta(unsigned int i, float v)
-    {
+        {
         theta[i] = v;
-    }
-};
+        }
+    };
 
-} // namespace fresnel
+    } // namespace fresnel
 #undef DEVICE
 
 #endif

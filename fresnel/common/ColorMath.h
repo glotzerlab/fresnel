@@ -16,40 +16,40 @@
 
 #include <math.h>
 
-namespace fresnel {
-
+namespace fresnel
+    {
 //! 3 element color vector
 /*! \tparam Real Data type of the components
 
     RGB defines simple 3 element color vector. The components are available publicly as .r .g .b.
 */
 template<class Real> struct RGB
-{
+    {
     //! Construct a RGB
     /*! \param _r r-component
         \param _g g-component
         \param _b b-component
     */
-    DEVICE RGB(const Real& _r, const Real& _g, const Real& _b) : r(_r), g(_g), b(_b) {}
+    DEVICE RGB(const Real& _r, const Real& _g, const Real& _b) : r(_r), g(_g), b(_b) { }
 
     //! Default construct an unitialized color
-    DEVICE RGB() {}
+    DEVICE RGB() { }
 
 #ifdef __CUDA_ARCH__
     //! Convenience function to generate float3 in device code
     DEVICE operator float3()
-    {
+        {
         return make_float3(r, g, b);
-    }
+        }
 
     //! Convenience function to get a vec3 from a float3 in device code
-    DEVICE explicit RGB(const float3& a) : r(a.x), g(a.y), b(a.z) {}
+    DEVICE explicit RGB(const float3& a) : r(a.x), g(a.y), b(a.z) { }
 #endif
 
     Real r; //!< r-component of the vector
     Real g; //!< g-component of the vector
     Real b; //!< b-component of the vector
-};
+    };
 
 //! Addition of two RGBs
 /*! \param a First vector
@@ -59,9 +59,9 @@ template<class Real> struct RGB
     \returns The vector (a.r+b.r, a.g+b.g, a.b+b.b).
 */
 template<class Real> DEVICE inline RGB<Real> operator+(const RGB<Real>& a, const RGB<Real>& b)
-{
+    {
     return RGB<Real>(a.r + b.r, a.g + b.g, a.b + b.b);
-}
+    }
 
 //! Subtraction of two RGBs
 /*! \param a First vector
@@ -71,9 +71,9 @@ template<class Real> DEVICE inline RGB<Real> operator+(const RGB<Real>& a, const
     \returns The vector (a.r-b.r, a.g-b.g, a.b-b.b).
 */
 template<class Real> DEVICE inline RGB<Real> operator-(const RGB<Real>& a, const RGB<Real>& b)
-{
+    {
     return RGB<Real>(a.r - b.r, a.g - b.g, a.b - b.b);
-}
+    }
 
 //! Multiplication of two RGBs
 /*! \param a First vector
@@ -83,9 +83,9 @@ template<class Real> DEVICE inline RGB<Real> operator-(const RGB<Real>& a, const
     \returns The vector (a.r*b.r, a.g*b.g, a.b*b.b).
 */
 template<class Real> DEVICE inline RGB<Real> operator*(const RGB<Real>& a, const RGB<Real>& b)
-{
+    {
     return RGB<Real>(a.r * b.r, a.g * b.g, a.b * b.b);
-}
+    }
 
 //! Division of two RGBs
 /*! \param a First vector
@@ -95,9 +95,9 @@ template<class Real> DEVICE inline RGB<Real> operator*(const RGB<Real>& a, const
     \returns The vector (a.r/b.r, a.g/b.g, a.b/b.b).
 */
 template<class Real> DEVICE inline RGB<Real> operator/(const RGB<Real>& a, const RGB<Real>& b)
-{
+    {
     return RGB<Real>(a.r / b.r, a.g / b.g, a.b / b.b);
-}
+    }
 
 //! Negation of a RGB
 /*! \param a Vector
@@ -106,9 +106,9 @@ template<class Real> DEVICE inline RGB<Real> operator/(const RGB<Real>& a, const
     \returns The vector (-a.x, -a.y, -a.z).
 */
 template<class Real> DEVICE inline RGB<Real> operator-(const RGB<Real>& a)
-{
+    {
     return RGB<Real>(-a.r, -a.g, -a.b);
-}
+    }
 
 //! Assignment-addition of two RGBs
 /*! \param a First vector
@@ -118,12 +118,12 @@ template<class Real> DEVICE inline RGB<Real> operator-(const RGB<Real>& a)
     \returns The vector (a.r += b.r, a.g += b.g, a.b += b.b).
 */
 template<class Real> DEVICE inline RGB<Real>& operator+=(RGB<Real>& a, const RGB<Real>& b)
-{
+    {
     a.r += b.r;
     a.g += b.g;
     a.b += b.b;
     return a;
-}
+    }
 
 //! Assignment-subtraction of two RGBs
 /*! \param a First vector
@@ -133,12 +133,12 @@ template<class Real> DEVICE inline RGB<Real>& operator+=(RGB<Real>& a, const RGB
     \returns The vector (a.r -= b.r, a.g -= b.g, a.b -= b.b).
 */
 template<class Real> DEVICE inline RGB<Real>& operator-=(RGB<Real>& a, const RGB<Real>& b)
-{
+    {
     a.r -= b.r;
     a.g -= b.g;
     a.b -= b.b;
     return a;
-}
+    }
 
 //! Assignment-multiplication of two RGBs
 /*! \param a First vector
@@ -148,12 +148,12 @@ template<class Real> DEVICE inline RGB<Real>& operator-=(RGB<Real>& a, const RGB
     \returns The vector (a.r *= b.r, a.g *= b.g, a.b *= b.b).
 */
 template<class Real> DEVICE inline RGB<Real>& operator*=(RGB<Real>& a, const RGB<Real>& b)
-{
+    {
     a.r *= b.r;
     a.g *= b.g;
     a.b *= b.b;
     return a;
-}
+    }
 
 //! Assignment-division of two RGBs
 /*! \param a First vector
@@ -163,12 +163,12 @@ template<class Real> DEVICE inline RGB<Real>& operator*=(RGB<Real>& a, const RGB
     \returns The vector (a.r /= b.r, a.g /= b.g, a.b /= b.b).
 */
 template<class Real> DEVICE inline RGB<Real>& operator/=(RGB<Real>& a, const RGB<Real>& b)
-{
+    {
     a.r /= b.r;
     a.g /= b.g;
     a.b /= b.b;
     return a;
-}
+    }
 
 //! Multiplication of a RGB by a scalar
 /*! \param a vector
@@ -178,9 +178,9 @@ template<class Real> DEVICE inline RGB<Real>& operator/=(RGB<Real>& a, const RGB
     \returns The vector (a.r*b, a.g*b, a.b*b).
 */
 template<class Real> DEVICE inline RGB<Real> operator*(const RGB<Real>& a, const Real& b)
-{
+    {
     return RGB<Real>(a.r * b, a.g * b, a.b * b);
-}
+    }
 
 //! Multiplication of a RGB by a scalar
 /*! \param a vector
@@ -190,9 +190,9 @@ template<class Real> DEVICE inline RGB<Real> operator*(const RGB<Real>& a, const
     \returns The vector (a.r*b, a.g*b, a.b*b).
 */
 template<class Real> DEVICE inline RGB<Real> operator*(const Real& b, const RGB<Real>& a)
-{
+    {
     return RGB<Real>(a.r * b, a.g * b, a.b * b);
-}
+    }
 
 //! Division of a RGB by a scalar
 /*! \param a vector
@@ -202,10 +202,10 @@ template<class Real> DEVICE inline RGB<Real> operator*(const Real& b, const RGB<
     \returns The vector (a.r/b, a.g/b, a.b/b).
 */
 template<class Real> DEVICE inline RGB<Real> operator/(const RGB<Real>& a, const Real& b)
-{
+    {
     Real q = Real(1.0) / b;
     return a * q;
-}
+    }
 
 //! Assignment-multiplication of a RGB by a scalar
 /*! \param a First vector
@@ -215,12 +215,12 @@ template<class Real> DEVICE inline RGB<Real> operator/(const RGB<Real>& a, const
     \returns The vector (a.r *= b, a.g *= b, a.b *= b).
 */
 template<class Real> DEVICE inline RGB<Real>& operator*=(RGB<Real>& a, const Real& b)
-{
+    {
     a.r *= b;
     a.g *= b;
     a.b *= b;
     return a;
-}
+    }
 
 //! Assignment-division of a RGB by a scalar
 /*! \param a First vector
@@ -230,12 +230,12 @@ template<class Real> DEVICE inline RGB<Real>& operator*=(RGB<Real>& a, const Rea
     \returns The vector (a.r /= b, a.g /= b, a.b /= b).
 */
 template<class Real> DEVICE inline RGB<Real>& operator/=(RGB<Real>& a, const Real& b)
-{
+    {
     a.r /= b;
     a.g /= b;
     a.b /= b;
     return a;
-}
+    }
 
 //! Equality test of two RGBs
 /*! \param a First vector
@@ -243,9 +243,9 @@ template<class Real> DEVICE inline RGB<Real>& operator/=(RGB<Real>& a, const Rea
     \returns true if the two vectors are identically equal, false if they are not
 */
 template<class Real> DEVICE inline bool operator==(const RGB<Real>& a, const RGB<Real>& b)
-{
+    {
     return (a.r == b.r) && (a.g == b.g) && (a.b == b.b);
-}
+    }
 
 //! Inequality test of two RGBs
 /*! \param a First vector
@@ -253,9 +253,9 @@ template<class Real> DEVICE inline bool operator==(const RGB<Real>& a, const RGB
     \returns true if the two vectors are not identically equal, and false if they are
 */
 template<class Real> DEVICE inline bool operator!=(const RGB<Real>& a, const RGB<Real>& b)
-{
+    {
     return (a.r != b.r) || (a.g != b.g) || (a.b != b.b);
-}
+    }
 
 //! 4 element color vector
 /*! \tparam Real Data type of the components
@@ -264,7 +264,7 @@ template<class Real> DEVICE inline bool operator!=(const RGB<Real>& a, const RGB
    and .a.
 */
 template<class Real> struct RGBA
-{
+    {
     //! Construct a RGBA
     /*! \param _r r-component
         \param _g g-component
@@ -273,22 +273,23 @@ template<class Real> struct RGBA
     */
     DEVICE RGBA(const Real& _r, const Real& _g, const Real& _b, const Real& _a)
         : r(_r), g(_g), b(_b), a(_a)
-    {}
+        {
+        }
 
     //! Construct a RGBA from a RGB
     /*! \param c Color to provide r,g,b components.
         \param _a a-component
     */
-    DEVICE RGBA(const RGB<Real>& c, const Real& _a) : r(c.r), g(c.g), b(c.b), a(_a) {}
+    DEVICE RGBA(const RGB<Real>& c, const Real& _a) : r(c.r), g(c.g), b(c.b), a(_a) { }
 
     //! Default construct an uninitialized color
-    DEVICE RGBA() : r(0), g(0), b(0), a(1.0) {}
+    DEVICE RGBA() : r(0), g(0), b(0), a(1.0) { }
 
     Real r; //!< r-component of the vector
     Real g; //!< g-component of the vector
     Real b; //!< b-component of the vector
     Real a; //!< a-component of the vector
-};
+    };
 
 //! Addition of two RGBs
 /*! \param a First vector
@@ -298,9 +299,9 @@ template<class Real> struct RGBA
     \returns The vector (a.r+b.r, a.g+b.g, a.b+b.b, a.a+b.a).
 */
 template<class Real> DEVICE inline RGBA<Real> operator+(const RGBA<Real>& a, const RGBA<Real>& b)
-{
+    {
     return RGBA<Real>(a.r + b.r, a.g + b.g, a.b + b.b, a.a + b.a);
-}
+    }
 
 //! Subtraction of two RGBs
 /*! \param a First vector
@@ -310,9 +311,9 @@ template<class Real> DEVICE inline RGBA<Real> operator+(const RGBA<Real>& a, con
     \returns The vector (a.r-b.r, a.g-b.g, a.b-b.b, a.a-b.a).
 */
 template<class Real> DEVICE inline RGBA<Real> operator-(const RGBA<Real>& a, const RGBA<Real>& b)
-{
+    {
     return RGBA<Real>(a.r - b.r, a.g - b.g, a.b - b.b, a.a - b.a);
-}
+    }
 
 //! Multiplication of two RGBs
 /*! \param a First vector
@@ -322,9 +323,9 @@ template<class Real> DEVICE inline RGBA<Real> operator-(const RGBA<Real>& a, con
     \returns The vector (a.r*b.r, a.g*b.g, a.b*b.b, a.a*b.a).
 */
 template<class Real> DEVICE inline RGBA<Real> operator*(const RGBA<Real>& a, const RGBA<Real>& b)
-{
+    {
     return RGBA<Real>(a.r * b.r, a.g * b.g, a.b * b.b, a.a * b.a);
-}
+    }
 
 //! Division of two RGBs
 /*! \param a First vector
@@ -334,9 +335,9 @@ template<class Real> DEVICE inline RGBA<Real> operator*(const RGBA<Real>& a, con
     \returns The vector (a.r/b.r, a.g/b.g, a.b/b.b, a.a/b.a).
 */
 template<class Real> DEVICE inline RGBA<Real> operator/(const RGBA<Real>& a, const RGBA<Real>& b)
-{
+    {
     return RGBA<Real>(a.r / b.r, a.g / b.g, a.b / b.b, a.a / b.a);
-}
+    }
 
 //! Negation of a RGB
 /*! \param a Vector
@@ -345,9 +346,9 @@ template<class Real> DEVICE inline RGBA<Real> operator/(const RGBA<Real>& a, con
     \returns The vector (-a.x, -a.y, -a.z, -a.a).
 */
 template<class Real> DEVICE inline RGBA<Real> operator-(const RGBA<Real>& a)
-{
+    {
     return RGBA<Real>(-a.r, -a.g, -a.b, -a.a);
-}
+    }
 
 //! Assignment-addition of two RGBs
 /*! \param a First vector
@@ -357,13 +358,13 @@ template<class Real> DEVICE inline RGBA<Real> operator-(const RGBA<Real>& a)
     \returns The vector (a.r += b.r, a.g += b.g, a.b += b.b, a.a += b.a).
 */
 template<class Real> DEVICE inline RGBA<Real>& operator+=(RGBA<Real>& a, const RGBA<Real>& b)
-{
+    {
     a.r += b.r;
     a.g += b.g;
     a.b += b.b;
     a.a += b.a;
     return a;
-}
+    }
 
 //! Assignment-subtraction of two RGBs
 /*! \param a First vector
@@ -373,13 +374,13 @@ template<class Real> DEVICE inline RGBA<Real>& operator+=(RGBA<Real>& a, const R
     \returns The vector (a.r -= b.r, a.g -= b.g, a.b -= b.b, a.a -= b.a).
 */
 template<class Real> DEVICE inline RGBA<Real>& operator-=(RGBA<Real>& a, const RGBA<Real>& b)
-{
+    {
     a.r -= b.r;
     a.g -= b.g;
     a.b -= b.b;
     a.a -= b.a;
     return a;
-}
+    }
 
 //! Assignment-multiplication of two RGBs
 /*! \param a First vector
@@ -389,13 +390,13 @@ template<class Real> DEVICE inline RGBA<Real>& operator-=(RGBA<Real>& a, const R
     \returns The vector (a.r *= b.r, a.g *= b.g, a.b *= b.b, a.a *= b.a).
 */
 template<class Real> DEVICE inline RGBA<Real>& operator*=(RGBA<Real>& a, const RGBA<Real>& b)
-{
+    {
     a.r *= b.r;
     a.g *= b.g;
     a.b *= b.b;
     a.a *= b.a;
     return a;
-}
+    }
 
 //! Assignment-division of two RGBs
 /*! \param a First vector
@@ -405,13 +406,13 @@ template<class Real> DEVICE inline RGBA<Real>& operator*=(RGBA<Real>& a, const R
     \returns The vector (a.r /= b.r, a.g /= b.g, a.b /= b.b, a.a /= b.a).
 */
 template<class Real> DEVICE inline RGBA<Real>& operator/=(RGBA<Real>& a, const RGBA<Real>& b)
-{
+    {
     a.r /= b.r;
     a.g /= b.g;
     a.b /= b.b;
     a.a /= b.a;
     return a;
-}
+    }
 
 //! Multiplication of a RGB by a scalar
 /*! \param a vector
@@ -421,9 +422,9 @@ template<class Real> DEVICE inline RGBA<Real>& operator/=(RGBA<Real>& a, const R
     \returns The vector (a.r*b, a.g*b, a.b*b, a.a*b).
 */
 template<class Real> DEVICE inline RGBA<Real> operator*(const RGBA<Real>& a, const Real& b)
-{
+    {
     return RGBA<Real>(a.r * b, a.g * b, a.b * b, a.a * b);
-}
+    }
 
 //! Multiplication of a RGB by a scalar
 /*! \param a vector
@@ -433,9 +434,9 @@ template<class Real> DEVICE inline RGBA<Real> operator*(const RGBA<Real>& a, con
     \returns The vector (a.r*b, a.g*b, a.b*b, a.a*b).
 */
 template<class Real> DEVICE inline RGBA<Real> operator*(const Real& b, const RGBA<Real>& a)
-{
+    {
     return RGBA<Real>(a.r * b, a.g * b, a.b * b, a.a * b);
-}
+    }
 
 //! Division of a RGB by a scalar
 /*! \param a vector
@@ -445,10 +446,10 @@ template<class Real> DEVICE inline RGBA<Real> operator*(const Real& b, const RGB
     \returns The vector (a.r/b, a.g/b, a.b/b, a.a/b).
 */
 template<class Real> DEVICE inline RGBA<Real> operator/(const RGBA<Real>& a, const Real& b)
-{
+    {
     Real q = Real(1.0) / b;
     return a * q;
-}
+    }
 
 //! Assignment-multiplication of a RGB by a scalar
 /*! \param a First vector
@@ -458,13 +459,13 @@ template<class Real> DEVICE inline RGBA<Real> operator/(const RGBA<Real>& a, con
     \returns The vector (a.r *= b, a.g *= b, a.b *= b, a.a *= b).
 */
 template<class Real> DEVICE inline RGBA<Real>& operator*=(RGBA<Real>& a, const Real& b)
-{
+    {
     a.r *= b;
     a.g *= b;
     a.b *= b;
     a.a *= b;
     return a;
-}
+    }
 
 //! Assignment-division of a RGB by a scalar
 /*! \param a First vector
@@ -474,13 +475,13 @@ template<class Real> DEVICE inline RGBA<Real>& operator*=(RGBA<Real>& a, const R
     \returns The vector (a.r /= b, a.g /= b, a.b /= b, a.a /= b).
 */
 template<class Real> DEVICE inline RGBA<Real>& operator/=(RGBA<Real>& a, const Real& b)
-{
+    {
     a.r /= b;
     a.g /= b;
     a.b /= b;
     a.a /= b;
     return a;
-}
+    }
 
 //! Linear interpolate between two values
 /*! \param x interpolation fraction
@@ -490,9 +491,9 @@ template<class Real> DEVICE inline RGBA<Real>& operator/=(RGBA<Real>& a, const R
     \returns (1-x)*a + x*b
 */
 template<class T> DEVICE inline T lerp(float x, const T& a, const T& b)
-{
+    {
     return (1.0f - x) * a + x * b;
-}
+    }
 
 //! Convert from linear color to sRGB
 /*! \param c linear color to convert
@@ -500,7 +501,7 @@ template<class T> DEVICE inline T lerp(float x, const T& a, const T& b)
     \returns The color in sRGB space
 */
 DEVICE inline RGBA<unsigned char> sRGB(const RGBA<float>& c)
-{
+    {
     RGBA<float> t;
 
     if (c.r < 0.0031308f)
@@ -531,9 +532,9 @@ DEVICE inline RGBA<unsigned char> sRGB(const RGBA<float>& c)
                                (unsigned char)(t.g * 255.0f + 0.5f),
                                (unsigned char)(t.b * 255.0f + 0.5f),
                                (unsigned char)(t.a * 255.0f + 0.5f));
-}
+    }
 
-} // namespace fresnel
+    } // namespace fresnel
 
 #undef DEVICE
 

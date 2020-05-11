@@ -12,8 +12,10 @@
 #include "Array.h"
 #include "Geometry.h"
 
-namespace fresnel { namespace gpu {
-
+namespace fresnel
+    {
+namespace gpu
+    {
 //! Polygon geometry
 /*! Define a polygon geometry.
 
@@ -21,7 +23,7 @@ namespace fresnel { namespace gpu {
    using OptiX.
 */
 class GeometryPolygon : public Geometry
-{
+    {
     public:
     //! Constructor
     GeometryPolygon(
@@ -34,27 +36,27 @@ class GeometryPolygon : public Geometry
 
     //! Get the position buffer
     std::shared_ptr<Array<vec2<float>>> getPositionBuffer()
-    {
+        {
         return m_position;
-    }
+        }
 
     //! Get the angle buffer
     std::shared_ptr<Array<float>> getAngleBuffer()
-    {
+        {
         return m_angle;
-    }
+        }
 
     //! Get the color buffer
     std::shared_ptr<Array<RGB<float>>> getColorBuffer()
-    {
+        {
         return m_color;
-    }
+        }
 
     //! Get the radius
     float getRadius()
-    {
+        {
         return m_radius;
-    }
+        }
 
     protected:
     optix::Buffer m_vertices; //!< Buffer containing polygon vertices
@@ -64,11 +66,12 @@ class GeometryPolygon : public Geometry
     std::shared_ptr<Array<RGB<float>>> m_color;     //!< Per-particle color
 
     float m_radius = 0; //!< Precomputed radius in the xy plane
-};
+    };
 
 //! Export GeometryPolygon to python
 void export_GeometryPolygon(pybind11::module& m);
 
-}} // end namespace fresnel::gpu
+    } // namespace gpu
+    } // namespace fresnel
 
 #endif

@@ -19,7 +19,7 @@ rtDeclareVariable(RGB<float>, shading_color, attribute shading_color, );
 rtDeclareVariable(optix::Ray, ray, rtCurrentRay, );
 
 RT_PROGRAM void intersect(int primIdx)
-{
+    {
     const vec3<float> position(sphere_position[primIdx]);
     const float radius = sphere_radius[primIdx];
     const vec3<float> ray_origin(ray.origin);
@@ -31,28 +31,28 @@ RT_PROGRAM void intersect(int primIdx)
         return;
 
     if (rtPotentialIntersection(t))
-    {
+        {
         shading_normal = N;
         shading_distance = d;
         shading_color = RGB<float>(sphere_color[primIdx]);
         rtReportIntersection(0);
+        }
     }
-}
 
 RT_PROGRAM void bounds(int primIdx, float result[6])
-{
+    {
     const float3 cen = sphere_position[primIdx];
     const float rad = sphere_radius[primIdx];
 
     optix::Aabb* aabb = (optix::Aabb*)result;
 
     if (rad > 0.0f && !isinf(rad))
-    {
+        {
         aabb->m_min = cen - rad;
         aabb->m_max = cen + rad;
-    }
+        }
     else
-    {
+        {
         aabb->invalidate();
+        }
     }
-}

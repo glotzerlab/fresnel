@@ -8,13 +8,15 @@
 
 using namespace std;
 
-namespace fresnel { namespace gpu {
-
+namespace fresnel
+    {
+namespace gpu
+    {
 /*! \param device Device to attach the raytracer to
  */
 TracerDirect::TracerDirect(std::shared_ptr<Device> device, unsigned int w, unsigned int h)
     : Tracer(device, w, h)
-{
+    {
     // create the entry point program
     optix::Context context = m_device->getContext();
     m_ray_gen = m_device->getProgram("direct.ptx", "direct_ray_gen");
@@ -23,21 +25,21 @@ TracerDirect::TracerDirect(std::shared_ptr<Device> device, unsigned int w, unsig
     // load the exception program
     m_exception_program = m_device->getProgram("direct.ptx", "direct_exception");
     context->setExceptionProgram(m_ray_gen_entry, m_exception_program);
-}
+    }
 
-TracerDirect::~TracerDirect() {}
+TracerDirect::~TracerDirect() { }
 
 //! Initialize the Material for use in tracing
 void TracerDirect::setupMaterial(optix::Material mat, Device* dev)
-{
+    {
     optix::Program p = dev->getProgram("direct.ptx", "direct_closest_hit");
     mat->setClosestHitProgram(TRACER_PREVIEW_RAY_ID, p);
-}
+    }
 
 /*! \param scene The Scene to render
  */
 void TracerDirect::render(std::shared_ptr<Scene> scene)
-{
+    {
     const RGB<float> background_color = scene->getBackgroundColor();
     const float background_alpha = scene->getBackgroundAlpha();
 
@@ -80,16 +82,17 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
     context["seed"]->setUint(m_seed);
 
     context->launch(m_ray_gen_entry, m_w, m_h);
-}
+    }
 
 /*! \param m Python module to export in
  */
 void export_TracerDirect(pybind11::module& m)
-{
+    {
     pybind11::class_<TracerDirect, Tracer, std::shared_ptr<TracerDirect>>(m, "TracerDirect")
         .def(pybind11::init<std::shared_ptr<Device>, unsigned int, unsigned int>())
         .def("setAntialiasingN", &TracerDirect::setAntialiasingN)
         .def("getAntialiasingN", &TracerDirect::getAntialiasingN);
-}
+    }
 
-}} // end namespace fresnel::gpu
+    } // namespace gpu
+    } // namespace fresnel
