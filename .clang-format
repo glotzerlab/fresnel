@@ -12,19 +12,7 @@ AllowShortIfStatementsOnASingleLine: 'false'
 AllowShortLoopsOnASingleLine: 'false'
 BinPackArguments: 'false'
 BinPackParameters: 'false'
-BreakBeforeBraces: Custom
-BraceWrapping:
-  AfterCaseLabel: true
-  AfterClass: true
-  AfterControlStatement: true
-  AfterEnum: true
-  AfterFunction: true
-  AfterStruct: true
-  AfterUnion: true
-  AfterExternBlock: false
-  BeforeCatch: true
-  BeforeElse: true
-  SplitEmptyFunction: false
+BreakBeforeBraces: Whitesmiths
 BreakConstructorInitializers: BeforeColon
 ColumnLimit: '100'
 CompactNamespaces: 'true'
