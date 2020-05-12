@@ -4,7 +4,7 @@ steps:
 
 - task: CMake@1
   inputs:
-    cmakeArgs: $(Build.SourcesDirectory) -GNinja -DENABLE_EMBREE=$(enable_embree) -DENABLE_OPTIX=$(enable_optix) -Dembree_DIR=/opt/embree-${EMBREE3_VERSION}.x86_64.linux -GNinja
+    cmakeArgs: $(Build.SourcesDirectory) -GNinja -DENABLE_EMBREE=$(enable_embree) -DENABLE_OPTIX=$(enable_optix) -GNinja
     workingDirectory: $(Build.BinariesDirectory)
 
 - script: nice -n 19 ninja -j 4

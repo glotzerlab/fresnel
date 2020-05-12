@@ -1,5 +1,5 @@
 variables:
-  image_root: glotzerlab/ci:2020.04
+  image_root: glotzerlab/ci:2020.05
   private_image_root: joaander/ci:2019.11
 
 trigger:
@@ -21,7 +21,7 @@ stages:
   - job: linux_cpu
     displayName: Linux
     strategy:
-      # maxParallel: 5
+      maxParallel: 5
       matrix:
         gcc10_py38:
           unused: ""

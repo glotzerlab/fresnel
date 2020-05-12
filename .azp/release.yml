@@ -1,5 +1,5 @@
 variables:
-  image_root: glotzerlab/ci:2020.01
+  image_root: glotzerlab/ci:2020.05
   name: fresnel
 
 trigger:
@@ -21,7 +21,7 @@ jobs:
     vmImage: 'ubuntu-latest'
 
   container:
-    image: $(image_root)-ubuntu19.10
+    image: $(image_root)-ubuntu20.04
     options: -u 0
 
   steps:
