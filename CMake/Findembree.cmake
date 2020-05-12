@@ -14,13 +14,13 @@ endif()
 # handle the QUIETLY and REQUIRED arguments and set EMBREE_FOUND to TRUE if
 # all listed variables are TRUE
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(EMBREE
+find_package_handle_standard_args(embree
                                   REQUIRED_VARS EMBREE_LIBRARY EMBREE_INCLUDE_DIR
                                   VERSION_VAR EMBREE_VERSION_STRING)
 
-if(EMBREE_LIBRARY AND NOT TARGET EMBREE::embree)
-    add_library(EMBREE::embree UNKNOWN IMPORTED)
-    set_target_properties(EMBREE::embree PROPERTIES
+if(EMBREE_LIBRARY AND NOT TARGET embree)
+    add_library(embree UNKNOWN IMPORTED)
+    set_target_properties(embree PROPERTIES
         IMPORTED_LOCATION "${EMBREE_LIBRARY}"
         INTERFACE_INCLUDE_DIRECTORIES "${EMBREE_INCLUDE_DIR}")
 endif()

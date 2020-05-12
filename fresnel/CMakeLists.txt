@@ -42,7 +42,7 @@ set(_cpu_sources
    )
 
 pybind11_add_module(_cpu "${_cpu_sources}")
-target_link_libraries(_cpu PRIVATE EMBREE::embree)
+target_link_libraries(_cpu PRIVATE embree)
 install(TARGETS _cpu LIBRARY DESTINATION ${PYTHON_SITE_INSTALL_DIR})
 
 endif()
