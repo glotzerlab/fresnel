@@ -143,10 +143,10 @@ stages:
     steps:
     - checkout: self
       submodules: true
-    - script: sphinx-build -b html -d _build/doctrees -W -n . _build/html
+    - script: sphinx-build -b html -d build/doctrees -W -n . _build/html
       displayName: (HTML)
       workingDirectory: doc
-    - script: sphinx-build -b latex -d _build/doctrees -W -n . _build/latex
+    - script: sphinx-build -b latex -d build/doctrees -W -n . _build/latex
       displayName: (LaTeX)
       workingDirectory: doc
 
