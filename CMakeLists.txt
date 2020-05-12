@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 project(fresnel LANGUAGES C CXX)
 
 add_subdirectory(CMake)
+include(fresnel-macros)
 
 #################################
 ## CFLAGS configuration
@@ -77,12 +78,18 @@ include_directories(${pybind11_INCLUDE_DIR})
 option(ENABLE_EMBREE "Use Embree for ray tracing on the CPU" ON)
 
 if (ENABLE_EMBREE)
-    find_package(embree 3.0 CONFIG REQUIRED)
-    if (embree_FOUND)
-        find_package_message(embree "Found embree: ${embree_DIR} ${EMBREE_LIBRARY} ${EMBREE_INCLUDE_DIRS}" "[${EMBREE_LIBRARY}][${EMBREE_INCLUDE_DIRS}]")
+    find_package_config_first(EMBREE 3.0 REQUIRED)
+    if (EMBREE_FOUND)
+        find_package_message(embree "Found EMBREE: ${embree_DIR} ${EMBREE_LIBRARY} ${EMBREE_INCLUDE_DIRS}" "[${EMBREE_LIBRARY}][${EMBREE_INCLUDE_DIRS}]")
     endif()
 
-    find_package(TBB 4.3 REQUIRED)
+    find_package_config_first(TBB 4.3 REQUIRED)
+
+    if (TBB_FOUND)
+        get_target_property(_tbb_library TBB::tbb IMPORTED_LOCATION_RELEASE)
+        get_target_property(_tbb_include_dir TBB::tbb INTERFACE_INCLUDE_DIRECTORIES)
+        find_package_message(tbb "Found TBB: ${TBB_DIR} ${_tbb_library} ${_tbb_include_dir}" "[${_tbb_library}][${_tbb_include_dir}]")
+    endif()
 
     if(EMBREE_LIBRARY AND NOT TARGET EMBREE::embree)
         add_library(EMBREE::embree UNKNOWN IMPORTED)
