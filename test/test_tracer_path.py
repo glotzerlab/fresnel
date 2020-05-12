@@ -23,10 +23,10 @@ def test_render(scene_hex_sphere_, generate=False):
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(
             open('output/test_tracer_path.test_render.png', 'wb'), 'png')
     else:
-        conftest.assert_image_approx_equal(
-            buf_proxy[:],
-            dir_path / 'reference' / 'test_tracer_path.test_render.png',
-            tolerance=16)
+        conftest.assert_image_approx_equal(buf_proxy[:],
+                                           dir_path / 'reference'
+                                           / 'test_tracer_path.test_render.png',
+                                           tolerance=16)
 
 
 if __name__ == '__main__':

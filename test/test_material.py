@@ -161,9 +161,7 @@ def test_primitive_color_mix(scene_hex_sphere_, generate=False):
             'png')
     else:
         conftest.assert_image_approx_equal(
-            buf_proxy[:],
-            dir_path
-            / 'reference'
+            buf_proxy[:], dir_path / 'reference'
             / 'test_material.test_primitive_color_mix.png')
 
 

@@ -34,9 +34,7 @@ def test_set_material(scene_hex_sphere_, generate=False):
             'png')
     else:
         conftest.assert_image_approx_equal(
-            buf_proxy[:],
-            dir_path
-            / 'reference'
+            buf_proxy[:], dir_path / 'reference'
             / 'test_outline_material.test_set_material.png')
 
 
@@ -99,19 +97,18 @@ def test_primitive_color_mix(scene_hex_sphere_, generate=False):
     geometry.color[4] = fresnel.color.linear([0, 1, 1])
     geometry.color[5] = fresnel.color.linear([0, 0, 0])
 
-    buf_proxy = fresnel.preview(
-        scene_hex_sphere_, w=100, h=100, anti_alias=False)
+    buf_proxy = fresnel.preview(scene_hex_sphere_,
+                                w=100,
+                                h=100,
+                                anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(
             open('output/test_outline_material.test_primitive_color_mix.png',
-                 'wb'),
-            'png')
+                 'wb'), 'png')
     else:
         conftest.assert_image_approx_equal(
-            buf_proxy[:],
-            dir_path
-            / 'reference'
+            buf_proxy[:], dir_path / 'reference'
             / 'test_outline_material.test_primitive_color_mix.png')
 
 

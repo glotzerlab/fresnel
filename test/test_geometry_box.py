@@ -18,8 +18,7 @@ def scene_box(device):
     """Create a test scene."""
     scene = fresnel.Scene(device, lights=conftest.test_lights())
 
-    fresnel.geometry.Box(scene,
-                         [1, 2, 3, 0.4, 0.5, 0.6],
+    fresnel.geometry.Box(scene, [1, 2, 3, 0.4, 0.5, 0.6],
                          box_radius=0.2,
                          box_color=[1, 0, 1])
 
@@ -136,8 +135,15 @@ def test_box_update(scene_box_, generate=False):
         [1, 2, 3],
         [1, 1.2, 2, 0.2, 0, 0.9],
         box_tuple(2, 2, 3, 0.5, 0.5, 0.7),
-        {"Lx": 1, "Ly": 2, "Lz": 1, "xy": 0.4, "xz": 0.5, "yz": 0.3},
-        ]
+        {
+            "Lx": 1,
+            "Ly": 2,
+            "Lz": 1,
+            "xy": 0.4,
+            "xz": 0.5,
+            "yz": 0.3
+        },
+    ]
 
     for update_box in box_list:
 
@@ -155,13 +161,10 @@ def test_box_update(scene_box_, generate=False):
         if generate:
             PIL.Image.fromarray(buf_proxy[:], mode="RGBA").save(
                 open(f"output/test_geometry_box.test_render{box_index}.png",
-                     "wb"),
-                "png")
+                     "wb"), "png")
         else:
             conftest.assert_image_approx_equal(
-                buf_proxy[:],
-                dir_path
-                / "reference"
+                buf_proxy[:], dir_path / "reference"
                 / f"test_geometry_box.test_render{box_index}.png")
 
 

@@ -16,20 +16,19 @@ def scene_rounded_polygons(device):
     """Create a test scene with polygons."""
     scene = fresnel.Scene(device, lights=conftest.test_lights())
 
-    mat = fresnel.material.Material(
-        color=fresnel.color.linear([0.42, 0.267, 1]),
-        solid=1)
+    mat = fresnel.material.Material(color=fresnel.color.linear([0.42, 0.267,
+                                                                1]),
+                                    solid=1)
 
     fresnel.geometry.Polygon(scene,
                              N=2,
                              rounding_radius=0.3,
-                             vertices=[[-1, -1], [1, -1],
-                                       [1, 1], [0, 0], [-1, 1]],
+                             vertices=[[-1, -1], [1, -1], [1, 1], [0, 0],
+                                       [-1, 1]],
                              position=[[-1.5, 0], [1.5, 0]],
                              angle=[0.1, -0.2],
                              color=[[0, 0, 1], [0, 1, 0]],
-                             material=mat
-                             )
+                             material=mat)
 
     scene.camera = fresnel.camera.Orthographic(position=(0, 0, -2),
                                                look_at=(0, 0, 0),
@@ -49,20 +48,19 @@ def scene_polygons(device):
     """Create a test scene with polygons."""
     scene = fresnel.Scene(device, lights=conftest.test_lights())
 
-    mat = fresnel.material.Material(
-        color=fresnel.color.linear([0.42, 0.267, 1]),
-        solid=1)
+    mat = fresnel.material.Material(color=fresnel.color.linear([0.42, 0.267,
+                                                                1]),
+                                    solid=1)
 
     fresnel.geometry.Polygon(scene,
                              N=2,
                              rounding_radius=0,
-                             vertices=[[-1, -1], [1, -1],
-                                       [1, 1], [0, 0], [-1, 1]],
+                             vertices=[[-1, -1], [1, -1], [1, 1], [0, 0],
+                                       [-1, 1]],
                              position=[[-1.5, 0], [1.5, 0]],
                              angle=[0.1, -0.2],
                              color=[[0, 0, 1], [0, 1, 0]],
-                             material=mat
-                             )
+                             material=mat)
 
     scene.camera = fresnel.camera.Orthographic(position=(0, 0, -2),
                                                look_at=(0, 0, 0),
@@ -84,8 +82,7 @@ def test_render(scene_polygons_, generate=False):
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(
-            open('output/test_geometry_polygon.test_render.png', 'wb'),
-            'png')
+            open('output/test_geometry_polygon.test_render.png', 'wb'), 'png')
     else:
         conftest.assert_image_approx_equal(
             buf_proxy[:],
@@ -134,8 +131,7 @@ def test_position(scene_polygons_, generate=False):
     """Test the position property."""
     geometry = scene_polygons_.geometry[0]
 
-    p = numpy.array([[-2, 0],
-                     [3, 0]], dtype=numpy.float32)
+    p = numpy.array([[-2, 0], [3, 0]], dtype=numpy.float32)
     geometry.position[:] = p
     numpy.testing.assert_array_equal(p, geometry.position[:])
 
@@ -155,8 +151,10 @@ def test_color(scene_polygons_, generate=False):
     geometry = scene_polygons_.geometry[0]
     geometry.material.primitive_color_mix = 1.0
 
-    c = numpy.array([fresnel.color.linear([0, 1, 0]),
-                     fresnel.color.linear([1, 0, 0])], dtype=numpy.float32)
+    c = numpy.array(
+        [fresnel.color.linear([0, 1, 0]),
+         fresnel.color.linear([1, 0, 0])],
+        dtype=numpy.float32)
     geometry.color[:] = c
     numpy.testing.assert_array_equal(c, geometry.color[:])
 

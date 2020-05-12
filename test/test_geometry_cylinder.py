@@ -16,19 +16,17 @@ def scene_four_cylinders(device):
     """Create a test scene with four cylinders."""
     scene = fresnel.Scene(device, lights=conftest.test_lights())
 
-    position = [[[-5, -5, 0], [-5, 5, 0]],
-                [[5, -5, -5], [5, 5, 5]],
-                [[3, 3, -3], [-3, -3, -3]],
-                [[-2, 2, 2], [2, -2, -2]]]
+    position = [[[-5, -5, 0], [-5, 5, 0]], [[5, -5, -5], [5, 5, 5]],
+                [[3, 3, -3], [-3, -3, -3]], [[-2, 2, 2], [2, -2, -2]]]
 
-    fresnel.geometry.Cylinder(scene,
-                              points=position,
-                              radius=1.0,
-                              color=[0.9, 0.9, 0.9],
-                              material=fresnel.material.Material(
-                                  color=fresnel.color.linear(
-                                      [0.42, 0.267, 1])),
-                              )
+    fresnel.geometry.Cylinder(
+        scene,
+        points=position,
+        radius=1.0,
+        color=[0.9, 0.9, 0.9],
+        material=fresnel.material.Material(
+            color=fresnel.color.linear([0.42, 0.267, 1])),
+    )
 
     scene.camera = fresnel.camera.Orthographic(position=(0, 2, 10),
                                                look_at=(0, 0, 0),
@@ -86,10 +84,9 @@ def test_points(scene_four_cylinders_, generate=False):
     """Test the points property."""
     geometry = scene_four_cylinders_.geometry[0]
 
-    p = numpy.array([[[-5, -5, 0], [-5, 5, 0]],
-                     [[-3, 5, 0], [3, 5, 0]],
-                     [[5, 5, 0], [5, -5, -0]],
-                     [[3, -5, 0], [-3, -5, 0]]], dtype=numpy.float32)
+    p = numpy.array([[[-5, -5, 0], [-5, 5, 0]], [[-3, 5, 0], [3, 5, 0]],
+                     [[5, 5, 0], [5, -5, -0]], [[3, -5, 0], [-3, -5, 0]]],
+                    dtype=numpy.float32)
     geometry.points[:] = p
     numpy.testing.assert_array_equal(p, geometry.points[:])
 
@@ -113,10 +110,10 @@ def test_color(scene_four_cylinders_, generate=False):
     geometry = scene_four_cylinders_.geometry[0]
     geometry.material.primitive_color_mix = 1.0
 
-    c = numpy.array([[[0.9, 0, 0], [0, 0.9, 0]],
-                     [[0, 0, 0.9], [0, 0.9, 0.9]],
-                     [[0.9, 0.9, 0], [0.9, 0, 0.9]],
-                     [[0.1, 0.2, 0.9], [0.9, 0.2, 0.3]]], dtype=numpy.float32)
+    c = numpy.array(
+        [[[0.9, 0, 0], [0, 0.9, 0]], [[0, 0, 0.9], [0, 0.9, 0.9]],
+         [[0.9, 0.9, 0], [0.9, 0, 0.9]], [[0.1, 0.2, 0.9], [0.9, 0.2, 0.3]]],
+        dtype=numpy.float32)
     geometry.color[:] = c
     numpy.testing.assert_array_equal(c, geometry.color[:])
 

@@ -19,9 +19,7 @@ def test_camera_fit_front(device_):
     scene = fresnel.Scene()
 
     fresnel.geometry.Sphere(scene,
-                            position=[[-9, -2, 0],
-                                      [-5, -1, 0],
-                                      [4, 0, 0],
+                            position=[[-9, -2, 0], [-5, -1, 0], [4, 0, 0],
                                       [2, 1, 0]],
                             radius=1.0)
 
@@ -37,9 +35,7 @@ def test_camera_fit_isometric(device_):
     scene = fresnel.Scene()
 
     fresnel.geometry.Sphere(scene,
-                            position=[[-9, -2, 0],
-                                      [-5, -1, 0],
-                                      [4, 0, 0],
+                            position=[[-9, -2, 0], [-5, -1, 0], [4, 0, 0],
                                       [2, 1, 0]],
                             radius=1.0)
 
@@ -53,9 +49,7 @@ def test_scene_default_camera(device_):
     scene = fresnel.Scene()
 
     fresnel.geometry.Sphere(scene,
-                            position=[[-9, -2, 0],
-                                      [-5, -1, 0],
-                                      [4, 0, 0],
+                            position=[[-9, -2, 0], [-5, -1, 0], [4, 0, 0],
                                       [2, 1, 0]],
                             radius=1.0)
 
@@ -64,8 +58,10 @@ def test_scene_default_camera(device_):
 
 def test_orthographic_attributes():
     """Test all properties."""
-    cam = fresnel.camera.Orthographic(
-        position=(1, 0, 10), look_at=(1, 0, 0), up=(0, 1, 0), height=6)
+    cam = fresnel.camera.Orthographic(position=(1, 0, 10),
+                                      look_at=(1, 0, 0),
+                                      up=(0, 1, 0),
+                                      height=6)
     numpy.testing.assert_array_equal(cam.position, (1, 0, 10))
     numpy.testing.assert_array_equal(cam.look_at, (1, 0, 0))
     numpy.testing.assert_array_equal(cam.up, (0, 1, 0))

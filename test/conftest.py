@@ -8,7 +8,6 @@ import numpy
 import os
 import pathlib
 
-
 dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 devices = []
@@ -62,9 +61,7 @@ def device_name(device):
     return name
 
 
-@pytest.fixture(scope='session',
-                params=devices,
-                ids=device_name)
+@pytest.fixture(scope='session', params=devices, ids=device_name)
 def device_(request):
     """Pytest fixture parameterized over several devices."""
     return device(request)
@@ -76,16 +73,21 @@ def scene_hex_sphere(device):
 
     position = []
     for i in range(6):
-        position.append([2 * math.cos(i * 2 * math.pi / 6),
-                         2 * math.sin(i * 2 * math.pi / 6), 0])
+        position.append([
+            2 * math.cos(i * 2 * math.pi / 6),
+            2 * math.sin(i * 2 * math.pi / 6), 0
+        ])
 
     geometry = fresnel.geometry.Sphere(scene, position=position, radius=1.0)
-    geometry.material = fresnel.material.Material(
-        solid=0.0, color=fresnel.color.linear([1, 0.874, 0.169]))
+    geometry.material = fresnel.material.Material(solid=0.0,
+                                                  color=fresnel.color.linear(
+                                                      [1, 0.874, 0.169]))
     geometry.outline_width = 0.12
 
-    scene.camera = fresnel.camera.Orthographic(
-        position=(0, 0, 10), look_at=(0, 0, 0), up=(0, 1, 0), height=6)
+    scene.camera = fresnel.camera.Orthographic(position=(0, 0, 10),
+                                               look_at=(0, 0, 0),
+                                               up=(0, 1, 0),
+                                               height=6)
 
     return scene
 
