@@ -11,7 +11,7 @@ steps:
   displayName: Compile
   workingDirectory: $(Build.BinariesDirectory)
 
-- script: python3 -m pytest -o junit_suite_name="${AGENT_JOBNAME}" --junit-xml=$(Common.TestResultsDirectory)/test.xml
+- script: python3 -m pytest -v --durations=0 -o junit_suite_name="${AGENT_JOBNAME}" --junit-xml=$(Common.TestResultsDirectory)/test.xml
   displayName: Unit test
   workingDirectory: test
   env:
