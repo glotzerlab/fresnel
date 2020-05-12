@@ -2,6 +2,12 @@ variables:
   image_root: glotzerlab/ci:2020.04
   private_image_root: joaander/ci:2019.11
 
+trigger:
+  batch: true
+  branches:
+    include:
+    - '*'
+
 stages:
 - stage: build_test_cpu
   displayName: Unit test (CPU)
@@ -15,6 +21,7 @@ stages:
   - job: linux_cpu
     displayName: Linux
     strategy:
+      maxParallel: 5
       matrix:
         gcc10_py38:
           unused: ""
