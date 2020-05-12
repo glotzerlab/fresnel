@@ -78,12 +78,12 @@ include_directories(${pybind11_INCLUDE_DIR})
 option(ENABLE_EMBREE "Use Embree for ray tracing on the CPU" ON)
 
 if (ENABLE_EMBREE)
-    find_package_config_first(EMBREE 3.0 REQUIRED)
+    find_package_config_first(EMBREE 3.0)
     if (EMBREE_FOUND)
         find_package_message(embree "Found EMBREE: ${embree_DIR} ${EMBREE_LIBRARY} ${EMBREE_INCLUDE_DIRS}" "[${EMBREE_LIBRARY}][${EMBREE_INCLUDE_DIRS}]")
     endif()
 
-    find_package_config_first(TBB 4.3 REQUIRED)
+    find_package_config_first(TBB 4.3)
 
     if (TBB_FOUND)
         get_target_property(_tbb_library TBB::tbb IMPORTED_LOCATION_RELEASE)
