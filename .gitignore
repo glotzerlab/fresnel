@@ -5,5 +5,3 @@ build
 .cache
 *.pyc
 .pytest_cache
-*.code-workspace
-.vscode/
