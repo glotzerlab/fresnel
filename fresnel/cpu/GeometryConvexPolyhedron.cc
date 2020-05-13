@@ -5,8 +5,10 @@
 
 #include "GeometryConvexPolyhedron.h"
 
-namespace fresnel { namespace cpu {
-
+namespace fresnel
+    {
+namespace cpu
+    {
 /*! \param scene Scene to attach the Geometry to
     \param plane_origins Origins of the planes that make up the polyhedron
     \param plane_normals Normals of the planes that make up the polyhedron
@@ -22,7 +24,7 @@ GeometryConvexPolyhedron::GeometryConvexPolyhedron(
     unsigned int N,
     float r)
     : Geometry(scene)
-{
+    {
     // create the geometry
     m_geometry = rtcNewGeometry(m_device->getRTCDevice(), RTC_GEOMETRY_TYPE_USER);
     m_device->checkError();
@@ -79,7 +81,7 @@ GeometryConvexPolyhedron::GeometryConvexPolyhedron(
 
     // construct planes in C++ data structures
     for (unsigned int i = 0; i < info_normal.shape[0]; i++)
-    {
+        {
         vec3<float> n(normal_f[i * 3], normal_f[i * 3 + 1], normal_f[i * 3 + 2]);
         n = n / sqrtf(dot(n, n));
 
@@ -87,7 +89,7 @@ GeometryConvexPolyhedron::GeometryConvexPolyhedron(
             vec3<float>(origin_f[i * 3], origin_f[i * 3 + 1], origin_f[i * 3 + 2]));
         m_plane_normal.push_back(vec3<float>(n.x, n.y, n.z));
         m_plane_color.push_back(RGB<float>(color_f[i * 3], color_f[i * 3 + 1], color_f[i * 3 + 2]));
-    }
+        }
 
     // for now, take a user supplied radius
     m_radius = r;
@@ -104,9 +106,9 @@ GeometryConvexPolyhedron::GeometryConvexPolyhedron(
     m_device->checkError();
 
     m_valid = true;
-}
+    }
 
-GeometryConvexPolyhedron::~GeometryConvexPolyhedron() {}
+GeometryConvexPolyhedron::~GeometryConvexPolyhedron() { }
 
 /*! Compute the bounding box of a given primitive
 
@@ -115,7 +117,7 @@ GeometryConvexPolyhedron::~GeometryConvexPolyhedron() {}
     \param bounds_o Output bounding box
 */
 void GeometryConvexPolyhedron::bounds(const struct RTCBoundsFunctionArguments* args)
-{
+    {
     GeometryConvexPolyhedron* geom = (GeometryConvexPolyhedron*)args->geometryUserPtr;
     vec3<float> p = geom->m_position->get(args->primID);
 
@@ -127,7 +129,7 @@ void GeometryConvexPolyhedron::bounds(const struct RTCBoundsFunctionArguments* a
     bounds_o.upper_x = p.x + geom->m_radius;
     bounds_o.upper_y = p.y + geom->m_radius;
     bounds_o.upper_z = p.z + geom->m_radius;
-}
+    }
 
 /*! Compute the intersection of a ray with the given primitive
 
@@ -136,7 +138,7 @@ void GeometryConvexPolyhedron::bounds(const struct RTCBoundsFunctionArguments* a
     \param item Index of the primitive to compute the bounding box of
 */
 void GeometryConvexPolyhedron::intersect(const struct RTCIntersectFunctionNArguments* args)
-{
+    {
     GeometryConvexPolyhedron* geom = (GeometryConvexPolyhedron*)args->geometryUserPtr;
 
     // adapted from OptiX quick start tutorial and Embree user_geometry tutorial files
@@ -160,7 +162,7 @@ void GeometryConvexPolyhedron::intersect(const struct RTCIntersectFunctionNArgum
     vec3<float> t1_n_local(0, 0, 0), t1_p_local(0, 0, 0);
     int t0_plane_hit = 0, t1_plane_hit = 0;
     for (int i = 0; i < n_planes && t0 < t1; ++i)
-    {
+        {
         vec3<float> n = geom->m_plane_normal[i];
         vec3<float> p = geom->m_plane_origin[i];
 
@@ -171,33 +173,33 @@ void GeometryConvexPolyhedron::intersect(const struct RTCIntersectFunctionNArgum
         // if the ray is parallel to the plane, there is no intersection when the ray is outside the
         // shape
         if (fabs(denom) < 1e-5)
-        {
+            {
             if (dot(ray_org_local - p, n) > 0)
                 return;
-        }
+            }
         else if (denom < 0)
-        {
+            {
             // find the last plane this ray enters
             if (t > t0)
-            {
+                {
                 t0 = t;
                 t0_n_local = n;
                 t0_p_local = p;
                 t0_plane_hit = i;
+                }
             }
-        }
         else
-        {
+            {
             // find the first plane this ray exits
             if (t < t1)
-            {
+                {
                 t1 = t;
                 t1_n_local = n;
                 t1_p_local = p;
                 t1_plane_hit = i;
+                }
             }
         }
-    }
 
     // if the ray enters after it exits, it missed the polyhedron
     if (t0 > t1)
@@ -211,7 +213,7 @@ void GeometryConvexPolyhedron::intersect(const struct RTCIntersectFunctionNArgum
     // if the t0 is in (tnear,tfar), we hit the entry plane
     FresnelRTCIntersectContext& context = *(FresnelRTCIntersectContext*)args->context;
     if ((ray.tnear < t0) & (t0 < ray.tfar))
-    {
+        {
         t_hit = ray.tfar = t0;
         rayhit.hit.geomID = geom->m_geom_id;
         rayhit.hit.primID = args->primID;
@@ -225,10 +227,10 @@ void GeometryConvexPolyhedron::intersect(const struct RTCIntersectFunctionNArgum
                                      geom->m_color->get(args->primID),
                                      geom->m_plane_color[t0_plane_hit]);
         hit = true;
-    }
+        }
     // if t1 is in (tnear,tfar), we hit the exit plane
     if ((ray.tnear < t1) & (t1 < ray.tfar))
-    {
+        {
         t_hit = ray.tfar = t1;
         rayhit.hit.geomID = geom->m_geom_id;
         rayhit.hit.primID = args->primID;
@@ -242,17 +244,17 @@ void GeometryConvexPolyhedron::intersect(const struct RTCIntersectFunctionNArgum
                                      geom->m_color->get(args->primID),
                                      geom->m_plane_color[t1_plane_hit]);
         hit = true;
-    }
+        }
 
     // determine distance from the hit point to the nearest edge
     float min_d = std::numeric_limits<float>::max();
     vec3<float> r_hit = ray_org_local + t_hit * ray_dir_local;
     if (hit)
-    {
+        {
         // edges come from intersections of planes
         // loop over all planes and find the intersection with the hit plane
         for (int i = 0; i < n_planes; ++i)
-        {
+            {
             vec3<float> n = geom->m_plane_normal[i];
             vec3<float> p = geom->m_plane_origin[i];
 
@@ -265,22 +267,22 @@ void GeometryConvexPolyhedron::intersect(const struct RTCIntersectFunctionNArgum
 
             // if the planes are not coplanar
             if (fabs(dot(u, u)) >= 1e-5)
-            {
+                {
                 int maxc; // max coordinate
                 if (fabs(u.x) > fabs(u.y))
-                {
+                    {
                     if (fabs(u.x) > fabs(u.z))
                         maxc = 1;
                     else
                         maxc = 3;
-                }
+                    }
                 else
-                {
+                    {
                     if (fabs(u.y) > fabs(u.z))
                         maxc = 2;
                     else
                         maxc = 3;
-                }
+                    }
 
                 // a point on the line
                 vec3<float> x0;
@@ -289,22 +291,22 @@ void GeometryConvexPolyhedron::intersect(const struct RTCIntersectFunctionNArgum
 
                 // solve the problem in different ways based on which direction is maximum
                 switch (maxc)
-                {
-                case 1: // intersect with x=0
+                    {
+                    case 1: // intersect with x=0
                     x0.x = 0;
                     x0.y = (d2 * n.z - d1 * n_hit.z) / u.x;
                     x0.z = (d1 * n_hit.y - d2 * n.y) / u.x;
                     break;
-                case 2: // intersect with y=0
+                    case 2: // intersect with y=0
                     x0.x = (d1 * n_hit.z - d2 * n.z) / u.y;
                     x0.y = 0;
                     x0.z = (d2 * n.x - d1 * n_hit.x) / u.y;
                     break;
-                case 3: // intersect with z=0
+                    case 3: // intersect with z=0
                     x0.x = (d2 * n.y - d1 * n_hit.y) / u.z;
                     x0.y = (d1 * n_hit.x - d2 * n.x) / u.z;
                     x0.z = 0;
-                }
+                    }
 
                 // we want the distance in the view plane for consistent line edge widths
                 // project the line x0 + t*u into the plane perpendicular to the view direction
@@ -323,16 +325,16 @@ void GeometryConvexPolyhedron::intersect(const struct RTCIntersectFunctionNArgum
                 float d = sqrtf(dsq);
                 if (d < min_d)
                     min_d = d;
+                }
             }
-        }
         context.d = min_d;
+        }
     }
-}
 
 /*! \param m Python module to export in
  */
 void export_GeometryConvexPolyhedron(pybind11::module& m)
-{
+    {
     pybind11::class_<GeometryConvexPolyhedron, Geometry, std::shared_ptr<GeometryConvexPolyhedron>>(
         m,
         "GeometryConvexPolyhedron")
@@ -348,6 +350,7 @@ void export_GeometryConvexPolyhedron(pybind11::module& m)
         .def("getColorBuffer", &GeometryConvexPolyhedron::getColorBuffer)
         .def("setColorByFace", &GeometryConvexPolyhedron::setColorByFace)
         .def("getColorByFace", &GeometryConvexPolyhedron::getColorByFace);
-}
+    }
 
-}} // end namespace fresnel::cpu
+    } // namespace cpu
+    } // namespace fresnel

@@ -1,6 +1,12 @@
 variables:
-  image_root: glotzerlab/ci:2019.11
+  image_root: glotzerlab/ci:2020.05
   private_image_root: joaander/ci:2019.11
+
+trigger:
+  batch: true
+  branches:
+    include:
+    - '*'
 
 stages:
 - stage: build_test_cpu
@@ -15,8 +21,13 @@ stages:
   - job: linux_cpu
     displayName: Linux
     strategy:
+      maxParallel: 5
       matrix:
+        gcc10_py38:
+          unused: ""
         gcc9_py38:
+          unused: ""
+        clang10_py38:
           unused: ""
         clang9_py38:
           unused: ""
@@ -43,7 +54,7 @@ stages:
         gcc7_py36:
           unused: ""
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-latest'
 
     container:
       image: $(image_root)-$(System.JobName)
@@ -67,19 +78,10 @@ stages:
       vmImage: '$(mac_image)'
 
     steps:
-    - script: brew install python tbb embree cmake ninja qhull
+    - script: brew install python tbb embree cmake ninja pybind11 qhull
       displayName: Brew install prereqs
     - script: python3 -m pip install pytest pillow numpy
       displayName: Pip install prereqs
-    # work around broken homebrew pybind11 package
-    - script: |
-        curl -sSL https://github.com/pybind/pybind11/archive/v2.4.2.tar.gz | tar -xzC ./ \
-        && cd pybind11-2.4.2 \
-        && mkdir build && cd build \
-        && cmake ../ -DCMAKE_INSTALL_PREFIX=/usr/local -DPYBIND11_TEST=off -DPYTHON_EXECUTABLE=/usr/local/bin/python3 \
-        && make install
-      displayName: Manually install pybind11
-      workingDirectory: $(Pipeline.Workspace)
     - template: templates/build_test.yml
 
 - stage: build_test_gpu
@@ -129,10 +131,10 @@ stages:
   - job: sphinx_doc
     displayName: Sphinx
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-latest'
 
     container:
-      image: $(image_root)-gcc7_py37
+      image: $(image_root)-clang10_py38
       options: -u 0
 
     workspace:
@@ -141,10 +143,10 @@ stages:
     steps:
     - checkout: self
       submodules: true
-    - script: sphinx-build -b html -d _build/doctrees -W -n . _build/html
+    - script: sphinx-build -b html -d build/doctrees -W -n . build/html
       displayName: (HTML)
       workingDirectory: doc
-    - script: sphinx-build -b latex -d _build/doctrees -W -n . _build/latex
+    - script: sphinx-build -b latex -d build/doctrees -W -n . build/latex
       displayName: (LaTeX)
       workingDirectory: doc
 
@@ -156,10 +158,10 @@ stages:
   - job: clang_format
     displayName: clang-format
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-latest'
 
     container:
-      image: $(image_root)-clang9_py38
+      image: $(image_root)-clang10_py38
       options: -u 0
 
     workspace:
@@ -168,15 +170,15 @@ stages:
     steps:
     - checkout: self
       submodules: true
-    - script: ./run-clang-format.py -r fresnel
+    - script: ./run-clang-format.py -r .
       displayName: Run clang-format
 
   - job: flake8
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-latest'
 
     container:
-      image: $(image_root)-clang9_py38
+      image: $(image_root)-clang10_py38
       options: -u 0
 
     workspace:
@@ -188,3 +190,21 @@ stages:
 
     - script: flake8
       displayName: Run flake8
+
+  - job: yapf
+    pool:
+      vmImage: 'ubuntu-latest'
+
+    container:
+      image: $(image_root)-clang10_py38
+      options: -u 0
+
+    workspace:
+      clean: all
+
+    steps:
+    - checkout: self
+      submodules: true
+
+    - script: yapf -d -r .
+      displayName: Run yapf

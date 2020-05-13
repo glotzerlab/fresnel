@@ -11,8 +11,10 @@
 
 #include "Tracer.h"
 
-namespace fresnel { namespace cpu {
-
+namespace fresnel
+    {
+namespace cpu
+    {
 //! Path tracer
 /*! The path tracer randomly samples light paths in the scene to obtain soft lighting from area
    light sources and other global illumination techniques (reflection, refraction, anti-aliasing,
@@ -26,7 +28,7 @@ namespace fresnel { namespace cpu {
    multiple exposure techniques are the desired output).
 */
 class TracerPath : public Tracer
-{
+    {
     public:
     //! Constructor
     TracerPath(std::shared_ptr<Device> device,
@@ -44,32 +46,33 @@ class TracerPath : public Tracer
 
     //! Resize the output buffer
     virtual void resize(unsigned int w, unsigned int h)
-    {
+        {
         Tracer::resize(w, h);
         m_n_samples = 0;
         m_seed++;
-    }
+        }
 
     //! Get the number of samples taken
     unsigned int getNumSamples() const
-    {
+        {
         return m_n_samples;
-    }
+        }
 
     //! Set the number of light samples
     void setLightSamples(unsigned int light_samples)
-    {
+        {
         m_light_samples = light_samples;
-    }
+        }
 
     protected:
     unsigned int m_n_samples;     //!< Number of samples taken since the last reset
     unsigned int m_light_samples; //!< Number of light samples to take each render()
-};
+    };
 
 //! Export TracerDirect to python
 void export_TracerPath(pybind11::module& m);
 
-}} // end namespace fresnel::cpu
+    } // namespace cpu
+    } // namespace fresnel
 
 #endif

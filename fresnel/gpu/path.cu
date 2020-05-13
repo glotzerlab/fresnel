@@ -37,19 +37,19 @@ rtDeclareVariable(RGB<float>, shading_color, attribute shading_color, );
 /*! Stack overflows result in magenta pixels, other exceptions are printed.
  */
 RT_PROGRAM void path_exception()
-{
+    {
     const unsigned int code = rtGetExceptionCode();
 
     if (code == RT_EXCEPTION_STACK_OVERFLOW)
-    {
+        {
         linear_output_buffer[launch_index]
             = make_float4(bad_color.x, bad_color.y, bad_color.z, 1.0f);
         srgb_output_buffer[launch_index]
             = make_uchar4(255.0f * bad_color.x, 255.0f * bad_color.y, 255.0f * bad_color.z, 255);
-    }
+        }
     else
         rtPrintExceptionDetails();
-}
+    }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // ray gen variables
@@ -68,7 +68,7 @@ rtDeclareVariable(unsigned int, light_samples, , );
 /*! Implement Path tracer ray generation
  */
 RT_PROGRAM void path_ray_gen()
-{
+    {
     // determine the viewing plane relative coordinates
     optix::size_t2 screen = linear_output_buffer.size();
 
@@ -82,13 +82,13 @@ RT_PROGRAM void path_ray_gen()
 
     // trace a path from the camera into the scene light_samples times
     for (prd.light_sample = 0; prd.light_sample < light_samples; prd.light_sample++)
-    {
+        {
         prd.attenuation = RGB<float>(1.0f, 1.0f, 1.0f);
         prd.done = false;
         cam.generateRay(prd.origin, prd.direction, launch_index.x, launch_index.y, n_samples);
 
         for (prd.depth = 0;; prd.depth++)
-        {
+            {
             // (1 is for the path tracer ray id)
             optix::Ray ray(prd.origin, prd.direction, TRACER_PATH_RAY_ID, scene_epsilon);
             rtTrace(top_object, ray, prd);
@@ -96,8 +96,8 @@ RT_PROGRAM void path_ray_gen()
             // break out of the loop when done
             if (prd.done)
                 break;
-        } // end depth loop
-    }     // end light samples loop
+            } // end depth loop
+        }     // end light samples loop
 
     RGBA<float> output_sample(prd.result / float(light_samples), prd.a);
 
@@ -122,7 +122,7 @@ RT_PROGRAM void path_ray_gen()
                                                    srgb_output_pixel.g,
                                                    srgb_output_pixel.b,
                                                    srgb_output_pixel.a);
-}
+    }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // closest hit variables
@@ -136,7 +136,7 @@ rtDeclareVariable(float, t_hit, rtIntersectionDistance, );
 /*! Implement Whitted ray material
  */
 RT_PROGRAM void path_closest_hit()
-{
+    {
     optix::size_t2 screen = linear_output_buffer.size();
     RayGen ray_gen(launch_index.x, launch_index.y, screen.x, screen.y, seed);
 
@@ -156,11 +156,11 @@ RT_PROGRAM void path_closest_hit()
                     ray_gen,
                     n_samples,
                     light_samples);
-}
+    }
 
 RT_PROGRAM void path_miss()
-{
+    {
     vec3<float> dir(ray.direction);
 
     path_tracer_miss(prd_path, background_color, background_alpha, light_samples, lights, dir);
-}
+    }

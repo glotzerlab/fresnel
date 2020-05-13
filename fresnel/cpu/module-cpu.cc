@@ -21,7 +21,7 @@ using namespace fresnel::cpu;
 using namespace std;
 
 PYBIND11_MODULE(_cpu, m)
-{
+    {
     export_Device(m);
     export_Scene(m);
     export_Geometry(m);
@@ -34,4 +34,4 @@ PYBIND11_MODULE(_cpu, m)
     export_TracerDirect(m);
     export_TracerPath(m);
     export_Array(m);
-}
+    }

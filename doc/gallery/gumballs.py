@@ -1,3 +1,5 @@
+"""Gumballs example scene."""
+
 import fresnel
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
@@ -14,7 +16,8 @@ colors = [
     '#734d56',
     '#5d5f7b',
     '#ecb642',
-    '#8a9441']
+    '#8a9441',
+]
 cmap = LinearSegmentedColormap.from_list(name='gumball',
                                          colors=colors,
                                          N=len(colors))
@@ -23,20 +26,22 @@ cmap = LinearSegmentedColormap.from_list(name='gumball',
 position = np.load('gumballs.npz')['position']
 np.random.seed(123)
 color = fresnel.color.linear(cmap(np.random.rand(len(position))))
-material = fresnel.material.Material(primitive_color_mix=1.0,
-                                     roughness=0.2,
-                                     specular=0.8,
-                                     )
+material = fresnel.material.Material(
+    primitive_color_mix=1.0,
+    roughness=0.2,
+    specular=0.8,
+)
 
 # We create a fresnel scene and its geometry.
 scene = fresnel.Scene()
 
-geometry = fresnel.geometry.Sphere(scene,
-                                   position=position,
-                                   radius=0.5,
-                                   color=color,
-                                   material=material,
-                                   )
+geometry = fresnel.geometry.Sphere(
+    scene,
+    position=position,
+    radius=0.5,
+    color=color,
+    material=material,
+)
 
 # Configure camera and lighting.
 scene.camera = fresnel.camera.fit(scene, view='front')

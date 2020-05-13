@@ -1,3 +1,5 @@
+"""Test the Box geometry."""
+
 import os
 import pathlib
 from collections import namedtuple
@@ -13,10 +15,10 @@ dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 
 def scene_box(device):
+    """Create a test scene."""
     scene = fresnel.Scene(device, lights=conftest.test_lights())
 
-    fresnel.geometry.Box(scene,
-                         [1, 2, 3, 0.4, 0.5, 0.6],
+    fresnel.geometry.Box(scene, [1, 2, 3, 0.4, 0.5, 0.6],
                          box_radius=0.2,
                          box_color=[1, 0, 1])
 
@@ -30,10 +32,12 @@ def scene_box(device):
 
 @pytest.fixture(scope="function")
 def scene_box_(device_):
+    """Pytest fixture to create a test scene."""
     return scene_box(device_)
 
 
 def test_render(scene_box_, generate=False):
+    """Test that Box renders properly."""
     buf_proxy = fresnel.preview(scene_box_, w=150, h=100, anti_alias=False)
 
     if generate:
@@ -46,6 +50,7 @@ def test_render(scene_box_, generate=False):
 
 
 def test_radius(scene_box_, generate=False):
+    """Test the radius property."""
     geometry = scene_box_.geometry[0]
 
     r = numpy.array(0.1, dtype=numpy.float32)
@@ -64,6 +69,7 @@ def test_radius(scene_box_, generate=False):
 
 
 def test_color(scene_box_, generate=False):
+    """Test the color property."""
     geometry = scene_box_.geometry[0]
     geometry.material.primitive_color_mix = 1.0
 
@@ -83,6 +89,7 @@ def test_color(scene_box_, generate=False):
 
 
 def test_box_radius(scene_box_, generate=False):
+    """Test the box_radius property."""
     geometry = scene_box_.geometry[0]
 
     r = 0.1
@@ -101,6 +108,7 @@ def test_box_radius(scene_box_, generate=False):
 
 
 def test_box_color(scene_box_, generate=False):
+    """Test the box_color property."""
     geometry = scene_box_.geometry[0]
 
     c = numpy.array([1, 0, 1], dtype=numpy.float32)
@@ -119,6 +127,7 @@ def test_box_color(scene_box_, generate=False):
 
 
 def test_box_update(scene_box_, generate=False):
+    """Test the box property."""
     box_tuple = namedtuple("box_tuple", "Lx Ly Lz xy xz yz")
     box_list = [
         2,
@@ -126,8 +135,15 @@ def test_box_update(scene_box_, generate=False):
         [1, 2, 3],
         [1, 1.2, 2, 0.2, 0, 0.9],
         box_tuple(2, 2, 3, 0.5, 0.5, 0.7),
-        {"Lx": 1, "Ly": 2, "Lz": 1, "xy": 0.4, "xz": 0.5, "yz": 0.3},
-        ]
+        {
+            "Lx": 1,
+            "Ly": 2,
+            "Lz": 1,
+            "xy": 0.4,
+            "xz": 0.5,
+            "yz": 0.3
+        },
+    ]
 
     for update_box in box_list:
 
@@ -145,13 +161,10 @@ def test_box_update(scene_box_, generate=False):
         if generate:
             PIL.Image.fromarray(buf_proxy[:], mode="RGBA").save(
                 open(f"output/test_geometry_box.test_render{box_index}.png",
-                     "wb"),
-                "png")
+                     "wb"), "png")
         else:
             conftest.assert_image_approx_equal(
-                buf_proxy[:],
-                dir_path
-                / "reference"
+                buf_proxy[:], dir_path / "reference"
                 / f"test_geometry_box.test_render{box_index}.png")
 
 

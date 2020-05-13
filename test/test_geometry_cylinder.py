@@ -1,3 +1,5 @@
+"""Test the Cylinder geometry."""
+
 import fresnel
 import numpy
 from collections import namedtuple
@@ -11,21 +13,20 @@ dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 
 def scene_four_cylinders(device):
+    """Create a test scene with four cylinders."""
     scene = fresnel.Scene(device, lights=conftest.test_lights())
 
-    position = [[[-5, -5, 0], [-5, 5, 0]],
-                [[5, -5, -5], [5, 5, 5]],
-                [[3, 3, -3], [-3, -3, -3]],
-                [[-2, 2, 2], [2, -2, -2]]]
+    position = [[[-5, -5, 0], [-5, 5, 0]], [[5, -5, -5], [5, 5, 5]],
+                [[3, 3, -3], [-3, -3, -3]], [[-2, 2, 2], [2, -2, -2]]]
 
-    fresnel.geometry.Cylinder(scene,
-                              points=position,
-                              radius=1.0,
-                              color=[0.9, 0.9, 0.9],
-                              material=fresnel.material.Material(
-                                  color=fresnel.color.linear(
-                                      [0.42, 0.267, 1])),
-                              )
+    fresnel.geometry.Cylinder(
+        scene,
+        points=position,
+        radius=1.0,
+        color=[0.9, 0.9, 0.9],
+        material=fresnel.material.Material(
+            color=fresnel.color.linear([0.42, 0.267, 1])),
+    )
 
     scene.camera = fresnel.camera.Orthographic(position=(0, 2, 10),
                                                look_at=(0, 0, 0),
@@ -37,10 +38,12 @@ def scene_four_cylinders(device):
 
 @pytest.fixture(scope='function')
 def scene_four_cylinders_(device_):
+    """Pytest fixture to create a test scene."""
     return scene_four_cylinders(device_)
 
 
 def test_render(scene_four_cylinders_, generate=False):
+    """Test that Cylinder renders properly."""
     buf_proxy = fresnel.preview(scene_four_cylinders_,
                                 w=150,
                                 h=100,
@@ -56,6 +59,7 @@ def test_render(scene_four_cylinders_, generate=False):
 
 
 def test_radius(scene_four_cylinders_, generate=False):
+    """Test the radius property."""
     geometry = scene_four_cylinders_.geometry[0]
 
     r = numpy.array([0.5, 0.6, 0.8, 1.0], dtype=numpy.float32)
@@ -77,12 +81,12 @@ def test_radius(scene_four_cylinders_, generate=False):
 
 
 def test_points(scene_four_cylinders_, generate=False):
+    """Test the points property."""
     geometry = scene_four_cylinders_.geometry[0]
 
-    p = numpy.array([[[-5, -5, 0], [-5, 5, 0]],
-                     [[-3, 5, 0], [3, 5, 0]],
-                     [[5, 5, 0], [5, -5, -0]],
-                     [[3, -5, 0], [-3, -5, 0]]], dtype=numpy.float32)
+    p = numpy.array([[[-5, -5, 0], [-5, 5, 0]], [[-3, 5, 0], [3, 5, 0]],
+                     [[5, 5, 0], [5, -5, -0]], [[3, -5, 0], [-3, -5, 0]]],
+                    dtype=numpy.float32)
     geometry.points[:] = p
     numpy.testing.assert_array_equal(p, geometry.points[:])
 
@@ -102,13 +106,14 @@ def test_points(scene_four_cylinders_, generate=False):
 
 
 def test_color(scene_four_cylinders_, generate=False):
+    """Test the color property."""
     geometry = scene_four_cylinders_.geometry[0]
     geometry.material.primitive_color_mix = 1.0
 
-    c = numpy.array([[[0.9, 0, 0], [0, 0.9, 0]],
-                     [[0, 0, 0.9], [0, 0.9, 0.9]],
-                     [[0.9, 0.9, 0], [0.9, 0, 0.9]],
-                     [[0.1, 0.2, 0.9], [0.9, 0.2, 0.3]]], dtype=numpy.float32)
+    c = numpy.array(
+        [[[0.9, 0, 0], [0, 0.9, 0]], [[0, 0, 0.9], [0, 0.9, 0.9]],
+         [[0.9, 0.9, 0], [0.9, 0, 0.9]], [[0.1, 0.2, 0.9], [0.9, 0.2, 0.3]]],
+        dtype=numpy.float32)
     geometry.color[:] = c
     numpy.testing.assert_array_equal(c, geometry.color[:])
 
@@ -127,6 +132,7 @@ def test_color(scene_four_cylinders_, generate=False):
 
 
 def test_outline(scene_four_cylinders_, generate=False):
+    """Test that outlines render properly."""
     geometry = scene_four_cylinders_.geometry[0]
     geometry.outline_width = 0.3
 

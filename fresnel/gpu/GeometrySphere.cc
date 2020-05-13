@@ -7,13 +7,15 @@
 
 #include "GeometrySphere.h"
 
-namespace fresnel { namespace gpu {
-
+namespace fresnel
+    {
+namespace gpu
+    {
 /*! \param scene Scene to attach the Geometry to
     \param N number of spheres in the geometry
 */
 GeometrySphere::GeometrySphere(std::shared_ptr<Scene> scene, unsigned int N) : Geometry(scene)
-{
+    {
     // Declared initial variabls
     optix::Program intersection_program;
     optix::Program bounding_box_program;
@@ -44,17 +46,18 @@ GeometrySphere::GeometrySphere(std::shared_ptr<Scene> scene, unsigned int N) : G
     m_radius = std::shared_ptr<Array<float>>(new Array<float>(1, optix_radius));
     m_color = std::shared_ptr<Array<RGB<float>>>(new Array<RGB<float>>(1, optix_color));
     setupInstance();
-}
+    }
 
-GeometrySphere::~GeometrySphere() {}
+GeometrySphere::~GeometrySphere() { }
 
 void export_GeometrySphere(pybind11::module& m)
-{
+    {
     pybind11::class_<GeometrySphere, Geometry, std::shared_ptr<GeometrySphere>>(m, "GeometrySphere")
         .def(pybind11::init<std::shared_ptr<Scene>, unsigned int>())
         .def("getPositionBuffer", &GeometrySphere::getPositionBuffer)
         .def("getRadiusBuffer", &GeometrySphere::getRadiusBuffer)
         .def("getColorBuffer", &GeometrySphere::getColorBuffer);
-}
+    }
 
-}} // end namespace fresnel::gpu
+    } // namespace gpu
+    } // namespace fresnel

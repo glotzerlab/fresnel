@@ -13,8 +13,10 @@
 #include "Array.h"
 #include "Geometry.h"
 
-namespace fresnel { namespace cpu {
-
+namespace fresnel
+    {
+namespace cpu
+    {
 //! Mesh geometry
 /*! Define a triangulated mesh geometry.
 
@@ -25,7 +27,7 @@ namespace fresnel { namespace cpu {
    counter-clockwise direction.
 */
 class GeometryMesh : public Geometry
-{
+    {
     public:
     //! Constructor
     GeometryMesh(
@@ -37,21 +39,21 @@ class GeometryMesh : public Geometry
 
     //! Get the position buffer
     std::shared_ptr<Array<vec3<float>>> getPositionBuffer()
-    {
+        {
         return m_position;
-    }
+        }
 
     //! Get the orientation buffer
     std::shared_ptr<Array<quat<float>>> getOrientationBuffer()
-    {
+        {
         return m_orientation;
-    }
+        }
 
     //! Get the color buffer
     std::shared_ptr<Array<RGB<float>>> getColorBuffer()
-    {
+        {
         return m_color;
-    }
+        }
 
     protected:
     std::vector<vec3<float>>
@@ -68,11 +70,12 @@ class GeometryMesh : public Geometry
 
     //! Embree ray intersection function
     static void intersect(const struct RTCIntersectFunctionNArguments* args);
-};
+    };
 
 //! Export GeometryMesh to python
 void export_GeometryMesh(pybind11::module& m);
 
-}} // end namespace fresnel::cpu
+    } // namespace cpu
+    } // namespace fresnel
 
 #endif

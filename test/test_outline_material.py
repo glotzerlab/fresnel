@@ -1,3 +1,5 @@
+"""Test outline materials."""
+
 import fresnel
 from collections import namedtuple
 import PIL
@@ -9,6 +11,7 @@ dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 
 def test_set_material(scene_hex_sphere_, generate=False):
+    """Test that outline materials render properly."""
     geometry = scene_hex_sphere_.geometry[0]
     geometry.outline_width = 0.3
     geometry.outline_material = fresnel.material.Material(
@@ -31,13 +34,12 @@ def test_set_material(scene_hex_sphere_, generate=False):
             'png')
     else:
         conftest.assert_image_approx_equal(
-            buf_proxy[:],
-            dir_path
-            / 'reference'
+            buf_proxy[:], dir_path / 'reference'
             / 'test_outline_material.test_set_material.png')
 
 
 def test_solid(scene_hex_sphere_, generate=False):
+    """Test the solid property."""
     geometry = scene_hex_sphere_.geometry[0]
     geometry.outline_width = 0.3
     geometry.outline_material.solid = 1.0
@@ -58,6 +60,7 @@ def test_solid(scene_hex_sphere_, generate=False):
 
 
 def test_color(scene_hex_sphere_, generate=False):
+    """Test the color property."""
     geometry = scene_hex_sphere_.geometry[0]
     geometry.outline_width = 0.3
     geometry.outline_material.color = fresnel.color.linear([0, 0, 1])
@@ -79,6 +82,7 @@ def test_color(scene_hex_sphere_, generate=False):
 
 
 def test_primitive_color_mix(scene_hex_sphere_, generate=False):
+    """Test the color mix property."""
     geometry = scene_hex_sphere_.geometry[0]
     geometry.outline_width = 0.3
     geometry.outline_material = fresnel.material.Material(
@@ -93,19 +97,18 @@ def test_primitive_color_mix(scene_hex_sphere_, generate=False):
     geometry.color[4] = fresnel.color.linear([0, 1, 1])
     geometry.color[5] = fresnel.color.linear([0, 0, 0])
 
-    buf_proxy = fresnel.preview(
-        scene_hex_sphere_, w=100, h=100, anti_alias=False)
+    buf_proxy = fresnel.preview(scene_hex_sphere_,
+                                w=100,
+                                h=100,
+                                anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(
             open('output/test_outline_material.test_primitive_color_mix.png',
-                 'wb'),
-            'png')
+                 'wb'), 'png')
     else:
         conftest.assert_image_approx_equal(
-            buf_proxy[:],
-            dir_path
-            / 'reference'
+            buf_proxy[:], dir_path / 'reference'
             / 'test_outline_material.test_primitive_color_mix.png')
 
 

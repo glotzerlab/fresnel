@@ -17,25 +17,25 @@ using namespace std;
 using namespace fresnel;
 
 bool gpu_built()
-{
+    {
 #ifdef FRESNEL_BUILD_GPU
     return true;
 #else
     return false;
 #endif
-}
+    }
 
 bool cpu_built()
-{
+    {
 #ifdef FRESNEL_BUILD_CPU
     return true;
 #else
     return false;
 #endif
-}
+    }
 
 PYBIND11_MODULE(_common, m)
-{
+    {
     m.def("gpu_built", &gpu_built);
     m.def("cpu_built", &cpu_built);
     m.def("find_polyhedron_faces", &find_polyhedron_faces);
@@ -108,4 +108,4 @@ PYBIND11_MODULE(_common, m)
         .def("setColor", &Lights::setColor)
         .def("getTheta", &Lights::getTheta)
         .def("setTheta", &Lights::setTheta);
-}
+    }

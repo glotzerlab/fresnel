@@ -7,10 +7,12 @@ fresnel.material
 
 .. rubric:: Overview
 
+.. py:currentmodule:: fresnel.material
+
 .. autosummary::
     :nosignatures:
 
-    fresnel.material.Material
+    Material
 
 .. rubric:: Details
 

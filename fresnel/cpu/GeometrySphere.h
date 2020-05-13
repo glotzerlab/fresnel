@@ -13,8 +13,10 @@
 #include "Array.h"
 #include "Geometry.h"
 
-namespace fresnel { namespace cpu {
-
+namespace fresnel
+    {
+namespace cpu
+    {
 //! Sphere geometry
 /*! Define a sphere geometry.
 
@@ -25,7 +27,7 @@ namespace fresnel { namespace cpu {
     GeometrySphere represents N spheres, each with a position, radius, and color.
 */
 class GeometrySphere : public Geometry
-{
+    {
     public:
     //! Constructor
     GeometrySphere(std::shared_ptr<Scene> scene, unsigned int N);
@@ -34,21 +36,21 @@ class GeometrySphere : public Geometry
 
     //! Get the position buffer
     std::shared_ptr<Array<vec3<float>>> getPositionBuffer()
-    {
+        {
         return m_position;
-    }
+        }
 
     //! Get the radius buffer
     std::shared_ptr<Array<float>> getRadiusBuffer()
-    {
+        {
         return m_radius;
-    }
+        }
 
     //! Get the color buffer
     std::shared_ptr<Array<RGB<float>>> getColorBuffer()
-    {
+        {
         return m_color;
-    }
+        }
 
     protected:
     std::shared_ptr<Array<vec3<float>>> m_position; //!< Position for each sphere
@@ -60,11 +62,12 @@ class GeometrySphere : public Geometry
 
     //! Embree ray intersection function
     static void intersect(const struct RTCIntersectFunctionNArguments* args);
-};
+    };
 
 //! Export GeometrySphere to python
 void export_GeometrySphere(pybind11::module& m);
 
-}} // end namespace fresnel::cpu
+    } // namespace cpu
+    } // namespace fresnel
 
 #endif

@@ -2,14 +2,11 @@
 # This file is part of the Fresnel project, released under the BSD 3-Clause
 # License.
 
-R"""
-Lights provide light to a :py:class:`fresnel.Scene`.
+"""Lights.
 
-Without lights, nothing will be visible in the scene. Fresnel provides a number
-of quality lighting setups for your use, and you can always define custom
-lights.
+Light objects in a `Scene`.
 
-.. seealso::
+See Also:
     Tutorials:
 
     - :doc:`examples/00-Basic-tutorials/04-Scene-properties`
@@ -22,22 +19,29 @@ from . import _common
 
 
 class Light(object):
-    R""" Define a single light
+    """A light.
 
     Args:
+        direction ((3, ) `numpy.ndarray` of ``float32``):
+            Vector direction the light points (in `Camera` space).
 
-        direction (`numpy.ndarray` or `array_like`): (``3``, ``float32``) -
-            Vector direction the light points (*in camera space*).
-        color (`numpy.ndarray` or `array_like`):  (``3``, ``float32``) - Linear
-            RGB color and intensity of the light.
+        color ((3, ) `numpy.ndarray` of ``float32``):
+            Linear RGB color and intensity of the light.
+
         theta (float): Half angle of the cone that defines the area of the light
-            (*radians*).
+            (in radians).
 
-    The direction vector may have any non-zero length, but only the direction
-    the vector points matters.
+    In fresnel, lights are area lights at an infinite distance away in the
+    given *direction* and are circular with the size set by *theta*. *color*
+    sets the light intensity. A ``(0.5, 0.5, 0.5)`` light is twice as bright as
+    ``(0.25, 0.25, 0.25)``. Lights are normalized so that ``color = (1, 1, 1)``
+    should provide approximately a correct exposure. Color values greater than
+    1 are allowed.
 
-    The color also sets the light intensity. A ``(0.5, 0.5, 0.5)`` light is
-    twice as bright as ``(0.25, 0.25, 0.25)``.
+    Note:
+        *direction* is in `Camera` space. A direction of (1, 0, 0) sets a light
+        coming from the right in the image, regardless of the camera
+        position.
     """
 
     def __init__(self, direction, color=(1, 1, 1), theta=0.375):
@@ -46,11 +50,13 @@ class Light(object):
         self.theta = float(theta)
 
     def __str__(self):
+        """Human readable representation of Light."""
         return "<Light object with direction {0} and color {1}>".format(
             self.direction, self.color)
 
 
 class _LightProxy(object):
+
     def __init__(self, light_list, idx):
         self._light_list = light_list
         self._idx = idx
@@ -89,6 +95,7 @@ class _LightProxy(object):
 
 
 class _LightListProxy(object):
+
     def __init__(self, _lights=None):
         if _lights is None:
             self._lights = _common.Lights()
@@ -120,159 +127,142 @@ class _LightListProxy(object):
 
 
 def butterfly():
-    R""" Create a butterfly lighting setup.
+    """Create a butterfly lighting setup.
 
     The butterfly portrait lighting setup is front lighting with the key light
     (index 0) placed high above the camera and the fill light (index 1) below
     the camera.
 
     Returns:
-
-        A list of lights.
+        List[Light]: The lights.
     """
-
     res = []
     theta1 = 50 * math.pi / 180
-    res.append(Light(direction=(0, math.sin(theta1), math.cos(theta1)),
-                     color=(1.0, 1.0, 1.0),
-                     theta=math.pi / 4))
+    res.append(
+        Light(direction=(0, math.sin(theta1), math.cos(theta1)),
+              color=(1.0, 1.0, 1.0),
+              theta=math.pi / 4))
     theta2 = -30 * math.pi / 180
-    res.append(Light(direction=(0, math.sin(theta2), math.cos(theta2)),
-                     color=(0.1, 0.1, 0.1),
-                     theta=math.pi / 2))
+    res.append(
+        Light(direction=(0, math.sin(theta2), math.cos(theta2)),
+              color=(0.1, 0.1, 0.1),
+              theta=math.pi / 2))
     return res
 
 
 def loop(side='right'):
-    R""" Create a loop lighting setup.
+    """Create a loop lighting setup.
 
     The loop portrait lighting setup places the key light slightly to one side
     of the camera and slightly up (index 0). The fill light is on the other side
     of the camera at the level of the camera (index 1).
 
     Args:
-
         side (str): 'right' or 'left' to choose which side of the camera to
             place the key light.
 
     Returns:
-
-        A list of lights.
+        List[Light]: The lights.
     """
-
     sign = {'right': 1, 'left': -1}
 
     res = []
     phi1 = sign[side] * 25 * math.pi / 180
     theta1 = (90 - 20) * math.pi / 180
-    res.append(Light(direction=(math.sin(theta1) * math.sin(phi1),
-                                math.cos(theta1),
-                                math.sin(theta1) * math.cos(phi1)),
-                     color=(1.0, 1.0, 1.0),
-                     theta=math.pi / 4))
+    res.append(
+        Light(direction=(math.sin(theta1) * math.sin(phi1), math.cos(theta1),
+                         math.sin(theta1) * math.cos(phi1)),
+              color=(1.0, 1.0, 1.0),
+              theta=math.pi / 4))
     phi1 = -sign[side] * 40 * math.pi / 180
     theta1 = (90) * math.pi / 180
-    res.append(Light(direction=(math.sin(theta1) * math.sin(phi1),
-                                math.cos(theta1),
-                                math.sin(theta1) * math.cos(phi1)),
-                     color=(0.1, 0.1, 0.1),
-                     theta=math.pi / 2))
+    res.append(
+        Light(direction=(math.sin(theta1) * math.sin(phi1), math.cos(theta1),
+                         math.sin(theta1) * math.cos(phi1)),
+              color=(0.1, 0.1, 0.1),
+              theta=math.pi / 2))
     return res
 
 
 def rembrandt(side='right'):
-    R""" Create a Rembrandt lighting setup.
+    """Create a Rembrandt lighting setup.
 
     The Rembrandt portrait lighting setup places the key light  45 degrees to
     one side of the camera and slightly up (index 0). The fill light is on the
     other side of the camera at the level of the camera (index 1).
 
     Args:
-
         side (str): 'right' or 'left' to choose which side of the camera to
             place the key light.
 
     Returns:
-
-        A list of lights.
+        List[Light]: The lights.
     """
-
     sign = {'right': 1, 'left': -1}
 
     res = []
     phi1 = sign[side] * 45 * math.pi / 180
     theta1 = (90 - 20) * math.pi / 180
-    res.append(Light(direction=(math.sin(theta1) * math.sin(phi1),
-                                math.cos(theta1),
-                                math.sin(theta1) * math.cos(phi1)),
-                     color=(1.0, 1.0, 1.0),
-                     theta=math.pi / 4))
+    res.append(
+        Light(direction=(math.sin(theta1) * math.sin(phi1), math.cos(theta1),
+                         math.sin(theta1) * math.cos(phi1)),
+              color=(1.0, 1.0, 1.0),
+              theta=math.pi / 4))
     phi1 = -sign[side] * 45 * math.pi / 180
     theta1 = (90) * math.pi / 180
-    res.append(Light(direction=(math.sin(theta1) * math.sin(phi1),
-                                math.cos(theta1),
-                                math.sin(theta1) * math.cos(phi1)),
-                     color=(0.1, 0.1, 0.1),
-                     theta=math.pi / 2))
+    res.append(
+        Light(direction=(math.sin(theta1) * math.sin(phi1), math.cos(theta1),
+                         math.sin(theta1) * math.cos(phi1)),
+              color=(0.1, 0.1, 0.1),
+              theta=math.pi / 2))
     return res
 
 
 def lightbox():
-    R""" Create a light box lighting setup.
+    """Create a light box lighting setup.
 
-    The light box lighting setup places a single massive area light that covers
-    the top, bottom, left, and right. Use path tracing for best results with
-    this setup.
+    The light box lighting setup places a single area light that covers the top,
+    bottom, left, and right. Use `Path` tracing for best results with this
+    setup.
 
     Returns:
-
-        A list of lights.
+        List[Light]: The lights.
     """
-
     res = []
-    res.append(Light(direction=(0, 0, 1),
-                     color=(0.9, 0.9, 0.9),
-                     theta=math.pi))
+    res.append(Light(direction=(0, 0, 1), color=(0.9, 0.9, 0.9), theta=math.pi))
     return res
 
 
 def cloudy():
-    R""" Create a cloudy day lighting setup.
+    """Create a cloudy day lighting setup.
 
     The cloudy lighting setup mimics a cloudy day. A strong light comes from all
     directions above. A weaker light comes from all directions below (accounting
-    for light reflected off the ground). Use path tracing for best results with
-    this setup.
+    for light reflected off the ground). Use `Path` tracing for best results
+    with this setup.
 
     Returns:
-
-        A list of lights.
+        List[Light]: The lights.
     """
-
     res = []
-    res.append(Light(direction=(0, 1, 0),
-                     color=(0.9, 0.9, 0.9),
-                     theta=math.pi / 2))
-    res.append(Light(direction=(0, -1, 0),
-                     color=(0.1, 0.1, 0.1),
-                     theta=math.pi / 2))
+    res.append(
+        Light(direction=(0, 1, 0), color=(0.9, 0.9, 0.9), theta=math.pi / 2))
+    res.append(
+        Light(direction=(0, -1, 0), color=(0.1, 0.1, 0.1), theta=math.pi / 2))
     return res
 
 
 def ring():
-    R""" Create a ring lighting setup.
+    """Create a ring lighting setup.
 
     The ring lighting setup provides a strong front area light. This type of
-    lighting is common in fashion photography. Use path tracing for best results
-    with this setup.
+    lighting is common in fashion photography. Use `Path` tracing for best
+    results with this setup.
 
     Returns:
-
-        A list of lights.
+        List[Light]: The lights.
     """
-
     res = []
-    res.append(Light(direction=(0, 0, 1),
-                     color=(0.9, 0.9, 0.9),
-                     theta=math.pi / 4))
+    res.append(
+        Light(direction=(0, 0, 1), color=(0.9, 0.9, 0.9), theta=math.pi / 4))
     return res

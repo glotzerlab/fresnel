@@ -7,16 +7,19 @@ fresnel.tracer
 
 .. rubric:: Overview
 
+.. py:currentmodule:: fresnel.tracer
+
 .. autosummary::
     :nosignatures:
 
-    fresnel.tracer.Path
-    fresnel.tracer.Preview
-    fresnel.tracer.Tracer
+    Path
+    Preview
+    Tracer
 
 .. rubric:: Details
 
 .. automodule:: fresnel.tracer
     :synopsis: Ray tracers.
+    :show-inheritance:
     :members:
 

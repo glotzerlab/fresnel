@@ -7,47 +7,50 @@
 
 #include "Device.h"
 
-namespace fresnel { namespace cpu {
-
+namespace fresnel
+    {
+namespace cpu
+    {
 /*! Construct a new RTCDevice with default options.
     \param limit Set a maximum number of threads limit. -1 will auto-select.
 */
 Device::Device(int limit) : m_limit(limit)
-{
-    if (limit == -1)
     {
+    if (limit == -1)
+        {
         m_device = rtcNewDevice(nullptr);
         limit = tbb::task_arena::automatic;
-    }
+        }
     else
-    {
+        {
         std::ostringstream config;
         config << "threads=" << limit;
         m_device = rtcNewDevice(config.str().c_str());
-    }
+        }
 
     m_arena = std::make_shared<tbb::task_arena>(limit);
 
     if (m_device == nullptr)
-    {
+        {
         throw std::runtime_error("Error creating embree device");
+        }
     }
-}
 
 /*! Destroy the underlying RTCDevice
  */
 Device::~Device()
-{
+    {
     rtcReleaseDevice(m_device);
-}
+    }
 
 /*! \param m Python module to export in
  */
 void export_Device(pybind11::module& m)
-{
+    {
     pybind11::class_<Device, std::shared_ptr<Device>>(m, "Device")
         .def(pybind11::init<int>())
         .def("describe", &Device::describe);
-}
+    }
 
-}} // end namespace fresnel::cpu
+    } // namespace cpu
+    } // namespace fresnel

@@ -18,8 +18,8 @@
 */
 
 struct FresnelRTCIntersectContext
-{
-    FresnelRTCIntersectContext() : d(std::numeric_limits<float>::max()) {}
+    {
+    FresnelRTCIntersectContext() : d(std::numeric_limits<float>::max()) { }
 
     RTCIntersectContext context;
 
@@ -27,5 +27,5 @@ struct FresnelRTCIntersectContext
     float d;                           //!< Distance to the nearest edge
     fresnel::RGB<float> shading_color; //!< shading color determined by which primitive the ray hits
                                        //!< (or where on the primitive)
-};
+    };
 #endif

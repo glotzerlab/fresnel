@@ -17,8 +17,8 @@
 #define DEVICE
 #endif
 
-namespace fresnel {
-
+namespace fresnel
+    {
 const float sphere_epsilon = 1e-4f;
 
 //! Ray-sphere intersection test
@@ -42,7 +42,7 @@ DEVICE inline bool intersect_ray_sphere(float& t,
                                         const vec3<float>& d,
                                         const vec3<float>& p,
                                         const float r)
-{
+    {
     // vector from sphere to ray origin
     vec3<float> v = p - o;
 
@@ -67,24 +67,24 @@ DEVICE inline bool intersect_ray_sphere(float& t,
     // first case
     t = b - det;
     if (t > sphere_epsilon)
-    {
+        {
         N = o + t * d - p;
         return true;
-    }
+        }
 
     // second case (origin is inside the sphere)
     t = b + det;
     if (t > sphere_epsilon)
-    {
+        {
         N = -(o + t * d - p);
         return true;
-    }
+        }
 
     // both cases intersect the sphere behind the origin
     return false;
-}
+    }
 
-} // namespace fresnel
+    } // namespace fresnel
 
 #undef DEVICE
 

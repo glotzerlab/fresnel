@@ -7,19 +7,22 @@ fresnel.geometry
 
 .. rubric:: Overview
 
+.. py:currentmodule:: fresnel.geometry
+
 .. autosummary::
     :nosignatures:
 
-    fresnel.geometry.Geometry
-    fresnel.geometry.ConvexPolyhedron
-    fresnel.geometry.Cylinder
-    fresnel.geometry.Box
-    fresnel.geometry.Polygon
-    fresnel.geometry.Sphere
+    Box
+    ConvexPolyhedron
+    Cylinder
+    Geometry
+    Polygon
+    Sphere
 
 .. rubric:: Details
 
 .. automodule:: fresnel.geometry
     :synopsis: Geometric primitives.
     :members:
+    :show-inheritance:
 

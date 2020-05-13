@@ -11,8 +11,10 @@
 #include "Array.h"
 #include "Geometry.h"
 
-namespace fresnel { namespace gpu {
-
+namespace fresnel
+    {
+namespace gpu
+    {
 //! Sphere geometry
 /*! Define a sphere geometry.
 
@@ -21,7 +23,7 @@ namespace fresnel { namespace gpu {
 */
 
 class GeometrySphere : public Geometry
-{
+    {
     public:
     //! Constructor
     GeometrySphere(std::shared_ptr<Scene> scene, unsigned int N);
@@ -31,31 +33,32 @@ class GeometrySphere : public Geometry
 
     //! Get the position buffer
     std::shared_ptr<Array<vec3<float>>> getPositionBuffer()
-    {
+        {
         return m_position;
-    }
+        }
 
     //! Get the radius buffer
     std::shared_ptr<Array<float>> getRadiusBuffer()
-    {
+        {
         return m_radius;
-    }
+        }
 
     //! Get the color buffer
     std::shared_ptr<Array<RGB<float>>> getColorBuffer()
-    {
+        {
         return m_color;
-    }
+        }
 
     protected:
     std::shared_ptr<Array<vec3<float>>> m_position; //!< Position for each sphere
     std::shared_ptr<Array<float>> m_radius;         //!< Per-particle radii
     std::shared_ptr<Array<RGB<float>>> m_color;     //!< Per-particle color
-};
+    };
 
 //! Export GeometrySphere to python
 void export_GeometrySphere(pybind11::module& m);
 
-}} // end namespace fresnel::gpu
+    } // namespace gpu
+    } // namespace fresnel
 
 #endif

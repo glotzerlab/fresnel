@@ -2,13 +2,10 @@
 # This file is part of the Fresnel project, released under the BSD 3-Clause
 # License.
 
-R"""
-Utilities.
-"""
+"""Utilities."""
 
 import numpy
 import io
-
 
 try:
     import PIL.Image as PIL_Image
@@ -17,31 +14,29 @@ except ImportError:
 
 
 class Array(object):
-    R""" Map internal fresnel buffers as :py:class:`numpy.ndarray` objects.
+    """Access fresnel memory buffers.
 
-    :py:class:`fresnel.util.Array` provides a python interface to access
-    internal data of memory buffers stored and managed by fresnel. You can
-    access a :py:class:`fresnel.util.Array` as if it were a
-    :py:class:`numpy.ndarray` (with limited operations). Below, *slice* is a
+    `Array` provides a python interface to access the internal data of memory
+    buffers stored and managed by fresnel. You can access a `Array` as if it
+    were a `numpy.ndarray` (with limited operations). Below, *slice* is a
     :std:term:`slice` or array `indexing <numpy.doc.indexing>` mechanic that
     **numpy** understands.
 
     .. rubric:: Writing
 
     Write to an array with ``array[slice] = v`` where *v* is
-    :py:class:`numpy.ndarray`, :any:`list`, or scalar value to broadcast. When
-    *v* is a *contiguous* :py:class:`numpy.ndarray` of the same data type, the
+    `numpy.ndarray`, `list`, or scalar value to broadcast. When
+    *v* is a *contiguous* `numpy.ndarray` of the same data type, the
     data is copied directly from *v* into the internal buffer. Otherwise, it is
-    converted to a :py:class:`numpy.ndarray` before copying.
+    converted to a `numpy.ndarray` before copying.
 
     .. rubric:: Reading
 
     Read from an array with ``v = array[slice]``. This returns a **copy** of the
-    data as a :py:class:`numpy.ndarray` each time it is called.
+    data as a `numpy.ndarray` each time it is called.
 
     Attributes:
-
-        shape (tuple): Dimensions of the array.
+        shape (Tuple[int, [int]]): Dimensions of the array.
         dtype: Numpy data type
     """
 
@@ -59,6 +54,7 @@ class Array(object):
         self.buf.unmap()
 
     def __setitem__(self, slice, data):
+        """Assign a data array to a slice."""
         self.buf.map()
         a = numpy.array(self.buf, copy=False)
         a[slice] = data
@@ -68,6 +64,7 @@ class Array(object):
             self.geom._geometry.update()
 
     def __getitem__(self, slice):
+        """Make a copy of the data in the buffer."""
         self.buf.map()
         a = numpy.array(self.buf, copy=False)
         data = numpy.array(a[slice], copy=True)
@@ -76,15 +73,14 @@ class Array(object):
 
 
 class ImageArray(Array):
-    R""" Map internal image buffers as :py:class:`numpy.ndarray` objects.
+    """Access fresnel images.
 
-    Inherits from :py:class:`Array` and provides all of its functionality, plus
-    some additional convenience methods specific to working with images. Images
-    are represented as ``WxHx4`` :py:class:`numpy.ndarray` of ``uint8`` values
-    in **RGBA** format.
+    Provide `Array` functionality withsome additional convenience methods
+    specific to working with images. Images are represented as ``(W, H, 4)``
+    `numpy.ndarray` of ``uint8`` values in **RGBA** format.
 
-    When a :py:class:`ImageArray` is the result of an image in a Jupyter
-    notebook cell, Jupyter will display the image.
+    When a `ImageArray` is the result of an image in a Jupyter notebook cell,
+    Jupyter will display the image.
     """
 
     def _repr_png_(self):
@@ -102,16 +98,17 @@ class ImageArray(Array):
 
 
 def convex_polyhedron_from_vertices(vertices):
-    R""" Convert convex polyhedron vertices to fresnel data structures
+    """Make a convex polyhedron from vertices.
 
     Args:
-        vertices (`numpy.ndarray` or `array_like`): (``Nx3`` : ``float64``) -
-            The vertices of the polyhedron.
+        vertices ((3, ) `numpy.ndarray` of ``float32``): Vertices of the\
+            polyhedron.
 
     Returns:
-        A dict containing the information used to draw the polyhedron. The dict
-        contains the keys ``face_origin``, ``face_normal``, ``face_color``, and
-        ``radius``.
+        Dict: Convex hull of *vertices* in a format used by `ConvexPolyhedron`.
+
+        The dictionary contains the keys ``face_origin``, ``face_normal``,
+        ``face_color``, and ``radius``.
 
     The dictionary can be used directly to draw a polyhedron from its vertices:
 

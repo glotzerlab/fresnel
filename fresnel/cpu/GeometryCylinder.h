@@ -13,8 +13,10 @@
 #include "Array.h"
 #include "Geometry.h"
 
-namespace fresnel { namespace cpu {
-
+namespace fresnel
+    {
+namespace cpu
+    {
 //! Cylinder geometry
 /*! Define a cylinder geometry
 
@@ -28,7 +30,7 @@ namespace fresnel { namespace cpu {
     The start and end points (and colors) are stored in Nx2 arrays.
 */
 class GeometryCylinder : public Geometry
-{
+    {
     public:
     //! Constructor
     GeometryCylinder(std::shared_ptr<Scene> scene, unsigned int N);
@@ -37,21 +39,21 @@ class GeometryCylinder : public Geometry
 
     //! Get the end points buffer
     std::shared_ptr<Array<vec3<float>>> getPointsBuffer()
-    {
+        {
         return m_points;
-    }
+        }
 
     //! Get the radius buffer
     std::shared_ptr<Array<float>> getRadiusBuffer()
-    {
+        {
         return m_radius;
-    }
+        }
 
     //! Get the color buffer
     std::shared_ptr<Array<RGB<float>>> getColorBuffer()
-    {
+        {
         return m_color;
-    }
+        }
 
     protected:
     std::shared_ptr<Array<vec3<float>>> m_points; //!< Position the start and end of each cylinder
@@ -63,11 +65,12 @@ class GeometryCylinder : public Geometry
 
     //! Embree ray intersection function
     static void intersect(const struct RTCIntersectFunctionNArguments* args);
-};
+    };
 
 //! Export Cylinder to python
 void export_GeometryCylinder(pybind11::module& m);
 
-}} // end namespace fresnel::cpu
+    } // namespace cpu
+    } // namespace fresnel
 
 #endif

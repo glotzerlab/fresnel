@@ -6,8 +6,10 @@
 
 #include "GeometryMesh.h"
 
-namespace fresnel { namespace gpu {
-
+namespace fresnel
+    {
+namespace gpu
+    {
 /*! \param scene Scene to attach the Geometry to
     \param plane_origins Origins of the planes that make up the polyhedron
     \param plane_normals Normals of the planes that make up the polyhedron
@@ -19,7 +21,7 @@ GeometryMesh::GeometryMesh(
     pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast> vertices,
     unsigned int N)
     : Geometry(scene)
-{
+    {
     // create the geometry
     // intersection and bounding programs are not stored for later destruction, as Device will
     // destroy its program cache
@@ -81,17 +83,17 @@ GeometryMesh::GeometryMesh(
     m_orientation = std::make_shared<Array<quat<float>>>(1, optix_orientation);
     m_color = std::make_shared<Array<RGB<float>>>(1, optix_color);
     setupInstance();
-}
+    }
 
 GeometryMesh::~GeometryMesh()
-{
+    {
     m_vertices->destroy();
-}
+    }
 
 /*! \param m Python module to export in
  */
 void export_GeometryMesh(pybind11::module& m)
-{
+    {
     pybind11::class_<GeometryMesh, Geometry, std::shared_ptr<GeometryMesh>>(m, "GeometryMesh")
         .def(pybind11::init<
              std::shared_ptr<Scene>,
@@ -100,6 +102,7 @@ void export_GeometryMesh(pybind11::module& m)
         .def("getPositionBuffer", &GeometryMesh::getPositionBuffer)
         .def("getOrientationBuffer", &GeometryMesh::getOrientationBuffer)
         .def("getColorBuffer", &GeometryMesh::getColorBuffer);
-}
+    }
 
-}} // namespace fresnel::gpu
+    } // namespace gpu
+    } // namespace fresnel

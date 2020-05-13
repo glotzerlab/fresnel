@@ -1,0 +1,90 @@
+{
+    "files.insertFinalNewline": true,
+    "editor.autoIndent": "keep",
+    "editor.detectIndentation": false,
+    "editor.rulers": [
+        100
+    ],
+    "[restructuredtext]": {
+        "editor.rulers": [
+            80
+        ]
+    },
+    "[python]": {
+        "editor.rulers": [
+            80
+        ]
+    },
+    "[cython]": {
+        "editor.rulers": [
+            80
+        ]
+    },
+    "[markdown]": {
+        "editor.rulers": [
+            80
+        ]
+    },
+    "python.linting.flake8Enabled": true,
+    "python.linting.pycodestyleEnabled": false,
+    "python.linting.pylintEnabled": false,
+    "python.formatting.provider": "yapf",
+    "cSpell.allowCompoundWords": true,
+    "files.exclude": {
+        ".cache": true,
+        ".pytest_cache": true,
+        "build": true,
+        "devdoc": true,
+        "dist": true,
+        "doc/build": true,
+        "doc/_build": true,
+        "*.sublime-workspace": true,
+    },
+    "cSpell.enableFiletypes": [
+        "cuda"
+    ],
+    "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
+    "cSpell.words": [
+        "GPUs",
+        "HOOMD",
+        "Jupyter",
+        "Jupyter's",
+        "RGBA",
+        "SRGB",
+        "asarray",
+        "ascontiguousarray",
+        "bokeh",
+        "cmake",
+        "cpptools",
+        "cuda",
+        "cython",
+        "devdoc",
+        "devops",
+        "dtype",
+        "ipython",
+        "itertools",
+        "mult",
+        "nbins",
+        "ndarray",
+        "ndim",
+        "noqa",
+        "nosignatures",
+        "numpy",
+        "pybind",
+        "pycodestyle",
+        "pylint",
+        "pyside",
+        "pytest",
+        "spherocylinder",
+        "spherocylinders",
+        "spheropolygons",
+        "stkb",
+        "struct",
+        "tobytes",
+        "twxs",
+        "uint",
+        "unmap",
+        "verts",
+        "yapf"
+    ],
+}

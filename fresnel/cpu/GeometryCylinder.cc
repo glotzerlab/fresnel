@@ -7,15 +7,17 @@
 #include "GeometryCylinder.h"
 #include "common/IntersectCylinder.h"
 
-namespace fresnel { namespace cpu {
-
+namespace fresnel
+    {
+namespace cpu
+    {
 /*! \param scene Scene to attach the Geometry to
     \param N number of cylinders to manage
 
     Initialize the cylinder geometry.
 */
 GeometryCylinder::GeometryCylinder(std::shared_ptr<Scene> scene, unsigned int N) : Geometry(scene)
-{
+    {
     // create the geometry
     m_geometry = rtcNewGeometry(m_device->getRTCDevice(), RTC_GEOMETRY_TYPE_USER);
     m_device->checkError();
@@ -42,16 +44,16 @@ GeometryCylinder::GeometryCylinder(std::shared_ptr<Scene> scene, unsigned int N)
     m_device->checkError();
 
     m_valid = true;
-}
+    }
 
-GeometryCylinder::~GeometryCylinder() {}
+GeometryCylinder::~GeometryCylinder() { }
 
 /*! Compute the bounding box of a given primitive
 
     \param args Arguments to the bounds check
 */
 void GeometryCylinder::bounds(const struct RTCBoundsFunctionArguments* args)
-{
+    {
     GeometryCylinder* geom = (GeometryCylinder*)args->geometryUserPtr;
     const vec3<float> A = geom->m_points->get(args->primID * 2 + 0);
     const vec3<float> B = geom->m_points->get(args->primID * 2 + 1);
@@ -65,14 +67,14 @@ void GeometryCylinder::bounds(const struct RTCBoundsFunctionArguments* args)
     bounds_o.upper_x = std::max(A.x + radius, B.x + radius);
     bounds_o.upper_y = std::max(A.y + radius, B.y + radius);
     bounds_o.upper_z = std::max(A.z + radius, B.z + radius);
-}
+    }
 
 /*! Compute the intersection of a ray with the given primitive
 
     \param args Arguments to the bounds check
 */
 void GeometryCylinder::intersect(const struct RTCIntersectFunctionNArguments* args)
-{
+    {
     GeometryCylinder* geom = (GeometryCylinder*)args->geometryUserPtr;
     const vec3<float> A = geom->m_points->get(args->primID * 2 + 0);
     const vec3<float> B = geom->m_points->get(args->primID * 2 + 1);
@@ -95,7 +97,7 @@ void GeometryCylinder::intersect(const struct RTCIntersectFunctionNArguments* ar
                                             radius);
 
     if (hit && (ray.tnear < t) && (t < ray.tfar))
-    {
+        {
         rayhit.hit.u = 0.0f;
         rayhit.hit.v = 0.0f;
         ray.tfar = t;
@@ -109,13 +111,13 @@ void GeometryCylinder::intersect(const struct RTCIntersectFunctionNArguments* ar
         rayhit.hit.instID[0] = context.context.instID[0];
         context.shading_color = geom->m_color->get(args->primID * 2 + color_index);
         context.d = d;
+        }
     }
-}
 
 /*! \param m Python module to export in
  */
 void export_GeometryCylinder(pybind11::module& m)
-{
+    {
     pybind11::class_<GeometryCylinder, Geometry, std::shared_ptr<GeometryCylinder>>(
         m,
         "GeometryCylinder")
@@ -123,6 +125,7 @@ void export_GeometryCylinder(pybind11::module& m)
         .def("getPointsBuffer", &GeometryCylinder::getPointsBuffer)
         .def("getRadiusBuffer", &GeometryCylinder::getRadiusBuffer)
         .def("getColorBuffer", &GeometryCylinder::getColorBuffer);
-}
+    }
 
-}} // end namespace fresnel::cpu
+    } // namespace cpu
+    } // namespace fresnel

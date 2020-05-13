@@ -1,3 +1,5 @@
+"""Test the Mesh geometry."""
+
 import fresnel
 from collections import namedtuple
 import PIL
@@ -10,21 +12,21 @@ dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 
 def scene_one_triangle(device):
+    """Create a test scene with one triangle."""
     scene = fresnel.Scene(device, lights=conftest.test_lights())
 
     geometry = fresnel.geometry.Mesh(scene,
-                                     vertices=[[-1, -1, 0],
-                                               [1, -1, 0],
+                                     vertices=[[-1, -1, 0], [1, -1, 0],
                                                [-1, 1, 0]],
                                      N=1)
     geometry.color[:] = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 
-    geometry.material = fresnel.material.Material(
-        color=fresnel.color.linear([1.0, 0, 0]),
-        roughness=0.8,
-        specular=0.5,
-        primitive_color_mix=0.0,
-        solid=1)
+    geometry.material = fresnel.material.Material(color=fresnel.color.linear(
+        [1.0, 0, 0]),
+                                                  roughness=0.8,
+                                                  specular=0.5,
+                                                  primitive_color_mix=0.0,
+                                                  solid=1)
 
     geometry.outline_material = fresnel.material.Material(
         color=fresnel.color.linear([0, 1.0, 0]),
@@ -45,17 +47,19 @@ def scene_one_triangle(device):
 
 @pytest.fixture(scope='function')
 def scene_one_triangle_(device_):
+    """Pytest fixture to create a test scene."""
     return scene_one_triangle(device_)
 
 
 def scene_tetrahedra(device):
+    """Create a test scene with a tetrahedron."""
     scene = fresnel.Scene(device, lights=conftest.test_lights())
 
     verts = [(1, 1, 1), (1, -1, -1), (-1, 1, -1), (-1, -1, 1)]
-    triangles = [verts[0], verts[1], verts[2],
-                 verts[2], verts[1], verts[3],
-                 verts[2], verts[3], verts[0],
-                 verts[1], verts[0], verts[3]]
+    triangles = [
+        verts[0], verts[1], verts[2], verts[2], verts[1], verts[3], verts[2],
+        verts[3], verts[0], verts[1], verts[0], verts[3]
+    ]
 
     geometry = fresnel.geometry.Mesh(scene, vertices=triangles, N=4)
     geometry.color[0:2, :] = [0.9, 0, 0]
@@ -64,37 +68,41 @@ def scene_tetrahedra(device):
     geometry.color[9:11, :] = [0.9, 0, 0.9]
 
     geometry.material = fresnel.material.Material(color=fresnel.color.linear(
-                                                  [1.0, 0, 0]),
+        [1.0, 0, 0]),
                                                   roughness=0.8,
                                                   specular=0.5,
                                                   primitive_color_mix=1.0,
                                                   solid=0)
 
-    geometry.position[:] = [[-2, -2, 0],
-                            [2, -2, 0],
-                            [2, 2, 0],
-                            [-2, 2, 0]]
+    geometry.position[:] = [[-2, -2, 0], [2, -2, 0], [2, 2, 0], [-2, 2, 0]]
 
     geometry.orientation[:] = [
         [0.03723867, 0.38927173, -0.73216521, -0.55768711],
         [-0.32661186, 0.43644863, -0.09899935, 0.83248808],
         [0.25624845, 0.32632096, -0.11995704, -0.9019211],
-        [-0.78025512, -0.12102377, 0.24947819, 0.56063877]]
+        [-0.78025512, -0.12102377, 0.24947819, 0.56063877]
+    ]
 
-    scene.camera = fresnel.camera.Orthographic(
-        position=(0, 0, -20), look_at=(0, 0, 0), up=(0, 1, 0), height=7.5)
+    scene.camera = fresnel.camera.Orthographic(position=(0, 0, -20),
+                                               look_at=(0, 0, 0),
+                                               up=(0, 1, 0),
+                                               height=7.5)
 
     return scene
 
 
 @pytest.fixture(scope='function')
 def scene_tetrahedra_(device_):
+    """Pytest fixture to create a test scene."""
     return scene_tetrahedra(device_)
 
 
 def test_render(scene_one_triangle_, generate=False):
-    buf_proxy = fresnel.preview(
-        scene_one_triangle_, w=100, h=100, anti_alias=False)
+    """Test that Mesh renders properly."""
+    buf_proxy = fresnel.preview(scene_one_triangle_,
+                                w=100,
+                                h=100,
+                                anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(
@@ -106,11 +114,14 @@ def test_render(scene_one_triangle_, generate=False):
 
 
 def test_outline(scene_one_triangle_, generate=False):
+    """Test that outlines render properly."""
     geometry = scene_one_triangle_.geometry[0]
     geometry.outline_width = 0.1
 
-    buf_proxy = fresnel.preview(
-        scene_one_triangle_, w=100, h=100, anti_alias=False)
+    buf_proxy = fresnel.preview(scene_one_triangle_,
+                                w=100,
+                                h=100,
+                                anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(
@@ -122,11 +133,14 @@ def test_outline(scene_one_triangle_, generate=False):
 
 
 def test_color_interp(scene_one_triangle_, generate=False):
+    """Test that colors are interpolated between vertices."""
     geometry = scene_one_triangle_.geometry[0]
     geometry.material.primitive_color_mix = 1.0
 
-    buf_proxy = fresnel.preview(
-        scene_one_triangle_, w=100, h=100, anti_alias=False)
+    buf_proxy = fresnel.preview(scene_one_triangle_,
+                                w=100,
+                                h=100,
+                                anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(
@@ -139,8 +153,11 @@ def test_color_interp(scene_one_triangle_, generate=False):
 
 
 def test_multiple(scene_tetrahedra_, generate=False):
-    buf_proxy = fresnel.preview(
-        scene_tetrahedra_, w=100, h=100, anti_alias=False)
+    """Test that Mesh supports multiple instances."""
+    buf_proxy = fresnel.preview(scene_tetrahedra_,
+                                w=100,
+                                h=100,
+                                anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode='RGBA').save(

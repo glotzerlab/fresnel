@@ -16,8 +16,8 @@
 #define DEVICE
 #endif
 
-namespace fresnel {
-
+namespace fresnel
+    {
 const float cylinder_epsilon = 1e-4f;
 
 //! Ray-cylinder intersection test
@@ -41,7 +41,7 @@ DEVICE inline bool intersect_ray_cylinder(float& t,
                                           const vec3<float>& A,
                                           const vec3<float>& B,
                                           const float r)
-{
+    {
     // translate to a coordinate system where A is the origin
     const vec3<float> Oa = o - A;
     const vec3<float> C = B - A;
@@ -72,7 +72,7 @@ DEVICE inline bool intersect_ray_cylinder(float& t,
     // first case
     t = (minus_b - det) / (2.0f * a);
     if (t > cylinder_epsilon)
-    {
+        {
         // find the hit point
         P = Oa + t * d;
         pdotc = dot(P, C);
@@ -80,15 +80,15 @@ DEVICE inline bool intersect_ray_cylinder(float& t,
         // cap the cylinder
         if (pdotc >= 0 && pdotc <= dot(C, C))
             hit = true;
-    }
+        }
 
     // second case (origin is inside the cylinder)
     // only trigger the 2nd case if the first didn't find an intersection
     if (!hit)
-    {
+        {
         t = (minus_b + det) / (2.0f * a);
         if (t > cylinder_epsilon)
-        {
+            {
             // find the hit point
             P = Oa + t * d;
             pdotc = dot(P, C);
@@ -96,21 +96,21 @@ DEVICE inline bool intersect_ray_cylinder(float& t,
             // cap the cylinder
             if (pdotc >= 0 && pdotc <= dot(C, C))
                 hit = true;
+            }
         }
-    }
 
     if (hit)
-    {
+        {
         // determine normal.
         N = (P - pdotc * cdotc_inv * C);
 
         // point normal toward the ray origin (double-sided surfaces)
         if (dot(N, d) > 0)
             N = -N;
-    }
+        }
 
     return hit;
-}
+    }
 
 //! Ray-spherocylinder intersection test
 /*! \param t [out] Intersection t value along ray
@@ -137,7 +137,7 @@ DEVICE inline bool intersect_ray_spherocylinder(float& t,
                                                 const vec3<float>& A,
                                                 const vec3<float>& B,
                                                 const float r)
-{
+    {
     t = HUGE_VALF;
 
     float t_sc = 0;
@@ -152,42 +152,42 @@ DEVICE inline bool intersect_ray_spherocylinder(float& t,
 
     hit_cyl = intersect_ray_cylinder(t_sc, N_sc, o, d, A, B, r);
     if (hit_cyl && t_sc < t)
-    {
+        {
         t = t_sc;
         N = N_sc;
-    }
+        }
 
     hit_A = intersect_ray_sphere(t_sc, d_edge_sc, N_sc, o, d, A, r);
     if (hit_A && (t_sc < t))
-    {
+        {
         // limit hits to the hemisphere below A
         const vec3<float> P_A = Oa + t_sc * d;
         if (dot(P_A, C) <= 0)
-        {
+            {
             t = t_sc;
             N = N_sc;
-        }
+            }
         else
-        {
+            {
             hit_A = false;
+            }
         }
-    }
 
     hit_B = intersect_ray_sphere(t_sc, d_edge_sc, N_sc, o, d, B, r);
     if (hit_B && (t_sc < t))
-    {
+        {
         // limit hits to the hemisphere above B
         const vec3<float> P_A = Oa + t_sc * d;
         if (dot(P_A, C) >= cdotc)
-        {
+            {
             t = t_sc;
             N = N_sc;
-        }
+            }
         else
-        {
+            {
             hit_B = false;
+            }
         }
-    }
 
     // determine color index
     const vec3<float> P = Oa + t * d;
@@ -207,26 +207,26 @@ DEVICE inline bool intersect_ray_spherocylinder(float& t,
     const float oavpdotcvp = dot(Oa_vp, C_vp);
     const float cvpdotcvp = dot(C_vp, C_vp);
     if (oavpdotcvp < 0)
-    {
+        {
         // case 1: point is below the origin
         d_edge = r - fast::sqrt(dot(Oa_vp, Oa_vp));
-    }
+        }
     else if (oavpdotcvp > cvpdotcvp)
-    {
+        {
         // case 2: point is above the point C_vp
         d_edge = r - fast::sqrt(dot(Oa_vp - C_vp, Oa_vp - C_vp));
-    }
+        }
     else
-    {
+        {
         // case 3: point is along the segment
         const vec3<float> n_vp = Oa_vp - oavpdotcvp / cvpdotcvp * C_vp;
         d_edge = r - fast::sqrt(dot(n_vp, n_vp));
-    }
+        }
 
     return hit_A || hit_B || hit_cyl;
-}
+    }
 
-} // namespace fresnel
+    } // namespace fresnel
 
 #undef DEVICE
 

@@ -2,46 +2,46 @@
 # This file is part of the Fresnel project, released under the BSD 3-Clause
 # License.
 
-R"""
-Materials describe the way light interacts with surfaces.
-"""
+"""Materials describe the way light interacts with surfaces."""
 
 from fresnel import _common
 
 
 class Material(object):
-    R"""Define material properties.
+    """Define material properties.
 
     Materials control how light interacts with the geometry.
 
     Args:
-
         solid (float): Set to 1 to pass through a solid color, regardless of the
             light and view angle.
-        color (`numpy.ndarray` or `array_like`): (``3``, ``float32``) - Linear
-            RGB color of the material.
+
+        color ((3, ) `numpy.ndarray` of ``float32``)): Linear material color.
+
         primitive_color_mix (float): Set to 1 to use the color provided in the
-            Geometry, 0 to use the color specified in the material, or a value
-            in the range [0,1] to mix the two colors.
+            `Geometry`, 0 to use the color specified in the `Material`, or a
+            value in the range [0, 1] to mix the two colors.
+
         roughness (float): Roughness of the material. Nominally in the range
-            [0.1,1].
+            [0.1, 1].
+
         specular (float): Control the strength of the specular highlights.
-            Nominally in the range [0,1].
+            Nominally in the range [0, 1].
+
         spec_trans (float): Control the amount of specular light transmission.
-            In the range [0,1].
+            In the range [0, 1].
+
         metal (float): Set to 0 for dielectric material, or 1 for metal.
             Intermediate values interpolate between the two.
 
-    .. seealso::
+    See Also:
         Tutorials:
 
         - :doc:`examples/00-Basic-tutorials/02-Material-properties`
 
-
     Note:
-        Colors are in the linearized color space. Use
-        :py:func:`fresnel.color.linear` to convert standard sRGB colors into
-        this space.
+        Colors are in the linearized color space. Use `fresnel.color.linear` to
+        convert standard sRGB colors into this space.
     """
 
     def __init__(self,
@@ -64,6 +64,11 @@ class Material(object):
 
     @property
     def solid(self):
+        """float: Is this material a solid color?
+
+        Set to 1 to pass through a solid color, regardless of the light and view
+        angle.
+        """
         return self._material.solid
 
     @solid.setter
@@ -72,6 +77,12 @@ class Material(object):
 
     @property
     def primitive_color_mix(self):
+        """float: Mix the material color with the geometry.
+
+        Set to 1 to use the color provided in the `Geometry`, 0 to use the color
+        specified in the `Material`, or a value in the range [0, 1] to mix
+        the two colors.
+        """
         return self._material.primitive_color_mix
 
     @primitive_color_mix.setter
@@ -80,8 +91,8 @@ class Material(object):
 
     @property
     def color(self):
-        return (self._material.color.r,
-                self._material.color.g,
+        """((3, ) `numpy.ndarray` of ``float32``)): - Linear material color."""
+        return (self._material.color.r, self._material.color.g,
                 self._material.color.b)
 
     @color.setter
@@ -92,6 +103,10 @@ class Material(object):
 
     @property
     def roughness(self):
+        """float: Roughness of the material.
+
+        Nominally in the range [0.1, 1].
+        """
         return self._material.roughness
 
     @roughness.setter
@@ -100,6 +115,10 @@ class Material(object):
 
     @property
     def specular(self):
+        """float: Control the strength of the specular highlights.
+
+        Nominally in the range [0, 1].
+        """
         return self._material.specular
 
     @specular.setter
@@ -108,6 +127,10 @@ class Material(object):
 
     @property
     def spec_trans(self):
+        """float: Control the amount of specular light transmission.
+
+        In the range [0, 1].
+        """
         return self._material.spec_trans
 
     @spec_trans.setter
@@ -116,6 +139,10 @@ class Material(object):
 
     @property
     def metal(self):
+        """float: Set to 0 for dielectric material, or 1 for metal.
+
+        Intermediate values interpolate between the two.
+        """
         return self._material.metal
 
     @metal.setter
@@ -127,9 +154,7 @@ class Material(object):
 
 
 class _MaterialProxy(object):
-    """ Proxy :py:class`Material` attached to a
-    :py:class`fresnel.geometry.Geometry`
-    """
+    """Proxy `Material` attached to a `Geometry`."""
 
     def __init__(self, geometry):
         self._geometry = geometry._geometry
@@ -219,8 +244,7 @@ class _MaterialProxy(object):
 
 
 class _OutlineMaterialProxy(object):
-    """ Proxy outline :py:class`Material` attached to a Geometry.
-    """
+    """Proxy outline `Material` attached to a Geometry."""
 
     def __init__(self, geometry):
         self._geometry = geometry._geometry

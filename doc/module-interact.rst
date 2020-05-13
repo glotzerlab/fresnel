@@ -7,10 +7,12 @@ fresnel.interact
 
 .. rubric:: Overview
 
+.. py:currentmodule:: fresnel.interact
+
 .. autosummary::
     :nosignatures:
 
-    fresnel.interact.SceneView
+    SceneView
 
 .. rubric:: Details
 

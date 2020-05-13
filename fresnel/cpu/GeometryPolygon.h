@@ -13,15 +13,17 @@
 #include "Array.h"
 #include "Geometry.h"
 
-namespace fresnel { namespace cpu {
-
+namespace fresnel
+    {
+namespace cpu
+    {
 //! Polygon geometry
 /*! Define a polygon geometry.
 
     It supports simple polygons in the x,y,z=0 plane.
 */
 class GeometryPolygon : public Geometry
-{
+    {
     public:
     //! Constructor
     GeometryPolygon(
@@ -34,27 +36,27 @@ class GeometryPolygon : public Geometry
 
     //! Get the position buffer
     std::shared_ptr<Array<vec2<float>>> getPositionBuffer()
-    {
+        {
         return m_position;
-    }
+        }
 
     //! Get the angle buffer
     std::shared_ptr<Array<float>> getAngleBuffer()
-    {
+        {
         return m_angle;
-    }
+        }
 
     //! Get the color buffer
     std::shared_ptr<Array<RGB<float>>> getColorBuffer()
-    {
+        {
         return m_color;
-    }
+        }
 
     //! Get the radius
     float getRadius()
-    {
+        {
         return m_radius;
-    }
+        }
 
     protected:
     std::vector<vec2<float>> m_vertices; //!< Polygon vertices
@@ -71,11 +73,12 @@ class GeometryPolygon : public Geometry
 
     //! Embree ray intersection function
     static void intersect(const struct RTCIntersectFunctionNArguments* args);
-};
+    };
 
 //! Export GeometryPolygon to python
 void export_GeometryPolygon(pybind11::module& m);
 
-}} // end namespace fresnel::cpu
+    } // namespace cpu
+    } // namespace fresnel
 
 #endif

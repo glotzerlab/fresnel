@@ -11,8 +11,10 @@
 
 using namespace tbb;
 
-namespace fresnel { namespace cpu {
-
+namespace fresnel
+    {
+namespace cpu
+    {
 /*! \param device Device to attach the raytracer to
  */
 TracerPath::TracerPath(std::shared_ptr<Device> device,
@@ -20,14 +22,14 @@ TracerPath::TracerPath(std::shared_ptr<Device> device,
                        unsigned int h,
                        unsigned int light_samples)
     : Tracer(device, w, h), m_light_samples(light_samples)
-{
+    {
     reset();
-}
+    }
 
-TracerPath::~TracerPath() {}
+TracerPath::~TracerPath() { }
 
 void TracerPath::reset()
-{
+    {
     m_n_samples = 0;
     m_seed++;
 
@@ -42,10 +44,10 @@ void TracerPath::reset()
            0,
            sizeof(RGBA<unsigned char>) * m_linear_out->getW() * m_linear_out->getH());
     m_srgb_out->unmap();
-}
+    }
 
 void TracerPath::render(std::shared_ptr<Scene> scene)
-{
+    {
     std::shared_ptr<tbb::task_arena> arena = scene->getDevice()->getTBBArena();
 
     const RGB<float> background_color = scene->getBackgroundColor();
@@ -79,7 +81,7 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
             blocked_range<size_t>(0, numTilesX * numTilesY),
             [=](const blocked_range<size_t>& r) {
                 for (size_t tile = r.begin(); tile != r.end(); ++tile)
-                {
+                    {
                     const unsigned int tileY = tile / numTilesX;
                     const unsigned int tileX = tile - tileY * numTilesX;
                     const unsigned int x0 = tileX * TILE_SIZE_X;
@@ -89,7 +91,7 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
 
                     for (unsigned int j = y0; j < y1; j++)
                         for (unsigned int i = x0; i < x1; i++)
-                        {
+                            {
                             // create the ray generator for this pixel
                             RayGen ray_gen(i, j, width, height, m_seed);
 
@@ -130,21 +132,21 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                             // trace a path from the hit point into the scene m_light_samples times
                             for (prd.light_sample = 0; prd.light_sample < m_light_samples;
                                  prd.light_sample++)
-                            {
+                                {
                                 prd.attenuation = RGB<float>(1.0f, 1.0f, 1.0f);
                                 prd.done = false;
 
                                 for (prd.depth = 0;; prd.depth++)
-                                {
+                                    {
                                     RTCRayHit ray_hit;
                                     if (prd.depth == 0)
-                                    {
+                                        {
                                         // the first hit is cached above
                                         ray_hit = ray_hit_initial;
                                         context = context_initial;
-                                    }
+                                        }
                                     else
-                                    {
+                                        {
                                         RTCRay& ray = ray_hit.ray;
                                         ray.org_x = prd.origin.x;
                                         ray.org_y = prd.origin.y;
@@ -169,10 +171,10 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                                         rtcIntersect1(scene->getRTCScene(),
                                                       &context.context,
                                                       &ray_hit);
-                                    }
+                                        }
 
                                     if (ray_hit.hit.geomID != RTC_INVALID_GEOMETRY_ID)
-                                    {
+                                        {
                                         // call hit program
                                         path_tracer_hit(
                                             prd,
@@ -194,9 +196,9 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                                             ray_gen,
                                             m_n_samples,
                                             m_light_samples);
-                                    }
+                                        }
                                     else
-                                    {
+                                        {
                                         // call miss program
                                         path_tracer_miss(prd,
                                                          background_color,
@@ -206,13 +208,13 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                                                          vec3<float>(ray_hit.ray.dir_x,
                                                                      ray_hit.ray.dir_y,
                                                                      ray_hit.ray.dir_z));
-                                    }
+                                        }
 
                                     // break out of the loop when done
                                     if (prd.done)
                                         break;
-                                } // end depth loop
-                            }     // end light samples loop
+                                    } // end depth loop
+                                }     // end light samples loop
 
                             // take the current sample and compute the average with the previous
                             // samples
@@ -235,24 +237,25 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
                             else
                                 srgb_output[pixel]
                                     = sRGB(RGBA<float>(m_highlight_warning_color, output_pixel.a));
-                        } // end loop over pixels in a tile
-                }         // end loop over tiles in this work unit
+                            } // end loop over pixels in a tile
+                    }         // end loop over tiles in this work unit
             });           // end parallel loop over all tiles
     });                   // end arena limited execution
 
     m_linear_out->unmap();
     m_srgb_out->unmap();
-}
+    }
 
 /*! \param m Python module to export in
  */
 void export_TracerPath(pybind11::module& m)
-{
+    {
     pybind11::class_<TracerPath, Tracer, std::shared_ptr<TracerPath>>(m, "TracerPath")
         .def(pybind11::init<std::shared_ptr<Device>, unsigned int, unsigned int, unsigned int>())
         .def("getNumSamples", &TracerPath::getNumSamples)
         .def("reset", &TracerPath::reset)
         .def("setLightSamples", &TracerPath::setLightSamples);
-}
+    }
 
-}} // end namespace fresnel::cpu
+    } // namespace cpu
+    } // namespace fresnel

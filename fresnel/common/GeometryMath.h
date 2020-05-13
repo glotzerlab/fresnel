@@ -16,8 +16,8 @@
 #define DEVICE
 #endif
 
-namespace fresnel {
-
+namespace fresnel
+    {
 //! Distance from point to line segment in 2d
 /*! \param p point
     \param a Line end point
@@ -26,7 +26,7 @@ namespace fresnel {
     \returns The distance from the point to the line segment
 */
 DEVICE inline float point_line_segment_distance(vec2<float> p, vec2<float> a, vec2<float> b)
-{
+    {
     // project p onto the line segment
     const vec2<float> ab = b - a;
     const float L = dot(ab, ab);
@@ -36,9 +36,9 @@ DEVICE inline float point_line_segment_distance(vec2<float> p, vec2<float> a, ve
     // compute the distance between p and the projection
     const vec2<float> v = p - projection;
     return fast::sqrt(dot(v, v));
-}
+    }
 
-} // namespace fresnel
+    } // namespace fresnel
 
 #undef DEVICE
 

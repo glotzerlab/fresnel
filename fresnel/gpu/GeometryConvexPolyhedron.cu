@@ -32,13 +32,13 @@ static __device__ float getShadingDistance(vec3<float> n_hit,
                                            vec3<float> ray_dir_local,
                                            vec3<float> r_hit,
                                            int n_planes)
-{
+    {
     float min_d = FLT_MAX;
 
     // edges come from intersections of planes
     // loop over all planes and find the intersection with the hit plane
     for (int i = 0; i < n_planes; ++i)
-    {
+        {
         vec3<float> n = vec3<float>(convex_polyhedron_plane_normal[i]);
         vec3<float> p = vec3<float>(convex_polyhedron_plane_origin[i]);
 
@@ -51,22 +51,22 @@ static __device__ float getShadingDistance(vec3<float> n_hit,
 
         // if the planes are not coplanar
         if (fabs(dot(u, u)) >= 1e-5)
-        {
+            {
             int maxc; // max coordinate
             if (fabs(u.x) > fabs(u.y))
-            {
+                {
                 if (fabs(u.x) > fabs(u.z))
                     maxc = 1;
                 else
                     maxc = 3;
-            }
+                }
             else
-            {
+                {
                 if (fabs(u.y) > fabs(u.z))
                     maxc = 2;
                 else
                     maxc = 3;
-            }
+                }
 
             // a point on the line
             vec3<float> x0;
@@ -75,22 +75,22 @@ static __device__ float getShadingDistance(vec3<float> n_hit,
 
             // solve the problem in different ways based on which direction is maximum
             switch (maxc)
-            {
-            case 1: // intersect with x=0
+                {
+                case 1: // intersect with x=0
                 x0.x = 0;
                 x0.y = (d2 * n.z - d1 * n_hit.z) / u.x;
                 x0.z = (d1 * n_hit.y - d2 * n.y) / u.x;
                 break;
-            case 2: // intersect with y=0
+                case 2: // intersect with y=0
                 x0.x = (d1 * n_hit.z - d2 * n.z) / u.y;
                 x0.y = 0;
                 x0.z = (d2 * n.x - d1 * n_hit.x) / u.y;
                 break;
-            case 3: // intersect with z=0
+                case 3: // intersect with z=0
                 x0.x = (d2 * n.y - d1 * n_hit.y) / u.z;
                 x0.y = (d1 * n_hit.x - d2 * n.x) / u.z;
                 x0.z = 0;
-            }
+                }
 
             // we want the distance in the view plane for consistent line edge widths
             // project the line x0 + t*u into the plane perpendicular to the view direction passing
@@ -109,14 +109,14 @@ static __device__ float getShadingDistance(vec3<float> n_hit,
             float d = sqrtf(dsq);
             if (d < min_d)
                 min_d = d;
+            }
         }
-    }
 
     return min_d;
-}
+    }
 
 RT_PROGRAM void intersect(int item)
-{
+    {
     // adapted from OptiX quick start tutorial and Embree user_geometry tutorial files
     int n_planes = convex_polyhedron_plane_origin.size();
     float t0 = -FLT_MAX;
@@ -133,7 +133,7 @@ RT_PROGRAM void intersect(int item)
     vec3<float> t1_n_local(0, 0, 0), t1_p_local(0, 0, 0);
     int t0_plane_hit = 0, t1_plane_hit = 0;
     for (int i = 0; i < n_planes && t0 < t1; ++i)
-    {
+        {
         vec3<float> n = vec3<float>(convex_polyhedron_plane_normal[i]);
         vec3<float> p = vec3<float>(convex_polyhedron_plane_origin[i]);
 
@@ -144,33 +144,33 @@ RT_PROGRAM void intersect(int item)
         // if the ray is parallel to the plane, there is no intersection when the ray is outside the
         // shape
         if (fabs(denom) < 1e-5)
-        {
+            {
             if (dot(ray_org_local - p, n) > 0)
                 return;
-        }
+            }
         else if (denom < 0)
-        {
+            {
             // find the last plane this ray enters
             if (t > t0)
-            {
+                {
                 t0 = t;
                 t0_n_local = n;
                 t0_p_local = p;
                 t0_plane_hit = i;
+                }
             }
-        }
         else
-        {
+            {
             // find the first plane this ray exits
             if (t < t1)
-            {
+                {
                 t1 = t;
                 t1_n_local = n;
                 t1_p_local = p;
                 t1_plane_hit = i;
+                }
             }
         }
-    }
 
     // if the ray enters after it exits, it missed the polyhedron
     if (t0 > t1)
@@ -178,7 +178,7 @@ RT_PROGRAM void intersect(int item)
 
     // if the t0 is a potential intersection, we hit the entry plane
     if (rtPotentialIntersection(t0))
-    {
+        {
         vec3<float> n_hit, p_hit;
         shading_normal = rotate(q_world, t0_n_local);
         n_hit = t0_n_local;
@@ -192,9 +192,9 @@ RT_PROGRAM void intersect(int item)
                                               ray_org_local + t0 * ray_dir_local,
                                               n_planes);
         rtReportIntersection(0);
-    }
+        }
     else if (rtPotentialIntersection(t1))
-    {
+        {
         vec3<float> n_hit, p_hit;
         // if t1 is a potential intersection, we hit the exit plane
         shading_normal = rotate(q_world, t1_n_local);
@@ -205,11 +205,11 @@ RT_PROGRAM void intersect(int item)
                              RGB<float>(convex_polyhedron_plane_color[t1_plane_hit]));
         shading_distance = 10.0f;
         rtReportIntersection(0);
+        }
     }
-}
 
 RT_PROGRAM void bounds(int item, float result[6])
-{
+    {
     optix::Aabb* aabb = (optix::Aabb*)result;
 
     vec3<float> p = vec3<float>(convex_polyhedron_position[item]);
@@ -224,4 +224,4 @@ RT_PROGRAM void bounds(int item, float result[6])
 
     if (convex_polyhedron_radius <= 0.0f)
         aabb->invalidate();
-}
+    }

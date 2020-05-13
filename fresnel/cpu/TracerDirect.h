@@ -11,13 +11,15 @@
 
 #include "Tracer.h"
 
-namespace fresnel { namespace cpu {
-
+namespace fresnel
+    {
+namespace cpu
+    {
 //! Basic Direct raytracer
 /*!
  */
 class TracerDirect : public Tracer
-{
+    {
     public:
     //! Constructor
     TracerDirect(std::shared_ptr<Device> device, unsigned int w, unsigned int h);
@@ -29,24 +31,25 @@ class TracerDirect : public Tracer
 
     //! Set the number of AA samples in each direction
     void setAntialiasingN(unsigned int n)
-    {
+        {
         m_aa_n = n;
-    }
+        }
 
     //! Get the number of AA samples in each direction
     unsigned int getAntialiasingN() const
-    {
+        {
         return m_aa_n;
-    }
+        }
 
     protected:
     //! Number of AA samples in each direction
     unsigned int m_aa_n = 8;
-};
+    };
 
 //! Export TracerDirect to python
 void export_TracerDirect(pybind11::module& m);
 
-}} // end namespace fresnel::cpu
+    } // namespace cpu
+    } // namespace fresnel
 
 #endif

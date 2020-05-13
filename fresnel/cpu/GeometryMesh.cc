@@ -6,8 +6,10 @@
 #include "GeometryMesh.h"
 #include "common/IntersectTriangle.h"
 
-namespace fresnel { namespace cpu {
-
+namespace fresnel
+    {
+namespace cpu
+    {
 /*! \param scene Scene to attach the Geometry to
     \param vertices vertices of the mesh
     \param N Number of polyhedra
@@ -18,7 +20,7 @@ GeometryMesh::GeometryMesh(
     pybind11::array_t<float, pybind11::array::c_style | pybind11::array::forcecast> vertices,
     unsigned int N)
     : Geometry(scene)
-{
+    {
     // extract vertices array from numpy
     pybind11::buffer_info info_vertices = vertices.request();
 
@@ -68,16 +70,16 @@ GeometryMesh::GeometryMesh(
     m_device->checkError();
 
     m_valid = true;
-}
+    }
 
-GeometryMesh::~GeometryMesh() {}
+GeometryMesh::~GeometryMesh() { }
 
 /*! Compute the bounding box of a given primitive
 
     \param args Arguments to the bounds check
 */
 void GeometryMesh::bounds(const struct RTCBoundsFunctionArguments* args)
-{
+    {
     GeometryMesh* geom = (GeometryMesh*)args->geometryUserPtr;
 
     unsigned int item = args->primID;
@@ -105,13 +107,13 @@ void GeometryMesh::bounds(const struct RTCBoundsFunctionArguments* args)
     bounds_o.upper_x = std::max(v0_world.x, std::max(v1_world.x, v2_world.x));
     bounds_o.upper_y = std::max(v0_world.y, std::max(v1_world.y, v2_world.y));
     bounds_o.upper_z = std::max(v0_world.z, std::max(v1_world.z, v2_world.z));
-}
+    }
 
 /*! Compute the intersection of a ray with the given primitive
    \param args Arguments to the intersect check
 */
 void GeometryMesh::intersect(const struct RTCIntersectFunctionNArguments* args)
-{
+    {
     GeometryMesh* geom = (GeometryMesh*)args->geometryUserPtr;
 
     unsigned int item = args->primID;
@@ -163,7 +165,7 @@ void GeometryMesh::intersect(const struct RTCIntersectFunctionNArguments* args)
 
     // if the t is in (tnear,tfar), we hit the entry plane
     if ((ray.tnear < t) & (t < ray.tfar))
-    {
+        {
         rayhit.hit.u = 0.0f;
         rayhit.hit.v = 0.0f;
         ray.tfar = t;
@@ -183,13 +185,13 @@ void GeometryMesh::intersect(const struct RTCIntersectFunctionNArguments* args)
                                 + geom->m_color->get(i_face * 3 + 2) * w;
 
         context.d = d;
+        }
     }
-}
 
 /*! \param m Python module to export in
  */
 void export_GeometryMesh(pybind11::module& m)
-{
+    {
     pybind11::class_<GeometryMesh, Geometry, std::shared_ptr<GeometryMesh>>(m, "GeometryMesh")
         .def(pybind11::init<
              std::shared_ptr<Scene>,
@@ -198,6 +200,7 @@ void export_GeometryMesh(pybind11::module& m)
         .def("getPositionBuffer", &GeometryMesh::getPositionBuffer)
         .def("getOrientationBuffer", &GeometryMesh::getOrientationBuffer)
         .def("getColorBuffer", &GeometryMesh::getColorBuffer);
-}
+    }
 
-}} // end namespace fresnel::cpu
+    } // namespace cpu
+    } // namespace fresnel

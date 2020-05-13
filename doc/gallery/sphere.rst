@@ -19,7 +19,6 @@ Spheres example script:
 .. rubric:: Source code
 
 .. literalinclude:: sphere.py
-    :lines: 3-21
 
 .. rubric:: Author
 

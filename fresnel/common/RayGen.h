@@ -22,8 +22,8 @@
 #define DEVICE
 #endif
 
-namespace fresnel {
-
+namespace fresnel
+    {
 // The following constants go in the 4th counter input to philox
 // Each unique use of RNGs must use a different values to get different numbers.
 
@@ -40,10 +40,10 @@ const unsigned int rng_val_rr = 0x54abf853;
 /*! Common code to generate rays on the host and device.
  */
 class RayGen
-{
+    {
     public:
     //! Default constructor gives uninitialized generator
-    DEVICE RayGen() {}
+    DEVICE RayGen() { }
 
     //! Set ray gen parameters
     DEVICE explicit RayGen(unsigned int i,
@@ -52,13 +52,13 @@ class RayGen
                            unsigned int height,
                            unsigned int seed)
         : m_width(width), m_height(height), m_i(i), m_j(j)
-    {
+        {
         unsigned int pixel = j * width + i;
 
         // create the philox unique key for this RNG which includes the pixel ID and the random seed
         r123::Philox4x32::ukey_type rng_uk = {{pixel, seed}};
         m_rng_key = rng_uk;
-    }
+        }
 
     //! Uniform sampling of reflected rays
     /*! \returns The direction to sample next
@@ -73,7 +73,7 @@ class RayGen
                                                const vec3<float>& n,
                                                unsigned int depth,
                                                unsigned int sample) const
-    {
+        {
         r123::Philox4x32 rng;
         r123::Philox4x32::ctr_type rng_counter = {{0, depth, sample, rng_val_uniform}};
         r123::Philox4x32::ctr_type rng_u = rng(rng_counter, m_rng_key);
@@ -88,14 +88,14 @@ class RayGen
         float ndotl = dot(n, l);
         // l is generated on the whole sphere, if it points down into the surface, make it point up
         if (ndotl < 0.0f)
-        {
+            {
             l = -l;
             ndotl = -ndotl;
-        }
+            }
         float pdf = 1.0f / (2.0f * float(M_PI));
         factor = 1.0f / pdf;
         return l;
-    }
+        }
 
     //! Multiple importance sampling of reflected and transmitted rays
     /*! \returns The direction to sample next
@@ -114,7 +114,7 @@ class RayGen
                                                  unsigned int depth,
                                                  unsigned int sample,
                                                  const Material& m) const
-    {
+        {
         r123::Philox4x32 rng;
         r123::Philox4x32::ctr_type rng_counter = {{0, depth, sample, rng_val_mis}};
         r123::Philox4x32::ctr_type rng_u = rng(rng_counter, m_rng_key);
@@ -127,34 +127,34 @@ class RayGen
         vec3<float> l;
         transmit = (choice_trans <= m.spec_trans);
         if (transmit)
-        {
+            {
             // hard code perfect transmission
             l = -v;
-        }
+            }
         else
-        {
+            {
             // handle reflection with multiple importance sampling
             if (choice_mis <= 0.5f)
-            {
+                {
                 // diffuse sampling
                 l = m.importanceSampleDiffuse(xi, v, n);
                 float pdf_diffuse = m.pdfDiffuse(l, v, n);
                 float pdf_ggx = m.pdfGGX(l, v, n);
                 float w_diffuse = pdf_diffuse / (pdf_diffuse + pdf_ggx);
                 factor = w_diffuse / (0.5f * pdf_diffuse);
-            }
+                }
             else
-            {
+                {
                 // specular reflection
                 l = m.importanceSampleGGX(xi, v, n);
                 float pdf_diffuse = m.pdfDiffuse(l, v, n);
                 float pdf_ggx = m.pdfGGX(l, v, n);
                 float w_ggx = pdf_ggx / (pdf_diffuse + pdf_ggx);
                 factor = w_ggx / (0.5f * pdf_ggx);
+                }
             }
-        }
         return l;
-    }
+        }
 
     //! Test for Russian roulette ray termination
     /*! \returns True when the path should terminate
@@ -167,7 +167,7 @@ class RayGen
     */
     DEVICE bool
     shouldTerminatePath(RGB<float>& attenuation, unsigned int depth, unsigned int sample) const
-    {
+        {
         r123::Philox4x32 rng;
         r123::Philox4x32::ctr_type rng_counter = {{0, depth, sample, rng_val_rr}};
         r123::Philox4x32::ctr_type rng_u = rng(rng_counter, m_rng_key);
@@ -175,15 +175,15 @@ class RayGen
         float p_continue = fmaxf(attenuation.r, fmaxf(attenuation.g, attenuation.b));
         p_continue = fminf(p_continue, 1.0f);
         if (r123::u01<float>(rng_u[0]) > p_continue)
-        {
+            {
             return true;
-        }
+            }
         else
-        {
+            {
             attenuation /= p_continue;
             return false;
+            }
         }
-    }
 
     protected:
     unsigned int m_width;                 //!< Width of the output image (in pixels)
@@ -191,9 +191,9 @@ class RayGen
     r123::Philox4x32::key_type m_rng_key; //!< Key for the random number generator
     unsigned int m_i;                     //!< i coordinate of the pixel
     unsigned int m_j;                     //!< j coordinate of the pixel
-};
+    };
 
-} // namespace fresnel
+    } // namespace fresnel
 #undef DEVICE
 
 #endif

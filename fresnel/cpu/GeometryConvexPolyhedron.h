@@ -12,8 +12,10 @@
 
 #include "Geometry.h"
 
-namespace fresnel { namespace cpu {
-
+namespace fresnel
+    {
+namespace cpu
+    {
 //! Convex polyhedron geometry
 /*! Define a convex polyhedron geometry.
 
@@ -23,7 +25,7 @@ namespace fresnel { namespace cpu {
    unclear if it performs well compared to possible other methods.
 */
 class GeometryConvexPolyhedron : public Geometry
-{
+    {
     public:
     //! Constructor
     GeometryConvexPolyhedron(
@@ -41,33 +43,33 @@ class GeometryConvexPolyhedron : public Geometry
 
     //! Get the position buffer
     std::shared_ptr<Array<vec3<float>>> getPositionBuffer()
-    {
+        {
         return m_position;
-    }
+        }
 
     //! Get the orientation buffer
     std::shared_ptr<Array<quat<float>>> getOrientationBuffer()
-    {
+        {
         return m_orientation;
-    }
+        }
 
     //! Get the color buffer
     std::shared_ptr<Array<RGB<float>>> getColorBuffer()
-    {
+        {
         return m_color;
-    }
+        }
 
     //! Set the color by face option
     void setColorByFace(float f)
-    {
+        {
         m_color_by_face = f;
-    }
+        }
 
     //! Get the color by face option
     float getColorByFace() const
-    {
+        {
         return m_color_by_face;
-    }
+        }
 
     protected:
     std::vector<vec3<float>> m_plane_origin; //!< Origins of all the planes in the convex polyhedron
@@ -86,11 +88,12 @@ class GeometryConvexPolyhedron : public Geometry
 
     //! Embree ray intersection function
     static void intersect(const struct RTCIntersectFunctionNArguments* args);
-};
+    };
 
 //! Export GeometryConvexPolyhedron to python
 void export_GeometryConvexPolyhedron(pybind11::module& m);
 
-}} // end namespace fresnel::cpu
+    } // namespace cpu
+    } // namespace fresnel
 
 #endif

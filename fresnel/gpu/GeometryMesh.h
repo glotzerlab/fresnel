@@ -12,8 +12,10 @@
 #include "Array.h"
 #include "Geometry.h"
 
-namespace fresnel { namespace gpu {
-
+namespace fresnel
+    {
+namespace gpu
+    {
 //! Mesh geometry
 /*! Define a triangulated mesh geometry.
 
@@ -21,7 +23,7 @@ namespace fresnel { namespace gpu {
    OptiX.
 */
 class GeometryMesh : public Geometry
-{
+    {
     public:
     //! Constructor
     GeometryMesh(
@@ -33,21 +35,21 @@ class GeometryMesh : public Geometry
 
     //! Get the position buffer
     std::shared_ptr<Array<vec3<float>>> getPositionBuffer()
-    {
+        {
         return m_position;
-    }
+        }
 
     //! Get the orientation buffer
     std::shared_ptr<Array<quat<float>>> getOrientationBuffer()
-    {
+        {
         return m_orientation;
-    }
+        }
 
     //! Get the color buffer
     std::shared_ptr<Array<RGB<float>>> getColorBuffer()
-    {
+        {
         return m_color;
-    }
+        }
 
     protected:
     optix::Buffer m_vertices; //!< Buffer containing mesh vertices
@@ -55,11 +57,12 @@ class GeometryMesh : public Geometry
     std::shared_ptr<Array<vec3<float>>> m_position;    //!< Position of each polyhedron
     std::shared_ptr<Array<quat<float>>> m_orientation; //!< Orientation of each polyhedron
     std::shared_ptr<Array<RGB<float>>> m_color;        //!< Per-vertex color
-};
+    };
 
 //! Export GeometryMesh to python
 void export_GeometryMesh(pybind11::module& m);
 
-}} // end namespace fresnel::gpu
+    } // namespace gpu
+    } // namespace fresnel
 
 #endif

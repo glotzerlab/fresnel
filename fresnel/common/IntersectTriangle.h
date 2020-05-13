@@ -17,8 +17,8 @@
 #define DEVICE
 #endif
 
-namespace fresnel {
-
+namespace fresnel
+    {
 const float mesh_epsilon = 1e-4f;
 
 //! Ray triangle intersection test
@@ -51,7 +51,7 @@ DEVICE inline bool intersect_ray_triangle(float& u,
                                           const vec3<float>& a,
                                           const vec3<float>& b,
                                           const vec3<float>& c)
-{
+    {
     vec3<float> ab = b - a;
     vec3<float> ac = c - a;
     vec3<float> qp = p - q;
@@ -96,31 +96,31 @@ DEVICE inline bool intersect_ray_triangle(float& u,
     vec3<float> edge;
     vec3<float> pt;
     if (u < v)
-    {
-        if (u < w)
         {
+        if (u < w)
+            {
             edge = c - b;
             pt = b;
-        }
+            }
         else
-        {
+            {
             edge = b - a;
             pt = a;
+            }
         }
-    }
     else
-    {
-        if (v < w)
         {
+        if (v < w)
+            {
             edge = a - c;
             pt = c;
-        }
+            }
         else
-        {
+            {
             edge = b - a;
             pt = a;
+            }
         }
-    }
 
     // find the distance from the hit point to the line
     vec3<float> r_hit = p + t * (q - p);
@@ -129,9 +129,9 @@ DEVICE inline bool intersect_ray_triangle(float& u,
     d_edge = sqrt(dsq);
 
     return true;
-}
+    }
 
-} // namespace fresnel
+    } // namespace fresnel
 
 #undef DEVICE
 
