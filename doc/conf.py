@@ -31,13 +31,17 @@ napoleon_use_param = False;
 intersphinx_mapping = {'python': ('https://docs.python.org/3', None), 'numpy': ('https://docs.scipy.org/doc/numpy', None)}
 autodoc_docstring_signature = True;
 # autodoc_default_flags = ['inherited-members'];
-autodoc_mock_imports = ['numpy', 'PySide2'];
+autodoc_mock_imports = ['numpy',
+                        'PySide2',
+                        'fresnel._common'];
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
-exclude_patterns = ['build',
+exclude_patterns = ['figures',
+                    'build',
                     '_templates',
-                    '**.ipynb_checkpoints']
+                    '**.ipynb_checkpoints',
+                    ]
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -76,10 +80,6 @@ language = None
 #today = ''
 # Else, today_fmt is used as the format for a strftime call.
 #today_fmt = '%B %d, %Y'
-
-# List of patterns, relative to source directory, that match files and
-# directories to ignore when looking for source files.
-exclude_patterns = ['build']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.

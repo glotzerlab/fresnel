@@ -83,13 +83,21 @@ PYBIND11_MODULE(_common, m)
         .def_readwrite("position", &UserCamera::position)
         .def_readwrite("look_at", &UserCamera::look_at)
         .def_readwrite("up", &UserCamera::up)
-        .def_readwrite("h", &UserCamera::h);
+        .def_readwrite("h", &UserCamera::h)
+        .def_readwrite("f", &UserCamera::f)
+        .def_readwrite("f_stop", &UserCamera::f_stop)
+        .def_readwrite("focus_distance", &UserCamera::focus_distance)
+        .def_readwrite("model", &UserCamera::model);
+
+    pybind11::enum_<CameraModel>(m, "CameraModel")
+        .value("orthographic", CameraModel::orthographic)
+        .value("perspective", CameraModel::perspective);
 
     pybind11::class_<CameraBasis>(m, "CameraBasis")
         .def(pybind11::init<const UserCamera&>())
-        .def_readwrite("r", &CameraBasis::r)
-        .def_readwrite("d", &CameraBasis::d)
-        .def_readwrite("u", &CameraBasis::u);
+        .def_readwrite("u", &CameraBasis::u)
+        .def_readwrite("v", &CameraBasis::v)
+        .def_readwrite("w", &CameraBasis::w);
 
     pybind11::class_<Lights>(m, "Lights")
         .def(pybind11::init<>())

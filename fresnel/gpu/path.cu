@@ -75,9 +75,6 @@ RT_PROGRAM void path_ray_gen()
     // create the ray generator for this pixel
     RayGen ray_gen(launch_index.x, launch_index.y, screen.x, screen.y, seed);
 
-    // determine the viewing plane relative coordinates of this pixel
-    vec2<float> sample_loc = ray_gen.importanceSampleAA(n_samples);
-
     // per ray data
     PRDpath prd;
     prd.result = RGB<float>(0, 0, 0);
@@ -88,8 +85,7 @@ RT_PROGRAM void path_ray_gen()
     {
         prd.attenuation = RGB<float>(1.0f, 1.0f, 1.0f);
         prd.done = false;
-        prd.origin = cam.origin(sample_loc);
-        prd.direction = cam.direction(sample_loc);
+        cam.generateRay(prd.origin, prd.direction, launch_index.x, launch_index.y, n_samples);
 
         for (prd.depth = 0;; prd.depth++)
         {

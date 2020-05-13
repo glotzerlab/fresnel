@@ -11,12 +11,13 @@ fresnel.camera
     :nosignatures:
 
     fresnel.camera.Camera
-    fresnel.camera.fit
-    fresnel.camera.orthographic
+    fresnel.camera.Orthographic
+    fresnel.camera.Perspective
 
 .. rubric:: Details
 
 .. automodule:: fresnel.camera
     :synopsis: Cameras.
     :members:
+    :show-inheritance:
 

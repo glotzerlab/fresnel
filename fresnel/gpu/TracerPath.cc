@@ -60,7 +60,7 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
     const RGB<float> background_color = scene->getBackgroundColor();
     const float background_alpha = scene->getBackgroundAlpha();
 
-    const Camera camera(scene->getCamera());
+    const Camera camera(scene->getCamera(), m_w, m_h, m_seed);
     const Lights lights(scene->getLights(), camera);
 
     Tracer::render(scene);
@@ -78,8 +78,7 @@ void TracerPath::render(std::shared_ptr<Scene> scene)
     context["linear_output_buffer"]->set(m_linear_out_gpu);
 
     // set camera variables
-    const Camera cam(scene->getCamera());
-    context["cam"]->setUserData(sizeof(cam), &cam);
+    context["cam"]->setUserData(sizeof(camera), &camera);
     context["lights"]->setUserData(sizeof(lights), &lights);
 
     // set background variables

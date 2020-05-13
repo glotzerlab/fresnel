@@ -28,7 +28,7 @@ def scene_rounded_polygons(device):
                              material=mat
                              )
 
-    scene.camera = fresnel.camera.orthographic(position=(0, 0, -2),
+    scene.camera = fresnel.camera.Orthographic(position=(0, 0, -2),
                                                look_at=(0, 0, 0),
                                                up=(0, 1, 0),
                                                height=5)
@@ -59,7 +59,7 @@ def scene_polygons(device):
                              material=mat
                              )
 
-    scene.camera = fresnel.camera.orthographic(position=(0, 0, -2),
+    scene.camera = fresnel.camera.Orthographic(position=(0, 0, -2),
                                                look_at=(0, 0, 0),
                                                up=(0, 1, 0),
                                                height=5)

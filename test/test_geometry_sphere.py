@@ -14,11 +14,6 @@ dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 def scene_four_spheres(device):
     scene = fresnel.Scene(device, lights=conftest.test_lights())
 
-    position = []
-    for i in range(6):
-        position.append([2 * math.cos(i * 2 * math.pi / 6),
-                         2 * math.sin(i * 2 * math.pi / 6), 0])
-
     mat = fresnel.material.Material(
         color=fresnel.color.linear([0.42, 0.267, 1]))
     fresnel.geometry.Sphere(scene,
@@ -32,7 +27,7 @@ def scene_four_spheres(device):
                                    [0, 0, 1], [1, 0, 1]]
                             )
 
-    scene.camera = fresnel.camera.orthographic(position=(10, 10, 10),
+    scene.camera = fresnel.camera.Orthographic(position=(10, 10, 10),
                                                look_at=(0, 0, 0),
                                                up=(0, 1, 0),
                                                height=4)

@@ -6,7 +6,7 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "tbb/tbb.h"
+#include "tbb/parallel_for.h"
 
 using namespace tbb;
 
@@ -27,7 +27,14 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
     const RGB<float> background_color = scene->getBackgroundColor();
     const float background_alpha = scene->getBackgroundAlpha();
 
-    const Camera cam(scene->getCamera());
+    // direct tracers do not support depth of field
+    UserCamera user_camera = scene->getCamera();
+    user_camera.f_stop = std::numeric_limits<float>::infinity();
+
+    // disable aa sampling with m_aa_n is 1
+    bool sample_aa = (m_aa_n != 1);
+
+    const Camera cam(user_camera, m_linear_out->getW(), m_linear_out->getH(), m_seed, sample_aa);
     const Lights lights(scene->getLights(), cam);
     Tracer::render(scene);
 
@@ -68,141 +75,133 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
 
                             // loop over AA samples
                             RGBA<float> output_avg(0, 0, 0, 0);
-                            float aa_factor_total = 0.0f;
 
-                            for (unsigned int si = 0; si < m_aa_n; si++)
-                                for (unsigned int sj = 0; sj < m_aa_n; sj++)
+                            for (unsigned int sample = 0; sample < m_aa_n * m_aa_n; sample++)
                                 {
-                                    // determine the sample location
-                                    float aa_factor = 1.0f;
-                                    vec2<float> sample_loc
-                                        = ray_gen.jitterSampleAA(aa_factor, si, sj, m_aa_n);
+                                // trace a ray into the scene
+                                RTCRayHit ray_hit;
+                                RTCRay& ray = ray_hit.ray;
+                                vec3<float> org, dir;
+                                cam.generateRay(org, dir, i, j, sample);
+                                ray.org_x = org.x;
+                                ray.org_y = org.y;
+                                ray.org_z = org.z;
 
-                                    // trace a ray into the scene
-                                    RTCRayHit ray_hit;
-                                    RTCRay& ray = ray_hit.ray;
-                                    const vec3<float>& org = cam.origin(sample_loc);
-                                    ray.org_x = org.x;
-                                    ray.org_y = org.y;
-                                    ray.org_z = org.z;
+                                ray.dir_x = dir.x;
+                                ray.dir_y = dir.y;
+                                ray.dir_z = dir.z;
 
-                                    const vec3<float>& dir = cam.direction(sample_loc);
-                                    ray.dir_x = dir.x;
-                                    ray.dir_y = dir.y;
-                                    ray.dir_z = dir.z;
+                                ray.tnear = 0.0f;
+                                ray.tfar = std::numeric_limits<float>::infinity();
+                                ray.time = 0.0f;
+                                ray.flags = 0;
+                                ray.mask = -1;
+                                ray_hit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
+                                ray_hit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
 
-                                    ray.tnear = 0.0f;
-                                    ray.tfar = std::numeric_limits<float>::infinity();
-                                    ray.time = 0.0f;
-                                    ray.flags = 0;
-                                    ray.mask = -1;
-                                    ray_hit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
-                                    ray_hit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
+                                FresnelRTCIntersectContext context;
+                                rtcInitIntersectContext(&context.context);
 
-                                    FresnelRTCIntersectContext context;
-                                    rtcInitIntersectContext(&context.context);
+                                rtcIntersect1(scene->getRTCScene(), &context.context, &ray_hit);
 
-                                    rtcIntersect1(scene->getRTCScene(), &context.context, &ray_hit);
+                                // determine the output pixel color
+                                RGB<float> c = background_color;
+                                float a = background_alpha;
 
-                                    // determine the output pixel color
-                                    RGB<float> c = background_color;
-                                    float a = background_alpha;
+                                if (ray_hit.hit.geomID != RTC_INVALID_GEOMETRY_ID)
+                                {
+                                    vec3<float> n(ray_hit.hit.Ng_x,
+                                                    ray_hit.hit.Ng_y,
+                                                    ray_hit.hit.Ng_z);
+                                    n /= std::sqrt(dot(n, n));
+                                    vec3<float> v = -dir / std::sqrt(dot(dir, dir));
+                                    Material m;
 
-                                    if (ray_hit.hit.geomID != RTC_INVALID_GEOMETRY_ID)
+                                    // apply the material color or outline color depending on
+                                    // the distance to the edge
+                                    if (context.d >= scene->getOutlineWidth(ray_hit.hit.geomID))
+                                        m = scene->getMaterial(ray_hit.hit.geomID);
+                                    else
+                                        m = scene->getOutlineMaterial(ray_hit.hit.geomID);
+
+                                    if (m.isSolid())
                                     {
-                                        vec3<float> n(ray_hit.hit.Ng_x,
-                                                      ray_hit.hit.Ng_y,
-                                                      ray_hit.hit.Ng_z);
-                                        n /= std::sqrt(dot(n, n));
-                                        vec3<float> v = -dir / std::sqrt(dot(dir, dir));
-                                        Material m;
-
-                                        // apply the material color or outline color depending on
-                                        // the distance to the edge
-                                        if (context.d >= scene->getOutlineWidth(ray_hit.hit.geomID))
-                                            m = scene->getMaterial(ray_hit.hit.geomID);
-                                        else
-                                            m = scene->getOutlineMaterial(ray_hit.hit.geomID);
-
-                                        if (m.isSolid())
+                                        c = m.getColor(context.shading_color);
+                                    }
+                                    else
+                                    {
+                                        c = RGB<float>(0, 0, 0);
+                                        for (unsigned int light_id = 0; light_id < lights.N;
+                                                light_id++)
                                         {
-                                            c = m.getColor(context.shading_color);
-                                        }
-                                        else
-                                        {
-                                            c = RGB<float>(0, 0, 0);
-                                            for (unsigned int light_id = 0; light_id < lights.N;
-                                                 light_id++)
+                                            vec3<float> l = lights.direction[light_id];
+
+                                            // find the representative point, a vector pointing
+                                            // to the a point on the area light with a smallest
+                                            // angle to the reflection vector
+                                            vec3<float> r = -v + (2.0f * n * dot(n, v));
+
+                                            // find the closest point on the area light
+                                            float half_angle = lights.theta[light_id];
+                                            float cos_half_angle = cosf(half_angle);
+                                            float ldotr = dot(l, r);
+                                            if (ldotr < cos_half_angle)
                                             {
-                                                vec3<float> l = lights.direction[light_id];
+                                                vec3<float> a = cross(l, r);
+                                                a = a / sqrtf(dot(a, a));
 
-                                                // find the representative point, a vector pointing
-                                                // to the a point on the area light with a smallest
-                                                // angle to the reflection vector
-                                                vec3<float> r = -v + (2.0f * n * dot(n, v));
-
-                                                // find the closest point on the area light
-                                                float half_angle = lights.theta[light_id];
-                                                float cos_half_angle = cosf(half_angle);
-                                                float ldotr = dot(l, r);
-                                                if (ldotr < cos_half_angle)
-                                                {
-                                                    vec3<float> a = cross(l, r);
-                                                    a = a / sqrtf(dot(a, a));
-
-                                                    // miss the light, need to rotate r by the
-                                                    // difference in the angles about l cross r
-                                                    quat<float> q = quat<float>::fromAxisAngle(
-                                                        a,
-                                                        -acosf(ldotr) + half_angle);
-                                                    r = rotate(q, r);
-                                                }
-                                                else
-                                                {
-                                                    // hit the light, no modification necessary to r
-                                                }
-
-                                                // only apply brdf when the light faces the surface
-                                                RGB<float> f_d;
-                                                float ndotl = dot(n, l);
-                                                if (ndotl >= 0.0f)
-                                                    f_d = m.brdf_diffuse(l,
-                                                                         v,
-                                                                         n,
-                                                                         context.shading_color)
-                                                          * ndotl;
-                                                else
-                                                    f_d = RGB<float>(0.0f, 0.0f, 0.0f);
-
-                                                RGB<float> f_s;
-                                                if (dot(n, r) >= 0.0f)
-                                                {
-                                                    f_s = m.brdf_specular(r,
-                                                                          v,
-                                                                          n,
-                                                                          context.shading_color,
-                                                                          half_angle)
-                                                          * dot(n, r);
-                                                }
-                                                else
-                                                    f_s = RGB<float>(0.0f, 0.0f, 0.0f);
-
-                                                c += (f_d + f_s) * float(M_PI)
-                                                     * lights.color[light_id];
+                                                // miss the light, need to rotate r by the
+                                                // difference in the angles about l cross r
+                                                quat<float> q = quat<float>::fromAxisAngle(
+                                                    a,
+                                                    -acosf(ldotr) + half_angle);
+                                                r = rotate(q, r);
                                             }
-                                        }
+                                            else
+                                            {
+                                                // hit the light, no modification necessary to r
+                                            }
 
-                                        a = 1.0;
+                                            // only apply brdf when the light faces the surface
+                                            RGB<float> f_d;
+                                            float ndotl = dot(n, l);
+                                            if (ndotl >= 0.0f)
+                                                f_d = m.brdf_diffuse(l,
+                                                                        v,
+                                                                        n,
+                                                                        context.shading_color)
+                                                        * ndotl;
+                                            else
+                                                f_d = RGB<float>(0.0f, 0.0f, 0.0f);
+
+                                            RGB<float> f_s;
+                                            if (dot(n, r) >= 0.0f)
+                                            {
+                                                f_s = m.brdf_specular(r,
+                                                                        v,
+                                                                        n,
+                                                                        context.shading_color,
+                                                                        half_angle)
+                                                        * dot(n, r);
+                                            }
+                                            else
+                                                f_s = RGB<float>(0.0f, 0.0f, 0.0f);
+
+                                            c += (f_d + f_s) * float(M_PI)
+                                                    * lights.color[light_id];
+                                        }
                                     }
 
-                                    // accumulate filtered average
-                                    output_avg += RGBA<float>(c, a) * aa_factor;
-                                    aa_factor_total += aa_factor;
+                                    a = 1.0;
+                                }
+
+                                // accumulate importance sampled average
+                                output_avg += RGBA<float>(c, a);
                                 } // end loop over AA samples
 
                             // write the output pixel
                             unsigned int pixel = j * width + i;
-                            RGBA<float> output_pixel = output_avg / aa_factor_total;
+                            RGBA<float> output_pixel = output_avg / float(m_aa_n * m_aa_n);
 
                             linear_output[pixel] = output_pixel;
                             if (!m_highlight_warning

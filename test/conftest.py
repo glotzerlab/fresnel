@@ -3,6 +3,11 @@ import fresnel
 import math
 import PIL
 import numpy
+import os
+import pathlib
+
+
+dir_path = pathlib.Path(os.path.realpath(__file__)).parent
 
 devices = []
 if 'cpu' in fresnel.Device.available_modes:
@@ -72,7 +77,7 @@ def scene_hex_sphere(device):
         solid=0.0, color=fresnel.color.linear([1, 0.874, 0.169]))
     geometry.outline_width = 0.12
 
-    scene.camera = fresnel.camera.orthographic(
+    scene.camera = fresnel.camera.Orthographic(
         position=(0, 0, 10), look_at=(0, 0, 0), up=(0, 1, 0), height=6)
 
     return scene
@@ -106,3 +111,38 @@ def assert_image_approx_equal(a, ref_file, tolerance=1.0):
     msd = numpy.mean(diff[selection]**2)
 
     assert msd < tolerance
+
+
+def _validate_or_generate_image(buf, name, generate, tolerance):
+    if generate:
+        PIL.Image.fromarray(buf[:],
+                            mode='RGBA').save(open(f'output/{name}.png', 'wb'),
+                                              'png')
+    else:
+        assert_image_approx_equal(buf[:],
+                                  dir_path / 'reference' / f'{name}.png',
+                                  tolerance)
+
+
+def check_preview_render(scene,
+                         name,
+                         w=150,
+                         h=100,
+                         tolerance=2,
+                         anti_alias=False,
+                         generate=False):
+    buf_proxy = fresnel.preview(scene, w=w, h=h, anti_alias=anti_alias)
+
+    _validate_or_generate_image(buf_proxy, name, generate, tolerance)
+
+
+def check_pathtrace_render(scene,
+                           name,
+                           w=150,
+                           h=100,
+                           tolerance=2,
+                           samples=64 * 40,
+                           generate=False):
+    buf_proxy = fresnel.pathtrace(scene, w=w, h=h, samples=samples)
+
+    _validate_or_generate_image(buf_proxy, name, generate, tolerance)

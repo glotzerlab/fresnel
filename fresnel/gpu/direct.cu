@@ -82,18 +82,15 @@ RT_PROGRAM void direct_ray_gen()
 
     // loop over AA samples
     RGBA<float> output_avg(0, 0, 0, 0);
-    float aa_factor_total = 0.0f;
 
-    for (unsigned int si = 0; si < aa_n; si++)
-        for (unsigned int sj = 0; sj < aa_n; sj++)
+    for (unsigned int sample = 0; sample < aa_n * aa_n; sample++)
         {
-            // determine the sample location
-            float aa_factor = 1.0f;
-            vec2<float> sample_loc = ray_gen.jitterSampleAA(aa_factor, si, sj, aa_n);
-
             // trace a ray into the scene
-            optix::Ray ray(cam.origin(sample_loc),
-                           cam.direction(sample_loc),
+            vec3<float> org, dir;
+            cam.generateRay(org, dir, launch_index.x, launch_index.y, sample);
+
+            optix::Ray ray(org,
+                           dir,
                            TRACER_PREVIEW_RAY_ID,
                            scene_epsilon);
 
@@ -111,13 +108,12 @@ RT_PROGRAM void direct_ray_gen()
                 a = 1.0f;
             }
 
-            // accumulate filtered average
-            output_avg += RGBA<float>(c, a) * aa_factor;
-            aa_factor_total += aa_factor;
+            // accumulate importance sampled average
+            output_avg += RGBA<float>(c, a);
         }
 
     // correct aa sample average
-    RGBA<float> output_pixel = output_avg / aa_factor_total;
+    RGBA<float> output_pixel = output_avg / float(aa_n * aa_n);
 
     // write the output pixel
     RGBA<unsigned char> srgb_output_pixel(0, 0, 0, 0);

@@ -59,7 +59,7 @@ def scene_eight_polyhedra(device):
                                   primitive_color_mix=0.0)
     geometry.orientation[:] = [1, 0, 0, 0]
 
-    scene.camera = fresnel.camera.orthographic(
+    scene.camera = fresnel.camera.Orthographic(
         position=(20, 20, 20), look_at=(0, 0, 0), up=(0, 1, 0), height=7)
 
     return scene
