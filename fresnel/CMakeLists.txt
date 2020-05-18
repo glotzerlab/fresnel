@@ -85,7 +85,7 @@ add_custom_command(
     "-DOUTPUT_DIR=${CMAKE_CURRENT_BINARY_DIR}"
     -P ${CMAKE_CURRENT_SOURCE_DIR}/copy_wrapper.cmake
   VERBATIM
-  DEPENDS $<TARGET_OBJECTS:_ptx>
+  DEPENDS _ptx
   COMMENT "Copying ptx files"
 )
 
