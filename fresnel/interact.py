@@ -19,13 +19,14 @@ from PySide2 import QtGui
 from PySide2 import QtCore
 from PySide2 import QtWidgets
 import math
+#import numpy as np
 
 from . import tracer, camera
 
 # initialize QApplication
 # but not in sphinx
 if 'sphinx' not in sys.modules:
-    import PySide2.QtWidgets.QWidget as QWidget
+    from PySide2.QtWidgets import QWidget
 
     app = QtCore.QCoreApplication.instance()
     if app is None:
@@ -52,6 +53,7 @@ def _q_conjugate(q):
 
 
 def _qv_mult(q1, v1):
+    #q2 = np.append(np.array([0]), v1)
     q2 = (0.0,) + v1
     return _q_mult(_q_mult(q1, q2), _q_conjugate(q1))[1:]
 
