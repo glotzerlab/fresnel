@@ -19,7 +19,6 @@ from PySide2 import QtGui
 from PySide2 import QtCore
 from PySide2 import QtWidgets
 import math
-#import numpy as np
 
 from . import tracer, camera
 
@@ -186,7 +185,6 @@ class SceneView(QWidget):
 
         - :doc:`examples/02-Advanced-topics/03-Interactive-scene-view`
     """
-
     def __init__(self, scene, max_samples=2000):
         super().__init__()
         self.setWindowTitle("fresnel: scene viewer")
@@ -220,6 +218,13 @@ class SceneView(QWidget):
 
         self.camera_controller = _CameraController3D(self._scene.camera)
         self.ipython_display_formatter = 'text'
+
+        # send signal when rendering starts
+        self.re = RenderEvent()
+        self.re.update_signal.connect(self._test)
+
+    def _test(self, camera):
+        print("camera:", camera.position)
 
     def minimumSizeHint(self):  # noqa
         return QtCore.QSize(1610, 1000)
@@ -279,6 +284,7 @@ class SceneView(QWidget):
         self.rendering = False
 
     def _start_rendering(self):
+        self.re.update_signal.emit(self._scene.camera)
         self.rendering = True
         self.samples = 0
         self.tracer.reset()
@@ -332,3 +338,6 @@ class SceneView(QWidget):
                                     & QtCore.Qt.ControlModifier)
         self._start_rendering()
         event.accept()
+
+class RenderEvent(QtCore.QObject):
+    update_signal = QtCore.Signal(camera.Camera)
