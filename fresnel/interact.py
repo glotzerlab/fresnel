@@ -185,6 +185,7 @@ class SceneView(QWidget):
 
         - :doc:`examples/02-Advanced-topics/03-Interactive-scene-view`
     """
+
     def __init__(self, scene, max_samples=2000):
         super().__init__()
         self.setWindowTitle("fresnel: scene viewer")
@@ -221,10 +222,6 @@ class SceneView(QWidget):
 
         # send signal when rendering starts
         self.re = RenderEvent()
-        self.re.update_signal.connect(self._test)
-
-    def _test(self, camera):
-        print("camera:", camera.position)
 
     def minimumSizeHint(self):  # noqa
         return QtCore.QSize(1610, 1000)

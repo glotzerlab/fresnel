@@ -4,7 +4,7 @@
 
 """Materials describe the way light interacts with surfaces."""
 
-from fresnel import _common
+from . import _common
 
 
 class Material(object):
