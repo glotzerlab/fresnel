@@ -52,7 +52,6 @@ def _q_conjugate(q):
 
 
 def _qv_mult(q1, v1):
-    #q2 = np.append(np.array([0]), v1)
     q2 = (0.0,) + v1
     return _q_mult(_q_mult(q1, q2), _q_conjugate(q1))[1:]
 
@@ -220,7 +219,7 @@ class SceneView(QWidget):
         self.camera_controller = _CameraController3D(self._scene.camera)
         self.ipython_display_formatter = 'text'
 
-        # send signal when rendering starts
+        # initialize QObject for sending signals
         self.re = RenderEvent()
 
     def minimumSizeHint(self):  # noqa
@@ -281,7 +280,9 @@ class SceneView(QWidget):
         self.rendering = False
 
     def _start_rendering(self):
+        # send signal
         self.re.update_signal.emit(self._scene.camera)
+
         self.rendering = True
         self.samples = 0
         self.tracer.reset()
