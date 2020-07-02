@@ -185,6 +185,8 @@ class SceneView(QWidget):
         - :doc:`examples/02-Advanced-topics/03-Interactive-scene-view`
     """
 
+    update_signal = QtCore.Signal(camera.Camera)
+
     def __init__(self, scene, max_samples=2000):
         super().__init__()
         self.setWindowTitle("fresnel: scene viewer")
@@ -219,8 +221,8 @@ class SceneView(QWidget):
         self.camera_controller = _CameraController3D(self._scene.camera)
         self.ipython_display_formatter = 'text'
 
-        # initialize QObject for sending signals
-        self.re = RenderEvent()
+        # test
+        self.update_signal.connect(self._test)
 
     def minimumSizeHint(self):  # noqa
         return QtCore.QSize(1610, 1000)
@@ -281,12 +283,15 @@ class SceneView(QWidget):
 
     def _start_rendering(self):
         # send signal
-        self.re.update_signal.emit(self._scene.camera)
+        self.update_signal.emit(self._scene.camera)
 
         self.rendering = True
         self.samples = 0
         self.tracer.reset()
         self.repaint_timer.start()
+
+    def _test(self, camera):
+        print("camera:", camera.position)
 
     def mouseMoveEvent(self, event):  # noqa
         delta = event.pos() - self.mouse_initial_pos
@@ -337,5 +342,3 @@ class SceneView(QWidget):
         self._start_rendering()
         event.accept()
 
-class RenderEvent(QtCore.QObject):
-    update_signal = QtCore.Signal(camera.Camera)
