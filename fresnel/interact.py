@@ -335,4 +335,3 @@ class SceneView(QWidget):
                                     & QtCore.Qt.ControlModifier)
         self._start_rendering()
         event.accept()
-
