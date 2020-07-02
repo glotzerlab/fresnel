@@ -221,9 +221,6 @@ class SceneView(QWidget):
         self.camera_controller = _CameraController3D(self._scene.camera)
         self.ipython_display_formatter = 'text'
 
-        # test
-        self.update_signal.connect(self._test)
-
     def minimumSizeHint(self):  # noqa
         return QtCore.QSize(1610, 1000)
 
@@ -289,9 +286,6 @@ class SceneView(QWidget):
         self.samples = 0
         self.tracer.reset()
         self.repaint_timer.start()
-
-    def _test(self, camera):
-        print("camera:", camera.position)
 
     def mouseMoveEvent(self, event):  # noqa
         delta = event.pos() - self.mouse_initial_pos
