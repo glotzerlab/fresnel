@@ -185,7 +185,7 @@ class SceneView(QWidget):
         - :doc:`examples/02-Advanced-topics/03-Interactive-scene-view`
     """
 
-    update_signal = QtCore.Signal(camera.Camera)
+    rendering = QtCore.Signal(camera.Camera)
 
     def __init__(self, scene, max_samples=2000):
         super().__init__()
