@@ -2,8 +2,13 @@
 
 staleLabel: wontfix
 
+exemptProjects: true
+
+exemptLabels:
+  - critical
+
 pulls:
-  daysUntilStale: 30
+  daysUntilStale: 20
   daysUntilClose: 10
 
   markComment: >
@@ -15,7 +20,7 @@ pulls:
     recent activity.
 
 issues:
-  daysUntilStale: 170
+  daysUntilStale: 260
   daysUntilClose: 10
 
   markComment: >
