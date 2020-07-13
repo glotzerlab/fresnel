@@ -25,7 +25,7 @@ from . import tracer, camera
 # initialize QApplication
 # but not in sphinx
 if 'sphinx' not in sys.modules:
-    import PySide2.QtWidgets.QWidget as QWidget
+    from PySide2.QtWidgets import QWidget
 
     app = QtCore.QCoreApplication.instance()
     if app is None:
@@ -185,6 +185,8 @@ class SceneView(QWidget):
         - :doc:`examples/02-Advanced-topics/03-Interactive-scene-view`
     """
 
+    rendering = QtCore.Signal(camera.Camera)
+
     def __init__(self, scene, max_samples=2000):
         super().__init__()
         self.setWindowTitle("fresnel: scene viewer")
@@ -277,6 +279,9 @@ class SceneView(QWidget):
         self.rendering = False
 
     def _start_rendering(self):
+        # send signal
+        self.update_signal.emit(self._scene.camera)
+
         self.rendering = True
         self.samples = 0
         self.tracer.reset()
