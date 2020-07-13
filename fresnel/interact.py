@@ -211,7 +211,7 @@ class SceneView(QWidget):
 
         # initialize the tracer
         self.tracer = tracer.Path(device=scene.device, w=10, h=10)
-        self.rendering = False
+        self._is_rendering = False
         self.initial_resize = True
 
         # flag to notify view rotation
@@ -235,7 +235,7 @@ class SceneView(QWidget):
         self._start_rendering()
 
     def paintEvent(self, event):  # noqa
-        if self.rendering:
+        if self._is_rendering:
             # Render the scene
             self.tracer.render(self._scene)
 
@@ -276,13 +276,13 @@ class SceneView(QWidget):
 
     def _stop_rendering(self):
         self.repaint_timer.stop()
-        self.rendering = False
+        self._is_rendering = False
 
     def _start_rendering(self):
         # send signal
-        self.update_signal.emit(self._scene.camera)
+        self.rendering.emit(self._scene.camera)
 
-        self.rendering = True
+        self._is_rendering = True
         self.samples = 0
         self.tracer.reset()
         self.repaint_timer.start()
