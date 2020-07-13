@@ -5,6 +5,7 @@
 """Interactive Qt widgets."""
 
 import sys
+import numpy
 
 # workaround bug in ipython that prevents pyside2 importing
 # https://github.com/jupyter/qtconsole/pull/280
@@ -19,6 +20,7 @@ from PySide2 import QtGui
 from PySide2 import QtCore
 from PySide2 import QtWidgets
 import math
+import rowan
 
 from . import tracer, camera
 
@@ -36,36 +38,6 @@ else:
     QWidget = object
 
 
-def _q_mult(q1, q2):
-    w1, x1, y1, z1 = q1
-    w2, x2, y2, z2 = q2
-    w = w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2
-    x = w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2
-    y = w1 * y2 + y1 * w2 + z1 * x2 - x1 * z2
-    z = w1 * z2 + z1 * w2 + x1 * y2 - y1 * x2
-    return w, x, y, z
-
-
-def _q_conjugate(q):
-    w, x, y, z = q
-    return (w, -x, -y, -z)
-
-
-def _qv_mult(q1, v1):
-    q2 = (0.0,) + v1
-    return _q_mult(_q_mult(q1, q2), _q_conjugate(q1))[1:]
-
-
-def _axisangle_to_q(v, theta):
-    x, y, z = v
-    theta /= 2
-    w = math.cos(theta)
-    x = x * math.sin(theta)
-    y = y * math.sin(theta)
-    z = z * math.sin(theta)
-    return w, x, y, z
-
-
 class _CameraController3D:
 
     def __init__(self, camera):
@@ -77,21 +49,18 @@ class _CameraController3D:
         if slight:
             factor = factor * 0.1
 
-        r, d, u = self.camera.basis
+        basis = numpy.array(self.camera.basis)
 
-        q1 = _axisangle_to_q(u, factor * yaw)
-        q2 = _axisangle_to_q(r, factor * pitch)
-        q3 = _axisangle_to_q(d, factor * roll)
-        q = _q_mult(q1, q2)
-        q = _q_mult(q, q3)
+        q1 = rowan.from_axis_angle(basis[1, :], factor * yaw)
+        q2 = rowan.from_axis_angle(basis[0, :], factor * pitch)
+        q3 = rowan.from_axis_angle(basis[2, :], factor * roll)
+        q = rowan.multiply(q2, rowan.multiply(q1, q3))
 
-        px, py, pz = self.camera.position
-        ax, ay, az = self.camera.look_at
-        v = (px - ax, py - ay, pz - az)
-        vx, vy, vz = _qv_mult(q, v)
+        v = self.camera.position - self.camera.look_at
+        v = rowan.rotate(q, v)
 
-        self.camera.position = (vx + ax, vy + ay, vz + az)
-        self.camera.up = _qv_mult(q, u)
+        self.camera.position = self.camera.look_at + v
+        self.camera.up = rowan.rotate(q, basis[1, :])
 
     def pan(self, x, y, slight=False):
         # TODO: this should be the height at the focal plane
@@ -100,19 +69,12 @@ class _CameraController3D:
         if slight:
             factor = factor * 0.1
 
-        r, d, u = self.camera.basis
+        basis = numpy.array(self.camera.basis)
 
-        rx, ry, rz = r
-        ux, uy, uz = u
-        delta_x = factor * (x * rx + y * ux)
-        delta_y = factor * (x * ry + y * uy)
-        delta_z = factor * (x * rz + y * uz)
+        delta = factor * (x * basis[0, :] + y * basis[1, :])
 
-        px, py, pz = self.camera.position
-        ax, ay, az = self.camera.look_at
-
-        self.camera.position = px + delta_x, py + delta_y, pz + delta_z
-        self.camera.look_at = ax + delta_x, ay + delta_y, az + delta_z
+        self.camera.position += delta
+        self.camera.look_at += delta
 
     def zoom(self, s, slight=False):
         """Zoom the view."""
