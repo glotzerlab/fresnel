@@ -148,7 +148,6 @@ class SceneView(QWidget):
 
         - :doc:`examples/02-Advanced-topics/03-Interactive-scene-view`
     """
-
     """Qt Signal sent when rendering starts at a new camera position."""
     rendering = QtCore.Signal(camera.Camera)
 
@@ -176,17 +175,11 @@ class SceneView(QWidget):
         self._initial_resize = True
 
         # flag to notify view rotation
-        self.camera_update_mode = None
-        self.mouse_initial_pos = None
+        self._camera_update_mode = None
+        self._mouse_initial_pos = None
 
-        self.camera_controller = _CameraController3D(self._scene.camera)
+        self._camera_controller = _CameraController3D(self._scene.camera)
         self.ipython_display_formatter = 'text'
-
-    def minimumSizeHint(self):  # noqa
-        """Specify the minimum window size hint to Qt.
-
-        :meta private:"""
-        return QtCore.QSize(1610, 1000)
 
     @property
     def scene(self):
@@ -197,6 +190,36 @@ class SceneView(QWidget):
     def scene(self, scene):
         self._scene = scene
         self._start_rendering()
+
+    def _resize_done(self):
+        """Resize the tracer after a delay."""
+        # resize the tracer
+        self._tracer.resize(w=self.width(), h=self.height())
+        self._start_rendering()
+
+    def _stop_rendering(self):
+        """Stop sampling the scene."""
+        self._repaint_timer.stop()
+        self._is_rendering = False
+
+    def _start_rendering(self):
+        """Start sampling the scene."""
+        # send signal
+        self.rendering.emit(self._scene.camera)
+
+        self._is_rendering = True
+        self._samples = 0
+        self._tracer.reset()
+        self._repaint_timer.start()
+
+    #####################################
+    # Qt methods:
+
+    def minimumSizeHint(self):  # noqa
+        """Specify the minimum window size hint to Qt.
+
+        :meta private:"""
+        return QtCore.QSize(1610, 1000)
 
     def paintEvent(self, event):  # noqa
         """Paint the window.
@@ -239,51 +262,30 @@ class SceneView(QWidget):
             # for a bit
             self._resize_timer.start(100)
 
-    def _resize_done(self):
-        """Resize the tracer after a delay."""
-        # resize the tracer
-        self._tracer.resize(w=self.width(), h=self.height())
-        self._start_rendering()
-
-    def _stop_rendering(self):
-        """Stop sampling the scene."""
-        self._repaint_timer.stop()
-        self._is_rendering = False
-
-    def _start_rendering(self):
-        """Start sampling the scene."""
-        # send signal
-        self.rendering.emit(self._scene.camera)
-
-        self._is_rendering = True
-        self._samples = 0
-        self._tracer.reset()
-        self._repaint_timer.start()
-
     def mouseMoveEvent(self, event):  # noqa
         """Respond to mouse move events.
 
         :meta private:"""
-        delta = event.pos() - self.mouse_initial_pos
-        self.mouse_initial_pos = event.pos()
+        delta = event.pos() - self._mouse_initial_pos
+        self._mouse_initial_pos = event.pos()
 
-        if self.camera_update_mode == 'pitch/yaw':
-            self.camera_controller.orbit(yaw=delta.x(),
-                                         pitch=delta.y(),
-                                         slight=event.modifiers()
-                                         & QtCore.Qt.ControlModifier)
+        if self._camera_update_mode == 'pitch/yaw':
+            self._camera_controller.orbit(yaw=delta.x(),
+                                          pitch=delta.y(),
+                                          slight=event.modifiers()
+                                          & QtCore.Qt.ControlModifier)
 
-        elif self.camera_update_mode == 'roll':
-            self.camera_controller.orbit(roll=delta.x(),
-                                         slight=event.modifiers()
-                                         & QtCore.Qt.ControlModifier)
+        elif self._camera_update_mode == 'roll':
+            self._camera_controller.orbit(roll=delta.x(),
+                                          slight=event.modifiers()
+                                          & QtCore.Qt.ControlModifier)
 
-        elif self.camera_update_mode == 'pan':
+        elif self._camera_update_mode == 'pan':
             h = self.height()
-            self.camera_controller.pan(x=-delta.x() / h,
-                                       y=delta.y() / h,
-                                       slight=event.modifiers()
-                                       & QtCore.Qt.ControlModifier)
+            self._camera_controller.pan(x=-delta.x() / h,
+                                        y=delta.y() / h,
+                                        slight=event.modifiers()
+                                        & QtCore.Qt.ControlModifier)
 
         self._start_rendering()
         self.update()
@@ -293,30 +295,30 @@ class SceneView(QWidget):
         """Respond to mouse press events.
 
         :meta private:"""
-        self.mouse_initial_pos = event.pos()
+        self._mouse_initial_pos = event.pos()
         event.accept()
 
         if event.button() == QtCore.Qt.LeftButton:
-            self.camera_update_mode = 'pitch/yaw'
+            self._camera_update_mode = 'pitch/yaw'
         elif event.button() == QtCore.Qt.RightButton:
-            self.camera_update_mode = 'roll'
+            self._camera_update_mode = 'roll'
         elif event.button() == QtCore.Qt.MiddleButton:
-            self.camera_update_mode = 'pan'
+            self._camera_update_mode = 'pan'
 
     def mouseReleaseEvent(self, event):  # noqa
         """Respond to mouse release events.
 
         :meta private:"""
-        if self.camera_update_mode is not None:
-            self.camera_update_mode = None
+        if self._camera_update_mode is not None:
+            self._camera_update_mode = None
             event.accept()
 
     def wheelEvent(self, event):  # noqa
         """Respond to mouse wheel events.
 
         :meta private:"""
-        self.camera_controller.zoom(event.angleDelta().y(),
-                                    slight=event.modifiers()
-                                    & QtCore.Qt.ControlModifier)
+        self._camera_controller.zoom(event.angleDelta().y(),
+                                     slight=event.modifiers()
+                                     & QtCore.Qt.ControlModifier)
         self._start_rendering()
         event.accept()
