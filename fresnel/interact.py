@@ -20,6 +20,7 @@ from PySide2 import QtGui
 from PySide2 import QtCore
 from PySide2 import QtWidgets
 import rowan
+import time
 
 from fresnel import tracer, camera
 
@@ -171,8 +172,13 @@ class SceneView(QWidget):
 
         # initialize the tracer
         self._tracer = tracer.Path(device=scene.device, w=10, h=10)
+        self._low_res_tracer = tracer.Path(device=scene.device, w=10, h=10)
         self._is_rendering = False
         self._initial_resize = True
+
+        # track render times
+        self._paint_time = None
+        self._frames_painted = 0
 
         # flag to notify view rotation
         self._camera_update_mode = None
@@ -195,6 +201,7 @@ class SceneView(QWidget):
         """Resize the tracer after a delay."""
         # resize the tracer
         self._tracer.resize(w=self.width(), h=self.height())
+        self._low_res_tracer.resize(w=self.width() // 4, h=self.height() // 4)
         self._start_rendering()
 
     def _stop_rendering(self):
@@ -210,6 +217,7 @@ class SceneView(QWidget):
         self._is_rendering = True
         self._samples = 0
         self._tracer.reset()
+        self._low_res_tracer.reset()
         self._repaint_timer.start()
 
     #####################################
@@ -225,16 +233,27 @@ class SceneView(QWidget):
         """Paint the window.
 
         :meta private:"""
+        # Track time for FPS
+        if self._frames_painted == 0:
+            self._paint_time = time.time()
+
         if self._is_rendering:
-            # Render the scene
-            self._tracer.render(self._scene)
+            # Render the hi-res scene when not moving the camera
+            if self._camera_update_mode is None:
+                self._tracer.render(self._scene)
 
-            self._samples += 1
-            if self._samples >= self._max_samples:
-                self._stop_rendering()
+                self._samples += 1
+                if self._samples >= self._max_samples:
+                    self._stop_rendering()
+            else:
+                # Render the low -res scene when moving the camera
+                self._low_res_tracer.render(self._scene)
 
-        # Display
-        image_array = self._tracer.output
+        # Display the active buffer
+        if self._camera_update_mode is None:
+            image_array = self._tracer.output
+        else:
+            image_array = self._low_res_tracer.output
 
         # display the rendered scene in the widget
         image_array.buf.map()
@@ -248,6 +267,15 @@ class SceneView(QWidget):
         qp.drawImage(target, img, source)
         qp.end()
         image_array.buf.unmap()
+
+        # Display FPS
+        self._frames_painted += 1
+
+        delta_t = time.time() - self._paint_time
+        if delta_t > 1:
+            print("FPS:", self._frames_painted / delta_t)
+            self._frames_painted = 0
+
 
     def resizeEvent(self, event):  # noqa
         """Adjust the size of the tracer as the window resizes.
@@ -304,6 +332,8 @@ class SceneView(QWidget):
             self._camera_update_mode = 'roll'
         elif event.button() == QtCore.Qt.MiddleButton:
             self._camera_update_mode = 'pan'
+
+        self._start_rendering()
 
     def mouseReleaseEvent(self, event):  # noqa
         """Respond to mouse release events.
