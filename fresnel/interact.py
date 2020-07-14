@@ -42,8 +42,8 @@ class _CameraController3D:
 
     def __init__(self, camera):
         self.camera = camera
-        if isinstance(self.camera, str):
-            raise RuntimeError("Cannot control an auto camera")
+
+    # TODO: Store camera at start of operation and make absolute rotations from there
 
     def orbit(self, yaw=0, pitch=0, roll=0, factor=-0.0025, slight=False):
         """Orbit the camera about the look_at point."""
