@@ -160,34 +160,21 @@ DEVICE inline bool intersect_ray_hemisphere(float& t,
 
     if (t0 < 0.0)
         {
-        t0 = t1;
-        N0 = N1;
-        d0 = d1;
-        }
-
-    if (t1 < 0.0)
-        {
-        t1 = t0;
-        N1 = N0;
-        d1 = d0;
-        }
-
-    if (t0 < t1)
-        {
-        t = t0;
-        N = N0;
-        d_edge = d0;
-        }
-    else
-        {
         t = t1;
         N = N1;
         d_edge = d1;
         }
 
-    if (t <= hemisphere_epsilon)
+    if (t1 < 0.0)
         {
-        if (t0 > t1)
+        t = t0;
+        N = N0;
+        d_edge = d0;
+        }
+
+    if (t0 >= 0.0 && t1 >= 0.0)
+        {
+        if (t0 < t1)
             {
             t = t0;
             N = N0;
@@ -201,7 +188,7 @@ DEVICE inline bool intersect_ray_hemisphere(float& t,
             }
         }
 
-    return (t > hemisphere_epsilon);
+    return (t > 0);
     }
 
 }
