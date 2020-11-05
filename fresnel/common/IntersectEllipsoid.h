@@ -41,7 +41,7 @@ DEVICE inline bool intersect_ray_ellipsoid(float& t,
                                         const vec3<float>& o,
                                         const vec3<float>& d,
                                         const vec3<float>& p,
-										const vec3<float>& xyz,
+										const vec3<float>& abc,
                                         const float r)
     {
     // vector from ellipsoid to ray origin
@@ -52,8 +52,7 @@ DEVICE inline bool intersect_ray_ellipsoid(float& t,
 	
 	  // transform the ray into the primitive coordinate system
     vec3<float> ray_dir_local = rotate(conj(q_world), dir); //rotates ray direction by conjugate of shape's quaternion
-    vec3<float> ray_org_local
-        = rotate(conj(q_world), vec3<float>(ray.org_x, ray.org_y, ray.org_z) - pos_world);
+    vec3<float> ray_org_local = rotate(conj(q_world), vec3<float>(ray.org_x, ray.org_y, ray.org_z) - pos_world);
 	
 	// matrix to scale an ellipsoid with half lengths a,b,c into a unit sphere
 	//M = {1/a, 0, 0}
