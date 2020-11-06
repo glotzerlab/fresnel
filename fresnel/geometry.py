@@ -628,13 +628,15 @@ class Ellipsoid(Geometry):
         ri = self.radii[:]
 
         # pick the max radius of each ellipsoid
-        rmax = [max(ri[3*i:3*i+3]) for i in range(int(len(ri)/3))]
+        # rmax = [max(ri[3*i:3*i+3]) for i in range(int(len(ri)/3))]
 
-        r = rmax
-        r = r.reshape(len(r), 1)
-        res = numpy.array(
-            [numpy.min(pos - r, axis=0),
-             numpy.max(pos + r, axis=0)])
+        # r = numpy.array(rmax)
+        # r = r.reshape(len(r), 1)
+        # res = numpy.array(
+        #     [numpy.min(pos - r, axis=0),
+        #      numpy.max(pos + r, axis=0)])
+        # res = numpy.array([([-2,-2,-2]), numpy.array([2,2,2])])
+        res = numpy.array([[-2,-2,-2],[2,2,2]]).T
         return res
 
     @property
