@@ -551,6 +551,72 @@ class Sphere(Geometry):
         return util.Array(self._geometry.getColorBuffer(), geom=self)
 
 
+class Ellipsoid(Geometry):
+    """Ellipsoid geometry,
+
+
+
+
+
+    """
+    def __init__(self,
+                 scene,
+                 position=(0, 0, 0),
+                 radius=0.5,
+                 color=(0, 0, 0),
+                 N=None,
+                 material=material.Material(solid=1.0, color=(1, 0, 1)),
+                 outline_material=material.Material(solid=1.0, color=(0, 0, 0)),
+                 outline_width=0.0):
+        if N is None:
+            N = len(position)
+
+        self._geometry = scene.device.module.GeometrySphere(scene._scene, N)
+        self.material = material
+        self.outline_material = outline_material
+        self.outline_width = outline_width
+
+        self.position[:] = position
+        self.radius[:] = radius
+        self.color[:] = color
+
+        self.scene = scene
+        self.scene.geometry.append(self)
+
+    def get_extents(self):
+        """Get the extents of the geometry.
+
+        Returns:
+            (3,2) `numpy.ndarray` of ``float32``: The lower left and\
+                upper right corners of the scene.
+        """
+        pos = self.position[:]
+        r = self.radius[:]
+        r = r.reshape(len(r), 1)
+        res = numpy.array(
+            [numpy.min(pos - r, axis=0),
+             numpy.max(pos + r, axis=0)])
+        return res
+
+    @property
+    def position(self):
+        """(N, 3) `Array`: The position of each sphere."""
+        return util.Array(self._geometry.getPositionBuffer(), geom=self)
+
+    @property
+    def radius(self):
+        """(N, ) `Array`: The radius of each sphere."""
+        return util.Array(self._geometry.getRadiusBuffer(), geom=self)
+
+    @property
+    def color(self):
+        """(N, 3) `Array`: The color of each sphere."""
+        return util.Array(self._geometry.getColorBuffer(), geom=self)
+
+    
+# end
+
+
 class Mesh(Geometry):
     """Mesh geometry.
 
