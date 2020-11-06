@@ -554,15 +554,47 @@ class Sphere(Geometry):
 class Ellipsoid(Geometry):
     """Ellipsoid geometry,
 
+    Define a set of ellipsoid primitives with individual positions, radiis,
+    orientations, and colors.
 
+    Args:
+        scene (Scene): Add the geometry to this scene.
 
+        position ((N, 3) `numpy.ndarray` of ``float32``):
+            Position of each ellipsoid.
 
+        radii ((N, 3) `numpy.ndarray` of ``float32``):
+            Radii in local x,y,z direction of each ellipsoid.
 
+        orientation ((N, 4) `numpy.ndarray` of ``float32``):
+            Orientation of each ellipsoid (as a quaternion).
+
+        color ((N, 3) `numpy.ndarray` of ``float32``): Color of each ellipsoid.
+
+        N (int): Number of ellipsoids in the geometry. If ``None``, determine *N*
+            from *position*.
+
+    See Also:
+        Tutorials:
+
+        - :doc:`examples/01-Primitives/06-Ellipsoid-geometry` TODO
+
+    Hint:
+        Avoid costly memory allocations and type conversions by specifying
+        primitive properties in the appropriate array type.
+
+    Tip:
+        When all ellipsoids have the same dimensions, pass a single value for *radii* and
+        numpy will broadcast it to all elements of the array.
+
+    TODO: see if broadcasting works for ellipsoids.
     """
+
     def __init__(self,
                  scene,
                  position=(0, 0, 0),
-                 radius=0.5,
+                 radii=(2, 1, 1),
+                 orientation=(1, 0, 0, 0),
                  color=(0, 0, 0),
                  N=None,
                  material=material.Material(solid=1.0, color=(1, 0, 1)),
@@ -571,27 +603,34 @@ class Ellipsoid(Geometry):
         if N is None:
             N = len(position)
 
-        self._geometry = scene.device.module.GeometrySphere(scene._scene, N)
+        self._geometry = scene.device.module.GeometryEllipsoid(scene._scene, N)
         self.material = material
         self.outline_material = outline_material
         self.outline_width = outline_width
 
         self.position[:] = position
-        self.radius[:] = radius
+        self.radii[:] = radii # TODO does this broadcast?
+        self.orientation[:] = orientation
         self.color[:] = color
 
         self.scene = scene
         self.scene.geometry.append(self)
 
     def get_extents(self):
-        """Get the extents of the geometry.
+        """Get the TEMPORARILY ROUGH extents of the geometry.
 
         Returns:
             (3,2) `numpy.ndarray` of ``float32``: The lower left and\
                 upper right corners of the scene.
         """
         pos = self.position[:]
-        r = self.radius[:]
+        # for now, same logic using bounding volume as circumscribed sphere
+        ri = self.radii[:]
+
+        # pick the max radius of each ellipsoid
+        rmax = [max(ri[3*i:3*i+3]) for i in range(int(len(ri)/3))]
+
+        r = rmax
         r = r.reshape(len(r), 1)
         res = numpy.array(
             [numpy.min(pos - r, axis=0),
@@ -600,21 +639,23 @@ class Ellipsoid(Geometry):
 
     @property
     def position(self):
-        """(N, 3) `Array`: The position of each sphere."""
+        """(N, 3) `Array`: The position of each ellipsoid."""
         return util.Array(self._geometry.getPositionBuffer(), geom=self)
 
     @property
-    def radius(self):
-        """(N, ) `Array`: The radius of each sphere."""
-        return util.Array(self._geometry.getRadiusBuffer(), geom=self)
+    def radii(self):
+        """(N, 3) `Array`: The radii of each ellipsoid."""
+        return util.Array(self._geometry.getRadiiiBuffer(), geom=self)
+
+    @property
+    def orientation(self):
+        """(N, 4) `Array`: The orientation of each ellipsoid."""
+        return util.Array(self._geometry.getOrientationBuffer(), geom=self)
 
     @property
     def color(self):
-        """(N, 3) `Array`: The color of each sphere."""
+        """(N, 3) `Array`: The color of each ellipsoid."""
         return util.Array(self._geometry.getColorBuffer(), geom=self)
-
-    
-# end
 
 
 class Mesh(Geometry):
