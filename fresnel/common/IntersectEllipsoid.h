@@ -108,7 +108,7 @@ DEVICE inline bool intersect_ray_ellipsoid(float& t,
 			const vec3<float> Np = op + t * dp - p;
 			// transform N back to world coordinates
 			N = Np * abc;
-			N = rotate(q_ellipsoid, Np)
+			N = rotate(q_ellipsoid, Np);
         return true;
         }
 
@@ -119,7 +119,7 @@ DEVICE inline bool intersect_ray_ellipsoid(float& t,
 			// N = -(o + t * d - p);
 			const vec3<float> Np = -(op + t * dp -p);
 			N = Np * abc;
-			N = rotate(q_ellipsoid, Np)
+			N = rotate(q_ellipsoid, Np);
         return true;
         }
 
