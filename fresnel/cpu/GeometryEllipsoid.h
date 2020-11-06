@@ -60,7 +60,7 @@ class GeometryEllipsoid : public Geometry
 
     protected:
     std::shared_ptr<Array<vec3<float>>> m_position;    //!< Position for each ellipsoid
-    std::shared_ptr<Array<float>> m_radii;             //!< Per-particle radii in x,y,z direction
+    std::shared_ptr<Array<vec3<float>>> m_radii;       //!< Per-particle radii in x,y,z direction
 	std::shared_ptr<Array<quat<float>>> m_orientation; //!< Per-particle orientation
     std::shared_ptr<Array<RGB<float>>> m_color;        //!< Per-particle color
 
