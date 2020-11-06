@@ -52,21 +52,33 @@ DEVICE inline bool intersect_ray_ellipsoid(float& t,
 	// replace o with ray_org_local
 	
 	  // transform the ray into the primitive coordinate system
-    vec3<float> ray_dir_local = rotate(conj(q_world), dir); //rotates ray direction by conjugate of shape's quaternion
-    vec3<float> ray_org_local = rotate(conj(q_world), vec3<float>(ray.org_x, ray.org_y, ray.org_z) - pos_world);
+	// ray is: RTCRay& ray = rayhit.ray;
+	// q_world is: const quat<float> q_world = geom->m_orientation->get(args->primID);
+	// dir is: vec3<float> dir = vec3<float>(ray.dir_x, ray.dir_y, ray.dir_z);
+	// const vec3<float> pos_world = geom->m_position->get(args->primID);
+	//    vec3<float> ray_dir_local = rotate(conj(q_world), dir); //rotates ray direction by conjugate of shape's quaternion
+	//    vec3<float> ray_org_local = rotate(conj(q_world), vec3<float>(ray.org_x, ray.org_y, ray.org_z) - pos_world);
+
+	vec3<float> ray_dir_local = rotate(conj(q_ellipsoid), d);
+	vec3<float> ray_origin_local = rotate(conj(q_ellipsoid), o);
+	vec3<float> o_c_local = rotate(conj(q_ellipsoid), v);
 	
 	// matrix to scale an ellipsoid with half lengths a,b,c into a unit sphere
 	//M = {1/a, 0, 0}
 	//    {0, 1/b, 0}
 	//    {0, 0, 1/c}
-	
-	// scaled vector from ellipsoid to ray origin v'
-	vec3<float> vp = ;// v*M
-	// how to do matrix multiplication fast?
 
 	// scaled ray direction d'
-	vec3<float> dp ;
-	 
+	//vec3<Real> dp = (ray_dir_local.x/a, ray_dir_local.y/b, ray_dir_local.z/c);
+	vec3<float> dp = ray_dir_local / abc;
+
+	// scaled ray origin o'
+	vec3<float> op = ray_origin_local / abc;
+
+	// scaled vector from ellipsoid to ray origin v' ("prime")
+	//vec3<Real> vp = (o_c_local.x/a, o_c_local.y/b, o_c_local.z/c);
+	vec3<float> vp = o_c_local / abc;
+	
     // solve intersection via quadratic formula
 	float b = dot(vp, dp); // b = b' = v' dot d'
     float det = b * b - dot(vp, vp) + 1;
