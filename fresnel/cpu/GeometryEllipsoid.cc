@@ -86,8 +86,8 @@ void GeometryEllipsoid::intersect(const struct RTCIntersectFunctionNArguments* a
     {
     GeometryEllipsoid* geom = (GeometryEllipsoid*)args->geometryUserPtr;
     const vec3<float> position = geom->m_position->get(args->primID);
-	vec3<float> radii = geom->m_radii->get(args->primID);
 	quat<float> orientation = geom->m_orientation(args->primID)
+	const vec3<float> radii = geom->m_radii->get(args->primID);
     RTCRayHit& rayhit = *(RTCRayHit*)args->rayhit;
     RTCRay& ray = rayhit.ray;
 
