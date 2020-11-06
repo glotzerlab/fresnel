@@ -645,7 +645,7 @@ class Ellipsoid(Geometry):
     @property
     def radii(self):
         """(N, 3) `Array`: The radii of each ellipsoid."""
-        return util.Array(self._geometry.getRadiiiBuffer(), geom=self)
+        return util.Array(self._geometry.getRadiiBuffer(), geom=self)
 
     @property
     def orientation(self):
