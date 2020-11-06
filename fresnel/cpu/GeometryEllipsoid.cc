@@ -33,7 +33,7 @@ GeometryEllipsoid::GeometryEllipsoid(std::shared_ptr<Scene> scene, unsigned int 
     // initialize the buffers
     m_position = std::shared_ptr<Array<vec3<float>>>(new Array<vec3<float>>(N));
     m_radii = std::shared_ptr<Array<vec3<float>>>(new Array<vec3<float>>(N));
-	m_orientation = std::shared_ptr<Array<quat<float>>>(new Array<quat<float>>);
+	m_orientation = std::shared_ptr<Array<quat<float>>>(new Array<quat<float>>(N));
     m_color = std::shared_ptr<Array<RGB<float>>>(new Array<RGB<float>>(N));
 
     // register functions for embree
