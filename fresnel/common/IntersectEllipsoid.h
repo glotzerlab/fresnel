@@ -105,7 +105,7 @@ DEVICE inline bool intersect_ray_ellipsoid(float& t,
     if (t > ellipsoid_epsilon)
         {
 			//N = o + t * d - p; // this just gives the radius of the sphere directed toward impact point
-			const float Np = op + t * dp - p;
+			const vec3<float> Np = op + t * dp - p;
 			// transform N back to world coordinates
 			N = Np * abc;
 			N = rotate(q_ellipsoid, Np)
@@ -117,7 +117,7 @@ DEVICE inline bool intersect_ray_ellipsoid(float& t,
     if (t > ellipsoid_epsilon)
         {
 			// N = -(o + t * d - p);
-			const float Np = -(op + t * dp -p);
+			const vec3<float> Np = -(op + t * dp -p);
 			N = Np * abc;
 			N = rotate(q_ellipsoid, Np)
         return true;
