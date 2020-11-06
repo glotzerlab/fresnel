@@ -65,7 +65,7 @@ void GeometryEllipsoid::bounds(const struct RTCBoundsFunctionArguments* args)
 	vec3<float> radii = geom->m_radii->get(args->primID);
 
 	// Use a too-big box for now
-    float max_radius = std::max_element(radii.begin(), radii.end());
+	float max_radius = fmax(radii.x, fmax(radii.y, radii.z));
     RTCBounds& bounds_o = *args->bounds_o;
     bounds_o.lower_x = p.x - max_radius;
     bounds_o.lower_y = p.y - max_radius;
