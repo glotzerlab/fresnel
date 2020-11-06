@@ -49,7 +49,7 @@ class GeometryEllipsoid : public Geometry
 	//! Get the orientation buffer
 	std::shared_ptr<Array<quat<float>>> getOrientationBuffer()
 		{
-		return m_orientation
+		return m_orientation;
 		}
 
     //! Get the color buffer
