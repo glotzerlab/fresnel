@@ -636,7 +636,7 @@ class Ellipsoid(Geometry):
         #     [numpy.min(pos - r, axis=0),
         #      numpy.max(pos + r, axis=0)])
         # res = numpy.array([([-2,-2,-2]), numpy.array([2,2,2])])
-        res = numpy.array([[-2,-2,-2],[2,2,2]]).T
+        res = numpy.array([[-2,-2,-2],[2,2,2]])
         return res
 
     @property
