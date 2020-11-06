@@ -28,7 +28,8 @@ const float ellipsoid_epsilon = 1e-4f;
     \param o Ray origin
     \param d Ray direction (normalized)
     \param p Ellipsoid position
-    \param r Ellipsoid radius
+    \param abc Ellipsoid radii a, b and c
+	\param quat q_ellipsoid unit quaternion of the ellipsoid's orientation
 
     \returns True if the ray intersects the sphere, False if it does not.
 
@@ -42,7 +43,7 @@ DEVICE inline bool intersect_ray_ellipsoid(float& t,
                                         const vec3<float>& d,
                                         const vec3<float>& p,
 										const vec3<float>& abc,
-                                        const float r)
+										const quat<float>& q_ellipsoid)
     {
     // vector from ellipsoid to ray origin
     vec3<float> v = p - o;
