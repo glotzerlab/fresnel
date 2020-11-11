@@ -46,7 +46,6 @@ class _CameraController3D:
         camera (Camera): The camera to control.
 
     Note:
-
         Call `start` on a mouse down event and then `orbit`, `pan` or `zoom`
         on mouse move events to adjust the camera from that starting point.
     """
@@ -301,7 +300,6 @@ class SceneView(QWidget):
             print("FPS:", self._frames_painted / delta_t)
             self._frames_painted = 0
 
-
     def resizeEvent(self, event):  # noqa
         """Adjust the size of the tracer as the window resizes.
 
@@ -334,7 +332,6 @@ class SceneView(QWidget):
             self._camera_controller.zoom(-delta.y(),
                                          slight=event.modifiers()
                                          & QtCore.Qt.ControlModifier)
-
 
         elif self._camera_update_mode == 'pan':
             h = self.height()
@@ -382,8 +379,8 @@ class SceneView(QWidget):
 
         self._camera_controller.start()
         self._camera_controller.zoom(event.angleDelta().y(),
-                                    slight=event.modifiers()
-                                    & QtCore.Qt.ControlModifier)
+                                     slight=event.modifiers()
+                                     & QtCore.Qt.ControlModifier)
 
         self._render_high_res = False
         self._low_res_timer.start(self.TIMEOUT)
