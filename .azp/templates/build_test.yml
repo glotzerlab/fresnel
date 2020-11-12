@@ -15,7 +15,7 @@ steps:
   displayName: Unit test
   workingDirectory: $(Build.BinariesDirectory)
 
-- script: for i in *.py; python3 $i; done
+- script: for i in *.py; do python3 $i; done
   displayName: Render gallery images
   workingDirectory: doc/gallery
   env:
