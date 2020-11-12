@@ -15,9 +15,9 @@ steps:
   displayName: Unit test
   workingDirectory: $(Build.BinariesDirectory)
 
-- script: for i in *.py; do python3 $i; done
+- script: for i in *.py; do python3 $i || exit 1; done
   displayName: Render gallery images
-  condition: eq(variables.test_gallery_images, true)
+  condition: and(succeeded(), eq(variables.test_gallery_images, true))
   workingDirectory: doc/gallery
   env:
     PYTHONPATH: $(Build.BinariesDirectory)

@@ -1,5 +1,5 @@
 variables:
-  image_root: glotzerlab/ci:2020.05
+  image_root: glotzerlab/ci:2020.07
   private_image_root: joaander/ci:2019.11
 
 trigger: none
@@ -31,7 +31,9 @@ stages:
     displayName: Linux
     strategy:
       matrix:
-        gcc10_py38:
+        gcc10_py39:
+          unused: ""
+        clang11_py39:
           unused: ""
         gcc9_py38:
           unused: ""
@@ -89,7 +91,7 @@ stages:
     steps:
     - script: brew install python tbb embree cmake ninja pybind11 qhull
       displayName: Brew install prereqs
-    - script: python3 -m pip install pytest pillow numpy
+    - script: python3 -m pip install pytest pillow numpy matplotlib
       displayName: Pip install prereqs
     - template: templates/build_test.yml
 
