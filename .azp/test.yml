@@ -2,11 +2,19 @@ variables:
   image_root: glotzerlab/ci:2020.05
   private_image_root: joaander/ci:2019.11
 
-trigger:
-  batch: true
+trigger: none
+
+pr:
+  - maint
+  - master
+
+schedules:
+- cron: "0 2 * * *"
+  displayName: Daily 10PM build
+  # 2am UTC is 10PM eastern time
   branches:
     include:
-    - '*'
+    - "*"
 
 stages:
 - stage: build_test_cpu
@@ -16,12 +24,12 @@ stages:
   variables:
     enable_embree: 'on'
     enable_optix: 'off'
+    test_gallery_images: False
 
   jobs:
   - job: linux_cpu
     displayName: Linux
     strategy:
-      maxParallel: 5
       matrix:
         gcc10_py38:
           unused: ""
@@ -73,6 +81,7 @@ stages:
 
         mac10_15:
           mac_image: macOS-10.15
+          test_gallery_images: True
 
     pool:
       vmImage: '$(mac_image)'

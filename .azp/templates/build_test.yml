@@ -17,6 +17,7 @@ steps:
 
 - script: for i in *.py; do python3 $i; done
   displayName: Render gallery images
+  condition: eq(variables.test_gallery_images, true)
   workingDirectory: doc/gallery
   env:
     PYTHONPATH: $(Build.BinariesDirectory)
