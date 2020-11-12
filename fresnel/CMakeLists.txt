@@ -72,10 +72,11 @@ foreach(ptx_file ${_ptx_files})
 endforeach()
 
 set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -Xcudafe --diag_suppress=code_is_unreachable")
-set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -arch compute_30 --use_fast_math")
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --use_fast_math")
 
 add_library(_ptx OBJECT ${_ptx_sources})
 set_property(TARGET _ptx PROPERTY CUDA_PTX_COMPILATION ON)
+set_property(TARGET _ptx PROPERTY CUDA_ARCHITECTURES 61-virtual)
 target_compile_features(_ptx PUBLIC cxx_std_11)
 
 add_custom_command(
