@@ -62,5 +62,9 @@ out = fresnel.pathtrace(scene, w=600, h=600, samples=128, light_samples=64)
 PIL.Image.fromarray(out[:], mode='RGBA').save('gumballs.png')
 
 if len(sys.argv) > 1 and sys.argv[1] == 'hires':
-    out = fresnel.pathtrace(scene, w=1500, h=1500, samples=256, light_samples=64)
+    out = fresnel.pathtrace(scene,
+                            w=1500,
+                            h=1500,
+                            samples=256,
+                            light_samples=64)
     PIL.Image.fromarray(out[:], mode='RGBA').save('gumballs-hires.png')

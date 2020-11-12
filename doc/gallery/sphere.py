@@ -25,5 +25,9 @@ out = fresnel.pathtrace(scene, samples=64, light_samples=32, w=580, h=580)
 PIL.Image.fromarray(out[:], mode='RGBA').save('sphere.png')
 
 if len(sys.argv) > 1 and sys.argv[1] == 'hires':
-    out = fresnel.pathtrace(scene, samples=256, light_samples=16, w=1380, h=1380)
+    out = fresnel.pathtrace(scene,
+                            samples=256,
+                            light_samples=16,
+                            w=1380,
+                            h=1380)
     PIL.Image.fromarray(out[:], mode='RGBA').save('sphere-hires.png')
