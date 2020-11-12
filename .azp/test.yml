@@ -145,7 +145,7 @@ stages:
       vmImage: 'ubuntu-latest'
 
     container:
-      image: $(image_root)-clang10_py38
+      image: $(image_root)-gcc7_py37
       options: -u 0
 
     workspace:
