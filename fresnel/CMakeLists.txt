@@ -121,19 +121,8 @@ endif()
 #####################################################
 ### Python only modules
 
-# copy python modules to the build directory to make it a working python package
-MACRO(copy_file file)
-    add_custom_command (
-        OUTPUT ${file}
-        DEPENDS ${file}
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}/${file}
-        COMMENT    "Copy ${file}"
-    )
-ENDMACRO(copy_file)
-
 set(files __init__.py
+          conftest.py
           geometry.py
           tracer.py
           material.py
@@ -148,8 +137,6 @@ install(FILES ${files}
         DESTINATION ${PYTHON_SITE_INSTALL_DIR}
        )
 
-foreach(file ${files})
-    copy_file(${file})
-endforeach()
+copy_files_to_build("${files}" "fresnel" "*.py")
 
-add_custom_target(copy_python ALL DEPENDS ${files})
+add_subdirectory(test)
