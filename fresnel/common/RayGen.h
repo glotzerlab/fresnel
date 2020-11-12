@@ -79,8 +79,8 @@ class RayGen
         r123::Philox4x32::ctr_type rng_u = rng(rng_counter, m_rng_key);
 
         // randomly pick a point on the sphere
-        r123::float2 rng_gauss1 = r123::boxmuller(rng_u[0], rng_u[1]);
-        r123::float2 rng_gauss2 = r123::boxmuller(rng_u[2], rng_u[3]);
+        r123::float2 rng_gauss1 = r123::boxmuller(rng_u.v[0], rng_u.v[1]);
+        r123::float2 rng_gauss2 = r123::boxmuller(rng_u.v[2], rng_u.v[3]);
         vec3<float> l(rng_gauss1.x, rng_gauss1.y, rng_gauss2.x);
 
         l = l * fast::rsqrt(dot(l, l));
@@ -120,9 +120,9 @@ class RayGen
         r123::Philox4x32::ctr_type rng_u = rng(rng_counter, m_rng_key);
 
         // multiple importance sampling
-        vec2<float> xi(r123::u01<float>(rng_u[0]), r123::u01<float>(rng_u[1]));
-        float choice_mis = r123::u01<float>(rng_u[2]);
-        float choice_trans = r123::u01<float>(rng_u[3]);
+        vec2<float> xi(r123::u01<float>(rng_u.v[0]), r123::u01<float>(rng_u.v[1]));
+        float choice_mis = r123::u01<float>(rng_u.v[2]);
+        float choice_trans = r123::u01<float>(rng_u.v[3]);
 
         vec3<float> l;
         transmit = (choice_trans <= m.spec_trans);
@@ -174,7 +174,7 @@ class RayGen
 
         float p_continue = fmaxf(attenuation.r, fmaxf(attenuation.g, attenuation.b));
         p_continue = fminf(p_continue, 1.0f);
-        if (r123::u01<float>(rng_u[0]) > p_continue)
+        if (r123::u01<float>(rng_u.v[0]) > p_continue)
             {
             return true;
             }
