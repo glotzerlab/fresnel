@@ -39,6 +39,19 @@ class Camera(object):
         # `UserCamera` class up to date with all parameter changes.
         self._camera = _camera
 
+    def __copy__(self):
+        """Make a copy of this camera."""
+        cam = _common.UserCamera()
+        cam.model = self._camera.model
+        cam.position = self._camera.position
+        cam.look_at = self._camera.look_at
+        cam.up = self._camera.up
+        cam.h = self._camera.h
+        cam.f = self._camera.f
+        cam.f_stop = self._camera.f_stop
+        cam.focus_distance = self._camera.focus_distance
+        return _from_cpp(cam)
+
     @property
     def position(self):
         """((3, ) `numpy.ndarray` of ``numpy.float32``): Camera position."""
