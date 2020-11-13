@@ -77,8 +77,7 @@ class Geometry(object):
     @property
     def outline_material(self):
         """material.Material: Define how light interacts with the geometry's \
-            outline.
-        """
+            outline."""
         return material._OutlineMaterialProxy(self)
 
     @outline_material.setter
@@ -158,7 +157,8 @@ class Cylinder(Geometry):
 
         if outline_material is None:
             self.outline_material = globals()['material'].Material(solid=1,
-                                                                   color=(0,0,0))
+                                                                   color=(0, 0,
+                                                                          0))
         else:
             self.outline_material = outline_material
 
@@ -454,7 +454,9 @@ class Polygon(Geometry):
             self.material = material
 
         if outline_material is None:
-            self.outline_material = globals()['material'].Material(solid=1, color=(0,0,0))
+            self.outline_material = globals()['material'].Material(solid=1,
+                                                                   color=(0, 0,
+                                                                          0))
         else:
             self.outline_material = outline_material
 
@@ -563,7 +565,9 @@ class Sphere(Geometry):
             self.material = material
 
         if outline_material is None:
-            self.outline_material = globals()['material'].Material(solid=1, color=(0,0,0))
+            self.outline_material = globals()['material'].Material(solid=1,
+                                                                   color=(0, 0,
+                                                                          0))
         else:
             self.outline_material = outline_material
 
@@ -673,7 +677,9 @@ class Mesh(Geometry):
             self.material = material
 
         if outline_material is None:
-            self.outline_material = globals()['material'].Material(solid=1, color=(0,0,0))
+            self.outline_material = globals()['material'].Material(solid=1,
+                                                                   color=(0, 0,
+                                                                          0))
         else:
             self.outline_material = outline_material
 
@@ -808,7 +814,9 @@ class ConvexPolyhedron(Geometry):
             self.material = material
 
         if outline_material is None:
-            self.outline_material = globals()['material'].Material(solid=1, color=(0,0,0))
+            self.outline_material = globals()['material'].Material(solid=1,
+                                                                   color=(0, 0,
+                                                                          0))
         else:
             self.outline_material = outline_material
 

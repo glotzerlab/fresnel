@@ -157,6 +157,7 @@ class Scene(object):
 
     Args:
         device (Device): Device to use when rendering the scene.
+
         camera (camera.Camera): Camera to view the scene. When `None`,
           defaults to::
 
@@ -184,10 +185,7 @@ class Scene(object):
         - :doc:`examples/02-Advanced-topics/01-Devices`
     """
 
-    def __init__(self,
-                 device=None,
-                 camera=None,
-                 lights=None):
+    def __init__(self, device=None, camera=None, lights=None):
         if device is None:
             device = Device()
 
@@ -196,9 +194,9 @@ class Scene(object):
         self.geometry = []
         if camera is None:
             self.camera = globals()['camera'].Orthographic(position=(0, 0, 100),
-                                            look_at=(0, 0, 0),
-                                            up=(0, 1, 0),
-                                            height=100)
+                                                           look_at=(0, 0, 0),
+                                                           up=(0, 1, 0),
+                                                           height=100)
         else:
             self.camera = camera
 
