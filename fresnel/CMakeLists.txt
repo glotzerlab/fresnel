@@ -43,6 +43,11 @@ set(_cpu_sources
 
 pybind11_add_module(_cpu "${_cpu_sources}")
 target_link_libraries(_cpu PRIVATE embree)
+if(APPLE)
+    set_target_properties(_cpu PROPERTIES INSTALL_RPATH "@loader_path")
+else()
+    set_target_properties(_cpu PROPERTIES INSTALL_RPATH "\$ORIGIN")
+endif()
 install(TARGETS _cpu LIBRARY DESTINATION ${PYTHON_SITE_INSTALL_DIR})
 
 endif()
@@ -115,6 +120,11 @@ set(_gpu_sources
 
 pybind11_add_module(_gpu "${_gpu_sources}")
 target_link_libraries(_gpu PRIVATE ${optix_LIBRARY})
+if(APPLE)
+    set_target_properties(_gpu PROPERTIES INSTALL_RPATH "@loader_path")
+else()
+    set_target_properties(_gpu PROPERTIES INSTALL_RPATH "\$ORIGIN")
+endif()
 install(TARGETS _gpu LIBRARY DESTINATION ${PYTHON_SITE_INSTALL_DIR})
 endif()
 
