@@ -63,14 +63,17 @@ DEVICE inline bool intersect_ray_ellipsoid(float& t,
 	vec3<float> ray_origin_local = rotate(conj(q_ellipsoid), o);
 	vec3<float> o_c_local = rotate(conj(q_ellipsoid), v);
 	
-	// matrix to scale an ellipsoid with half lengths a,b,c into a unit sphere
+	// matrix to scale an aligned ellipsoid with half lengths a,b,c into a unit sphere
 	//M = {1/a, 0, 0}
 	//    {0, 1/b, 0}
 	//    {0, 0, 1/c}
 
 	// scaled ray direction d'
 	//vec3<Real> dp = (ray_dir_local.x/a, ray_dir_local.y/b, ray_dir_local.z/c);
-	vec3<float> dp = ray_dir_local / abc;
+	vec3<float> dp = ray_dir_local / abc; // this is not normalized
+
+	float dp2 = dot(dp,dp);
+	vec3<float> dpNorm = dp / fast::sqrt(dp2);
 
 	// scaled ray origin o'
 	vec3<float> op = ray_origin_local / abc;
@@ -81,31 +84,31 @@ DEVICE inline bool intersect_ray_ellipsoid(float& t,
 	
     // solve intersection via quadratic formula
 	float b = dot(vp, dp); // b = b' = v' dot d'
-    float det = b * b - dot(vp, vp) + 1; //I think this is wrong! missing a factor of dot(dp,dp) in second term
+    float det = b * b - dp2*dot(vp, vp) + dp2;
 
     // no solution when determinant is negative
     if (det < 0)
         return false;
 
     // the ray intersects the scaled ellipsoid, compute the distance in the viewing plane
-    const vec3<float> wp = cross(vp, dp);
+    const vec3<float> wp = cross(vp, dpNorm);
     const float Dsq = dot(wp, wp); // assumes ray direction, d, is normalized
     // The distance of the hit position from the edge of the scaled ellipsoid,
     // projected into the plane which has the ray as its normal
     d_edge = 1 - fast::sqrt(Dsq);
 
 	// TODO: transform back by multiplying by appropriate factors of a,b,c
-	//	d_edge = ;
+	// d_edge = ;
 	
     // solve the quadratic equation
     det = fast::sqrt(det);
 
     // first case
-    t = b - det;
+    t = (b - det) / dp2;
     if (t > ellipsoid_epsilon)
         {
 			//N = o + t * d - p; // this just gives the radius of the sphere directed toward impact point
-			const vec3<float> Np = op + t * dp - p;
+			const vec3<float> Np = op + t * dpNorm - p;
 			// transform N back to world coordinates
 			N = Np * abc;
 			N = rotate(q_ellipsoid, Np);
@@ -113,11 +116,11 @@ DEVICE inline bool intersect_ray_ellipsoid(float& t,
         }
 
     // second case (origin is inside the sphere)
-    t = b + det;
+    t = (b + det) / dp2;
     if (t > ellipsoid_epsilon)
         {
 			// N = -(o + t * d - p);
-			const vec3<float> Np = -(op + t * dp -p);
+			const vec3<float> Np = -(op + t * dpNorm - p);
 			N = Np * abc;
 			N = rotate(q_ellipsoid, Np);
         return true;
