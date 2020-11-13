@@ -435,7 +435,7 @@ class Polygon(Geometry):
     def __init__(self,
                  scene,
                  vertices,
-                 position=(0, 0, 0),
+                 position=(0, 0),
                  angle=0,
                  color=(0, 0, 0),
                  rounding_radius=0,
