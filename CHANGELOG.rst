@@ -6,6 +6,25 @@ Change log
 v0.x
 ----
 
+v0.13.0 (not yet released)
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Added*
+
+* Perspective camera.
+* Depth of field effect.
+
+*Changed*
+
+* Reduce latency in ``interact.SceneView`` while rotating the view.
+* Improve user experience with mouse rotations in ``interact.SceneView``.
+* [breaking] - Moved ``camera.orthographic`` to ``camera.Orthographic``.
+* [breaking] - Moved ``camera.fit`` moved to ``camera.Orthographic.fit``.
+
+*Removed*
+
+* [breaking] - "auto" camera in ``Scene``.
+
 v0.12.0 (2020-02-27)
 ^^^^^^^^^^^^^^^^^^^^
 

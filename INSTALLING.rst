@@ -15,13 +15,13 @@ Anaconda package
 `miniconda <http://conda.pydata.org/miniconda.html>`_.
 Then add the ``conda-forge`` channel and install **fresnel**::
 
-   ▶ conda config --add channels conda-forge
-   ▶ conda install fresnel
+   $ conda config --add channels conda-forge
+   $ conda install fresnel
 
 **jupyter** and **matplotlib** are required to execute the
 `fresnel example notebooks <https://github.com/glotzerlab/fresnel-examples>`_::
 
-   ▶ conda install jupyter matplotlib
+   $ conda install jupyter matplotlib
 
 .. note::
 
@@ -41,11 +41,11 @@ Obtain the source
 
 Download source releases directly from the web: https://glotzerlab.engin.umich.edu/downloads/fresnel::
 
-   ▶ curl -O https://glotzerlab.engin.umich.edu/downloads/fresnel/fresnel-v0.12.0.tar.gz
+   $ curl -O https://glotzerlab.engin.umich.edu/downloads/fresnel/fresnel-v0.12.0.tar.gz
 
 Or, clone using git::
 
-   ▶ git clone --recursive  https://github.com/glotzerlab/fresnel
+   $ git clone --recursive  https://github.com/glotzerlab/fresnel
 
 **Fresnel** uses git submodules. Either clone with the ``--recursive`` option, or execute ``git submodule update --init``
 to fetch the submodules.
@@ -57,16 +57,16 @@ When using a shared Python installation, create a `virtual environment
 <https://docs.python.org/3/library/venv.html>`_ where you can install
 **fresnel**::
 
-    ▶ python3 -m venv /path/to/virtual/environment --system-site-packages
+    $ python3 -m venv /path/to/virtual/environment --system-site-packages
 
 Activate the environment before configuring and before executing
 **fresnel** scripts::
 
-    ▶ source /path/to/virtual/environment/bin/activate
+    $ source /path/to/virtual/environment/bin/activate
 
 Tell CMake to search in the virtual environment first::
 
-    ▶ export CMAKE_PREFIX_PATH=/path/to/virtual/environment
+    $ export CMAKE_PREFIX_PATH=/path/to/virtual/environment
 
 .. note::
 
@@ -123,11 +123,11 @@ Install these tools with your system or virtual environment package manager. **f
 ``pacman`` (`arch linux <https://www.archlinux.org/>`_), ``apt-get`` (`ubuntu <https://ubuntu.com/>`_), `Homebrew
 <https://brew.sh/>`_ (macOS), and `MacPorts <https://www.macports.org/>`_ (macOS)::
 
-    ▶ your-package-manager install cmake doxygen embree pybind11 python python-pillow python-pytest python-sphinx python-sphinx_rtd_theme python-nbsphinx intell-tbb qhull
+    $ your-package-manager install cmake doxygen embree pybind11 python python-pillow python-pytest python-sphinx python-sphinx_rtd_theme python-nbsphinx intell-tbb qhull
 
 Typical HPC cluster environments provide python, numpy, and cmake via a module system::
 
-    ▶ module load gcc python cmake
+    $ module load gcc python cmake
 
 .. note::
 
@@ -144,11 +144,11 @@ Compile
 
 Configure with **cmake** and compile with **make**::
 
-   ▶ cd /path/to/fresnel
-   ▶ mkdir build
-   ▶ cd build
-   ▶ cmake ../
-   ▶ make install -j10
+   $ cd /path/to/fresnel
+   $ mkdir build
+   $ cd build
+   $ cmake ../
+   $ make install -j10
 
 By default, **fresnel** builds the Embree (CPU) backend. Pass ``-DENABLE_OPTIX=ON`` to **cmake** to enable the GPU
 accelerated OptiX backend.
@@ -156,26 +156,22 @@ accelerated OptiX backend.
 Run tests
 ^^^^^^^^^
 
-To test **fresnel** builds without installing, add the build directory to your ``PYTHONPATH``::
-
-   ▶ export PYTHONPATH=$PYTHONPATH:/path/to/fresnel/build
-
-Execute ``pytest`` in the source directory to run all tests.
+To run tests, execute ``pytest`` in the build directory or in an environment
+where fresnel is installed to run all tests.
 
 .. code-block:: bash
 
-   ▶ cd /path/to/fresnel
-   ▶ pytest
+   $ pytest --pyargs fresnel
 
 Build user documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 Build the user documentation with **sphinx**::
 
-   ▶ cd /path/to/fresnel
-   ▶ cd doc
-   ▶ make html
-   ▶ open build/html/index.html
+   $ cd /path/to/fresnel
+   $ cd doc
+   $ make html
+   $ open build/html/index.html
 
 Build C++ Documentation
 ^^^^^^^^^^^^^^^^^^^^^^^

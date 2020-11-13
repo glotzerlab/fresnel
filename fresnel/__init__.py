@@ -5,7 +5,7 @@
 """The fresnel ray tracing package.
 
 Attributes:
-    __version__ (str): Fresnel version
+    __version__ (str): Fresnel version: "<major>.<minor>.<patch>"
 """
 
 import os
@@ -70,10 +70,10 @@ class Device(object):
     """
 
     available_modes = []
-    """List[str]: Available execution modes."""
+    """list[str]: Available execution modes."""
 
     available_gpus = []
-    """List[str]: Available GPUS."""
+    """list[str]: Available GPUS."""
 
     def __init__(self, mode='auto', n=None):
         # determine the number of available GPUs
@@ -156,15 +156,25 @@ class Scene(object):
     """Content of the scene to ray trace.
 
     Args:
-        device (`Device`): Device to create this Scene on.
+        device (Device): Device to use when rendering the scene.
 
-    `Scene` defines the contents of the scene to be ray traced, including any
-    number of `Geometry` objects, the `Camera`, the `background_color`,
+        camera (camera.Camera): Camera to view the scene. When `None`,
+          defaults to::
+
+            camera.Orthographic(position=(0, 0, 100),
+                                look_at=(0, 0, 0),
+                                up=(0, 1, 0),
+                                height=100)
+
+        lights (list[Light]): Lights to light the scene. When `None`, defaults
+          to: ``light.rembrandt()``
+
+    `Scene` defines the contents of the scene to be traced, including any number
+    of `Geometry` objects, the `Camera`, the `background_color`,
     `background_alpha`, and `lights`.
 
     Every `Scene` must be associated with a `Device`. For convenience, `Scene`
-    creates a default `Device` when *device* is ``None``. To use a non-default
-    device, you must create it explicitly.
+    creates a default `Device` when *device* is ``None``.
 
     See Also:
         Tutorials:
@@ -175,21 +185,26 @@ class Scene(object):
         - :doc:`examples/02-Advanced-topics/01-Devices`
     """
 
-    def __init__(self,
-                 device=None,
-                 camera=camera.Orthographic(position=(0, 0, -1),
-                                            look_at=(0, 0, 0),
-                                            up=(0, 1, 0),
-                                            height=1),
-                 lights=light.rembrandt()):
+    def __init__(self, device=None, camera=None, lights=None):
         if device is None:
             device = Device()
 
         self._device = device
         self._scene = self.device.module.Scene(self.device._device)
         self.geometry = []
-        self.camera = camera
-        self.lights = lights
+        if camera is None:
+            self.camera = globals()['camera'].Orthographic(position=(0, 0, 100),
+                                                           look_at=(0, 0, 0),
+                                                           up=(0, 1, 0),
+                                                           height=100)
+        else:
+            self.camera = camera
+
+        if lights is None:
+            self.lights = light.rembrandt()
+        else:
+            self.lights = lights
+
         self._tracer = None
 
     def get_extents(self):
@@ -224,11 +239,15 @@ class Scene(object):
 
     @camera.setter
     def camera(self, value):
-        self._scene.setCamera(value._camera)
+        if isinstance(value, camera.Camera):
+            self._scene.setCamera(value._camera)
+        else:
+            raise TypeError(f"camera {value} is not a fresnel.camera.Camera")
 
     @property
     def background_color(self):
-        """((3, ) `numpy.ndarray` of ``numpy.float32``): Background color RGB.
+        """((3, ) `numpy.ndarray` of ``numpy.float32``): Background color \
+          linear RGB.
 
         Note:
             Use `fresnel.color.linear` to convert standard sRGB colors into the
@@ -252,37 +271,10 @@ class Scene(object):
 
     @property
     def lights(self):
-        """List[Light]): Lights in the scene.
+        """list[Light]: Lights in the scene.
 
         `lights` is a sequence of up to 4 directional lights that apply to the
-        scene. Each light has a direction, color, and size. You can assign
-        lights using one of the predefined setups in `fresnel.light`:
-
-        .. code-block:: python
-
-            scene.lights = fresnel.light.butterfly()
-
-        You can also assign a sequence of `Light` objects:
-
-        .. code-block:: python
-
-            scene.lights = [fresnel.light.Light(direction=(1,2,3))]
-
-        You can modify the lights in place:
-
-        .. code-block:: python
-
-            >>> print(len(scene.lights))
-            2
-            >>> scene.lights.append(fresnel.light.Light(direction=(1,0,0),
-                                                        color=(1,1,1)))
-            >>> print(len(scene.lights))
-            3
-            >>> print(l[2]).direction
-            (1,0,0)
-            >>> l[0].direction = (-1,0,0)
-            >>> print(l[0]).direction
-            (-1,0,0)
+        scene. Each light has a direction, color, and size.
         """
         return light._LightListProxy(self._scene.getLights())
 
@@ -304,7 +296,7 @@ def preview(scene, w=600, h=370, anti_alias=True):
         h (int): Output image height (in pixels).
         anti_alias (bool): Whether to perform anti-aliasing.
 
-    :py:func:`preview` is a shortcut to rendering output with `Preview`.
+    :py:func:`preview` is a shortcut that renders output with `tracer.Preview`.
     """
     t = tracer.Preview(scene.device, w=w, h=h, anti_alias=anti_alias)
     return t.render(scene)
@@ -322,7 +314,7 @@ def pathtrace(scene, w=600, h=370, samples=64, light_samples=1):
         light_samples (int): Number of light samples to take for each pixel
             sample.
 
-    :py:func:`pathtrace` is a shortcut to rendering output with `Path`.
+    :py:func:`pathtrace` is a shortcut that renders output with `tracer.Path`.
     """
     t = tracer.Path(scene.device, w=w, h=h)
     t.sample(scene, samples=samples, light_samples=light_samples)

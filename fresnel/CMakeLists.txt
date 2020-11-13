@@ -43,7 +43,12 @@ set(_cpu_sources
    )
 
 pybind11_add_module(_cpu "${_cpu_sources}")
-target_link_libraries(_cpu PRIVATE embree)
+target_link_libraries(_cpu PRIVATE embree TBB::tbb)
+if(APPLE)
+    set_target_properties(_cpu PROPERTIES INSTALL_RPATH "@loader_path")
+else()
+    set_target_properties(_cpu PROPERTIES INSTALL_RPATH "\$ORIGIN")
+endif()
 install(TARGETS _cpu LIBRARY DESTINATION ${PYTHON_SITE_INSTALL_DIR})
 
 endif()
@@ -73,10 +78,11 @@ foreach(ptx_file ${_ptx_files})
 endforeach()
 
 set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -Xcudafe --diag_suppress=code_is_unreachable")
-set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -arch compute_30 --use_fast_math")
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --use_fast_math")
 
 add_library(_ptx OBJECT ${_ptx_sources})
 set_property(TARGET _ptx PROPERTY CUDA_PTX_COMPILATION ON)
+set_property(TARGET _ptx PROPERTY CUDA_ARCHITECTURES 61-virtual)
 target_compile_features(_ptx PUBLIC cxx_std_11)
 
 add_custom_command(
@@ -115,25 +121,19 @@ set(_gpu_sources
 
 pybind11_add_module(_gpu "${_gpu_sources}")
 target_link_libraries(_gpu PRIVATE ${optix_LIBRARY})
+if(APPLE)
+    set_target_properties(_gpu PROPERTIES INSTALL_RPATH "@loader_path")
+else()
+    set_target_properties(_gpu PROPERTIES INSTALL_RPATH "\$ORIGIN")
+endif()
 install(TARGETS _gpu LIBRARY DESTINATION ${PYTHON_SITE_INSTALL_DIR})
 endif()
 
 #####################################################
 ### Python only modules
 
-# copy python modules to the build directory to make it a working python package
-MACRO(copy_file file)
-    add_custom_command (
-        OUTPUT ${file}
-        DEPENDS ${file}
-        POST_BUILD
-        COMMAND    ${CMAKE_COMMAND}
-        ARGS       -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}/${file}
-        COMMENT    "Copy ${file}"
-    )
-ENDMACRO(copy_file)
-
 set(files __init__.py
+          conftest.py
           geometry.py
           tracer.py
           material.py
@@ -148,8 +148,6 @@ install(FILES ${files}
         DESTINATION ${PYTHON_SITE_INSTALL_DIR}
        )
 
-foreach(file ${files})
-    copy_file(${file})
-endforeach()
+copy_files_to_build("${files}" "fresnel" "*.py")
 
-add_custom_target(copy_python ALL DEPENDS ${files})
+add_subdirectory(test)

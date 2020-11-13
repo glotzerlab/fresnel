@@ -11,14 +11,14 @@ steps:
   displayName: Compile
   workingDirectory: $(Build.BinariesDirectory)
 
-- script: python3 -m pytest -v --durations=0 -o junit_suite_name="${AGENT_JOBNAME}" --junit-xml=$(Common.TestResultsDirectory)/test.xml
+- script: python3 -m pytest -v --durations=0
   displayName: Unit test
-  workingDirectory: test
+  workingDirectory: $(Build.BinariesDirectory)
+
+- script: for i in *.py; do python3 $i || exit 1; done
+  displayName: Render gallery images
+  condition: and(succeeded(), eq(variables.test_gallery_images, true))
+  workingDirectory: doc/gallery
   env:
     PYTHONPATH: $(Build.BinariesDirectory)
 
-- task: PublishTestResults@2
-  condition: always()
-  inputs:
-    testResultsFormat: 'JUnit'
-    testResultsFiles: '$(Common.TestResultsDirectory)/test.xml'

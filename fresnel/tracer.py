@@ -171,7 +171,7 @@ class Preview(Tracer):
 
     @property
     def anti_alias(self):
-        """Whether to perform anti-aliasing."""
+        """bool: Whether to perform anti-aliasing."""
         return self._tracer.getAntialiasingN() > 1
 
     @anti_alias.setter
