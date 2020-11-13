@@ -36,7 +36,7 @@ class Array(object):
     data as a `numpy.ndarray` each time it is called.
 
     Attributes:
-        shape (Tuple[int, [int]]): Dimensions of the array.
+        shape (tuple[int, [int]]): Dimensions of the array.
         dtype: Numpy data type
     """
 
@@ -105,7 +105,7 @@ def convex_polyhedron_from_vertices(vertices):
             polyhedron.
 
     Returns:
-        Dict: Convex hull of *vertices* in a format used by `ConvexPolyhedron`.
+        dict: Convex hull of *vertices* in a format used by `ConvexPolyhedron`.
 
         The dictionary contains the keys ``face_origin``, ``face_normal``,
         ``face_color``, and ``radius``.

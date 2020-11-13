@@ -134,7 +134,7 @@ def butterfly():
     the camera.
 
     Returns:
-        List[Light]: The lights.
+        list[Light]: The lights.
     """
     res = []
     theta1 = 50 * math.pi / 180
@@ -162,7 +162,7 @@ def loop(side='right'):
             place the key light.
 
     Returns:
-        List[Light]: The lights.
+        list[Light]: The lights.
     """
     sign = {'right': 1, 'left': -1}
 
@@ -196,7 +196,7 @@ def rembrandt(side='right'):
             place the key light.
 
     Returns:
-        List[Light]: The lights.
+        list[Light]: The lights.
     """
     sign = {'right': 1, 'left': -1}
 
@@ -226,7 +226,7 @@ def lightbox():
     setup.
 
     Returns:
-        List[Light]: The lights.
+        list[Light]: The lights.
     """
     res = []
     res.append(Light(direction=(0, 0, 1), color=(0.9, 0.9, 0.9), theta=math.pi))
@@ -242,7 +242,7 @@ def cloudy():
     with this setup.
 
     Returns:
-        List[Light]: The lights.
+        list[Light]: The lights.
     """
     res = []
     res.append(
@@ -260,7 +260,7 @@ def ring():
     results with this setup.
 
     Returns:
-        List[Light]: The lights.
+        list[Light]: The lights.
     """
     res = []
     res.append(

@@ -46,7 +46,7 @@ class Material(object):
 
     def __init__(self,
                  solid=0,
-                 color=(0, 0, 0),
+                 color=(0.9, 0.9, 0.9),
                  primitive_color_mix=0,
                  roughness=0.3,
                  specular=0.5,
