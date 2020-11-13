@@ -42,7 +42,7 @@ set(_cpu_sources
    )
 
 pybind11_add_module(_cpu "${_cpu_sources}")
-target_link_libraries(_cpu PRIVATE embree)
+target_link_libraries(_cpu PRIVATE embree TBB::tbb)
 if(APPLE)
     set_target_properties(_cpu PROPERTIES INSTALL_RPATH "@loader_path")
 else()
