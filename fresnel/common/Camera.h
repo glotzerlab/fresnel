@@ -197,8 +197,8 @@ class Camera
             r123::Philox4x32 rng;
             r123::Philox4x32::ctr_type rng_counter = {{0, 0, sample, rng_val_aperture}};
             r123::Philox4x32::ctr_type rng_u = rng(rng_counter, rng_key);
-            float theta = r123::u01<float>(rng_u[0]) * 2.0f * float(M_PI);
-            float r = r123::u01<float>(rng_u[1]) * m_a * 0.5f;
+            float theta = r123::u01<float>(rng_u.v[0]) * 2.0f * float(M_PI);
+            float r = r123::u01<float>(rng_u.v[1]) * m_a * 0.5f;
 
             vec3<float> offset = r * cosf(theta) * m_basis.u + r * sinf(theta) * m_basis.v;
             origin = m_p + offset;
@@ -238,8 +238,8 @@ class Camera
             r123::Philox4x32 rng;
             r123::Philox4x32::ctr_type rng_counter = {{0, 0, sample, rng_val_aa}};
             r123::Philox4x32::ctr_type rng_u = rng(rng_counter, rng_uk);
-            float r1 = r123::u01<float>(rng_u[0]) * 2.0f;
-            float r2 = r123::u01<float>(rng_u[1]) * 2.0f;
+            float r1 = r123::u01<float>(rng_u.v[0]) * 2.0f;
+            float r2 = r123::u01<float>(rng_u.v[1]) * 2.0f;
 
             // use important sampling to sample the tent filter
             float dx, dy;

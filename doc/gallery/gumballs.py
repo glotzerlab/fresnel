@@ -4,6 +4,7 @@ import fresnel
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
 import PIL
+import sys
 
 # First, we create a color map for gumballs.
 colors = [
@@ -44,8 +45,12 @@ geometry = fresnel.geometry.Sphere(
 )
 
 # Configure camera and lighting.
-scene.camera = fresnel.camera.fit(scene, view='front')
-scene.camera.height = 10
+scene.camera = fresnel.camera.Perspective(position=(0, 0, 25),
+                                          look_at=(0, 0, 0),
+                                          up=(0, 1, 0),
+                                          focal_length=0.5,
+                                          f_stop=0.25)
+scene.camera.focus_on = (0, 0, 5.6)
 scene.lights = fresnel.light.lightbox()
 scene.lights.append(
     fresnel.light.Light(direction=(0.3, -0.3, 1),
@@ -56,5 +61,10 @@ scene.lights.append(
 out = fresnel.pathtrace(scene, w=600, h=600, samples=128, light_samples=64)
 PIL.Image.fromarray(out[:], mode='RGBA').save('gumballs.png')
 
-out = fresnel.pathtrace(scene, w=1500, h=1500, samples=256, light_samples=64)
-PIL.Image.fromarray(out[:], mode='RGBA').save('gumballs-hires.png')
+if len(sys.argv) > 1 and sys.argv[1] == 'hires':
+    out = fresnel.pathtrace(scene,
+                            w=1500,
+                            h=1500,
+                            samples=256,
+                            light_samples=64)
+    PIL.Image.fromarray(out[:], mode='RGBA').save('gumballs-hires.png')

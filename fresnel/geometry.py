@@ -67,7 +67,7 @@ class Geometry(object):
 
     @property
     def material(self):
-        """Material: Define how light interacts with the geometry."""
+        """material.Material: Define how light interacts with the geometry."""
         return material._MaterialProxy(self)
 
     @material.setter
@@ -76,7 +76,8 @@ class Geometry(object):
 
     @property
     def outline_material(self):
-        """Material: Define how light interacts with the geometry's outline."""
+        """material.Material: Define how light interacts with the geometry's \
+            outline."""
         return material._OutlineMaterialProxy(self)
 
     @outline_material.setter
@@ -110,8 +111,17 @@ class Cylinder(Geometry):
         color ((N, 2, 3) `numpy.ndarray` of ``float32``): Color of each start
             and end point.
 
-        N (int): Number of cylinders in the geometry. If ``None``, determine
+        N (int): Number of cylinders in the geometry. When `None`, determine
             *N* from *points*.
+
+        material (material.Material): Define how light interacts with the
+            geometry. When `None`, defaults to ``material.Material()``.
+
+        outline_material (material.Material): Define how light interacts with \
+            the geometry's outline. When `None`, defaults to solid black
+            ``material.Material(solid=1, color=(0,0,0))``.
+
+        outline_width (float): Width of the outline in scene units.
 
     See Also:
         Tutorials:
@@ -133,15 +143,25 @@ class Cylinder(Geometry):
                  radius=0.5,
                  color=(0, 0, 0),
                  N=None,
-                 material=material.Material(solid=1.0, color=(1, 0, 1)),
-                 outline_material=material.Material(solid=1.0, color=(0, 0, 0)),
+                 material=None,
+                 outline_material=None,
                  outline_width=0.0):
         if N is None:
             N = len(points)
 
         self._geometry = scene.device.module.GeometryCylinder(scene._scene, N)
-        self.material = material
-        self.outline_material = outline_material
+        if material is None:
+            self.material = globals()['material'].Material()
+        else:
+            self.material = material
+
+        if outline_material is None:
+            self.outline_material = globals()['material'].Material(solid=1,
+                                                                   color=(0, 0,
+                                                                          0))
+        else:
+            self.outline_material = outline_material
+
         self.outline_width = outline_width
 
         self.points[:] = points
@@ -192,6 +212,7 @@ class Box(Cylinder):
     """Box geometry.
 
     Generate a triclinic box outline with `spherocylinders <Cylinder>`.
+    The geometry's material defaults to ``material.Material(solid=1.0)``.
 
     Args:
         scene (Scene): Add the geometry to this scene.
@@ -199,7 +220,7 @@ class Box(Cylinder):
         box ((1, ), (3, ), or (6, ) `numpy.ndarray` of ``float32``): Box
             parameters.
 
-        radius (float): Radius of box edges.
+        box_radius (float): Radius of box edges.
 
         box_color ((3, ) `numpy.ndarray` of ``float32``): Color of the box
             edges.
@@ -392,6 +413,15 @@ class Polygon(Geometry):
         N (int): Number of polygons in the geometry. If ``None``, determine
             *N* from *position*.
 
+        material (material.Material): Define how light interacts with the
+            geometry. When `None`, defaults to ``material.Material()``.
+
+        outline_material (material.Material): Define how light interacts with \
+            the geometry's outline. When `None`, defaults to solid black
+            ``material.Material(solid=1, color=(0,0,0))``.
+
+        outline_width (float): Width of the outline in scene units.
+
     See Also:
         Tutorials:
 
@@ -405,21 +435,31 @@ class Polygon(Geometry):
     def __init__(self,
                  scene,
                  vertices,
-                 position=(0, 0, 0),
+                 position=(0, 0),
                  angle=0,
                  color=(0, 0, 0),
                  rounding_radius=0,
                  N=None,
-                 material=material.Material(solid=1.0, color=(1, 0, 1)),
-                 outline_material=material.Material(solid=1.0, color=(0, 0, 0)),
+                 material=None,
+                 outline_material=None,
                  outline_width=0.0):
         if N is None:
             N = len(position)
 
         self._geometry = scene.device.module.GeometryPolygon(
             scene._scene, vertices, rounding_radius, N)
-        self.material = material
-        self.outline_material = outline_material
+        if material is None:
+            self.material = globals()['material'].Material()
+        else:
+            self.material = material
+
+        if outline_material is None:
+            self.outline_material = globals()['material'].Material(solid=1,
+                                                                   color=(0, 0,
+                                                                          0))
+        else:
+            self.outline_material = outline_material
+
         self.outline_width = outline_width
 
         self.position[:] = position
@@ -482,6 +522,15 @@ class Sphere(Geometry):
         N (int): Number of spheres in the geometry. If ``None``, determine *N*
             from *position*.
 
+        material (material.Material): Define how light interacts with the
+            geometry. When `None`, defaults to ``material.Material()``.
+
+        outline_material (material.Material): Define how light interacts with \
+            the geometry's outline. When `None`, defaults to solid black
+            ``material.Material(solid=1, color=(0,0,0))``.
+
+        outline_width (float): Width of the outline in scene units.
+
     See Also:
         Tutorials:
 
@@ -502,15 +551,26 @@ class Sphere(Geometry):
                  radius=0.5,
                  color=(0, 0, 0),
                  N=None,
-                 material=material.Material(solid=1.0, color=(1, 0, 1)),
-                 outline_material=material.Material(solid=1.0, color=(0, 0, 0)),
+                 material=None,
+                 outline_material=None,
                  outline_width=0.0):
         if N is None:
             N = len(position)
 
         self._geometry = scene.device.module.GeometrySphere(scene._scene, N)
-        self.material = material
-        self.outline_material = outline_material
+
+        if material is None:
+            self.material = globals()['material'].Material()
+        else:
+            self.material = material
+
+        if outline_material is None:
+            self.outline_material = globals()['material'].Material(solid=1,
+                                                                   color=(0, 0,
+                                                                          0))
+        else:
+            self.outline_material = outline_material
+
         self.outline_width = outline_width
 
         self.position[:] = position
@@ -576,6 +636,15 @@ class Mesh(Geometry):
         N (int): Number of mesh instances in the geometry. If ``None``,
             determine *N* from *position*.
 
+        material (material.Material): Define how light interacts with the
+            geometry. When `None`, defaults to ``material.Material()``.
+
+        outline_material (material.Material): Define how light interacts with \
+            the geometry's outline. When `None`, defaults to solid black
+            ``material.Material(solid=1, color=(0,0,0))``.
+
+        outline_width (float): Width of the outline in scene units.
+
     See Also:
         Tutorials:
 
@@ -593,8 +662,8 @@ class Mesh(Geometry):
                  orientation=(1, 0, 0, 0),
                  color=(0, 0, 0),
                  N=None,
-                 material=material.Material(solid=1.0, color=(1, 0, 1)),
-                 outline_material=material.Material(solid=1.0, color=(0, 0, 0)),
+                 material=None,
+                 outline_material=None,
                  outline_width=0.0):
         if N is None:
             N = len(position)
@@ -602,8 +671,18 @@ class Mesh(Geometry):
         self.vertices = numpy.asarray(vertices, dtype=numpy.float32)
         self._geometry = scene.device.module.GeometryMesh(
             scene._scene, self.vertices, N)
-        self.material = material
-        self.outline_material = outline_material
+        if material is None:
+            self.material = globals()['material'].Material()
+        else:
+            self.material = material
+
+        if outline_material is None:
+            self.outline_material = globals()['material'].Material(solid=1,
+                                                                   color=(0, 0,
+                                                                          0))
+        else:
+            self.outline_material = outline_material
+
         self.outline_width = outline_width
 
         self.position[:] = position
@@ -690,6 +769,15 @@ class ConvexPolyhedron(Geometry):
         N (int): Number of spheres in the geometry. If ``None``, determine *N*
             from *position*.
 
+        material (material.Material): Define how light interacts with the
+            geometry. When `None`, defaults to ``material.Material()``.
+
+        outline_material (material.Material): Define how light interacts with \
+            the geometry's outline. When `None`, defaults to solid black
+            ``material.Material(solid=1, color=(0,0,0))``.
+
+        outline_width (float): Width of the outline in scene units.
+
     See Also:
         Tutorials:
 
@@ -707,8 +795,8 @@ class ConvexPolyhedron(Geometry):
                  orientation=(1, 0, 0, 0),
                  color=(0, 0, 0),
                  N=None,
-                 material=material.Material(solid=1.0, color=(1, 0, 1)),
-                 outline_material=material.Material(solid=1.0, color=(0, 0, 0)),
+                 material=None,
+                 outline_material=None,
                  outline_width=0.0):
         if N is None:
             N = len(position)
@@ -719,8 +807,19 @@ class ConvexPolyhedron(Geometry):
         r = polyhedron_info['radius']
         self._geometry = scene.device.module.GeometryConvexPolyhedron(
             scene._scene, origins, normals, face_colors, N, r)
-        self.material = material
-        self.outline_material = outline_material
+
+        if material is None:
+            self.material = globals()['material'].Material()
+        else:
+            self.material = material
+
+        if outline_material is None:
+            self.outline_material = globals()['material'].Material(solid=1,
+                                                                   color=(0, 0,
+                                                                          0))
+        else:
+            self.outline_material = outline_material
+
         self.outline_width = outline_width
         self._radius = r
 
