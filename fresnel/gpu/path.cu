@@ -107,6 +107,11 @@ RT_PROGRAM void path_ray_gen()
     float4 old_mean_f = linear_output_buffer[launch_index];
     RGBA<float> old_mean = RGBA<float>(old_mean_f.x, old_mean_f.y, old_mean_f.z, old_mean_f.w);
     RGBA<float> output_pixel = old_mean + (output_sample - old_mean) / float(n_samples);
+
+    // output pixels occasionally evaluate to NaN in the GPU code path, ignore these
+    if (!isfinite(output_pixel.r) || !isfinite(output_pixel.g) || !isfinite(output_pixel.b))
+        output_pixel = old_mean;
+
     linear_output_buffer[launch_index]
         = make_float4(output_pixel.r, output_pixel.g, output_pixel.b, output_pixel.a);
 
