@@ -3,9 +3,6 @@
 # License.
 
 """The fresnel ray tracing package.
-
-Attributes:
-    __version__ (str): Fresnel version: "<major>.<minor>.<patch>"
 """
 
 import os
@@ -22,8 +19,6 @@ if _common.cpu_built():
     from . import _cpu
 if _common.gpu_built():
     from . import _gpu
-
-__version__ = "0.12.0"
 
 
 class Device(object):

@@ -37,3 +37,4 @@ fresnel
    module-material
    module-tracer
    module-util
+   module-version
