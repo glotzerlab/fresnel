@@ -5,7 +5,6 @@
 """Version and build information.
 
 Attributes:
-
     version (str): HOOMD-blue package version, following semantic versioning.
 """
 

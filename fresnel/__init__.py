@@ -2,8 +2,7 @@
 # This file is part of the Fresnel project, released under the BSD 3-Clause
 # License.
 
-"""The fresnel ray tracing package.
-"""
+"""The fresnel ray tracing package."""
 
 import os
 import numpy
