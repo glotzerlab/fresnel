@@ -51,27 +51,14 @@ DEVICE inline bool intersect_ray_ellipsoid(float& t,
 	// replace v with ray_dir_local
 	// replace o with ray_org_local
 	
-	  // transform the ray into the primitive coordinate system
-	// ray is: RTCRay& ray = rayhit.ray;
-	// q_world is: const quat<float> q_world = geom->m_orientation->get(args->primID);
-	// dir is: vec3<float> dir = vec3<float>(ray.dir_x, ray.dir_y, ray.dir_z);
-	// const vec3<float> pos_world = geom->m_position->get(args->primID);
-	//    vec3<float> ray_dir_local = rotate(conj(q_world), dir); //rotates ray direction by conjugate of shape's quaternion
-	//    vec3<float> ray_org_local = rotate(conj(q_world), vec3<float>(ray.org_x, ray.org_y, ray.org_z) - pos_world);
-
 	vec3<float> ray_dir_local = rotate(conj(q_ellipsoid), d);
 	vec3<float> ray_origin_local = rotate(conj(q_ellipsoid), o);
-	vec3<float> o_c_local = rotate(conj(q_ellipsoid), v);
-	
-	// matrix to scale an aligned ellipsoid with half lengths a,b,c into a unit sphere
-	//M = {1/a, 0, 0}
-	//    {0, 1/b, 0}
-	//    {0, 0, 1/c}
 
 	// scaled ray direction d'
-	//vec3<Real> dp = (ray_dir_local.x/a, ray_dir_local.y/b, ray_dir_local.z/c);
-	vec3<float> dp = ray_dir_local / abc; // this is not normalized
+	vec3<float> dp = ray_dir_local / abc;
 
+	// normalize dp
+	// TODO figure out how to optimize when to normalize and when not to
 	float dp2 = dot(dp,dp);
 	vec3<float> dpNorm = dp / fast::sqrt(dp2);
 
