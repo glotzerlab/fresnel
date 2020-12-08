@@ -45,14 +45,18 @@ DEVICE inline bool intersect_ray_ellipsoid(float& t,
 										const vec3<float>& abc,
 										const quat<float>& q_ellipsoid)
     {
-    // vector from ellipsoid to ray origin
+    // vector from ray origin to ellipsoid position
     vec3<float> v = p - o;
 
 	// replace v with ray_dir_local
 	// replace o with ray_org_local
 	
+	// transform the ray into the primitive coordinate system
 	vec3<float> ray_dir_local = rotate(conj(q_ellipsoid), d);
-	vec3<float> ray_origin_local = rotate(conj(q_ellipsoid), o);
+	vec3<float> ray_pos_local = rotate(conj(q_ellipsoid), o);
+	vec3<float> ray_ellipsoid_local = rotate(conj(q_ellipsoid), v);
+	// Now the world axes have been rotated around so that the x axis
+	// is aligned with the direction of the a radius of the ellipsoid
 
 	// scaled ray direction d'
 	vec3<float> dp = ray_dir_local / abc;
@@ -63,11 +67,11 @@ DEVICE inline bool intersect_ray_ellipsoid(float& t,
 	vec3<float> dpNorm = dp / fast::sqrt(dp2);
 
 	// scaled ray origin o'
-	vec3<float> op = ray_origin_local / abc;
+	vec3<float> op = ray_pos_local / abc;
 
 	// scaled vector from ellipsoid to ray origin v' ("prime")
-	//vec3<Real> vp = (o_c_local.x/a, o_c_local.y/b, o_c_local.z/c);
-	vec3<float> vp = o_c_local / abc;
+	//vec3<Real> vp = (ray_ellipsoid_local.x/a, ray_ellipsoid_local.y/b, ray_ellipsoid_local.z/c);
+	vec3<float> vp = ray_ellipsoid_local / abc;
 	
     // solve intersection via quadratic formula
 	float b = dot(vp, dp); // b = b' = v' dot d'
@@ -83,9 +87,20 @@ DEVICE inline bool intersect_ray_ellipsoid(float& t,
     // The distance of the hit position from the edge of the scaled ellipsoid,
     // projected into the plane which has the ray as its normal
     d_edge = 1 - fast::sqrt(Dsq);
+	// the 1 used to be the radius of the sphere, but we scaled our
+	// ellipsoid by its radii
+
+	// magnitude of cross product is product of lengths
 
 	// TODO: transform back by multiplying by appropriate factors of a,b,c
+	// I need to multiply by the projection of these values onto the rotation
 	// d_edge = ;
+
+	//d_edge= d_edge * abc.x * cross(vp, vec3<float>(1,0,0)); //+ d_edge * cross(vp,) + d_edge * cross(vp, abc.z);
+
+	// the "vector rejection"
+	// (new length) = t*dpNorm - dot(vec3<float>(abc.x,0,0), vp);
+
 	
     // solve the quadratic equation
     det = fast::sqrt(det);
