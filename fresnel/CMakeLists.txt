@@ -113,6 +113,7 @@ set(_gpu_sources
      gpu/GeometryPolygon.cc
      gpu/GeometryConvexPolyhedron.cc
      gpu/GeometrySphere.cc
+     gpu/GeometryEllipsoid.cc
      gpu/Tracer.cc
      gpu/TracerDirect.cc
      gpu/TracerPath.cc
