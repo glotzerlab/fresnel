@@ -35,17 +35,18 @@ GeometryEllipsoid::GeometryEllipsoid(std::shared_ptr<Scene> scene, unsigned int 
     optix::Buffer optix_positions
         = context->createBuffer(RT_BUFFER_INPUT_OUTPUT, RT_FORMAT_FLOAT3, N);
     optix::Buffer optix_radii = context->createBuffer(RT_BUFFER_INPUT_OUTPUT, RT_FORMAT_FLOAT3, N);
+    optix::Buffer optix_orientation = context->createBuffer(RT_BUFFER_INPUT_OUTPUT, RT_FORMAT_FLOAT4, N);
     optix::Buffer optix_color = context->createBuffer(RT_BUFFER_INPUT_OUTPUT, RT_FORMAT_FLOAT3, N);
 
     m_geometry["ellipsoid_position"]->setBuffer(optix_positions);
     m_geometry["ellipsoid_radii"]->setBuffer(optix_radii);
-	m_geometry["ellipsoid_orientation"]->setBuffer(optix_orientation);
+    m_geometry["ellipsoid_orientation"]->setBuffer(optix_orientation);
     m_geometry["ellipsoid_color"]->setBuffer(optix_color);
 
     // intialize python access to buffers
     m_position = std::shared_ptr<Array<vec3<float>>>(new Array<vec3<float>>(1, optix_positions));
     m_radii = std::shared_ptr<Array<vec3<float>>>(new Array<vec3<float>>(1, optix_radii));
-    m_orientation = std::shared_ptr<Array<quat<float>>>(new Array<quat<float>>>(1, optix_orientation));
+    m_orientation = std::shared_ptr<Array<quat<float>>>(new Array<quat<float>>(1, optix_orientation));
     m_color = std::shared_ptr<Array<RGB<float>>>(new Array<RGB<float>>(1, optix_color));
     setupInstance();
     }

@@ -22,8 +22,8 @@ rtDeclareVariable(optix::Ray, ray, rtCurrentRay, );
 RT_PROGRAM void intersect(int primIdx)
     {
     const vec3<float> position(ellipsoid_position[primIdx]);
-    const vec3<float> radii = ellipsoid_radii[primIdx];
-	const quat<float> orientation = ellipsoid_orientation[primIdx];
+    const vec3<float> radii = vec3<float>(ellipsoid_radii[primIdx]);
+    const quat<float> orientation = quat<float>(ellipsoid_orientation[primIdx]);
     const vec3<float> ray_origin(ray.origin);
     const vec3<float> ray_direction(ray.direction);
 

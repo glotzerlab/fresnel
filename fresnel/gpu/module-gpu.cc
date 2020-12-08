@@ -8,6 +8,7 @@
 #include "GeometryMesh.h"
 #include "GeometryPolygon.h"
 #include "GeometrySphere.h"
+#include "GeometryEllipsoid.h"
 #include "Scene.h"
 #include "Tracer.h"
 #include "TracerDirect.h"
@@ -36,6 +37,7 @@ PYBIND11_MODULE(_gpu, m)
     export_GeometryPolygon(m);
     export_GeometryConvexPolyhedron(m);
     export_GeometrySphere(m);
+    export_GeometryEllipsoid(m);
     export_Tracer(m);
     export_TracerDirect(m);
     export_TracerPath(m);
