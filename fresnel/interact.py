@@ -296,9 +296,11 @@ class SceneView(QWidget):
         self._frames_painted += 1
 
         delta_t = time.time() - self._paint_time
-        if delta_t > 1:
-            print("FPS:", self._frames_painted / delta_t)
-            self._frames_painted = 0
+
+        # performance testing
+        # if delta_t > 1:
+        #     print("FPS:", self._frames_painted / delta_t)
+        #     self._frames_painted = 0
 
     def resizeEvent(self, event):  # noqa
         """Adjust the size of the tracer as the window resizes.
