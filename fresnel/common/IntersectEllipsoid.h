@@ -74,8 +74,8 @@ DEVICE inline bool intersect_ray_ellipsoid(float& t,
 	vec3<float> vp = ray_ellipsoid_local / abc;
 	
     // solve intersection via quadratic formula
-	float b = dot(vp, dp); // b = b' = v' dot d'
-    float det = b * b - dp2*dot(vp, vp) + dp2;
+	float b = dot(vp, dpNorm); // b = b' = v' dot d'
+    float det = b * b - dot(vp, vp) + 1;
 
     // no solution when determinant is negative
     if (det < 0)
@@ -106,7 +106,7 @@ DEVICE inline bool intersect_ray_ellipsoid(float& t,
     det = fast::sqrt(det);
 
     // first case
-    t = (b - det) / dp2;
+    t = b - det;
     if (t > ellipsoid_epsilon)
         {
 			//N = o + t * d - p; // this just gives the radius of the sphere directed toward impact point
@@ -118,7 +118,7 @@ DEVICE inline bool intersect_ray_ellipsoid(float& t,
         }
 
     // second case (origin is inside the sphere)
-    t = (b + det) / dp2;
+    t = b + det;
     if (t > ellipsoid_epsilon)
         {
 			// N = -(o + t * d - p);
