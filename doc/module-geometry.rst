@@ -16,6 +16,7 @@ fresnel.geometry
     ConvexPolyhedron
     Cylinder
     Geometry
+    Mesh
     Polygon
     Sphere
 
