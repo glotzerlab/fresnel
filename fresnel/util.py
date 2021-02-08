@@ -19,8 +19,7 @@ class Array(object):
     `Array` provides a python interface to access the internal data of memory
     buffers stored and managed by fresnel. You can access a `Array` as if it
     were a `numpy.ndarray` (with limited operations). Below, *slice* is a
-    :std:term:`slice` or array `indexing <numpy.doc.indexing>` mechanic that
-    **numpy** understands.
+    :std:term:`slice` or array indexing mechanic that **numpy** understands.
 
     .. rubric:: Writing
 

@@ -20,7 +20,6 @@ from PySide2 import QtGui
 from PySide2 import QtCore
 from PySide2 import QtWidgets
 import rowan
-import time
 import copy
 
 from fresnel import tracer, camera
@@ -191,7 +190,6 @@ class SceneView(QWidget):
         self._initial_resize = True
 
         # track render times
-        self._paint_time = None
         self._frames_painted = 0
 
         # flag to notify view rotation
@@ -257,10 +255,6 @@ class SceneView(QWidget):
         """Paint the window.
 
         :meta private:"""
-        # Track time for FPS
-        if self._frames_painted == 0:
-            self._paint_time = time.time()
-
         if self._is_rendering:
             # Render the hi-res scene when not moving the camera
             if self._render_high_res:
@@ -294,13 +288,6 @@ class SceneView(QWidget):
 
         # Display FPS
         self._frames_painted += 1
-
-        delta_t = time.time() - self._paint_time
-
-        # performance testing
-        # if delta_t > 1:
-        #     print("FPS:", self._frames_painted / delta_t)
-        #     self._frames_painted = 0
 
     def resizeEvent(self, event):  # noqa
         """Adjust the size of the tracer as the window resizes.
