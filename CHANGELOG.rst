@@ -1,7 +1,10 @@
 Change log
 ==========
 
-`fresnel <https://github.com/glotzerlab/fresnel>`_ releases follow `semantic versioning <https://semver.org/>`_.
+fresnel_ releases follow `semantic versioning`_.
+
+.. _fresnel:  https://github.com/glotzerlab/fresnel
+.. _semantic versioning: https://semver.org/
 
 v0.x
 ----
