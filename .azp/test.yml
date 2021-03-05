@@ -1,17 +1,20 @@
 variables:
-  image_root: glotzerlab/ci:2020.11
-  private_image_root: joaander/ci:2019.11
+  image_root: glotzerlab/ci:2021.03
+  private_image_root: joaander/ci:2021.03
 
-trigger: none
-
+# Trigger on PRs into stable branches.
 pr:
   - maint
   - master
 
+# Do not trigger on every push. This runs every commit twice for PRs with branches on the main
+# repository.
+trigger: none
+
+# Instead, trigger periodic builds on active branches.
 schedules:
-- cron: "0 2 * * *"
-  displayName: Daily 10PM build
-  # 2am UTC is 10PM eastern time
+- cron: "0 4-22/6 * * *"
+  displayName: Periodic build
   branches:
     include:
     - "*"
@@ -49,17 +52,7 @@ stages:
           unused: ""
         gcc7_py37:
           unused: ""
-        gcc6_py37:
-          unused: ""
-        gcc5_py37:
-          unused: ""
-        gcc48_py37:
-          unused: ""
         clang6_py37:
-          unused: ""
-        clang5_py37:
-          unused: ""
-        clang4_py37:
           unused: ""
         gcc7_py36:
           unused: ""
@@ -111,22 +104,19 @@ stages:
 
         optix60_cuda10_py37:
           unused: ""
-        optix51_cuda9_py37:
-          unused: ""
-        optix51_cuda10_py37:
+        optix60_cuda11_py38:
           unused: ""
 
     pool:
       name: 'GPU'
       demands:
-        - short_jobs
         # optix6 jobs require a capable GPU
         - optix6
 
     container:
        image: $(private_image_root)-$(System.JobName)
        # bind mount needed to load OpTiX driver: https://github.com/NVIDIA/nvidia-docker/issues/990
-       options: -u 0 --mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --gpus=all --cpus=4 --memory=8g -e CUDA_VISIBLE_DEVICES
+       options: -u 0 --mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --gpus=all -e CUDA_VISIBLE_DEVICES
 
     workspace:
       clean: all

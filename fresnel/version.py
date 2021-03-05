@@ -5,7 +5,7 @@
 """Version and build information.
 
 Attributes:
-    version (str): HOOMD-blue package version, following semantic versioning.
+    version (str): fresnel package version, following semantic versioning.
 """
 
 version = "0.12.0"

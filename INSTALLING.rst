@@ -77,7 +77,7 @@ Install Prerequisites
 
 **fresnel** requires:
 
-* C++11 capable compiler
+* C++14 capable compiler
 * CMake >= 3.8
 * pybind11 >= 2.2
 * Python >= 3.6
@@ -90,8 +90,8 @@ Install Prerequisites
 
 * For GPU execution (required when ``ENABLE_OPTIX=ON``):
 
-  * OptiX >= 4.0
-  * CUDA >= 7.5
+  * OptiX == 6.0
+  * CUDA >= 10
 
 ``ENABLE_EMBREE`` (*defaults ON*) and ``ENABLE_OPTIX`` (*defaults OFF*) are orthogonal settings, either or both may be
 enabled.
