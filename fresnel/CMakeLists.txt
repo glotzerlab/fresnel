@@ -141,6 +141,7 @@ set(files __init__.py
           color.py
           light.py
           interact.py
+          version.py
     )
 
 install(FILES ${files}

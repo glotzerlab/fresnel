@@ -12,6 +12,7 @@ from . import tracer
 from . import camera
 from . import color  # noqa
 from . import light
+from . import version  # noqa
 
 from . import _common
 if _common.cpu_built():

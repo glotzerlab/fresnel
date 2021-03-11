@@ -9,6 +9,13 @@ fresnel_ releases follow `semantic versioning`_.
 v0.x
 ----
 
+v0.13.1 (2021-03-11)
+^^^^^^^^^^^^^^^^^^^^
+
+*Fixed*
+
+* Add missing ``version`` module
+
 v0.13.0 (2021-03-11)
 ^^^^^^^^^^^^^^^^^^^^
 
