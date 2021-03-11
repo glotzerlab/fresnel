@@ -8,4 +8,4 @@ Attributes:
     version (str): fresnel package version, following semantic versioning.
 """
 
-version = "0.12.0"
+version = "0.13.0"
