@@ -9,8 +9,8 @@ fresnel_ releases follow `semantic versioning`_.
 v0.x
 ----
 
-v0.13.0 (not yet released)
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+v0.13.0 (2021-03-11)
+^^^^^^^^^^^^^^^^^^^^
 
 *Added*
 
@@ -22,11 +22,12 @@ v0.13.0 (not yet released)
 * Reduce latency in ``interact.SceneView`` while rotating the view.
 * Improve user experience with mouse rotations in ``interact.SceneView``.
 * [breaking] - Moved ``camera.orthographic`` to ``camera.Orthographic``.
-* [breaking] - Moved ``camera.fit`` moved to ``camera.Orthographic.fit``.
+* [breaking] - Moved ``camera.fit`` to ``camera.Orthographic.fit``.
 
 *Removed*
 
-* [breaking] - "auto" camera in ``Scene``.
+* [breaking] - Removed "auto" camera in ``Scene``. Use
+  ``camera.Orthographic.fit``
 
 v0.12.0 (2020-02-27)
 ^^^^^^^^^^^^^^^^^^^^
