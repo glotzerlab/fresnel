@@ -61,6 +61,8 @@ jobs:
       - name: Build
         run: ninja install
         working-directory: build
+      - run: ls ${{ github.workspace }}/install
+      - run: python3 -c "import fresnel; print(fresnel)"
       - name: Run tests
         run: python3 -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0
         env:
