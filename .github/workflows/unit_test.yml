@@ -23,12 +23,12 @@ jobs:
     strategy:
       matrix:
         image: [clang11_py39,
-                gcc10_py39,
-                gcc9_py38,
-                clang10_py38,
-                clang9_py38,
-                clang8_py38,
-                clang7_py38,
+                # gcc10_py39,
+                # gcc9_py38,
+                # clang10_py38,
+                # clang9_py38,
+                # clang8_py38,
+                # clang7_py38,
                 # gcc8_py37,
                 # gcc7_py37,
                 # clang6_py37,
@@ -46,7 +46,7 @@ jobs:
         run: ninja
         working-directory: build
       - name: Run tests
-        run: python3 -m pytest -v --log-level=DEBUG --durations=0
+        run: python3 -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0
         env:
           PYTHONPATH: ${{ github.workspace }}/build
       - name: Render gallery images
