@@ -61,7 +61,6 @@ jobs:
       - name: Build
         run: ninja install
         working-directory: build
-      - run: ls ${{ github.workspace }}/install/fresnel
       - run: pwd
       - run: python3 -c "import sys; print(sys.path)"
         env:
