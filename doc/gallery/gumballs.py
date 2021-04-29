@@ -5,6 +5,7 @@ import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
 import PIL
 import sys
+import os
 
 # First, we create a color map for gumballs.
 colors = [
@@ -57,8 +58,13 @@ scene.lights.append(
                         color=(0.5, 0.5, 0.5),
                         theta=np.pi))
 
+if 'CI' in os.environ:
+    samples = 1
+else:
+    samples = 128
+
 # Execute rendering.
-out = fresnel.pathtrace(scene, w=600, h=600, samples=128, light_samples=64)
+out = fresnel.pathtrace(scene, w=600, h=600, samples=samples, light_samples=64)
 PIL.Image.fromarray(out[:], mode='RGBA').save('gumballs.png')
 
 if len(sys.argv) > 1 and sys.argv[1] == 'hires':

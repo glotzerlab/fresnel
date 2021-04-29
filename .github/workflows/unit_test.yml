@@ -53,23 +53,24 @@ jobs:
           cd build
           cmake ../code -GNinja \
                         -DENABLE_EMBREE=${ENABLE_EMBREE:-"ON"} \
-                        -DENABLE_OPTIX=${ENABLE_OPTIX:-"OFF"}
+                        -DENABLE_OPTIX=${ENABLE_OPTIX:-"OFF"} \
+                        -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install
         env:
           ENABLE_OPTIX: ${{ matrix.enable_optix }}
           ENABLE_EMBREE: ${{ matrix.enable_embree }}
       - name: Build
-        run: ninja
+        run: ninja install
         working-directory: build
       - name: Run tests
         run: python3 -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0
         env:
-          PYTHONPATH: ${{ github.workspace }}/build
+          PYTHONPATH: ${{ github.workspace }}/install
       - name: Render gallery images
         if: matrix.render_gallery
         run: for i in *.py; do echo "Rendering $i" && python3 $i || exit 1; done
         working-directory: code/doc/gallery
         env:
-          PYTHONPATH: ${{ github.workspace }}/build
+          PYTHONPATH: ${{ github.workspace }}/install
 
   # unit_test_other:
   #   name: Unit test on ${{ matrix.os }}
