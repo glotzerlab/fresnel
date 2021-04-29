@@ -4,6 +4,7 @@ import fresnel
 import numpy
 import PIL
 import sys
+import os
 
 data = numpy.load('cuboids.npz')
 
@@ -40,9 +41,9 @@ scene.camera = fresnel.camera.Orthographic.fit(scene, view='front')
 if 'CI' in os.environ:
     samples = 1
 else:
-    samples = 32
+    samples = 64
 
-out = fresnel.pathtrace(scene, samples=64, light_samples=samples, w=580, h=580)
+out = fresnel.pathtrace(scene, samples=samples, light_samples=32, w=580, h=580)
 PIL.Image.fromarray(out[:], mode='RGBA').save('cuboid.png')
 
 if len(sys.argv) > 1 and sys.argv[1] == 'hires':
