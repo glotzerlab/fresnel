@@ -1,5 +1,9 @@
 name: Unit test
 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   # Trigger on pull requests.
   pull_request:
@@ -22,8 +26,12 @@ jobs:
       options: -u 0
     strategy:
       matrix:
-        image: [clang11_py39,
-                # gcc10_py39,
+        include:
+          - image: clang11_py39
+            render_gallery: true
+          - image: gcc10_py39
+
+
                 # gcc9_py38,
                 # clang10_py38,
                 # clang9_py38,
@@ -33,7 +41,6 @@ jobs:
                 # gcc7_py37,
                 # clang6_py37,
                 # gcc7_py36,
-                ]
 
     steps:
       - uses: actions/checkout@v2.3.4
@@ -41,7 +48,15 @@ jobs:
           path: code
           submodules: true
       - name: Configure
-        run: mkdir -p build && cd build && cmake ../code -GNinja -DENABLE_EMBREE=ON -DENABLE_OPTIX=OFF
+        run: |
+          mkdir -p build
+          cd build
+          cmake ../code -GNinja \
+                        -DENABLE_EMBREE=${ENABLE_EMBREE:-"ON"} \
+                        -DENABLE_OPTIX=${ENABLE_OPTIX:-"OFF"}
+        env:
+          ENABLE_OPTIX: ${{ matrix.enable_optix }}
+          ENABLE_EMBREE: ${{ matrix.enable_embree }}
       - name: Build
         run: ninja
         working-directory: build
@@ -50,7 +65,8 @@ jobs:
         env:
           PYTHONPATH: ${{ github.workspace }}/build
       - name: Render gallery images
-        run: for i in *.py; do python3 $i || exit 1; done
+        if: matrix.render_gallery
+        run: for i in *.py; do echo "Rendering $i" && time python3 $i || exit 1; done
         working-directory: code/doc/gallery
         env:
           PYTHONPATH: ${{ github.workspace }}/build
