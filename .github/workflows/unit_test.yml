@@ -1,0 +1,90 @@
+name: Unit test
+
+on:
+  # Trigger on pull requests.
+  pull_request:
+
+  # Trigger on pushes to the mainline branches and version tags. This prevents building commits
+  # twice when the pull request source branch is in the same repository.
+  push:
+    branches:
+      - "master"
+
+  # Trigger on request.
+  workflow_dispatch:
+
+jobs:
+  unit_test_linux:
+    name: Unit test on Linux [${{ matrix.image }}]
+    runs-on: ubuntu-latest
+    container:
+      image: glotzerlab/ci:2021.03-${{ matrix.image }}
+      options: -u 0
+    strategy:
+      matrix:
+        image: [clang11_py39,
+                gcc10_py39,
+                gcc9_py38,
+                clang10_py38,
+                clang9_py38,
+                clang8_py38,
+                clang7_py38,
+                gcc8_py37,
+                gcc7_py37,
+                clang6_py37,
+                gcc7_py36]
+
+    steps:
+      - uses: actions/checkout@v2.3.4
+        with:
+          path: code
+      - name: Configure
+        run: mkdir -p build && cd build && cmake ../code -GNinja -DENABLE_EMBREE=ON -DENABLE_OPTIX=OFF
+      - name: Build
+        run: ninja
+        working-directory: build
+      - name: Run tets
+        run: python3 -m pytest -v --log-level=DEBUG --durations=0
+        env:
+          PYTHONPATH: ${{ github.workspace }}/build
+      - name: Render gallery images
+        run: for i in *.py; do python3 $i || exit 1; done
+        working-directory: doc/gallery
+        env:
+          PYTHONPATH: ${{ github.workspace }}/build
+
+  # unit_test_other:
+  #   name: Unit test on ${{ matrix.os }}
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     matrix:
+  #       os: [macos-10.15, windows-2019]
+
+  #   steps:
+  #     - uses: actions/checkout@v2.3.4
+  #       with:
+  #         path: code
+  #     - name: Install prereqs
+  #       run: python3 -m pip install -r code/.github/requirements-test.txt
+  #     - name: Configure
+  #       run: cmake -S code -B build
+  #     - name: Build
+  #       run: cmake --build build -j 4 --config Release
+  #     - if: runner.os == 'Windows'
+  #       name: Copy pyd files
+  #       run: cp ./gsd/Release/*.pyd gsd/
+  #       working-directory: build
+  #     - name: Run tests
+  #       run: python3 -m pytest --pyargs gsd ${pytest_options} -v --log-level=DEBUG
+  #       env:
+  #         PYTHONPATH: ${{ github.workspace }}/build
+
+  # # This job is used to provide a single requirement for branch merge conditions.
+  # tests_complete:
+  #   name: Unit test
+  #   if: always()
+  #   needs: [unit_test_linux, unit_test_other]
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - run: echo "Done!"
