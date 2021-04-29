@@ -54,7 +54,7 @@ jobs:
           cmake ../code -GNinja \
                         -DENABLE_EMBREE=${ENABLE_EMBREE:-"ON"} \
                         -DENABLE_OPTIX=${ENABLE_OPTIX:-"OFF"} \
-                        -DCMAKE_INSTALL_PREFIX=$(GITHUB_WORKSPACE)/install
+                        -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install
         env:
           ENABLE_OPTIX: ${{ matrix.enable_optix }}
           ENABLE_EMBREE: ${{ matrix.enable_embree }}
