@@ -51,7 +51,7 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}/build
       - name: Render gallery images
         run: for i in *.py; do python3 $i || exit 1; done
-        working-directory: doc/gallery
+        working-directory: code/doc/gallery
         env:
           PYTHONPATH: ${{ github.workspace }}/build
 
