@@ -29,10 +29,11 @@ jobs:
                 clang9_py38,
                 clang8_py38,
                 clang7_py38,
-                gcc8_py37,
-                gcc7_py37,
-                clang6_py37,
-                gcc7_py36]
+                # gcc8_py37,
+                # gcc7_py37,
+                # clang6_py37,
+                # gcc7_py36,
+                ]
 
     steps:
       - uses: actions/checkout@v2.3.4
@@ -44,7 +45,7 @@ jobs:
       - name: Build
         run: ninja
         working-directory: build
-      - name: Run tets
+      - name: Run tests
         run: python3 -m pytest -v --log-level=DEBUG --durations=0
         env:
           PYTHONPATH: ${{ github.workspace }}/build
