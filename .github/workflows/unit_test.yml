@@ -109,7 +109,8 @@ jobs:
       options: -u 0
     strategy:
       matrix:
-        - {repository: glotzerlab, config: [clang11_py39, embree]}
+        include:
+          - {repository: glotzerlab, config: [clang11_py39, embree]}
     steps:
       - uses: actions/checkout@v2.3.4
         with:
