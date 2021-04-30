@@ -21,27 +21,26 @@ on:
 # for compiling all tests configurations (GPU and CPU), then upload the installation directory
 # as an artifact. Test jobs depend on the build job, download the install directory, and run the
 # tests. Upload each build configuration to a separate artifact.
+
+# Github Actions does not support any form of templating at this time, not even YAML anchors.
+# To minimize the number of duplicated lines, encode the job configuration as an array in config:
+# [image, (embree|optix)]
 jobs:
   build:
-    name: Build [${{ matrix.image }}]
+    name: Build [${{ join(matrix.config, '_') }}]
     runs-on: ubuntu-latest
-    container: &container
-      image: glotzerlab/ci:2021.04-${{ matrix.image }}
+    container:
+      image: ${{ matrix.repository }}/ci:2021.04-${{ matrix.config[0] }}
       options: -u 0
     strategy:
       matrix:
-        include: &all_configurations
-          - image: clang11_py29
-          - image: gcc10_py39
-                # gcc9_py38,
-                # clang10_py38,
-                # clang9_py38,
-                # clang8_py38,
-                # clang7_py38,
-                # gcc8_py37,
-                # gcc7_py37,
-                # clang6_py37,
-                # gcc7_py36,
+        include:
+          - {repository: glotzerlab, config: [clang11_py39, embree]}
+          - {repository: glotzerlab, config: [gcc10_py39, embree]}
+          - {repository: glotzerlab, config: [gcc9_py38, embree]}
+          - {repository: glotzerlab, config: [gcc8_py37, embree]}
+          - {repository: glotzerlab, config: [clang6_py37, embree]}
+          - {repository: glotzerlab, config: [gcc7_py36, embree]}
 
     steps:
       - uses: actions/checkout@v2.3.4
@@ -57,8 +56,8 @@ jobs:
                         -DENABLE_OPTIX=${ENABLE_OPTIX:-"OFF"} \
                         -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install
         env:
-          ENABLE_OPTIX: ${{ matrix.enable_optix }}
-          ENABLE_EMBREE: ${{ matrix.enable_embree }}
+          ENABLE_OPTIX: ${{ contains(matrix.config, "optix") }}
+          ENABLE_EMBREE: ${{ contains(matrix.config, "embree") }}
       - name: Build
         run: ninja install
         working-directory: build
@@ -70,22 +69,30 @@ jobs:
       - name: 'Upload install'
         uses: actions/upload-artifact@v2.2.3
         with:
-          name: install-${{ matrix.image }}
+          name: install-${{ join(matrix.config, '_') }}
           path: install.tar
           retention-days: 7
 
   test:
-    name: Test [${{ matrix.image }}]
+    name: Test [${{ join(matrix.config, '_') }}]
     needs: build
     runs-on: ubuntu-latest
-    container: *container
+    container:
+      image: ${{ matrix.repository }}/ci:2021.04-${{ matrix.config[0] }}
+      options: -u 0
     strategy:
       matrix:
-        include: *all_configurations
+        include:
+          - {repository: glotzerlab, config: [clang11_py39, embree]}
+          - {repository: glotzerlab, config: [gcc10_py39, embree]}
+          - {repository: glotzerlab, config: [gcc9_py38, embree]}
+          - {repository: glotzerlab, config: [gcc8_py37, embree]}
+          - {repository: glotzerlab, config: [clang6_py37, embree]}
+          - {repository: glotzerlab, config: [gcc7_py36, embree]}
     steps:
       - uses: actions/download-artifact@v2.0.9
         with:
-          name: install-${{ matrix.image }}
+          name: install-${{ join(matrix.config, '_') }}
       - name: Untar install
         run: tar -xvf install.tar
       - name: Run tests
@@ -94,13 +101,15 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}/install
 
   render_gallery:
-    name: Render gallery [${{ matrix.image }}]
+    name: Render gallery [${{ join(matrix.config, '_') }}]
     needs: build
     runs-on: ubuntu-latest
-    container: *container
+    container:
+      image: glotzerlab/ci:2021.04-${{ matrix.config[0] }}
+      options: -u 0
     strategy:
       matrix:
-        image: [clang11_py39]
+        - {repository: glotzerlab, config: [clang11_py39, embree]}
     steps:
       - uses: actions/checkout@v2.3.4
         with:
@@ -108,7 +117,7 @@ jobs:
           path: code
       - uses: actions/download-artifact@v2.0.9
         with:
-          name: install-${{ matrix.image }}
+          name: install-${{ join(matrix.config, '_') }}
       - name: Untar install
         run: tar -xvf install.tar
       - name: Render gallery images
