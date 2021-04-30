@@ -18,8 +18,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  unit_test_linux:
-    name: Unit test on Linux [${{ matrix.image }}]
+  build:
+    name: Build [${{ matrix.image }}]
     runs-on: ubuntu-latest
     container:
       image: glotzerlab/ci:2021.04-${{ matrix.image }}
@@ -28,7 +28,6 @@ jobs:
       matrix:
         include:
           - image: clang11_py39
-            render_gallery: true
           - image: gcc10_py39
 
 
@@ -61,14 +60,30 @@ jobs:
       - name: Build
         run: ninja install
         working-directory: build
-      - run: pwd
-      - run: set
-      - run: python3 -c "import sys; print(sys.path)"
-        env:
-          PYTHONPATH: ${{ github.workspace }}/install
-      - run: python3 -c "import fresnel; print(fresnel)"
-        env:
-          PYTHONPATH: ${{ github.workspace }}/install
+      - name: 'Tar install'
+        run: tar -cvf install.tar install
+      - name: 'Upload install'
+        uses: actions/upload-artifact@v2.2.3
+        with:
+          name: install-${{ matrix.image }}
+          path: install.tar
+
+  test:
+    name: Test [${{ matrix.image }}]
+    runs-on: ubuntu-latest
+    container:
+      image: glotzerlab/ci:2021.04-${{ matrix.image }}
+      options: -u 0
+    strategy:
+      matrix:
+        include:
+          - image: clang11_py39
+          - image: gcc10_py39
+      - uses: actions/download-artifact@v2.0.9
+        with:
+          name: install-${{ matrix.image }}
+      - name: Untar install
+        run: tar -xvf install.tar
       - name: Run tests
         run: python3 -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0
         env:
