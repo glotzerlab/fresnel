@@ -45,6 +45,7 @@ jobs:
           - {repository: glotzerlab, config: [clang6_py37, embree]}
           - {repository: glotzerlab, config: [gcc7_py36, embree]}
           - {repository: joaander, config: [optix60_cuda11_py38]}
+          - {repository: joaander, config: [optix60_cuda10_py37]}
     steps:
       - uses: actions/checkout@v2.3.4
         with:
@@ -95,6 +96,7 @@ jobs:
           - {repository: glotzerlab, config: [gcc8_py37, embree]}
           - {repository: glotzerlab, config: [clang6_py37, embree]}
           - {repository: glotzerlab, config: [gcc7_py36, embree]}
+          # bind mount needed to load OpTiX driver: https://github.com/NVIDIA/nvidia-docker/issues/990
           # - {repository: joaander, config: [optix60_cuda11_py38, optix], docker_options: -mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --gpus=all -e CUDA_VISIBLE_DEVICES}
     steps:
       - uses: actions/download-artifact@v2.0.9
@@ -134,38 +136,11 @@ jobs:
         env:
           PYTHONPATH: ${{ github.workspace }}/install
 
-  # unit_test_other:
-  #   name: Unit test on ${{ matrix.os }}
-  #   runs-on: ${{ matrix.os }}
-  #   strategy:
-  #     matrix:
-  #       os: [macos-10.15, windows-2019]
+  # This job is used to provide a single requirement for branch merge conditions.
+  tests_complete:
+    name: Unit test
+    needs: [test, render_gallery]
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - uses: actions/checkout@v2.3.4
-  #       with:
-  #         path: code
-  #     - name: Install prereqs
-  #       run: python3 -m pip install -r code/.github/requirements-test.txt
-  #     - name: Configure
-  #       run: cmake -S code -B build
-  #     - name: Build
-  #       run: cmake --build build -j 4 --config Release
-  #     - if: runner.os == 'Windows'
-  #       name: Copy pyd files
-  #       run: cp ./gsd/Release/*.pyd gsd/
-  #       working-directory: build
-  #     - name: Run tests
-  #       run: python3 -m pytest --pyargs gsd ${pytest_options} -v --log-level=DEBUG
-  #       env:
-  #         PYTHONPATH: ${{ github.workspace }}/build
-
-  # # This job is used to provide a single requirement for branch merge conditions.
-  # tests_complete:
-  #   name: Unit test
-  #   if: always()
-  #   needs: [unit_test_linux, unit_test_other]
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #     - run: echo "Done!"
+    steps:
+      - run: echo "Done!"
