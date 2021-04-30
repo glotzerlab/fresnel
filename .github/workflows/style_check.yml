@@ -1,5 +1,9 @@
 name: Style check
 
+concurrency:
+  group: style_check-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   # Trigger on pull requests.
   pull_request:
@@ -33,14 +37,13 @@ jobs:
             command: exit 1
     steps:
       - uses: actions/checkout@v2.3.4
-      - name: Configure
-        run: cmake -B build
       - name: Execute ${{ matrix.name }}
         run: ${{ matrix.command }}
 
   # This job is used to provide a single requirement for branch merge conditions.
   checks_complete:
     name: Style check
+    if: always()
     needs: [style_checks]
     runs-on: ubuntu-latest
 
