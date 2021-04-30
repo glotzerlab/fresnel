@@ -24,7 +24,7 @@ on:
 
 # Github Actions does not support any form of templating at this time, not even YAML anchors.
 # To minimize the number of duplicated lines, encode the job configuration as an array in config:
-# [image, (embree|optix)]
+# [image, (embree)]
 jobs:
   build:
     name: Build [${{ join(matrix.config, '_') }}]
@@ -44,7 +44,7 @@ jobs:
           - {repository: glotzerlab, config: [gcc8_py37, embree]}
           - {repository: glotzerlab, config: [clang6_py37, embree]}
           - {repository: glotzerlab, config: [gcc7_py36, embree]}
-          - {repository: joaander, config: [optix60_cuda11_py38, optix]}
+          - {repository: joaander, config: [optix60_cuda11_py38]}
     steps:
       - uses: actions/checkout@v2.3.4
         with:
@@ -59,7 +59,7 @@ jobs:
                         -DENABLE_OPTIX=${ENABLE_OPTIX:-"OFF"} \
                         -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install
         env:
-          ENABLE_OPTIX: ${{ contains(matrix.config, 'optix') }}
+          ENABLE_OPTIX: ${{ contains(matrix.config[0], 'optix') }}
           ENABLE_EMBREE: ${{ contains(matrix.config, 'embree') }}
       - name: Build
         run: ninja install
