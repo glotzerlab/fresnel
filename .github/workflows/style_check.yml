@@ -33,8 +33,7 @@ jobs:
             command: flake8
           - name: yapf
             command: yapf -d -r .
-          - name: Fail test
-            command: exit 1
+
     steps:
       - uses: actions/checkout@v2.3.4
       - name: Execute ${{ matrix.name }}
@@ -43,7 +42,6 @@ jobs:
   # This job is used to provide a single requirement for branch merge conditions.
   checks_complete:
     name: Style check
-    if: always()
     needs: [style_checks]
     runs-on: ubuntu-latest
 
