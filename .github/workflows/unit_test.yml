@@ -81,7 +81,7 @@ jobs:
           - image: gcc10_py39
     steps:
       - uses: actions/download-artifact@v2.0.9
-          with:
+        with:
           name: install-${{ matrix.image }}
       - name: Untar install
         run: tar -xvf install.tar
