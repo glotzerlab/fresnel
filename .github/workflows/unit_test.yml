@@ -56,8 +56,8 @@ jobs:
                         -DENABLE_OPTIX=${ENABLE_OPTIX:-"OFF"} \
                         -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install
         env:
-          ENABLE_OPTIX: ${{ contains(matrix.config, "optix") }}
-          ENABLE_EMBREE: ${{ contains(matrix.config, "embree") }}
+          ENABLE_OPTIX: ${{ contains(matrix.config, 'optix') }}
+          ENABLE_EMBREE: ${{ contains(matrix.config, 'embree') }}
       - name: Build
         run: ninja install
         working-directory: build
