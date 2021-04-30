@@ -70,6 +70,7 @@ jobs:
 
   test:
     name: Test [${{ matrix.image }}]
+    needs: build
     runs-on: ubuntu-latest
     container:
       image: glotzerlab/ci:2021.04-${{ matrix.image }}
