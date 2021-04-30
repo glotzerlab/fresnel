@@ -38,14 +38,14 @@ jobs:
     strategy:
       matrix:
         include:
-          # - {repository: glotzerlab, config: [clang11_py39, embree]}
-          # - {repository: glotzerlab, config: [gcc10_py39, embree]}
-          # - {repository: glotzerlab, config: [gcc9_py38, embree]}
-          # - {repository: glotzerlab, config: [gcc8_py37, embree]}
-          # - {repository: glotzerlab, config: [clang6_py37, embree]}
-          # - {repository: glotzerlab, config: [gcc7_py36, embree]}
+          - {repository: glotzerlab, config: [clang11_py39, embree]}
+          - {repository: glotzerlab, config: [gcc10_py39, embree]}
+          - {repository: glotzerlab, config: [gcc9_py38, embree]}
+          - {repository: glotzerlab, config: [gcc8_py37, embree]}
+          - {repository: glotzerlab, config: [clang6_py37, embree]}
+          - {repository: glotzerlab, config: [gcc7_py36, embree]}
           - {repository: joaander, config: [optix60_cuda11_py38]}
-          # - {repository: joaander, config: [optix60_cuda10_py37]}
+          - {repository: joaander, config: [optix60_cuda10_py37]}
     steps:
       - uses: actions/checkout@v2.3.4
         with:
@@ -90,15 +90,15 @@ jobs:
     strategy:
       matrix:
         include:
-          # - {repository: glotzerlab, config: [clang11_py39, embree], runner: ubuntu-latest}
-          # - {repository: glotzerlab, config: [gcc10_py39, embree], runner: ubuntu-latest}
-          # - {repository: glotzerlab, config: [gcc9_py38, embree], runner: ubuntu-latest}
-          # - {repository: glotzerlab, config: [gcc8_py37, embree], runner: ubuntu-latest}
-          # - {repository: glotzerlab, config: [clang6_py37, embree], runner: ubuntu-latest}
-          # - {repository: glotzerlab, config: [gcc7_py36, embree], runner: ubuntu-latest}
+          - {repository: glotzerlab, config: [clang11_py39, embree], runner: ubuntu-latest}
+          - {repository: glotzerlab, config: [gcc10_py39, embree], runner: ubuntu-latest}
+          - {repository: glotzerlab, config: [gcc9_py38, embree], runner: ubuntu-latest}
+          - {repository: glotzerlab, config: [gcc8_py37, embree], runner: ubuntu-latest}
+          - {repository: glotzerlab, config: [clang6_py37, embree], runner: ubuntu-latest}
+          - {repository: glotzerlab, config: [gcc7_py36, embree], runner: ubuntu-latest}
           # bind mount needed to load OpTiX driver: https://github.com/NVIDIA/nvidia-docker/issues/990
           - {repository: joaander, config: [optix60_cuda11_py38], runner: [self-hosted,GPU], docker_options: "--mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --gpus=all -e CUDA_VISIBLE_DEVICES"}
-          # - {repository: joaander, config: [optix60_cuda10_py37], runner: [self-hosted,GPU], docker_options: "--mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --gpus=all -e CUDA_VISIBLE_DEVICES"}
+          - {repository: joaander, config: [optix60_cuda10_py37], runner: [self-hosted,GPU], docker_options: "--mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --gpus=all -e CUDA_VISIBLE_DEVICES"}
     steps:
       - uses: actions/download-artifact@v2.0.9
         with:
