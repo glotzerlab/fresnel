@@ -80,7 +80,7 @@ jobs:
   test:
     name: Test [${{ join(matrix.config, '_') }}]
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     container:
       image: ${{ matrix.repository }}/ci:2021.04-${{ matrix.config[0] }}
       options: -u 0 ${{ matrix.docker_options }}
