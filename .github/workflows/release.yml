@@ -1,7 +1,8 @@
 name: GitHub Release
 
 concurrency:
-  group: ${{ github.ref }}
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
 
 on:
   # Trigger on pull requests.

@@ -1,7 +1,8 @@
 name: Unit test
 
 concurrency:
-  group: ${{ github.ref }}
+  group: unit-test-${{ github.ref }}
+  cancel-in-progress: true
 
 on:
   # Trigger on pull requests.
