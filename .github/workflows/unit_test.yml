@@ -25,16 +25,14 @@ jobs:
   build:
     name: Build [${{ matrix.image }}]
     runs-on: ubuntu-latest
-    container:
+    container: &container
       image: glotzerlab/ci:2021.04-${{ matrix.image }}
       options: -u 0
     strategy:
       matrix:
-        include:
-          - image: clang11_py39
+        include: &all_configurations
+          - image: clang11_py29
           - image: gcc10_py39
-
-
                 # gcc9_py38,
                 # clang10_py38,
                 # clang9_py38,
@@ -80,14 +78,10 @@ jobs:
     name: Test [${{ matrix.image }}]
     needs: build
     runs-on: ubuntu-latest
-    container:
-      image: glotzerlab/ci:2021.04-${{ matrix.image }}
-      options: -u 0
+    container: *container
     strategy:
       matrix:
-        include:
-          - image: clang11_py39
-          - image: gcc10_py39
+        include: *all_configurations
     steps:
       - uses: actions/download-artifact@v2.0.9
         with:
@@ -103,9 +97,7 @@ jobs:
     name: Render gallery [${{ matrix.image }}]
     needs: build
     runs-on: ubuntu-latest
-    container:
-      image: glotzerlab/ci:2021.04-${{ matrix.image }}
-      options: -u 0
+    container: *container
     strategy:
       matrix:
         image: [clang11_py39]
