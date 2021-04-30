@@ -23,14 +23,13 @@ on:
 env:
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
   name: fresnel
-  image_prefix: ci:2021.04
 
 jobs:
   release:
     name: Build release tarball
     runs-on: ubuntu-latest
     container:
-      image: glotzerlab/${{ env.image_prefix }}-ubuntu20.04
+      image: glotzerlab/ci:2021.04-ubuntu20.04
       options: -u 0
 
     steps:
