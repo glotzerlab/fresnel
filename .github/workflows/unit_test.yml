@@ -30,7 +30,7 @@ jobs:
     name: Build [${{ join(matrix.config, '_') }}]
     runs-on: ubuntu-latest
     container:
-      image: ${{ matrix.repository }}/ci:2021.04-${{ matrix.config[0] }}
+      image: ${{ matrix.repository }}/ci:2021.05-${{ matrix.config[0] }}
       options: -u 0
       credentials:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
@@ -82,7 +82,7 @@ jobs:
     needs: build
     runs-on: ${{ matrix.runner }}
     container:
-      image: ${{ matrix.repository }}/ci:2021.04-${{ matrix.config[0] }}
+      image: ${{ matrix.repository }}/ci:2021.05-${{ matrix.config[0] }}
       options: -u 0 ${{ matrix.docker_options }}
       credentials:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
@@ -115,7 +115,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     container:
-      image: glotzerlab/ci:2021.04-${{ matrix.config[0] }}
+      image: glotzerlab/ci:2021.05-${{ matrix.config[0] }}
       options: -u 0
     strategy:
       matrix:
