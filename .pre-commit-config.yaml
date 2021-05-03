@@ -27,7 +27,8 @@ repos:
     hooks:
       - id: clang-format
         name: clang-format
-        entry: clang-format-10 -i
+        entry: clang-format -i
+        additional_dependencies: [-c conda-forge, clang-tools=10.0]
         language: conda
         types_or: [c++, cuda, inc]
         stages: [manual]
