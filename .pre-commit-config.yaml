@@ -3,9 +3,9 @@ repos:
     rev: 'v3.4.0'
     hooks:
       - id: end-of-file-fixer
-        exclude: (?:.*\.(svg))
+        exclude_types: [svg]
       - id: trailing-whitespace
-        exclude: (?:.*\.(svg))
+        exclude_types: [svg]
       - id: check-json
       - id: check-yaml
       - id: check-case-conflict
@@ -27,8 +27,8 @@ repos:
     hooks:
       - id: clang-format
         name: clang-format
-        entry: clang-format -i
-        language: system
+        entry: clang-format-10 -i
+        language: conda
         types_or: [c++, cuda, inc]
         stages: [manual]
         exclude: (?:^extern/)
