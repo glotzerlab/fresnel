@@ -1,0 +1,35 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 'v3.4.0'
+    hooks:
+      - id: end-of-file-fixer
+        exclude: (?:.*\.(svg))
+      - id: trailing-whitespace
+        exclude: (?:.*\.(svg))
+      - id: check-json
+      - id: check-yaml
+      - id: check-case-conflict
+  - repo: https://github.com/google/yapf
+    rev: 'v0.31.0'
+    hooks:
+      - id: yapf
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: '3.9.1'
+    hooks:
+      - id: flake8
+        args:
+        - --show-source
+        additional_dependencies:
+          - pep8-naming
+          - flake8-docstrings
+          - flake8-rst-docstrings
+  - repo: local
+    hooks:
+      - id: clang-format
+        name: clang-format
+        entry: clang-format -i
+        language: system
+        types_or: [c++, cuda, inc]
+        stages: [manual]
+        exclude: (?:^extern/)
+        verbose: true
