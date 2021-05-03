@@ -9,7 +9,6 @@ import os
 data = numpy.load('cuboids.npz')
 
 scene = fresnel.Scene()
-print(scene.device)
 scene.lights = fresnel.light.lightbox()
 W, H, D = data['width']
 poly_info = fresnel.util.convex_polyhedron_from_vertices([
