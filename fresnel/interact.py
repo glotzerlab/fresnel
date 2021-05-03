@@ -245,16 +245,18 @@ class SceneView(QWidget):
     #####################################
     # Qt methods:
 
-    def minimumSizeHint(self):  # noqa
+    def minimumSizeHint(self):  # noqa: N802 - allow Qt style naming
         """Specify the minimum window size hint to Qt.
 
-        :meta private:"""
+        :meta private:
+        """
         return QtCore.QSize(1610, 1000)
 
-    def paintEvent(self, event):  # noqa
+    def paintEvent(self, event):  # noqa: N802 - allow Qt style naming
         """Paint the window.
 
-        :meta private:"""
+        :meta private:
+        """
         if self._is_rendering:
             # Render the hi-res scene when not moving the camera
             if self._render_high_res:
@@ -289,10 +291,11 @@ class SceneView(QWidget):
         # Display FPS
         self._frames_painted += 1
 
-    def resizeEvent(self, event):  # noqa
+    def resizeEvent(self, event):  # noqa: N802 - allow Qt style naming
         """Adjust the size of the tracer as the window resizes.
 
-        :meta private:"""
+        :meta private:
+        """
         # for the initial window size, resize immediately
         if self._initial_resize:
             self._resize_done()
@@ -302,10 +305,11 @@ class SceneView(QWidget):
             # for a bit
             self._resize_timer.start(self.TIMEOUT)
 
-    def mouseMoveEvent(self, event):  # noqa
+    def mouseMoveEvent(self, event):  # noqa: N802 - allow Qt style naming
         """Respond to mouse move events.
 
-        :meta private:"""
+        :meta private:
+        """
         delta = event.pos() - self._mouse_initial_pos
 
         if self._camera_update_mode == 'pitch/yaw':
@@ -333,10 +337,11 @@ class SceneView(QWidget):
         self.update()
         event.accept()
 
-    def mousePressEvent(self, event):  # noqa
+    def mousePressEvent(self, event):  # noqa: N802 - allow Qt style naming
         """Respond to mouse press events.
 
-        :meta private:"""
+        :meta private:
+        """
         self._mouse_initial_pos = event.pos()
         self._camera_controller.start()
         event.accept()
@@ -351,21 +356,22 @@ class SceneView(QWidget):
         self._render_high_res = False
         self._start_rendering()
 
-    def mouseReleaseEvent(self, event):  # noqa
+    def mouseReleaseEvent(self, event):  # noqa: N802 - allow Qt style naming
         """Respond to mouse release events.
 
-        :meta private:"""
+        :meta private:
+        """
         if self._camera_update_mode is not None:
             self._camera_update_mode = None
             event.accept()
 
         self._render_high_res = True
 
-    def wheelEvent(self, event):  # noqa
+    def wheelEvent(self, event):  # noqa: N802 - allow Qt style naming
         """Respond to mouse wheel events.
 
-        :meta private:"""
-
+        :meta private:
+        """
         self._camera_controller.start()
         self._camera_controller.zoom(event.angleDelta().y(),
                                      slight=event.modifiers()

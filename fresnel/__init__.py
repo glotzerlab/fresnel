@@ -7,12 +7,12 @@
 import os
 import numpy
 
-from . import geometry  # noqa
+from . import geometry  # noqa: F401 - ignore unused import
 from . import tracer
 from . import camera
-from . import color  # noqa
+from . import color  # noqa: F401 - ignore unused import (users will use)
 from . import light
-from . import version  # noqa
+from . import version  # noqa: F401 - ignore unused import (users will use)
 
 from . import _common
 if _common.cpu_built():

@@ -7,7 +7,7 @@ import pytest
 def test_lightlist(device_):
     """Test that lightlist allows getting and setting lights."""
     scene = fresnel.Scene(device_, lights=[])
-    l = scene.lights  # noqa
+    l = scene.lights  # noqa: E741 - allow l as a name
     assert (len(l) == 0)
     l.append(
         fresnel.light.Light(direction=(1, 2, 3),
