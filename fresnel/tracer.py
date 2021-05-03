@@ -95,7 +95,7 @@ class Tracer(object):
         r = img[:, 0]
         g = img[:, 1]
         b = img[:, 2]
-        l = 0.21 * r + 0.72 * g + 0.07 * b  # noqa
+        l = 0.21 * r + 0.72 * g + 0.07 * b  # noqa: E741 - allow l as a name
         gamma_l = l**(1 / 2.2)
 
         n = 512

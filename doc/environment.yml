@@ -1,10 +1,11 @@
 channels:
   - conda-forge
 dependencies:
-  - python==3.7
-  - tornado
-  - sphinx
-  - pandoc
-  - nbconvert
   - ipykernel
+  - nbconvert
   - nbsphinx
+  - pandoc
+  - python==3.7
+  - rowan
+  - sphinx
+  - tornado
