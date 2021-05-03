@@ -1,7 +1,7 @@
 name: Style check
 
 concurrency:
-  group: style_check-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 on:

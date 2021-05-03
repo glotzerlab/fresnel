@@ -1,7 +1,7 @@
 name: Unit test
 
 concurrency:
-  group: unit-test-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 on:
