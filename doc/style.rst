@@ -84,7 +84,7 @@ Tools
 
   * Run: ``pre-commit run --all-files --hook-stage manual`` to apply changes to
     the whole repository. You must have a ``conda`` installation in your
-    ``PATH`` the first time you run this on a system.
+    ``PATH`` to run this.
 
 Documentation
 ^^^^^^^^^^^^^
