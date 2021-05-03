@@ -19,4 +19,3 @@ fresnel.material
 .. automodule:: fresnel.material
     :synopsis: Materials.
     :members:
-
