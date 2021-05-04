@@ -918,7 +918,7 @@ template<class Real> struct quat
         return q;
         }
 
-    Real s;       //!< scalar component
+    Real s; //!< scalar component
     vec3<Real> v; //!< vector component
     };
 

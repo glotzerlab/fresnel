@@ -22,4 +22,3 @@ fresnel.util
     :synopsis: Utility classes.
     :members:
     :show-inheritance:
-

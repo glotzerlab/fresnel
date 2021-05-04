@@ -74,7 +74,7 @@ class Device
             throw std::runtime_error("Embree: The operation got cancelled by an Memory Monitor "
                                      "Callback or Progress Monitor Callback function.");
             break;
-        default:
+            default:
             throw std::runtime_error("Embree: An invalid error has occurred.");
             break;
             }
@@ -89,9 +89,9 @@ class Device
         }
 
     private:
-    RTCDevice m_device;                       //!< Store the embree device
+    RTCDevice m_device; //!< Store the embree device
     std::shared_ptr<tbb::task_arena> m_arena; //!< TBB task arena
-    int m_limit;                              //!< Cached limit for reporting to users
+    int m_limit; //!< Cached limit for reporting to users
     };
 
 //! Export Device to python

@@ -19,4 +19,3 @@ fresnel.color
 .. automodule:: fresnel.color
     :synopsis: Color utilities.
     :members:
-

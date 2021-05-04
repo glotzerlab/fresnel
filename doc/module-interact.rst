@@ -19,4 +19,3 @@ fresnel.interact
 .. automodule:: fresnel.interact
     :synopsis: Interactive Qt widgets.
     :members:
-

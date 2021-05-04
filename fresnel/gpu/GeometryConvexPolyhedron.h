@@ -72,11 +72,11 @@ class GeometryConvexPolyhedron : public Geometry
     protected:
     optix::Buffer m_plane_origin; //!< Buffer containing plane origins
     optix::Buffer m_plane_normal; //!< Buffer containing plane normals
-    optix::Buffer m_plane_color;  //!< Buffer containing plane colors
+    optix::Buffer m_plane_color; //!< Buffer containing plane colors
 
-    std::shared_ptr<Array<vec3<float>>> m_position;    //!< Position of each polyhedron
+    std::shared_ptr<Array<vec3<float>>> m_position; //!< Position of each polyhedron
     std::shared_ptr<Array<quat<float>>> m_orientation; //!< Orientation of each polyhedron
-    std::shared_ptr<Array<RGB<float>>> m_color;        //!< Per-particle color
+    std::shared_ptr<Array<RGB<float>>> m_color; //!< Per-particle color
     };
 
 //! Export GeometryConvexPolyhedron to python

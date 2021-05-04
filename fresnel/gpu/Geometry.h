@@ -90,16 +90,16 @@ class Geometry
 
     protected:
     optix::GeometryInstance m_instance; //!< The geometry instance object
-    optix::Geometry m_geometry;         //!< The geometry object
-    bool m_valid = false;   //!< true when the geometry instance is valid and attached to the Scene
+    optix::Geometry m_geometry; //!< The geometry object
+    bool m_valid = false; //!< true when the geometry instance is valid and attached to the Scene
     bool m_enabled = false; //!< true when the geometry instance is part of the Scene
 
-    std::shared_ptr<Scene> m_scene;   //!< The scene the geometry is attached to
+    std::shared_ptr<Scene> m_scene; //!< The scene the geometry is attached to
     std::shared_ptr<Device> m_device; //!< The device the Scene is attached to
 
-    Material m_mat;         //!< material assigned to this geometry
+    Material m_mat; //!< material assigned to this geometry
     Material m_outline_mat; //!< outline material assigned to this geometry
-    float m_outline_width;  //!< outline width
+    float m_outline_width; //!< outline width
 
     //! Set up m_instance
     void setupInstance();

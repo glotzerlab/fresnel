@@ -22,4 +22,3 @@ fresnel.camera
     :synopsis: Cameras.
     :members:
     :show-inheritance:
-

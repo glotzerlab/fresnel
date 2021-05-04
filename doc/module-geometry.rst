@@ -26,4 +26,3 @@ fresnel.geometry
     :synopsis: Geometric primitives.
     :members:
     :show-inheritance:
-

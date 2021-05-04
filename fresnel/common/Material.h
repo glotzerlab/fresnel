@@ -46,13 +46,13 @@ DEVICE inline float schlick(float x)
 */
 struct Material
     {
-    float solid;               //!< Set to 1 to pass through solid color
-    RGB<float> color;          //!< Color of the material
+    float solid; //!< Set to 1 to pass through solid color
+    RGB<float> color; //!< Color of the material
     float primitive_color_mix; //!< Set to 0 to force material color, 1 to use geometry color
-    float roughness;           //!< Set to 0 for a smooth material, non-zero for a rough material
-    float specular;            //!< Set to 0 for no specular highlights, 1 for strong highlights
-    float metal;               //!< Set to 0 for dielectric materials, set to 1 for metals
-    float spec_trans;          //!< Set to 0 for solid materials, 1 for fully transmissive
+    float roughness; //!< Set to 0 for a smooth material, non-zero for a rough material
+    float specular; //!< Set to 0 for no specular highlights, 1 for strong highlights
+    float metal; //!< Set to 0 for dielectric materials, set to 1 for metals
+    float spec_trans; //!< Set to 0 for solid materials, 1 for fully transmissive
 
     //! Default constructor gives uninitialized material
     DEVICE Material() { }
