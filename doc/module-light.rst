@@ -25,4 +25,3 @@ fresnel.light
 .. automodule:: fresnel.light
     :synopsis: Lights.
     :members:
-

@@ -54,9 +54,9 @@ class GeometryMesh : public Geometry
     protected:
     optix::Buffer m_vertices; //!< Buffer containing mesh vertices
 
-    std::shared_ptr<Array<vec3<float>>> m_position;    //!< Position of each polyhedron
+    std::shared_ptr<Array<vec3<float>>> m_position; //!< Position of each polyhedron
     std::shared_ptr<Array<quat<float>>> m_orientation; //!< Orientation of each polyhedron
-    std::shared_ptr<Array<RGB<float>>> m_color;        //!< Per-vertex color
+    std::shared_ptr<Array<RGB<float>>> m_color; //!< Per-vertex color
     };
 
 //! Export GeometryMesh to python

@@ -97,7 +97,7 @@ RT_PROGRAM void path_ray_gen()
             if (prd.done)
                 break;
             } // end depth loop
-        }     // end light samples loop
+        } // end light samples loop
 
     RGBA<float> output_sample(prd.result / float(light_samples), prd.a);
 

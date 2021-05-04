@@ -215,11 +215,11 @@ template<class T> class Array
         }
 
     protected:
-    size_t m_w;             //!< Width of data array
-    size_t m_h;             //!< Height of data array
-    unsigned int m_ndim;    //!< Number of dimensions in the data array
+    size_t m_w; //!< Width of data array
+    size_t m_h; //!< Height of data array
+    unsigned int m_ndim; //!< Number of dimensions in the data array
     optix::Buffer m_buffer; //!< OptiX buffer
-    void* m_tmp = nullptr;  //!< Temporary storage of the data pointer
+    void* m_tmp = nullptr; //!< Temporary storage of the data pointer
     };
 
 //! Export Array instantiations to python

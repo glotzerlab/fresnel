@@ -22,4 +22,3 @@ fresnel.tracer
     :synopsis: Ray tracers.
     :show-inheritance:
     :members:
-

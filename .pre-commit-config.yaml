@@ -1,3 +1,6 @@
+ci:
+    skip: [clang-format]
+
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: 'v3.4.0'

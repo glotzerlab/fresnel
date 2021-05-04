@@ -22,7 +22,7 @@ jobs:
     - uses: actions/setup-python@v2.2.2
     - uses: pre-commit/action@v2.0.2
       with:
-        extra_args: --all-files --hook-stage manual
+        extra_args: --all-files --hook-stage manual clang-format
 
   # This job is used to provide a single requirement for branch merge conditions.
   checks_complete:

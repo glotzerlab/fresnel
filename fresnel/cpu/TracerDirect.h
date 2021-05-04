@@ -44,6 +44,9 @@ class TracerDirect : public Tracer
     protected:
     //! Number of AA samples in each direction
     unsigned int m_aa_n = 8;
+
+    /// Implementation of the render loop
+    virtual void renderImplementation(std::shared_ptr<Scene> scene);
     };
 
 //! Export TracerDirect to python
