@@ -223,9 +223,9 @@ template<class T> class Array
 
     protected:
     std::vector<T> m_data; //!< Stored data
-    size_t m_w;            //!< Width of data array
-    size_t m_h;            //!< Height of data array
-    unsigned int m_ndim;   //!< Number of dimensions in the data array
+    size_t m_w; //!< Width of data array
+    size_t m_h; //!< Height of data array
+    unsigned int m_ndim; //!< Number of dimensions in the data array
     };
 
 //! Export Array instantiations to python

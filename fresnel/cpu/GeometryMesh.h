@@ -60,7 +60,7 @@ class GeometryMesh : public Geometry
         m_vertices; //!< Holds the vertex coordinates in ccw order for each face
     std::shared_ptr<Array<RGB<float>>> m_color; //!< Color for each vertex point
 
-    std::shared_ptr<Array<vec3<float>>> m_position;    //!< Position of each polyhedron
+    std::shared_ptr<Array<vec3<float>>> m_position; //!< Position of each polyhedron
     std::shared_ptr<Array<quat<float>>> m_orientation; //!< Orientation of each polyhedron
 
     unsigned int m_N; //!< Number of polyhedra

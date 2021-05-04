@@ -51,8 +51,8 @@ class GeometryCylinder : public Geometry
 
     protected:
     std::shared_ptr<Array<vec3<float>>> m_points; //!< Position the start and end of each cylinder
-    std::shared_ptr<Array<float>> m_radius;       //!< Per-particle radii
-    std::shared_ptr<Array<RGB<float>>> m_color;   //!< Color for each start and end point
+    std::shared_ptr<Array<float>> m_radius; //!< Per-particle radii
+    std::shared_ptr<Array<RGB<float>>> m_color; //!< Color for each start and end point
     };
 
 //! Export GeometryCylinder to python

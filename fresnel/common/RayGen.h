@@ -186,11 +186,11 @@ class RayGen
         }
 
     protected:
-    unsigned int m_width;                 //!< Width of the output image (in pixels)
-    unsigned int m_height;                //!< Height of the output image (in pixels)
+    unsigned int m_width; //!< Width of the output image (in pixels)
+    unsigned int m_height; //!< Height of the output image (in pixels)
     r123::Philox4x32::key_type m_rng_key; //!< Key for the random number generator
-    unsigned int m_i;                     //!< i coordinate of the pixel
-    unsigned int m_j;                     //!< j coordinate of the pixel
+    unsigned int m_i; //!< i coordinate of the pixel
+    unsigned int m_j; //!< j coordinate of the pixel
     };
 
     } // namespace fresnel

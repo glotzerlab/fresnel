@@ -21,8 +21,8 @@ void export_Array(pybind11::module& m)
         m,
         "ArrayRGBAc",
         pybind11::buffer_protocol())
-        .def_buffer(
-            [](Array<RGBA<unsigned char>>& t) -> pybind11::buffer_info { return t.getBuffer(); })
+        .def_buffer([](Array<RGBA<unsigned char>>& t) -> pybind11::buffer_info
+                    { return t.getBuffer(); })
         .def("map", &Array<RGBA<unsigned char>>::map_py)
         .def("unmap", &Array<RGBA<unsigned char>>::unmap);
 
@@ -38,8 +38,8 @@ void export_Array(pybind11::module& m)
         m,
         "ArrayRGBc",
         pybind11::buffer_protocol())
-        .def_buffer(
-            [](Array<RGB<unsigned char>>& t) -> pybind11::buffer_info { return t.getBuffer(); })
+        .def_buffer([](Array<RGB<unsigned char>>& t) -> pybind11::buffer_info
+                    { return t.getBuffer(); })
         .def("map", &Array<RGB<unsigned char>>::map_py)
         .def("unmap", &Array<RGB<unsigned char>>::unmap);
 

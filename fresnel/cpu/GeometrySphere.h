@@ -54,8 +54,8 @@ class GeometrySphere : public Geometry
 
     protected:
     std::shared_ptr<Array<vec3<float>>> m_position; //!< Position for each sphere
-    std::shared_ptr<Array<float>> m_radius;         //!< Per-particle radii
-    std::shared_ptr<Array<RGB<float>>> m_color;     //!< Per-particle color
+    std::shared_ptr<Array<float>> m_radius; //!< Per-particle radii
+    std::shared_ptr<Array<RGB<float>>> m_color; //!< Per-particle color
 
     //! Embree bounding function
     static void bounds(const struct RTCBoundsFunctionArguments* args);

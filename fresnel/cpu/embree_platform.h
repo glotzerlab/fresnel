@@ -24,7 +24,7 @@ struct FresnelRTCIntersectContext
     RTCIntersectContext context;
 
     // ray extensions go here
-    float d;                           //!< Distance to the nearest edge
+    float d; //!< Distance to the nearest edge
     fresnel::RGB<float> shading_color; //!< shading color determined by which primitive the ray hits
                                        //!< (or where on the primitive)
     };

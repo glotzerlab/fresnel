@@ -131,14 +131,14 @@ class Scene
         }
 
     private:
-    optix::GeometryGroup m_root;      //!< Store the scene root object
-    optix::Acceleration m_accel;      //!< Store the acceleration structure
+    optix::GeometryGroup m_root; //!< Store the scene root object
+    optix::Acceleration m_accel; //!< Store the acceleration structure
     std::shared_ptr<Device> m_device; //!< The device the scene is attached to
 
     RGB<float> m_background_color; //!< The background color
-    float m_background_alpha;      //!< Background alpha
-    UserCamera m_camera;           //!< The camera
-    Lights m_lights;               //!< The lights
+    float m_background_alpha; //!< Background alpha
+    UserCamera m_camera; //!< The camera
+    Lights m_lights; //!< The lights
     };
 
 //! Export Scene to python

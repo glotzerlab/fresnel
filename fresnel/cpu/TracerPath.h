@@ -65,7 +65,7 @@ class TracerPath : public Tracer
         }
 
     protected:
-    unsigned int m_n_samples;     //!< Number of samples taken since the last reset
+    unsigned int m_n_samples; //!< Number of samples taken since the last reset
     unsigned int m_light_samples; //!< Number of light samples to take each render()
 
     /// Implementation of the render loop

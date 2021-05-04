@@ -81,8 +81,8 @@ class Device
         }
 
     private:
-    optix::Context m_context;   //!< Store the context
-    std::string m_ptx_root;     //!< Directory where PTX files are stored
+    optix::Context m_context; //!< Store the context
+    std::string m_ptx_root; //!< Directory where PTX files are stored
     optix::Material m_material; //!< Material for Direct ray tracer
 
     std::map<std::tuple<std::string, std::string>, optix::Program>
