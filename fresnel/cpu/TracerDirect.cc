@@ -26,7 +26,15 @@ TracerDirect::~TracerDirect() { }
 void TracerDirect::render(std::shared_ptr<Scene> scene)
     {
     std::shared_ptr<tbb::task_arena> arena = scene->getDevice()->getTBBArena();
+    Tracer::render(scene);
+        arena->execute([&]
+        {
+        renderImplementation(scene);
+        });
+    }
 
+void TracerDirect::renderImplementation(std::shared_ptr<Scene> scene)
+    {
     const RGB<float> background_color = scene->getBackgroundColor();
     const float background_alpha = scene->getBackgroundAlpha();
 
@@ -39,7 +47,6 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
 
     const Camera cam(user_camera, m_linear_out->getW(), m_linear_out->getH(), m_seed, sample_aa);
     const Lights lights(scene->getLights(), cam);
-    Tracer::render(scene);
 
     // update Embree data structures
     rtcCommitScene(scene->getRTCScene());
@@ -57,7 +64,6 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
     const unsigned int numTilesX = (width + TILE_SIZE_X - 1) / TILE_SIZE_X;
     const unsigned int numTilesY = (height + TILE_SIZE_Y - 1) / TILE_SIZE_Y;
 
-    arena->execute([&] {
         parallel_for(
             blocked_range<size_t>(0, numTilesX * numTilesY),
             [=](const blocked_range<size_t>& r) {
@@ -213,7 +219,6 @@ void TracerDirect::render(std::shared_ptr<Scene> scene)
                             } // end loop over pixels in the tile
                     }         // loop over tiles in this region
             });           // end parallel loop over tiles
-    });                   // end parallel arena
 
     m_linear_out->unmap();
     m_srgb_out->unmap();
