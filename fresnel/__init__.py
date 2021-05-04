@@ -20,6 +20,7 @@ if _common.cpu_built():
 if _common.gpu_built():
     from . import _gpu
 
+
 class Device(object):
     """Hardware device to use for ray tracing.
 
