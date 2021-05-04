@@ -23,14 +23,9 @@ repos:
     - pep8-naming
     - flake8-docstrings
     - flake8-rst-docstrings
-- repo: local
+- repo: https://github.com/glotzerlab/pre-commit-clang-format
+  rev: v1.0.0
   hooks:
   - id: clang-format
-    name: clang-format
-    entry: clang-format -i
-    additional_dependencies: [-c conda-forge, clang-tools=10.0]
-    language: conda
-    types_or: [c++, cuda, inc]
     stages: [manual]
     exclude: (?:^extern/)
-    verbose: true
