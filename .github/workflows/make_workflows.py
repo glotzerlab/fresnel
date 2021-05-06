@@ -2,8 +2,12 @@
 
 import jinja2
 import yaml
+import os
 
 if __name__ == '__main__':
+    # change to the directory of the script
+    os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
     env = jinja2.Environment(loader=jinja2.FileSystemLoader('templates'),
                              block_start_string = '<%',
                              block_end_string = '%>',
