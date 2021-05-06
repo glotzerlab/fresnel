@@ -80,7 +80,7 @@ jobs:
 << upload_install_steps >>
 
   test:
-<< job(name='Test', use_gpu_runners=True, configurations=test_configurations) >>
+<< job(name='Test', use_gpu_runners=True, needs='build', configurations=test_configurations) >>
     steps:
 << download_install_steps >>
     - name: Run tests
@@ -89,7 +89,7 @@ jobs:
         PYTHONPATH: ${{ github.workspace }}/install
 
   render_gallery:
-<< job(name='Render gallery', use_gpu_runners=True, configurations=gallery_configurations) >>
+<< job(name='Render gallery', use_gpu_runners=True, needs='build', configurations=gallery_configurations) >>
     steps:
     - uses: actions/checkout@v2.3.4
       with:

@@ -82,6 +82,7 @@ jobs:
 
   test:
     name: Test [${{ join(matrix.config, '_') }}]
+    needs: build
     runs-on: ${{ matrix.runner }}
     container:
       image: ${{ matrix.repository }}/ci:2021.05-${{ matrix.config[0] }}
@@ -112,6 +113,7 @@ jobs:
 
   render_gallery:
     name: Render gallery [${{ join(matrix.config, '_') }}]
+    needs: build
     runs-on: ${{ matrix.runner }}
     container:
       image: ${{ matrix.repository }}/ci:2021.05-${{ matrix.config[0] }}
