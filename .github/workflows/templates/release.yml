@@ -1,38 +1,25 @@
+<% extends "workflow.yml" %>
+<% block name %>
 # Edit `release.yml` in `.github/workflows/templates` and run `make_workflows.py` to update the
 # workflow.
 name: GitHub Release
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-on:
-  # Trigger on pull requests.
-  pull_request:
-
-  # Trigger on pushes to the mainline branches. This prevents building commits twice when the pull
-  # request source branch is in the same repository.
-  push:
-    branches:
-    - "master"
+<% endblock %>
+<% block on_push_tags %>
     # Trigger on tags. Tag builds create GitHub releases with the change log and source tarball.
     tags:
       - "v*"
-
-  # Trigger on request.
-  workflow_dispatch:
-
-
+<% endblock %>
+<% block env %>
 env:
   name: fresnel
-
-
+<% endblock %>
+<% block jobs %>
 jobs:
   release:
     name: Build release tarball
     runs-on: ubuntu-latest
     container:
-      image: glotzerlab/ci:2021.05-ubuntu20.04
+      image: glotzerlab/<< container_prefix >>-ubuntu20.04
 
     steps:
       - uses: actions/checkout@v2.3.4
@@ -105,3 +92,4 @@ jobs:
           job_name: Publish [GitHub]
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+<% endblock %>
