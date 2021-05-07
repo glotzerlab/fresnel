@@ -36,8 +36,8 @@ name: Unit test
       run: tar --use-compress-program='zstd -10 -T0' -cvf install.tar install
     # Upload the tarball. Retain the file for a limited time in case developers need to download
     # and run tests locally for further debugging.
-    - name: 'Upload install'
-      uses: actions/upload-artifact@v2.2.3
+    - uses: actions/upload-artifact@v2.2.3
+      name: 'Upload install'
       with:
         name: install-${{ join(matrix.config, '_') }}
         path: install.tar

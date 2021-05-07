@@ -77,13 +77,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v2.0.9
+      - uses: actions/download-artifact@v2.0.9
+        name: Download artifacts
         with:
           name: release
 
-      - name: Create release
-        uses: softprops/action-gh-release@v1
+      - uses: softprops/action-gh-release@v1
+        name: Create release
         if: startsWith(github.ref, 'refs/tags/v')
         with:
           files: "*.tar.gz"
@@ -91,9 +91,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Slack notification
+      - uses: 8398a7/action-slack@v3.9.0
+        name: Slack notification
         if: startsWith(github.ref, 'refs/tags/v') && ( cancelled() || failure() )
-        uses: 8398a7/action-slack@v3.9.0
         with:
           status: ${{ job.status }}
           fields: workflow,job,message,commit
