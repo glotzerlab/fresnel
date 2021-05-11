@@ -100,6 +100,11 @@ jobs:
         - {repository: joaander, config: [optix60_cuda10_py37], runner: [self-hosted,GPU], docker_options: '--mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --gpus=all' }
 
     steps:
+    - run: pwd
+    - run: ls
+    - name: Clean workspace
+      run: rm -rf ./*
+
     - uses: actions/download-artifact@v2.0.9
       with:
         name: install-${{ join(matrix.config, '_') }}-${{ github.sha }}
@@ -128,6 +133,11 @@ jobs:
       with:
         submodules: true
         path: code
+    - run: pwd
+    - run: ls
+    - name: Clean workspace
+      run: rm -rf ./*
+
     - uses: actions/download-artifact@v2.0.9
       with:
         name: install-${{ join(matrix.config, '_') }}-${{ github.sha }}

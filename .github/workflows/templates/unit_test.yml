@@ -50,6 +50,12 @@ name: Unit test
     - name: Untar install
       run: tar --use-compress-program='zstd -10 -T0' -xvf install.tar
 <% endset %>
+<% set clean_steps %>
+    - run: pwd
+    - run: ls
+    - name: Clean workspace
+      run: rm -rf ./*
+<% endset %>
 <% block jobs %>
 # Use multiple jobs to reduce the amount of time spent on GPU runners. Use GitHub Hosted runners
 # for compiling all tests configurations (GPU and CPU), then upload the installation directory
@@ -82,6 +88,7 @@ jobs:
   test:
 << job(name='Test', use_gpu_runners=True, needs='build', configurations=test_configurations) >>
     steps:
+<< clean_steps >>
 << download_install_steps >>
     - name: Run tests
       run: python3 -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0 --durations-min=0.1
@@ -95,6 +102,7 @@ jobs:
       with:
         submodules: true
         path: code
+<< clean_steps >>
 << download_install_steps >>
     - name: Render gallery images
       run: for i in *.py; do echo "Rendering $i" && python3 $i || exit 1; done
