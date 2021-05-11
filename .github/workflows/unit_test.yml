@@ -75,7 +75,7 @@ jobs:
     - uses: actions/upload-artifact@v2.2.3
       name: 'Upload install'
       with:
-        name: install-${{ join(matrix.config, '_') }}-${{ github.ref }}
+        name: install-${{ join(matrix.config, '_') }}-${{ github.sha }}
         path: install.tar
         retention-days: 7
 
@@ -102,7 +102,7 @@ jobs:
     steps:
     - uses: actions/download-artifact@v2.0.9
       with:
-        name: install-${{ join(matrix.config, '_') }}-${{ github.ref }}
+        name: install-${{ join(matrix.config, '_') }}-${{ github.sha }}
     - name: Untar install
       run: tar --use-compress-program='zstd -10 -T0' -xvf install.tar
 
@@ -130,7 +130,7 @@ jobs:
         path: code
     - uses: actions/download-artifact@v2.0.9
       with:
-        name: install-${{ join(matrix.config, '_') }}-${{ github.ref }}
+        name: install-${{ join(matrix.config, '_') }}-${{ github.sha }}
     - name: Untar install
       run: tar --use-compress-program='zstd -10 -T0' -xvf install.tar
 
