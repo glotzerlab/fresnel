@@ -58,7 +58,7 @@ formatting for use in `Napoleon`_.
 C++/CUDA
 --------
 
-* Style is set by clang-format-10
+* Style is set by clang-format
 
   * Whitesmith's indentation style.
   * 100 character line width.
