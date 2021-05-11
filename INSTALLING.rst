@@ -1,27 +1,30 @@
 Installation
 ============
 
-**Fresnel** binaries are available in the `glotzerlab-software <https://glotzerlab-software.readthedocs.io>`_
-`Docker <https://hub.docker.com/>`_/`Singularity <https://www.sylabs.io/>`_ images and in packages on
-`conda-forge <https://conda-forge.org/>`_. You can also compile **fresnel** from source.
+**fresnel** binaries are available in the glotzerlab-software_ Docker_/Singularity_ images and in
+packages on conda-forge_. You can also compile **fresnel** from source
+
+.. _glotzerlab-software: https://glotzerlab-software.readthedocs.io
+.. _Docker: https://hub.docker.com/
+.. _Singularity: https://www.sylabs.io/
+.. _conda-forge: https://conda-forge.org/
 
 Binaries
 --------
 
-Anaconda package
-^^^^^^^^^^^^^^^^
+Conda package
+^^^^^^^^^^^^^
 
-**Fresnel** is available on `conda-forge <https://conda-forge.org/>`_. To install, first download and install
-`miniconda <http://conda.pydata.org/miniconda.html>`_.
-Then add the ``conda-forge`` channel and install **fresnel**::
+**fresnel** is available on conda-forge_ on the *linux-64*, *osx-64*, and *osx-arm64* platforms. To
+install, download and install miniforge_ or miniconda_ Then install **fresnel** from the
+conda-forge_ channel:
 
-   $ conda config --add channels conda-forge
-   $ conda install fresnel
+.. _miniforge: https://github.com/conda-forge/miniforge
+.. _miniconda: http://conda.pydata.org/miniconda.html
 
-**jupyter** and **matplotlib** are required to execute the
-`fresnel example notebooks <https://github.com/glotzerlab/fresnel-examples>`_::
+.. code-block:: bash
 
-   $ conda install jupyter matplotlib
+   $ conda install -c conda-forge fresnel
 
 .. note::
 
@@ -30,8 +33,7 @@ Then add the ``conda-forge`` channel and install **fresnel**::
 Singularity / Docker images
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-See the `glotzerlab-software documentation <https://glotzerlab-software.readthedocs.io/>`_ for container usage
-information and cluster specific instructions.
+See the glotzerlab-software_ documentation for instructions to install and use the containers.
 
 Compile from source
 -------------------
@@ -47,8 +49,8 @@ Or, clone using git::
 
    $ git clone --recursive  https://github.com/glotzerlab/fresnel
 
-**Fresnel** uses git submodules. Either clone with the ``--recursive`` option, or execute ``git submodule update --init``
-to fetch the submodules.
+**Fresnel** uses git submodules. Either clone with the ``--recursive`` option, or execute ``git
+submodule update --init`` to fetch the submodules.
 
 Configure a virtual environment
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -57,7 +59,7 @@ When using a shared Python installation, create a `virtual environment
 <https://docs.python.org/3/library/venv.html>`_ where you can install
 **fresnel**::
 
-    $ python3 -m venv /path/to/virtual/environment --system-site-packages
+    $ python3 -m venv /path/to/virtual/environment
 
 Activate the environment before configuring and before executing
 **fresnel** scripts::
@@ -93,8 +95,8 @@ Install Prerequisites
   * OptiX == 6.0
   * CUDA >= 10
 
-``ENABLE_EMBREE`` (*defaults ON*) and ``ENABLE_OPTIX`` (*defaults OFF*) are orthogonal settings, either or both may be
-enabled.
+``ENABLE_EMBREE`` (*defaults ON*) and ``ENABLE_OPTIX`` (*defaults OFF*) are orthogonal settings,
+either or both may be enabled.
 
 Additional packages may be needed:
 
@@ -119,9 +121,10 @@ Additional packages may be needed:
 
   * Requited to build developer documentation.
 
-Install these tools with your system or virtual environment package manager. **fresnel** developers have had success with
-``pacman`` (`arch linux <https://www.archlinux.org/>`_), ``apt-get`` (`ubuntu <https://ubuntu.com/>`_), `Homebrew
-<https://brew.sh/>`_ (macOS), and `MacPorts <https://www.macports.org/>`_ (macOS)::
+Install these tools with your system or virtual environment package manager. **fresnel** developers
+have had success with ``pacman`` (`arch linux <https://www.archlinux.org/>`_), ``apt-get`` (`ubuntu
+<https://ubuntu.com/>`_), `Homebrew <https://brew.sh/>`_ (macOS), and `MacPorts
+<https://www.macports.org/>`_ (macOS)::
 
     $ your-package-manager install cmake doxygen embree pybind11 python python-pillow python-pytest python-sphinx python-sphinx_rtd_theme python-nbsphinx intell-tbb qhull
 
@@ -131,7 +134,8 @@ Typical HPC cluster environments provide python, numpy, and cmake via a module s
 
 .. note::
 
-    Packages may be named differently, check your system's package list. Install any ``-dev`` packages as needed.
+    Packages may be named differently, check your system's package list. Install any ``-dev``
+    packages as needed.
 
 .. tip::
 
@@ -150,8 +154,8 @@ Configure with **cmake** and compile with **make**::
    $ cmake ../
    $ make install -j10
 
-By default, **fresnel** builds the Embree (CPU) backend. Pass ``-DENABLE_OPTIX=ON`` to **cmake** to enable the GPU
-accelerated OptiX backend.
+By default, **fresnel** builds the Embree (CPU) backend. Pass ``-DENABLE_OPTIX=ON`` to **cmake** to
+enable the GPU accelerated OptiX backend.
 
 Run tests
 ^^^^^^^^^
@@ -176,5 +180,5 @@ Build the user documentation with **sphinx**::
 Build C++ Documentation
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-To build the developer documentation, execute
-``doxygen`` in the repository root. It will write HTML output in ``devdoc/html/index.html``.
+To build the developer documentation, execute ``doxygen`` in the repository root. It will write HTML
+output in ``devdoc/html/index.html``.
