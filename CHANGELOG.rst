@@ -9,9 +9,12 @@ fresnel_ releases follow `semantic versioning`_.
 v0.x
 ----
 
-v0.14.0 (not yet released)
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+v0.13.2 (2021-05-11)
+^^^^^^^^^^^^^^^^^^^^
 
+*Added*
+
+* Support macos-arm64.
 
 v0.13.1 (2021-03-11)
 ^^^^^^^^^^^^^^^^^^^^
