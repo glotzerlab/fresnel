@@ -21,7 +21,6 @@ name: Unit test
       credentials:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
     <% endif %>
     strategy:
       matrix:
@@ -29,6 +28,12 @@ name: Unit test
     <% for configuration in configurations %>
         - {repository: << configuration.repository >>, config: << configuration.config >>, runner: << configuration.runner >>, docker_options: '<< configuration.docker_options >>' }
     <% endfor %>
+
+    steps:
+    <% if use_gpu_runners %>
+    - name: Clean workspace
+      run: rm -rf ./*
+    <% endif %>
 <% endmacro %>
 <% set upload_install_steps %>
     # Tar the installation directory to preserve permissions and reduce HTTP requests on upload.
@@ -50,10 +55,6 @@ name: Unit test
     - name: Untar install
       run: tar --use-compress-program='zstd -10 -T0' -xvf install.tar
 <% endset %>
-<% set clean_steps %>
-    - name: Clean workspace
-      run: rm -rf ./*
-<% endset %>
 <% block jobs %>
 # Use multiple jobs to reduce the amount of time spent on GPU runners. Use GitHub Hosted runners
 # for compiling all tests configurations (GPU and CPU), then upload the installation directory
@@ -62,7 +63,6 @@ name: Unit test
 jobs:
   build:
 << job(name='Build', use_gpu_runners=False, configurations=test_configurations) >>
-    steps:
     - uses: actions/checkout@v2.3.4
       with:
         path: code
@@ -85,8 +85,6 @@ jobs:
 
   test:
 << job(name='Test', use_gpu_runners=True, needs='build', configurations=test_configurations) >>
-    steps:
-<< clean_steps >>
 << download_install_steps >>
     - name: Run tests
       run: python3 -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0 --durations-min=0.1
@@ -95,8 +93,6 @@ jobs:
 
   render_gallery:
 << job(name='Render gallery', use_gpu_runners=True, needs='build', configurations=gallery_configurations) >>
-    steps:
-<< clean_steps >>
     - uses: actions/checkout@v2.3.4
       with:
         submodules: true

@@ -35,7 +35,6 @@ jobs:
       credentials:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
     strategy:
       matrix:
         include:
@@ -49,6 +48,7 @@ jobs:
         - {repository: joaander, config: [optix60_cuda10_py37], runner: [self-hosted,GPU], docker_options: '--mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --gpus=all' }
 
     steps:
+
     - uses: actions/checkout@v2.3.4
       with:
         path: code
@@ -100,8 +100,6 @@ jobs:
         - {repository: joaander, config: [optix60_cuda10_py37], runner: [self-hosted,GPU], docker_options: '--mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --gpus=all' }
 
     steps:
-    - run: pwd
-    - run: ls
     - name: Clean workspace
       run: rm -rf ./*
 
@@ -129,15 +127,13 @@ jobs:
         - {repository: glotzerlab, config: [clang11_py39, embree], runner: ubuntu-latest, docker_options: '' }
 
     steps:
+    - name: Clean workspace
+      run: rm -rf ./*
+
     - uses: actions/checkout@v2.3.4
       with:
         submodules: true
         path: code
-    - run: pwd
-    - run: ls
-    - name: Clean workspace
-      run: rm -rf ./*
-
     - uses: actions/download-artifact@v2.0.9
       with:
         name: install-${{ join(matrix.config, '_') }}-${{ github.sha }}
