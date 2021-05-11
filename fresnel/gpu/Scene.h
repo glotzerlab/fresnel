@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 The Regents of the University of Michigan
+// Copyright (c) 2016-2021 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #ifndef SCENE_H_
@@ -131,14 +131,14 @@ class Scene
         }
 
     private:
-    optix::GeometryGroup m_root;      //!< Store the scene root object
-    optix::Acceleration m_accel;      //!< Store the acceleration structure
+    optix::GeometryGroup m_root; //!< Store the scene root object
+    optix::Acceleration m_accel; //!< Store the acceleration structure
     std::shared_ptr<Device> m_device; //!< The device the scene is attached to
 
     RGB<float> m_background_color; //!< The background color
-    float m_background_alpha;      //!< Background alpha
-    UserCamera m_camera;           //!< The camera
-    Lights m_lights;               //!< The lights
+    float m_background_alpha; //!< Background alpha
+    UserCamera m_camera; //!< The camera
+    Lights m_lights; //!< The lights
     };
 
 //! Export Scene to python

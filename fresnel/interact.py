@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2020 The Regents of the University of Michigan
+# Copyright (c) 2016-2021 The Regents of the University of Michigan
 # This file is part of the Fresnel project, released under the BSD 3-Clause
 # License.
 
@@ -20,7 +20,6 @@ from PySide2 import QtGui
 from PySide2 import QtCore
 from PySide2 import QtWidgets
 import rowan
-import time
 import copy
 
 from fresnel import tracer, camera
@@ -191,7 +190,6 @@ class SceneView(QWidget):
         self._initial_resize = True
 
         # track render times
-        self._paint_time = None
         self._frames_painted = 0
 
         # flag to notify view rotation
@@ -247,20 +245,18 @@ class SceneView(QWidget):
     #####################################
     # Qt methods:
 
-    def minimumSizeHint(self):  # noqa
+    def minimumSizeHint(self):  # noqa: N802 - allow Qt style naming
         """Specify the minimum window size hint to Qt.
 
-        :meta private:"""
+        :meta private:
+        """
         return QtCore.QSize(1610, 1000)
 
-    def paintEvent(self, event):  # noqa
+    def paintEvent(self, event):  # noqa: N802 - allow Qt style naming
         """Paint the window.
 
-        :meta private:"""
-        # Track time for FPS
-        if self._frames_painted == 0:
-            self._paint_time = time.time()
-
+        :meta private:
+        """
         if self._is_rendering:
             # Render the hi-res scene when not moving the camera
             if self._render_high_res:
@@ -295,15 +291,11 @@ class SceneView(QWidget):
         # Display FPS
         self._frames_painted += 1
 
-        delta_t = time.time() - self._paint_time
-        if delta_t > 1:
-            print("FPS:", self._frames_painted / delta_t)
-            self._frames_painted = 0
-
-    def resizeEvent(self, event):  # noqa
+    def resizeEvent(self, event):  # noqa: N802 - allow Qt style naming
         """Adjust the size of the tracer as the window resizes.
 
-        :meta private:"""
+        :meta private:
+        """
         # for the initial window size, resize immediately
         if self._initial_resize:
             self._resize_done()
@@ -313,10 +305,11 @@ class SceneView(QWidget):
             # for a bit
             self._resize_timer.start(self.TIMEOUT)
 
-    def mouseMoveEvent(self, event):  # noqa
+    def mouseMoveEvent(self, event):  # noqa: N802 - allow Qt style naming
         """Respond to mouse move events.
 
-        :meta private:"""
+        :meta private:
+        """
         delta = event.pos() - self._mouse_initial_pos
 
         if self._camera_update_mode == 'pitch/yaw':
@@ -344,10 +337,11 @@ class SceneView(QWidget):
         self.update()
         event.accept()
 
-    def mousePressEvent(self, event):  # noqa
+    def mousePressEvent(self, event):  # noqa: N802 - allow Qt style naming
         """Respond to mouse press events.
 
-        :meta private:"""
+        :meta private:
+        """
         self._mouse_initial_pos = event.pos()
         self._camera_controller.start()
         event.accept()
@@ -362,21 +356,22 @@ class SceneView(QWidget):
         self._render_high_res = False
         self._start_rendering()
 
-    def mouseReleaseEvent(self, event):  # noqa
+    def mouseReleaseEvent(self, event):  # noqa: N802 - allow Qt style naming
         """Respond to mouse release events.
 
-        :meta private:"""
+        :meta private:
+        """
         if self._camera_update_mode is not None:
             self._camera_update_mode = None
             event.accept()
 
         self._render_high_res = True
 
-    def wheelEvent(self, event):  # noqa
+    def wheelEvent(self, event):  # noqa: N802 - allow Qt style naming
         """Respond to mouse wheel events.
 
-        :meta private:"""
-
+        :meta private:
+        """
         self._camera_controller.start()
         self._camera_controller.zoom(event.angleDelta().y(),
                                      slight=event.modifiers()

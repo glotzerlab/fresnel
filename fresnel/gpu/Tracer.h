@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 The Regents of the University of Michigan
+// Copyright (c) 2016-2021 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #ifndef TRACER_H_
@@ -80,22 +80,22 @@ class Tracer
 
     protected:
     std::shared_ptr<Device> m_device; //!< The device the Scene is attached to
-    unsigned int m_w;                 //!< Width of the output buffer
-    unsigned int m_h;                 //!< Height of the output buffer
-    optix::Buffer m_linear_out_gpu;   //!< The GPU linear output buffer
-    optix::Buffer m_srgb_out_gpu;     //!< The GPU linear output buffer
+    unsigned int m_w; //!< Width of the output buffer
+    unsigned int m_h; //!< Height of the output buffer
+    optix::Buffer m_linear_out_gpu; //!< The GPU linear output buffer
+    optix::Buffer m_srgb_out_gpu; //!< The GPU linear output buffer
 
     std::shared_ptr<Array<RGBA<float>>> m_linear_out_py; //!< The linear output buffer for python
     std::shared_ptr<Array<RGBA<unsigned char>>>
         m_srgb_out_py; //!< The sRGB output buffer for python
 
-    optix::Program m_ray_gen;           //!< Ray generation program
+    optix::Program m_ray_gen; //!< Ray generation program
     optix::Program m_exception_program; //!< Exception program
-    unsigned int m_ray_gen_entry;       //!< Entry point of the ray generation program
+    unsigned int m_ray_gen_entry; //!< Entry point of the ray generation program
 
     bool m_highlight_warning; //!< Set to true to enable highlight warnings in sRGB output
     RGB<float> m_highlight_warning_color; //!< The highlight warning color
-    unsigned int m_seed = 0;              //!< Random number seed
+    unsigned int m_seed = 0; //!< Random number seed
     };
 
 //! Export Tracer to python

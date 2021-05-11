@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 The Regents of the University of Michigan
+// Copyright (c) 2016-2021 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include "Camera.h"
@@ -36,9 +36,9 @@ namespace fresnel
 struct Lights
     {
     vec3<float> direction[4]; //!< Light directions
-    RGB<float> color[4];      //!< Color of each light (linearized sRGB color space)
-    float theta[4];           //!< Half angle of the area light
-    unsigned int N;           //!< Number of lights
+    RGB<float> color[4]; //!< Color of each light (linearized sRGB color space)
+    float theta[4]; //!< Half angle of the area light
+    unsigned int N; //!< Number of lights
 
     //! Default constructor leaves memory uninitialized to support OptiX variables
     Lights() { }

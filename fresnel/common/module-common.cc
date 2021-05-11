@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 The Regents of the University of Michigan
+// Copyright (c) 2016-2021 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include <pybind11/numpy.h>
@@ -55,28 +55,32 @@ PYBIND11_MODULE(_common, m)
         .def_readwrite("spec_trans", &Material::spec_trans)
         .def_readwrite("metal", &Material::metal)
         .def_readwrite("color", &Material::color)
-        .def("__repr__", [](const Material& a) {
-            ostringstream s;
-            s << "<fresnel._common.Material:"
-              << " solid=" << a.solid << " color=(" << a.color.r << ", " << a.color.g << ", "
-              << a.color.b << ")"
-              << " primitive_color_mix=" << a.primitive_color_mix << " roughness=" << a.roughness
-              << " specular=" << a.specular << " spec_trans=" << a.spec_trans
-              << " metal=" << a.metal << ">";
+        .def("__repr__",
+             [](const Material& a)
+             {
+                 ostringstream s;
+                 s << "<fresnel._common.Material:"
+                   << " solid=" << a.solid << " color=(" << a.color.r << ", " << a.color.g << ", "
+                   << a.color.b << ")"
+                   << " primitive_color_mix=" << a.primitive_color_mix
+                   << " roughness=" << a.roughness << " specular=" << a.specular
+                   << " spec_trans=" << a.spec_trans << " metal=" << a.metal << ">";
 
-            return s.str();
-        });
+                 return s.str();
+             });
 
     pybind11::class_<vec3<float>>(m, "vec3f")
         .def(pybind11::init<float, float, float>())
         .def_readwrite("x", &vec3<float>::x)
         .def_readwrite("y", &vec3<float>::y)
         .def_readwrite("z", &vec3<float>::z)
-        .def("__repr__", [](const vec3<float>& a) {
-            ostringstream s;
-            s << "<fresnel._common.vec3f (" << a.x << ", " << a.y << ", " << a.z << ")>";
-            return s.str();
-        });
+        .def("__repr__",
+             [](const vec3<float>& a)
+             {
+                 ostringstream s;
+                 s << "<fresnel._common.vec3f (" << a.x << ", " << a.y << ", " << a.z << ")>";
+                 return s.str();
+             });
 
     pybind11::class_<UserCamera>(m, "UserCamera")
         .def(pybind11::init<>())

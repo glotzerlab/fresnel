@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2020 The Regents of the University of Michigan
+# Copyright (c) 2016-2021 The Regents of the University of Michigan
 # This file is part of the Fresnel project, released under the BSD 3-Clause
 # License.
 
@@ -19,8 +19,7 @@ class Array(object):
     `Array` provides a python interface to access the internal data of memory
     buffers stored and managed by fresnel. You can access a `Array` as if it
     were a `numpy.ndarray` (with limited operations). Below, *slice* is a
-    :std:term:`slice` or array `indexing <numpy.doc.indexing>` mechanic that
-    **numpy** understands.
+    :std:term:`slice` or array indexing mechanic that **numpy** understands.
 
     .. rubric:: Writing
 

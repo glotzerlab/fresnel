@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 The Regents of the University of Michigan
+// Copyright (c) 2016-2021 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include "Array.h"
@@ -21,8 +21,8 @@ void export_Array(pybind11::module& m)
         m,
         "ArrayRGBAc",
         pybind11::buffer_protocol())
-        .def_buffer(
-            [](Array<RGBA<unsigned char>>& t) -> pybind11::buffer_info { return t.getBuffer(); })
+        .def_buffer([](Array<RGBA<unsigned char>>& t) -> pybind11::buffer_info
+                    { return t.getBuffer(); })
         .def("map", &Array<RGBA<unsigned char>>::map_py)
         .def("unmap", &Array<RGBA<unsigned char>>::unmap);
 
@@ -38,8 +38,8 @@ void export_Array(pybind11::module& m)
         m,
         "ArrayRGBc",
         pybind11::buffer_protocol())
-        .def_buffer(
-            [](Array<RGB<unsigned char>>& t) -> pybind11::buffer_info { return t.getBuffer(); })
+        .def_buffer([](Array<RGB<unsigned char>>& t) -> pybind11::buffer_info
+                    { return t.getBuffer(); })
         .def("map", &Array<RGB<unsigned char>>::map_py)
         .def("unmap", &Array<RGB<unsigned char>>::unmap);
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 The Regents of the University of Michigan
+// Copyright (c) 2016-2021 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #include "TracerIDs.h"
@@ -97,7 +97,7 @@ RT_PROGRAM void path_ray_gen()
             if (prd.done)
                 break;
             } // end depth loop
-        }     // end light samples loop
+        } // end light samples loop
 
     RGBA<float> output_sample(prd.result / float(light_samples), prd.a);
 
@@ -107,6 +107,11 @@ RT_PROGRAM void path_ray_gen()
     float4 old_mean_f = linear_output_buffer[launch_index];
     RGBA<float> old_mean = RGBA<float>(old_mean_f.x, old_mean_f.y, old_mean_f.z, old_mean_f.w);
     RGBA<float> output_pixel = old_mean + (output_sample - old_mean) / float(n_samples);
+
+    // output pixels occasionally evaluate to NaN in the GPU code path, ignore these
+    if (!isfinite(output_pixel.r) || !isfinite(output_pixel.g) || !isfinite(output_pixel.b))
+        output_pixel = old_mean;
+
     linear_output_buffer[launch_index]
         = make_float4(output_pixel.r, output_pixel.g, output_pixel.b, output_pixel.a);
 

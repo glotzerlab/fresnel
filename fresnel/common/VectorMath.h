@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 The Regents of the University of Michigan
+// Copyright (c) 2016-2021 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #ifndef __VECTOR_MATH_H__
@@ -918,7 +918,7 @@ template<class Real> struct quat
         return q;
         }
 
-    Real s;       //!< scalar component
+    Real s; //!< scalar component
     vec3<Real> v; //!< vector component
     };
 

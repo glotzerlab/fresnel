@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 The Regents of the University of Michigan
+// Copyright (c) 2016-2021 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #ifndef GEOMETRY_POLYGON_H_
@@ -60,11 +60,11 @@ class GeometryPolygon : public Geometry
 
     protected:
     std::vector<vec2<float>> m_vertices; //!< Polygon vertices
-    float m_rounding_radius;             //!< Spheropolygon rounding radius
+    float m_rounding_radius; //!< Spheropolygon rounding radius
 
     std::shared_ptr<Array<vec2<float>>> m_position; //!< Position of each polygon
-    std::shared_ptr<Array<float>> m_angle;          //!< Orientation of each polygon
-    std::shared_ptr<Array<RGB<float>>> m_color;     //!< Per-particle color
+    std::shared_ptr<Array<float>> m_angle; //!< Orientation of each polygon
+    std::shared_ptr<Array<RGB<float>>> m_color; //!< Per-particle color
 
     float m_radius = 0; //!< Precomputed radius in the xy plane
 

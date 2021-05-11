@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 The Regents of the University of Michigan
+// Copyright (c) 2016-2021 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #ifndef DEVICE_H_
@@ -81,8 +81,8 @@ class Device
         }
 
     private:
-    optix::Context m_context;   //!< Store the context
-    std::string m_ptx_root;     //!< Directory where PTX files are stored
+    optix::Context m_context; //!< Store the context
+    std::string m_ptx_root; //!< Directory where PTX files are stored
     optix::Material m_material; //!< Material for Direct ray tracer
 
     std::map<std::tuple<std::string, std::string>, optix::Program>

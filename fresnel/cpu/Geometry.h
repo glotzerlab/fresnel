@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 The Regents of the University of Michigan
+// Copyright (c) 2016-2021 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #ifndef GEOMETRY_H_
@@ -94,11 +94,11 @@ class Geometry
         }
 
     protected:
-    unsigned int m_geom_id;           //!< Associated geometry id
-    bool m_valid = false;             //!< true when the geometry is valid and attached to the Scene
-    std::shared_ptr<Scene> m_scene;   //!< The scene the geometry is attached to
+    unsigned int m_geom_id; //!< Associated geometry id
+    bool m_valid = false; //!< true when the geometry is valid and attached to the Scene
+    std::shared_ptr<Scene> m_scene; //!< The scene the geometry is attached to
     std::shared_ptr<Device> m_device; //!< The device the Scene is attached to
-    RTCGeometry m_geometry;           //!< The embree geometry object
+    RTCGeometry m_geometry; //!< The embree geometry object
     };
 
 //! Export Geometry to python

@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 The Regents of the University of Michigan
+// Copyright (c) 2016-2021 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #ifndef __INTERSECT_CYLINDER_H__
@@ -200,7 +200,7 @@ DEVICE inline bool intersect_ray_spherocylinder(float& t,
 
     // determine d_edge
     // project C and Oa into the view plane perpendicular to the view direction
-    const vec3<float> C_vp = C - dot(C, d) * d;    // vector rejection assuming view is normalized
+    const vec3<float> C_vp = C - dot(C, d) * d; // vector rejection assuming view is normalized
     const vec3<float> Oa_vp = Oa - dot(Oa, d) * d; // vector rejection assuming view is normalized
 
     // d_edge is r - (the distance from Oa_vp to the line segment (0,0,0) - Oa_vp)

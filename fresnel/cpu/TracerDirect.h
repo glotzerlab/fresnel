@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 The Regents of the University of Michigan
+// Copyright (c) 2016-2021 The Regents of the University of Michigan
 // This file is part of the Fresnel project, released under the BSD 3-Clause License.
 
 #ifndef TRACER_WHITTED_H_
@@ -44,6 +44,9 @@ class TracerDirect : public Tracer
     protected:
     //! Number of AA samples in each direction
     unsigned int m_aa_n = 8;
+
+    /// Implementation of the render loop
+    virtual void renderImplementation(std::shared_ptr<Scene> scene);
     };
 
 //! Export TracerDirect to python
