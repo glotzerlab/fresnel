@@ -59,8 +59,6 @@ repos:
   rev: '3.9.2'
   hooks:
   - id: flake8
-    args:
-    - --show-source
     additional_dependencies:
     - pep8-naming
     - flake8-docstrings
