@@ -1,3 +1,6 @@
+// Copyright (c) 2016-2021 The Regents of the University of Michigan
+// Part of fresnel, released under the BSD 3-Clause License.
+
 #ifndef __TRACER_RAY_IDS_H__
 #define __TRACER_RAY_IDS_H__
 

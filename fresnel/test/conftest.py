@@ -1,3 +1,6 @@
+# Copyright (c) 2016-2021 The Regents of the University of Michigan
+# Part of fresnel, released under the BSD 3-Clause License.
+
 """Pytest fixtures and methods used across all fresnel tests."""
 
 import pytest

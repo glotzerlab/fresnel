@@ -1,5 +1,5 @@
 // Copyright (c) 2016-2021 The Regents of the University of Michigan
-// This file is part of the Fresnel project, released under the BSD 3-Clause License.
+// Part of fresnel, released under the BSD 3-Clause License.
 
 #ifndef TRACER_PATH_H_
 #define TRACER_PATH_H_

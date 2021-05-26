@@ -1,3 +1,6 @@
+// Copyright (c) 2016-2021 The Regents of the University of Michigan
+// Part of fresnel, released under the BSD 3-Clause License.
+
 #ifndef PLATFORM_H_
 #define PLATFORM_H_
 

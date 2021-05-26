@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
+# Copyright (c) 2016-2021 The Regents of the University of Michigan
+# Part of fresnel, released under the BSD 3-Clause License.
 
 import sys
 import os
+import datetime
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -54,7 +57,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'fresnel'
-copyright = '2016-2021 The Regents of the University of Michigan'
+year = datetime.date.today().year
+copyright = f'2016-{ year } The Regents of the University of Michigan'
 author = 'The Regents of the University of Michigan'
 
 # The version info for the project you're documenting, acts as replacement for
