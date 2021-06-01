@@ -25,6 +25,10 @@ if (ENABLE_EMBREE)
 
 target_compile_definitions(_common PUBLIC FRESNEL_BUILD_CPU)
 
+if (WIN32)
+target_compile_definitions(_common PUBLIC _USE_MATH_DEFINES R123_NO_SINCOS)
+endif()
+
 set(_cpu_sources
      cpu/module-cpu.cc
      cpu/Device.cc
@@ -48,6 +52,11 @@ if(APPLE)
 else()
     set_target_properties(_cpu PROPERTIES INSTALL_RPATH "\$ORIGIN")
 endif()
+
+if (WIN32)
+target_compile_definitions(_cpu PUBLIC _USE_MATH_DEFINES R123_NO_SINCOS)
+endif()
+
 install(TARGETS _cpu LIBRARY DESTINATION ${PYTHON_SITE_INSTALL_DIR})
 
 endif()
@@ -125,6 +134,11 @@ if(APPLE)
 else()
     set_target_properties(_gpu PROPERTIES INSTALL_RPATH "\$ORIGIN")
 endif()
+
+if (WIN32)
+target_compile_definitions(_gpu PUBLIC _USE_MATH_DEFINES)
+endif()
+
 install(TARGETS _gpu LIBRARY DESTINATION ${PYTHON_SITE_INSTALL_DIR})
 endif()
 
