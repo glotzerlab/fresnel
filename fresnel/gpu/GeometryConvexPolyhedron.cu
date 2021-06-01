@@ -76,17 +76,17 @@ static __device__ float getShadingDistance(vec3<float> n_hit,
             // solve the problem in different ways based on which direction is maximum
             switch (maxc)
                 {
-                case 1: // intersect with x=0
+            case 1: // intersect with x=0
                 x0.x = 0;
                 x0.y = (d2 * n.z - d1 * n_hit.z) / u.x;
                 x0.z = (d1 * n_hit.y - d2 * n.y) / u.x;
                 break;
-                case 2: // intersect with y=0
+            case 2: // intersect with y=0
                 x0.x = (d1 * n_hit.z - d2 * n.z) / u.y;
                 x0.y = 0;
                 x0.z = (d2 * n.x - d1 * n_hit.x) / u.y;
                 break;
-                case 3: // intersect with z=0
+            case 3: // intersect with z=0
                 x0.x = (d2 * n.y - d1 * n_hit.y) / u.z;
                 x0.y = (d1 * n_hit.x - d2 * n.x) / u.z;
                 x0.z = 0;

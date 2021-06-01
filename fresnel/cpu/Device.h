@@ -50,31 +50,31 @@ class Device
 
         switch (err)
             {
-            case RTC_ERROR_NONE:
+        case RTC_ERROR_NONE:
             break;
-            case RTC_ERROR_UNKNOWN:
+        case RTC_ERROR_UNKNOWN:
             throw std::runtime_error("Embree: An unknown error has occurred.");
             break;
-            case RTC_ERROR_INVALID_ARGUMENT:
+        case RTC_ERROR_INVALID_ARGUMENT:
             throw std::runtime_error("Embree: An invalid argument was specified.");
             break;
-            case RTC_ERROR_INVALID_OPERATION:
+        case RTC_ERROR_INVALID_OPERATION:
             throw std::runtime_error(
                 "Embree: The operation is not allowed for the specified object.");
             break;
-            case RTC_ERROR_OUT_OF_MEMORY:
+        case RTC_ERROR_OUT_OF_MEMORY:
             throw std::runtime_error(
                 "Embree: There is not enough memory left to complete the operation.");
             break;
-            case RTC_ERROR_UNSUPPORTED_CPU:
+        case RTC_ERROR_UNSUPPORTED_CPU:
             throw std::runtime_error(
                 "Embree: The CPU is not supported as it does not support SSE2.");
             break;
-            case RTC_ERROR_CANCELLED:
+        case RTC_ERROR_CANCELLED:
             throw std::runtime_error("Embree: The operation got cancelled by an Memory Monitor "
                                      "Callback or Progress Monitor Callback function.");
             break;
-            default:
+        default:
             throw std::runtime_error("Embree: An invalid error has occurred.");
             break;
             }

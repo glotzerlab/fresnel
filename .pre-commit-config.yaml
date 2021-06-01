@@ -27,7 +27,7 @@ repos:
     - --remove
   - id: mixed-line-ending
 - repo: https://github.com/glotzerlab/fix-license-header
-  rev: f0f0cc0
+  rev: 686eea86f3a812bf1227a9d074c8328a459c5a66
   hooks:
   - id: fix-license-header
     name: Fix license headers (Python)
@@ -64,7 +64,7 @@ repos:
     - flake8-docstrings
     - flake8-rst-docstrings
 - repo: https://github.com/glotzerlab/pre-commit-clang-format
-  rev: v1.0.0
+  rev: v1.1.0
   hooks:
   - id: clang-format
     stages: [manual]
