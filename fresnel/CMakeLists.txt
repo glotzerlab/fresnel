@@ -1,5 +1,9 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+# variables needed for multi-config builds
+get_property(_is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+file(RELATIVE_PATH relative_dir ${PROJECT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+
 #####################################################
 ## C++ libraries
 
@@ -17,6 +21,9 @@ if (qhull_EMBED_SOURCE)
 endif()
 
 pybind11_add_module(_common ${_common_sources})
+if (_is_multi_config)
+    set_target_properties(_common PROPERTIES LIBRARY_OUTPUT_DIRECTORY  ${PROJECT_BINARY_DIR}/$<CONFIG>/${relative_dir})
+endif()
 target_link_libraries(_common PRIVATE QHull::qhull_r QHull::qhull_cpp)
 install(TARGETS _common LIBRARY DESTINATION ${PYTHON_SITE_INSTALL_DIR})
 
@@ -47,6 +54,9 @@ set(_cpu_sources
 
 pybind11_add_module(_cpu "${_cpu_sources}")
 target_link_libraries(_cpu PRIVATE embree TBB::tbb)
+if (_is_multi_config)
+    set_target_properties(_cpu PROPERTIES LIBRARY_OUTPUT_DIRECTORY  ${PROJECT_BINARY_DIR}/$<CONFIG>/${relative_dir})
+endif()
 if(APPLE)
     set_target_properties(_cpu PROPERTIES INSTALL_RPATH "@loader_path")
 else()
@@ -129,6 +139,9 @@ set(_gpu_sources
 
 pybind11_add_module(_gpu "${_gpu_sources}")
 target_link_libraries(_gpu PRIVATE ${optix_LIBRARY})
+if (_is_multi_config)
+    set_target_properties(_cpu PROPERTIES LIBRARY_OUTPUT_DIRECTORY  ${PROJECT_BINARY_DIR}/$<CONFIG>/${relative_dir})
+endif()
 if(APPLE)
     set_target_properties(_gpu PROPERTIES INSTALL_RPATH "@loader_path")
 else()

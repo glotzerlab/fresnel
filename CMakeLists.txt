@@ -15,6 +15,11 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     "MinSizeRel" "RelWithDebInfo")
 endif()
 
+# Set the default build type for the Ninja multi-configuration generator
+if (CMAKE_GENERATOR MATCHES "Ninja Multi-Config")
+    set(CMAKE_DEFAULT_BUILD_TYPE "Release")
+endif()
+
 # enable c++11
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
