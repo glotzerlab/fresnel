@@ -4,6 +4,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 get_property(_is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
 file(RELATIVE_PATH relative_dir ${PROJECT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
+if (_is_multi_config AND ${CMAKE_VERSION} VERSION_LESS "3.20.0")
+    message(WARNING "Install fresnel to obtain a functioning Python package.\n"
+                    "Use CMake 3.20 or newer to assemble a the Python package in ${PROJECT_BINARY_DIR}/<CONFIG>")
+endif()
+
 #####################################################
 ## C++ libraries
 

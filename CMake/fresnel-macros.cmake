@@ -28,7 +28,7 @@ macro(copy_files_to_build files target validate_pattern)
     file(RELATIVE_PATH relative_dir ${PROJECT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
     get_property(_is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-    if (_is_multi_config)
+    if (_is_multi_config AND ${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.20.0")
         set(_output_dir ${PROJECT_BINARY_DIR}/$<CONFIG>/${relative_dir})
     else()
         set (_output_dir ${CMAKE_CURRENT_BINARY_DIR})
