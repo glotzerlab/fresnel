@@ -94,6 +94,11 @@ if (ENABLE_EMBREE)
         get_target_property(_tbb_library TBB::tbb IMPORTED_LOCATION_RELEASE)
         get_target_property(_tbb_include_dir TBB::tbb INTERFACE_INCLUDE_DIRECTORIES)
         find_package_message(tbb "Found TBB: ${TBB_DIR} ${_tbb_library} ${_tbb_include_dir}" "[${_tbb_library}][${_tbb_include_dir}]")
+
+        # fix debug builds when the debug library is missing (such as in conda-forge installs)
+        if (WIN32)
+            set_target_properties(TBB::tbb PROPERTIES INTERFACE_COMPILE_DEFINITIONS "__TBB_NO_IMPLICIT_LINKAGE=1")
+        endif()
     endif()
 
     if(EMBREE_LIBRARY AND NOT TARGET embree)
