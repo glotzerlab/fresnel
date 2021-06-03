@@ -128,7 +128,7 @@ jobs:
       run: echo $GITHUB_WORKSPACE\\env\\Scripts >> $GITHUB_PATH
     - name: Configure
       run: |
-        cmake -S code -B build -DENABLE_EMBREE=ON} \
+        cmake -S code -B build -DENABLE_EMBREE=ON \
                       -DENABLE_OPTIX=OFF
       env:
         CMAKE_PREFIX_PATH: ${{ github.workspace }}\env
