@@ -166,7 +166,7 @@ these options on the command line.
 
   - Default: ``python3.X`` detected on ``$PATH``.
 
-- ``<package-name>_ROOT_DIR`` - Specify the location of a package.
+- ``<package-name>_DIR`` - Specify the location of a package.
 
   - Default: Found on the `CMake`_ search path.
 
