@@ -1,11 +1,11 @@
 test_configurations:
 - {config: "[clang11_py39, embree]"}
-- {repository: glotzerlab, config: "[gcc10_py39, embree]"}
-- {repository: glotzerlab, config: "[gcc9_py38, embree]"}
-- {repository: glotzerlab, config: "[gcc8_py37, embree]"}
-- {repository: glotzerlab, config: "[clang6_py37, embree]"}
-- {repository: glotzerlab, config: "[gcc7_py36, embree]"}
-- {repository: joaander, config: "[optix60_cuda11_py38]"}
-- {repository: joaander, config: "[optix60_cuda10_py37]"}
+- {config: "[gcc10_py39, embree]"}
+- {config: "[gcc9_py38, embree]"}
+- {config: "[gcc8_py37, embree]"}
+- {config: "[clang6_py37, embree]"}
+- {config: "[gcc7_py36, embree]"}
+- {config: "[optix60_cuda11_py38]"}
+- {config: "[optix60_cuda10_py37]"}
 gallery_configurations:
-- {repository: glotzerlab, config: "[clang11_py39, embree]"}
+- {config: "[clang11_py39, embree]"}

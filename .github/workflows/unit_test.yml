@@ -146,10 +146,36 @@ jobs:
       env:
         PYTHONPATH: ${{ github.workspace }}/install
 
+  build_test_windows:
+    name: Build and test on Windows
+    runs-on: windows-2019
+    defaults:
+      run:
+        shell: bash
+    steps:
+    - name: Create conda environment
+      run: $CONDA/bin/conda env create -f .github/workflows/environments/conda.yml --prefix env
+    - name: Add environment to system path
+      run: echo $GITHUB_WORKSPACE/env/Scripts >> $GITHUB_PATH
+    - uses: actions/checkout@v2.3.4
+      with:
+        path: code
+        submodules: true
+    - name: Configure
+      run: |
+        cmake -S code -B build -DENABLE_EMBREE=ON} \
+                      -DENABLE_OPTIX=OFF
+    - name: Build
+      run: cmake --build build -j
+    - name: Install
+      run: cmake --install build
+    - name: Run tests
+      run: python -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0 --durations-min=0.1
+
   # This job is used to provide a single requirement for branch merge conditions.
   tests_complete:
     name: Unit test
-    needs: [test, render_gallery]
+    needs: [build_test_windows, test, render_gallery]
     runs-on: ubuntu-latest
 
     steps:
