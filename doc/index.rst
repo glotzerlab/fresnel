@@ -74,6 +74,7 @@ Here are a few samples of what **fresnel** can do:
     :maxdepth: 1
     :caption: Developer guide
 
+    contributing
     style
     testing
 
