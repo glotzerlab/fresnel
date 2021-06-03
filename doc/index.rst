@@ -39,6 +39,7 @@ Here are a few samples of what **fresnel** can do:
     :caption: Getting started
 
     installation
+    building
     changes
     community
 
@@ -71,9 +72,10 @@ Here are a few samples of what **fresnel** can do:
 
 .. toctree::
     :maxdepth: 1
-    :caption: Contributing
+    :caption: Developer guide
 
     style
+    testing
 
 .. toctree::
     :maxdepth: 1
