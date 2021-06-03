@@ -124,6 +124,8 @@ jobs:
     - name: Create conda environment
       if: steps.cache-conda.outputs.cache-hit != 'true'
       run: $CONDA\\Scripts\\conda env create -f code\\.github\\workflows\\environments\\conda.yml --prefix env -q
+    - name: Inspect conda environment files
+      run: ls -lR env
     - name: Add environment to system path
       # these are all needed because miniconda installs libraries to a variety of paths
       run: |
