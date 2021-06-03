@@ -123,7 +123,7 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('code\\.github\\workflows\\environments\\conda.yml') }}
     - name: Create conda environment
       if: steps.cache-conda.outputs.cache-hit != 'true'
-      run: $CONDA\\Scripts\\conda env create -f code\\.github\\workflows\\environments\\conda.yml --prefix env -qpre
+      run: $CONDA\\Scripts\\conda env create -f code\\.github\\workflows\\environments\\conda.yml --prefix env -q
     - name: Add environment to system path
       run: |
         echo $GITHUB_WORKSPACE\\env >> $GITHUB_PATH
