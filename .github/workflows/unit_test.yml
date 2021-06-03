@@ -183,6 +183,8 @@ jobs:
       run: cmake --build build --config Release -j
     - name: Install
       run: cmake --install build --config Release
+    - name: Check files
+      run: ls $GITHUB_WORKSPACE\\install
     - name: Run tests
       run: python -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0 --durations-min=0.1
       env:
