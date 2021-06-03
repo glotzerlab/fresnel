@@ -154,9 +154,9 @@ jobs:
         shell: bash
     steps:
     - name: Create conda environment
-      run: $CONDA\Scripts\conda env create -f .github/workflows/environments/conda.yml --prefix env
+      run: $CONDA\\Scripts\\conda env create -f .github/workflows/environments/conda.yml --prefix env
     - name: Add environment to system path
-      run: echo $GITHUB_WORKSPACE\env\Scripts >> $GITHUB_PATH
+      run: echo $GITHUB_WORKSPACE\\env\\Scripts >> $GITHUB_PATH
     - uses: actions/checkout@v2.3.4
       with:
         path: code
