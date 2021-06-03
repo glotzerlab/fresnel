@@ -174,7 +174,9 @@ jobs:
     - name: Configure
       run: |
         cmake -S code -B build -DENABLE_EMBREE=ON \
-                      -DENABLE_OPTIX=OFF
+                      -DENABLE_OPTIX=OFF \
+                      -DPYTHON_EXECUTABLE=$GITHUB_WORKSPACE\\python.exe \
+                      -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE\\install
       env:
         CMAKE_PREFIX_PATH: ${{ github.workspace }}\env
     - name: Build
@@ -183,6 +185,8 @@ jobs:
       run: cmake --install build
     - name: Run tests
       run: python -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0 --durations-min=0.1
+      env:
+        PYTHONPATH: ${{ github.workspace }}\install
 
   # This job is used to provide a single requirement for branch merge conditions.
   tests_complete:
