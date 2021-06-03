@@ -123,7 +123,7 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('code\\.github\\workflows\\environments\\conda.yml') }}
     - name: Create conda environment
       if: steps.cache-conda.outputs.cache-hit != 'true'
-      run: $CONDA\\Scripts\\conda env create -f code\\.github\\workflows\\environments\\conda.yml --prefix env -q
+      run: $CONDA\\Scripts\\conda env create -f code\\.github\\workflows\\environments\\conda.yml --prefix env -qpre
     - name: Add environment to system path
       run: |
         echo $GITHUB_WORKSPACE\\env >> $GITHUB_PATH
@@ -138,9 +138,9 @@ jobs:
       env:
         CMAKE_PREFIX_PATH: ${{ github.workspace }}\env
     - name: Build
-      run: cmake --build build -j
+      run: cmake --build build --config Release -j
     - name: Install
-      run: cmake --install build
+      run: cmake --install build --config Release
     - name: Run tests
       run: python -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0 --durations-min=0.1
       env:
