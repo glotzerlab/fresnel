@@ -1,5 +1,6 @@
 ci:
-    skip: [clang-format]
+  autoupdate_schedule: quarterly
+  skip: [clang-format]
 
 repos:
 - repo: local
