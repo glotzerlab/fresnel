@@ -167,7 +167,10 @@ jobs:
       if: steps.cache-conda.outputs.cache-hit != 'true'
       run: $CONDA\\Scripts\\conda env create -f code\\.github\\workflows\\environments\\conda.yml --prefix env
     - name: Add environment to system path
-      run: echo $GITHUB_WORKSPACE\\env\\Scripts >> $GITHUB_PATH
+      run: |
+        echo $GITHUB_WORKSPACE\\env >> $GITHUB_PATH
+        echo $GITHUB_WORKSPACE\\env\\Scripts >> $GITHUB_PATH
+        echo $GITHUB_WORKSPACE\\env\\Library\\bin >> $GITHUB_PATH
     - name: Configure
       run: |
         cmake -S code -B build -DENABLE_EMBREE=ON \
