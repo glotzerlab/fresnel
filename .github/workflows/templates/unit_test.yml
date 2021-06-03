@@ -125,8 +125,10 @@ jobs:
       if: steps.cache-conda.outputs.cache-hit != 'true'
       run: $CONDA\\Scripts\\conda env create -f code\\.github\\workflows\\environments\\conda.yml --prefix env -q
     - name: Add environment to system path
+      # these are all needed because miniconda installs libraries to a variety of paths
       run: |
         echo $GITHUB_WORKSPACE\\env >> $GITHUB_PATH
+        echo $GITHUB_WORKSPACE\\env\\bin >> $GITHUB_PATH
         echo $GITHUB_WORKSPACE\\env\\Scripts >> $GITHUB_PATH
         echo $GITHUB_WORKSPACE\\env\\Library\\bin >> $GITHUB_PATH
     - name: Configure
@@ -141,8 +143,6 @@ jobs:
       run: cmake --build build --config Release -j
     - name: Install
       run: cmake --install build --config Release
-    - name: Check files
-      run: ls $GITHUB_WORKSPACE\\install
     - name: Run tests
       run: python -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0 --durations-min=0.1
       env:
