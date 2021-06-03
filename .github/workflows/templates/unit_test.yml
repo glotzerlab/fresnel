@@ -111,14 +111,14 @@ jobs:
       run:
         shell: bash
     steps:
-    - name: Create conda environment
-      run: $CONDA\\Scripts\\conda env create -f code\\.github\\workflows\\environments\\conda.yml --prefix env
-    - name: Add environment to system path
-      run: echo $GITHUB_WORKSPACE\\env\\Scripts >> $GITHUB_PATH
     - uses: actions/checkout@v2.3.4
       with:
         path: code
         submodules: true
+    - name: Create conda environment
+      run: $CONDA\\Scripts\\conda env create -f code\\.github\\workflows\\environments\\conda.yml --prefix env
+    - name: Add environment to system path
+      run: echo $GITHUB_WORKSPACE\\env\\Scripts >> $GITHUB_PATH
     - name: Configure
       run: |
         cmake -S code -B build -DENABLE_EMBREE=ON} \
