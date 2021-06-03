@@ -133,7 +133,7 @@ jobs:
       run: |
         cmake -S code -B build -DENABLE_EMBREE=ON \
                       -DENABLE_OPTIX=OFF \
-                      -DPYTHON_EXECUTABLE=$GITHUB_WORKSPACE\\python.exe \
+                      -DPYTHON_EXECUTABLE=$GITHUB_WORKSPACE\\env\\python.exe \
                       -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE\\install
       env:
         CMAKE_PREFIX_PATH: ${{ github.workspace }}\env
