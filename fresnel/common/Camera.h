@@ -54,7 +54,7 @@ enum class CameraModel
 */
 struct UserCamera
     {
-    UserCamera()
+    DEVICE UserCamera()
         {
         position = vec3<float>(0, 0, 0);
         look_at = vec3<float>(0, 0, 1);
@@ -88,8 +88,8 @@ struct UserCamera
 */
 struct CameraBasis
     {
-    CameraBasis() { }
-    explicit CameraBasis(const UserCamera& user) : v(user.up)
+    DEVICE CameraBasis() { }
+    DEVICE explicit CameraBasis(const UserCamera& user) : v(user.up)
         {
         vec3<float> d = user.look_at - user.position;
 
@@ -129,7 +129,7 @@ struct CameraBasis
 class Camera
     {
     public:
-    Camera() { }
+    DEVICE Camera() { }
 
     /** Construct from a UserCamera.
 
@@ -138,7 +138,7 @@ class Camera
         @param height Height of the image in pixels.
         @param seed Random number seed.
     */
-    explicit Camera(const UserCamera& user,
+    DEVICE explicit Camera(const UserCamera& user,
                     unsigned int width,
                     unsigned int height,
                     unsigned int seed,
@@ -209,7 +209,7 @@ class Camera
         }
 
     /// Get the camera basis.
-    const CameraBasis& getBasis() const
+    DEVICE const CameraBasis& getBasis() const
         {
         return m_basis;
         }

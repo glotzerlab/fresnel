@@ -106,7 +106,7 @@ set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --use_fast_math")
 add_library(_ptx OBJECT ${_ptx_sources})
 set_property(TARGET _ptx PROPERTY CUDA_PTX_COMPILATION ON)
 set_property(TARGET _ptx PROPERTY CUDA_ARCHITECTURES 61-virtual)
-target_compile_features(_ptx PUBLIC cxx_std_11)
+target_compile_definitions(_ptx PUBLIC _USE_MATH_DEFINES)
 
 add_custom_command(
   OUTPUT ${_ptx_outputs}
