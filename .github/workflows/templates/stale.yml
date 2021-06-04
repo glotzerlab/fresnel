@@ -22,11 +22,10 @@ jobs:
     - uses: actions/stale@v3.0.19
       with:
         days-before-close: 10
-        stale-issue-label: wontfix
-        stale-pr-label: wontfix
+        stale-issue-label: stale
+        stale-pr-label: stale
         exempt-issue-labels: critical
         exempt-pr-labels: critical
-        debug-only: true
 
         days-before-issue-stale: 260
         stale-issue-message: >
