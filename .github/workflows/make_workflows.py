@@ -49,3 +49,7 @@ if __name__ == '__main__':
     template = env.get_template('release.yml')
     with open('release.yml', 'w') as f:
         f.write(template.render())
+
+    template = env.get_template('stale.yml')
+    with open('stale.yml', 'w') as f:
+        f.write(template.render())

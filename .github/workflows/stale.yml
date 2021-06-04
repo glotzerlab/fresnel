@@ -1,0 +1,43 @@
+# Edit `stale.yml` in `.github/workflows/templates` and run `make_workflows.py` to update the
+# workflow.
+name: Close stale issues and PRs
+
+
+on:
+  schedule:
+    - cron: '0 19 * * *'
+
+  # Trigger on request.
+  workflow_dispatch:
+
+
+
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/stale@v3.0.19
+      with:
+        days-before-close: 10
+        stale-issue-label: stale
+        stale-pr-label: stale
+        exempt-issue-labels: critical
+        exempt-pr-labels: critical
+        debug-only: true
+
+        days-before-issue-stale: 260
+        stale-issue-message: >
+          This issue has been automatically marked as stale because it has not had
+          recent activity. It will be closed if no further activity occurs.
+        close-issue-message: >
+          This issue has been automatically closed because it has not had
+          recent activity.
+
+        days-before-pr-stale: 20
+        stale-pr-message: >
+          This pull request has been automatically marked as stale because it has not had
+          recent activity. It will be closed if no further activity occurs.
+        close-pr-message: >
+          This pull request has been automatically closed because it has not had
+          recent activity.
