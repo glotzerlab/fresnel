@@ -139,10 +139,10 @@ class Camera
         @param seed Random number seed.
     */
     DEVICE explicit Camera(const UserCamera& user,
-                    unsigned int width,
-                    unsigned int height,
-                    unsigned int seed,
-                    bool sample_aa = true)
+                           unsigned int width,
+                           unsigned int height,
+                           unsigned int seed,
+                           bool sample_aa = true)
         : m_p(user.position), m_basis(user), m_focal_d(user.focus_distance),
           m_a(user.f / user.f_stop), m_model(user.model), m_width(width), m_height(height),
           m_seed(seed), m_sample_aa(sample_aa)

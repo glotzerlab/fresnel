@@ -19,7 +19,6 @@
 
 namespace fresnel
     {
-
 //! Ray-sphere intersection test
 /*! \param t [out] Intersection t value along ray
     \param d_edge [out] Distance from shape edge in the view plane

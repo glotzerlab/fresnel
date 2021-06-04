@@ -18,7 +18,6 @@
 
 namespace fresnel
     {
-
 //! Ray-cylinder intersection test
 /*! \param t [out] Intersection t value along ray
     \param N [out] Normal vector
