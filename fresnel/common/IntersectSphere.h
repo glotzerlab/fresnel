@@ -19,7 +19,6 @@
 
 namespace fresnel
     {
-const float sphere_epsilon = 1e-4f;
 
 //! Ray-sphere intersection test
 /*! \param t [out] Intersection t value along ray
@@ -43,6 +42,8 @@ DEVICE inline bool intersect_ray_sphere(float& t,
                                         const vec3<float>& p,
                                         const float r)
     {
+    const float sphere_epsilon = 1e-4f;
+
     // vector from sphere to ray origin
     vec3<float> v = p - o;
 

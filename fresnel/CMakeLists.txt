@@ -38,7 +38,7 @@ if (ENABLE_EMBREE)
 target_compile_definitions(_common PUBLIC FRESNEL_BUILD_CPU)
 
 if (WIN32)
-target_compile_definitions(_common PUBLIC _USE_MATH_DEFINES R123_NO_SINCOS)
+target_compile_definitions(_common PUBLIC _USE_MATH_DEFINES NOMINMAX R123_NO_SINCOS)
 endif()
 
 set(_cpu_sources
@@ -69,7 +69,7 @@ else()
 endif()
 
 if (WIN32)
-target_compile_definitions(_cpu PUBLIC _USE_MATH_DEFINES R123_NO_SINCOS)
+target_compile_definitions(_cpu PUBLIC _USE_MATH_DEFINES NOMINMAX R123_NO_SINCOS)
 endif()
 
 install(TARGETS _cpu LIBRARY DESTINATION ${PYTHON_SITE_INSTALL_DIR})
@@ -154,7 +154,7 @@ else()
 endif()
 
 if (WIN32)
-target_compile_definitions(_gpu PUBLIC _USE_MATH_DEFINES)
+target_compile_definitions(_gpu PUBLIC _USE_MATH_DEFINES NOMINMAX)
 endif()
 
 install(TARGETS _gpu LIBRARY DESTINATION ${PYTHON_SITE_INSTALL_DIR})

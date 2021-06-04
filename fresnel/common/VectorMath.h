@@ -4,6 +4,15 @@
 #ifndef __VECTOR_MATH_H__
 #define __VECTOR_MATH_H__
 
+#ifdef _WIN32
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#endif
+
 #include <cfloat>
 #include <math.h>
 
