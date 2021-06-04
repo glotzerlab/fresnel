@@ -20,8 +20,8 @@ jobs:
     - uses: actions/stale@v3.0.19
       with:
         days-before-close: 10
-        stale-issue-label: stale
-        stale-pr-label: stale
+        stale-issue-label: wontfix
+        stale-pr-label: wontfix
         exempt-issue-labels: critical
         exempt-pr-labels: critical
         debug-only: true
