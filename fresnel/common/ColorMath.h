@@ -14,6 +14,17 @@
 #define DEVICE
 #endif
 
+#ifdef _WIN32
+// Name of RGB macro from <wingdi.h> conflicts with RGB struct below.
+#undef RGB
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#endif
+
 #include <math.h>
 
 namespace fresnel

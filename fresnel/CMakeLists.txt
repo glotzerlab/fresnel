@@ -1,5 +1,14 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+# variables needed for multi-config builds
+get_property(_is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+file(RELATIVE_PATH relative_dir ${PROJECT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+
+if (_is_multi_config AND ${CMAKE_VERSION} VERSION_LESS "3.20.0")
+    message(WARNING "Install fresnel to obtain a functioning Python package.\n"
+                    "Use CMake 3.20 or newer to assemble a the Python package in ${PROJECT_BINARY_DIR}/<CONFIG>")
+endif()
+
 #####################################################
 ## C++ libraries
 
@@ -17,6 +26,9 @@ if (qhull_EMBED_SOURCE)
 endif()
 
 pybind11_add_module(_common ${_common_sources})
+if (_is_multi_config)
+    set_target_properties(_common PROPERTIES LIBRARY_OUTPUT_DIRECTORY  ${PROJECT_BINARY_DIR}/$<CONFIG>/${relative_dir})
+endif()
 target_link_libraries(_common PRIVATE QHull::qhull_r QHull::qhull_cpp)
 install(TARGETS _common LIBRARY DESTINATION ${PYTHON_SITE_INSTALL_DIR})
 
@@ -24,6 +36,10 @@ install(TARGETS _common LIBRARY DESTINATION ${PYTHON_SITE_INSTALL_DIR})
 if (ENABLE_EMBREE)
 
 target_compile_definitions(_common PUBLIC FRESNEL_BUILD_CPU)
+
+if (WIN32)
+target_compile_definitions(_common PUBLIC _USE_MATH_DEFINES NOMINMAX R123_NO_SINCOS)
+endif()
 
 set(_cpu_sources
      cpu/module-cpu.cc
@@ -43,11 +59,19 @@ set(_cpu_sources
 
 pybind11_add_module(_cpu "${_cpu_sources}")
 target_link_libraries(_cpu PRIVATE embree TBB::tbb)
+if (_is_multi_config)
+    set_target_properties(_cpu PROPERTIES LIBRARY_OUTPUT_DIRECTORY  ${PROJECT_BINARY_DIR}/$<CONFIG>/${relative_dir})
+endif()
 if(APPLE)
     set_target_properties(_cpu PROPERTIES INSTALL_RPATH "@loader_path")
 else()
     set_target_properties(_cpu PROPERTIES INSTALL_RPATH "\$ORIGIN")
 endif()
+
+if (WIN32)
+target_compile_definitions(_cpu PUBLIC _USE_MATH_DEFINES NOMINMAX R123_NO_SINCOS)
+endif()
+
 install(TARGETS _cpu LIBRARY DESTINATION ${PYTHON_SITE_INSTALL_DIR})
 
 endif()
@@ -82,7 +106,7 @@ set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --use_fast_math")
 add_library(_ptx OBJECT ${_ptx_sources})
 set_property(TARGET _ptx PROPERTY CUDA_PTX_COMPILATION ON)
 set_property(TARGET _ptx PROPERTY CUDA_ARCHITECTURES 61-virtual)
-target_compile_features(_ptx PUBLIC cxx_std_11)
+target_compile_definitions(_ptx PUBLIC _USE_MATH_DEFINES)
 
 add_custom_command(
   OUTPUT ${_ptx_outputs}
@@ -120,11 +144,19 @@ set(_gpu_sources
 
 pybind11_add_module(_gpu "${_gpu_sources}")
 target_link_libraries(_gpu PRIVATE ${optix_LIBRARY})
+if (_is_multi_config)
+    set_target_properties(_cpu PROPERTIES LIBRARY_OUTPUT_DIRECTORY  ${PROJECT_BINARY_DIR}/$<CONFIG>/${relative_dir})
+endif()
 if(APPLE)
     set_target_properties(_gpu PROPERTIES INSTALL_RPATH "@loader_path")
 else()
     set_target_properties(_gpu PROPERTIES INSTALL_RPATH "\$ORIGIN")
 endif()
+
+if (WIN32)
+target_compile_definitions(_gpu PUBLIC _USE_MATH_DEFINES NOMINMAX)
+endif()
+
 install(TARGETS _gpu LIBRARY DESTINATION ${PYTHON_SITE_INSTALL_DIR})
 endif()
 

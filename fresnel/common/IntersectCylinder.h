@@ -18,8 +18,6 @@
 
 namespace fresnel
     {
-const float cylinder_epsilon = 1e-4f;
-
 //! Ray-cylinder intersection test
 /*! \param t [out] Intersection t value along ray
     \param N [out] Normal vector
@@ -42,6 +40,8 @@ DEVICE inline bool intersect_ray_cylinder(float& t,
                                           const vec3<float>& B,
                                           const float r)
     {
+    const float cylinder_epsilon = 1e-4f;
+
     // translate to a coordinate system where A is the origin
     const vec3<float> Oa = o - A;
     const vec3<float> C = B - A;
