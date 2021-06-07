@@ -66,7 +66,7 @@ Install prerequisites
 
 **General requirements:**
 
-- C++14 capable compiler
+- C++14 capable compiler (tested with GCC 7-10, Clang 6-11, Visual Studio 2019)
 - CMake >= 3.8
 - pybind11 >= 2.2
 - Python >= 3.6
@@ -79,7 +79,7 @@ Install prerequisites
 
 - For GPU execution (required when ``ENABLE_OPTIX=ON``):
 
-  - OptiX == 6.0
+  - OptiX >= 6.0, < 7.0
   - CUDA >= 10
 
 **Optional runtime dependencies:**
