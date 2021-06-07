@@ -12,6 +12,13 @@ fresnel_ releases follow `semantic versioning`_.
 v0.x
 ----
 
+v0.13.3 (2021-06-07)
+^^^^^^^^^^^^^^^^^^^^
+
+*Added*
+
+* Support Windows.
+
 v0.13.2 (2021-05-11)
 ^^^^^^^^^^^^^^^^^^^^
 
