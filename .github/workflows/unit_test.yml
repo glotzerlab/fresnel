@@ -86,7 +86,10 @@ jobs:
     runs-on: ${{ matrix.runner }}
     container:
       image: ${{ matrix.repository }}/ci:2021.05-${{ matrix.config[0] }}
-      options: ${{ matrix.docker_options }} -e CUDA_VISIBLE_DEVICES
+      # privileged is needed to access the GPU devices on the runners because the nvidia container
+      # toolkit is built without cgroups support:
+      # https://aur.archlinux.org/packages/nvidia-container-toolkit
+      options: ${{ matrix.docker_options }} -e CUDA_VISIBLE_DEVICES --privileged=true
     strategy:
       matrix:
         include:
@@ -120,7 +123,10 @@ jobs:
     runs-on: ${{ matrix.runner }}
     container:
       image: ${{ matrix.repository }}/ci:2021.05-${{ matrix.config[0] }}
-      options: ${{ matrix.docker_options }} -e CUDA_VISIBLE_DEVICES
+      # privileged is needed to access the GPU devices on the runners because the nvidia container
+      # toolkit is built without cgroups support:
+      # https://aur.archlinux.org/packages/nvidia-container-toolkit
+      options: ${{ matrix.docker_options }} -e CUDA_VISIBLE_DEVICES --privileged=true
     strategy:
       matrix:
         include:
