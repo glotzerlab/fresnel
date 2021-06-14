@@ -8,10 +8,20 @@ import jinja2
 import yaml
 import os
 
+# device options needed to access the GPU devices on the runners
+# because the nvidia container toolkit is built without cgroups
+# support:
+# https://aur.archlinux.org/packages/nvidia-container-toolkit
 optix_docker_options = "--mount type=bind,source=/usr/lib/libnvidia-rtcore.so,"\
                        "target=/usr/lib/libnvidia-rtcore.so --mount type=bind,"\
                        "source=/usr/lib/libnvoptix.so,"\
-                       "target=/usr/lib/libnvoptix.so --gpus=all"
+                       "target=/usr/lib/libnvoptix.so " \
+                       "--device /dev/nvidia0 " \
+                       "--device /dev/nvidia1 " \
+                       "--device /dev/nvidia-uvm " \
+                       "--device /dev/nvidia-uvm-tools " \
+                       "--device /dev/nvidiactl " \
+                       "--gpus=all"
 
 if __name__ == '__main__':
     # change to the directory of the script
