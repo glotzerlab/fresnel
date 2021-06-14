@@ -13,7 +13,7 @@ name: Unit test
     runs-on: ${{ matrix.runner }}
     container:
       image: ${{ matrix.repository }}/<< container_prefix >>-${{ matrix.config[0] }}
-      options: ${{ matrix.docker_options }} -e CUDA_VISIBLE_DEVICES
+      options: ${{ matrix.docker_options }} -e CUDA_VISIBLE_DEVICES --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidiactl
     <% else %>
     runs-on: ubuntu-latest
     container:

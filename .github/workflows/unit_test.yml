@@ -86,7 +86,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     container:
       image: ${{ matrix.repository }}/ci:2021.05-${{ matrix.config[0] }}
-      options: ${{ matrix.docker_options }} -e CUDA_VISIBLE_DEVICES
+      options: ${{ matrix.docker_options }} -e CUDA_VISIBLE_DEVICES --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidiactl
     strategy:
       matrix:
         include:
@@ -120,7 +120,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     container:
       image: ${{ matrix.repository }}/ci:2021.05-${{ matrix.config[0] }}
-      options: ${{ matrix.docker_options }} -e CUDA_VISIBLE_DEVICES
+      options: ${{ matrix.docker_options }} -e CUDA_VISIBLE_DEVICES --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidiactl
     strategy:
       matrix:
         include:
