@@ -22,8 +22,8 @@ jobs:
         days-before-close: 10
         stale-issue-label: stale
         stale-pr-label: stale
-        exempt-issue-labels: critical
-        exempt-pr-labels: critical
+        exempt-issue-labels: essential
+        exempt-pr-labels: essential
 
         days-before-issue-stale: 260
         stale-issue-message: >
