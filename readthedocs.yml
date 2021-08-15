@@ -13,7 +13,8 @@ submodules:
     include: all
     recursive: true
 
-formats: all
+formats:
+    - htmlzip
 
 build:
   image: stable
