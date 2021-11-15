@@ -31,13 +31,15 @@ jobs:
     name: Build [${{ join(matrix.config, '_') }}]
     runs-on: ubuntu-latest
     container:
-      image: ${{ matrix.repository }}/ci:2021.05-${{ matrix.config[0] }}
+      image: ${{ matrix.repository }}/ci:2021.11-${{ matrix.config[0] }}
       credentials:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
     strategy:
       matrix:
         include:
+        - {repository: glotzerlab, config: [clang12_py310, embree], runner: ubuntu-latest, docker_options: '' }
+        - {repository: glotzerlab, config: [gcc11_py310, embree], runner: ubuntu-latest, docker_options: '' }
         - {repository: glotzerlab, config: [clang11_py39, embree], runner: ubuntu-latest, docker_options: '' }
         - {repository: glotzerlab, config: [gcc10_py39, embree], runner: ubuntu-latest, docker_options: '' }
         - {repository: glotzerlab, config: [gcc9_py38, embree], runner: ubuntu-latest, docker_options: '' }
@@ -85,11 +87,13 @@ jobs:
     needs: build
     runs-on: ${{ matrix.runner }}
     container:
-      image: ${{ matrix.repository }}/ci:2021.05-${{ matrix.config[0] }}
+      image: ${{ matrix.repository }}/ci:2021.11-${{ matrix.config[0] }}
       options: ${{ matrix.docker_options }} -e CUDA_VISIBLE_DEVICES
     strategy:
       matrix:
         include:
+        - {repository: glotzerlab, config: [clang12_py310, embree], runner: ubuntu-latest, docker_options: '' }
+        - {repository: glotzerlab, config: [gcc11_py310, embree], runner: ubuntu-latest, docker_options: '' }
         - {repository: glotzerlab, config: [clang11_py39, embree], runner: ubuntu-latest, docker_options: '' }
         - {repository: glotzerlab, config: [gcc10_py39, embree], runner: ubuntu-latest, docker_options: '' }
         - {repository: glotzerlab, config: [gcc9_py38, embree], runner: ubuntu-latest, docker_options: '' }
@@ -119,12 +123,12 @@ jobs:
     needs: build
     runs-on: ${{ matrix.runner }}
     container:
-      image: ${{ matrix.repository }}/ci:2021.05-${{ matrix.config[0] }}
+      image: ${{ matrix.repository }}/ci:2021.11-${{ matrix.config[0] }}
       options: ${{ matrix.docker_options }} -e CUDA_VISIBLE_DEVICES
     strategy:
       matrix:
         include:
-        - {repository: glotzerlab, config: [clang11_py39, embree], runner: ubuntu-latest, docker_options: '' }
+        - {repository: glotzerlab, config: [clang12_py310, embree], runner: ubuntu-latest, docker_options: '' }
 
     steps:
     - name: Clean workspace
