@@ -38,6 +38,7 @@ jobs:
     strategy:
       matrix:
         include:
+        - {repository: glotzerlab, config: [clang13_py310, embree], runner: ubuntu-latest, docker_options: '' }
         - {repository: glotzerlab, config: [clang12_py310, embree], runner: ubuntu-latest, docker_options: '' }
         - {repository: glotzerlab, config: [gcc11_py310, embree], runner: ubuntu-latest, docker_options: '' }
         - {repository: glotzerlab, config: [clang11_py39, embree], runner: ubuntu-latest, docker_options: '' }
@@ -92,6 +93,7 @@ jobs:
     strategy:
       matrix:
         include:
+        - {repository: glotzerlab, config: [clang13_py310, embree], runner: ubuntu-latest, docker_options: '' }
         - {repository: glotzerlab, config: [clang12_py310, embree], runner: ubuntu-latest, docker_options: '' }
         - {repository: glotzerlab, config: [gcc11_py310, embree], runner: ubuntu-latest, docker_options: '' }
         - {repository: glotzerlab, config: [clang11_py39, embree], runner: ubuntu-latest, docker_options: '' }
@@ -128,7 +130,7 @@ jobs:
     strategy:
       matrix:
         include:
-        - {repository: glotzerlab, config: [clang12_py310, embree], runner: ubuntu-latest, docker_options: '' }
+        - {repository: glotzerlab, config: [clang13_py310, embree], runner: ubuntu-latest, docker_options: '' }
 
     steps:
     - name: Clean workspace
@@ -151,8 +153,11 @@ jobs:
         PYTHONPATH: ${{ github.workspace }}/install
 
   build_test_windows:
-    name: Build and test on Windows
-    runs-on: windows-2019
+    name: Build and test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-2019, windows-2022]
     defaults:
       run:
         shell: bash
