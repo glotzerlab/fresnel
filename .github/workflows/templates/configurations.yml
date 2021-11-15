@@ -1,4 +1,6 @@
 test_configurations:
+- {config: "[clang12_py310, embree]"}
+- {config: "[gcc11_py310, embree]"}
 - {config: "[clang11_py39, embree]"}
 - {config: "[gcc10_py39, embree]"}
 - {config: "[gcc9_py38, embree]"}
@@ -8,4 +10,4 @@ test_configurations:
 - {config: "[optix60_cuda11_py38]"}
 - {config: "[optix60_cuda10_py37]"}
 gallery_configurations:
-- {config: "[clang11_py39, embree]"}
+- {config: "[clang12_py310, embree]"}
