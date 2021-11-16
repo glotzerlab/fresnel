@@ -1,11 +1,11 @@
 channels:
 - conda-forge
 dependencies:
-- tbb=2021.2.0
-- tbb-devel=2021.2.0
-- embree3=3.13.0
-- pybind11=2.6.2
-- numpy=1.20.3
-- pillow=8.2.0
-- pytest=6.2.4
-- cmake=3.20.3
+- tbb=2021.4.0
+- tbb-devel=2021.4.0
+- embree3=3.13.2
+- pybind11=2.8.1
+- numpy=1.21.4
+- pillow=8.4.0
+- pytest=6.2.5
+- cmake=3.21.3
