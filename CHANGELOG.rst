@@ -12,6 +12,14 @@ fresnel_ releases follow `semantic versioning`_.
 v0.x
 ----
 
+v0.13.4 (2021-11-17)
+^^^^^^^^^^^^^^^^^^^^
+
+*Added*
+
+* Support Python 3.10.
+* Support clang 13.
+
 v0.13.3 (2021-06-07)
 ^^^^^^^^^^^^^^^^^^^^
 
