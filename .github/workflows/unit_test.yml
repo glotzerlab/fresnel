@@ -109,7 +109,7 @@ jobs:
     - name: Clean workspace
       run: rm -rf ./*
 
-    - uses: actions/download-artifact@v2.10.0
+    - uses: actions/download-artifact@v2.0.10
       with:
         name: install-${{ join(matrix.config, '_') }}-${{ github.sha }}
     - name: Untar install
@@ -140,7 +140,7 @@ jobs:
       with:
         submodules: true
         path: code
-    - uses: actions/download-artifact@v2.10.0
+    - uses: actions/download-artifact@v2.0.10
       with:
         name: install-${{ join(matrix.config, '_') }}-${{ github.sha }}
     - name: Untar install
