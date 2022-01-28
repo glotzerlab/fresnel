@@ -53,13 +53,13 @@ if __name__ == '__main__':
                 entry['docker_options'] = ""
                 entry['repository'] = "glotzerlab"
 
-    with open('unit_test.yml', 'w') as f:
-        f.write(template.render(configurations))
+    # with open('unit_test.yml', 'w') as f:
+    #     f.write(template.render(configurations))
 
-    template = env.get_template('release.yml')
-    with open('release.yml', 'w') as f:
-        f.write(template.render())
+    # template = env.get_template('release.yml')
+    # with open('release.yml', 'w') as f:
+    #     f.write(template.render())
 
-    template = env.get_template('stale.yml')
-    with open('stale.yml', 'w') as f:
-        f.write(template.render())
+    # template = env.get_template('stale.yml')
+    # with open('stale.yml', 'w') as f:
+    #     f.write(template.render())

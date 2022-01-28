@@ -1,7 +1,4 @@
-# Edit `stale.yml` in `.github/workflows/templates` and run `make_workflows.py` to update the
-# workflow.
 name: Close stale issues and PRs
-
 
 on:
   schedule:
@@ -9,9 +6,6 @@ on:
 
   # Trigger on request.
   workflow_dispatch:
-
-
-
 
 jobs:
   stale:

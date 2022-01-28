@@ -22,10 +22,8 @@ on:
   # Trigger on request.
   workflow_dispatch:
 
-
 env:
   name: fresnel
-
 
 jobs:
   release:
