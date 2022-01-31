@@ -21,24 +21,81 @@ on:
   workflow_dispatch:
 
 jobs:
-  # clang13_py310:
-  #   uses: ./.github/workflows/build.yml
-  #   with:
-  #     image: clang13_py310
-  #   secrets:
-  #     DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-  #     DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+  clang13_py310:
+    uses: ./.github/workflows/build_test.yml
+    with:
+      image: clang13_py310
+      render_gallery: true
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-  # clang12_py310:
-  #   uses: ./.github/workflows/build.yml
-  #   with:
-  #     image: clang12_py310
-  #   secrets:
-  #     DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-  #     DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+  clang12_py310:
+    uses: ./.github/workflows/build_test.yml
+    with:
+      image: clang12_py310
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+  gcc11_py310:
+    uses: ./.github/workflows/build_test.yml
+    with:
+      image: gcc11_py310
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+  clang11_py39:
+    uses: ./.github/workflows/build_test.yml
+    with:
+      image: clang11_py39
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+  gcc10_py39:
+    uses: ./.github/workflows/build_test.yml
+    with:
+      image: gcc10_py39
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+  gcc9_py38:
+    uses: ./.github/workflows/build_test.yml
+    with:
+      image: gcc9_py38
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+  gcc8_py37:
+    uses: ./.github/workflows/build_test.yml
+    with:
+      image: gcc8_py37
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+  clang6_py37:
+    uses: ./.github/workflows/build_test.yml
+    with:
+      image: clang6_py37
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+  gcc7_py36:
+    uses: ./.github/workflows/build_test.yml
+    with:
+      image: gcc7_py36
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
   optix60_cuda11_py38:
-    uses: ./.github/workflows/build.yml
+    uses: ./.github/workflows/build_test.yml
     with:
       image: optix60_cuda11_py38
       repository: joaander
@@ -50,7 +107,7 @@ jobs:
       DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
   optix60_cuda10_py37:
-    uses: ./.github/workflows/build.yml
+    uses: ./.github/workflows/build_test.yml
     with:
       image: optix60_cuda10_py37
       repository: joaander
@@ -60,151 +117,79 @@ jobs:
       DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
       DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-        # - {repository: glotzerlab, config: [clang13_py310, embree], runner: ubuntu-latest, docker_options: '' }
-        # - {repository: glotzerlab, config: [clang12_py310, embree], runner: ubuntu-latest, docker_options: '' }
-        # - {repository: glotzerlab, config: [gcc11_py310, embree], runner: ubuntu-latest, docker_options: '' }
-        # - {repository: glotzerlab, config: [clang11_py39, embree], runner: ubuntu-latest, docker_options: '' }
-        # - {repository: glotzerlab, config: [gcc10_py39, embree], runner: ubuntu-latest, docker_options: '' }
-        # - {repository: glotzerlab, config: [gcc9_py38, embree], runner: ubuntu-latest, docker_options: '' }
-        # - {repository: glotzerlab, config: [gcc8_py37, embree], runner: ubuntu-latest, docker_options: '' }
-        # - {repository: glotzerlab, config: [clang6_py37, embree], runner: ubuntu-latest, docker_options: '' }
-        # - {repository: glotzerlab, config: [gcc7_py36, embree], runner: ubuntu-latest, docker_options: '' }
-        # - {repository: joaander, config: [optix60_cuda11_py38], runner: [self-hosted,GPU], docker_options: '--mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidiactl --gpus=all' }
-        # - {repository: joaander, config: [optix60_cuda10_py37], runner: [self-hosted,GPU], docker_options: '--mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidiactl --gpus=all' }
+  build_test_windows:
+    name: Build and test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+        - {os: windows-2019, cmake_generator: "Visual Studio 16 2019"}
+        - {os: windows-2022, cmake_generator: "Visual Studio 17 2022"}
+    steps:
+    - uses: actions/checkout@v2_test.4.0
+      with:
+        path: code
+        submodules: true
+    - name: Cache conda packages
+      uses: actions/cache@v2_test.1.6
+      with:
+        path: ~/conda_pkgs_dir
+        key:
+          ${{ matrix.os }}-${{ hashFiles('code/.github/workflows/environments/conda.yml') }}
+    - name: Create conda environment
+      uses: conda-incubator/setup-miniconda@v2_test.1.1
+      with:
+        environment-file: code/.github/workflows/environments/conda.yml
+        activate-environment: ${{ github.workspace }}/env
+        python-version: 3.9
+        miniforge-variant: Mambaforge
+        miniforge-version: "latest"
+        use-only-tar-bz2: true
+        use-mamba: true
+      env:
+        CONDA: ${{ github.workspace }}\miniconda
+    - name: Add environment to system path
+      # these are all needed because miniconda installs libraries to a variety of paths
+      run: |
+        echo "$env:GITHUB_WORKSPACE\env" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        echo "$env:GITHUB_WORKSPACE\env\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        echo "$env:GITHUB_WORKSPACE\env\Scripts" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        echo "$env:GITHUB_WORKSPACE\env\Library\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+    - name: Configure
+      run: >
+        cmake -S code -B build
+        -DENABLE_EMBREE=ON
+        -DENABLE_OPTIX=OFF
+        -DPYTHON_EXECUTABLE="$env:GITHUB_WORKSPACE"\env\python.exe
+        -DCMAKE_INSTALL_PREFIX="$env:GITHUB_WORKSPACE"\install
+        -G "${{ matrix.cmake_generator }}"
+      env:
+        CMAKE_PREFIX_PATH: ${{ github.workspace }}\env
+    - name: Build
+      run: cmake --build build --config Release -j
+    - name: Install
+      run: cmake --install build --config Release
+    - name: Run tests
+      run: python -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0 --durations-min=0.1
+      env:
+        PYTHONPATH: ${{ github.workspace }}\install
 
+  # This job is used to provide a single requirement for branch merge conditions.
+  tests_complete:
+    name: Unit test
+    needs: [clang13_py310,
+            clang12_py310,
+            gcc11_py310,
+            clang11_py39,
+            gcc10_py39,
+            gcc9_py38,
+            gcc8_py37,
+            clang6_py37,
+            gcc7_py36,
+            optix60_cuda11_py38,
+            optix60_cuda10_py37,
+            build_test_windows]
+    runs-on: ubuntu-latest
 
-  # test:
-  #   name: Test [${{ join(matrix.config, '_') }}]
-  #   needs: build
-  #   runs-on: ${{ matrix.runner }}
-  #   container:
-  #     image: ${{ matrix.repository }}/ci:2021.11-${{ matrix.config[0] }}
-  #     options: ${{ matrix.docker_options }} -e CUDA_VISIBLE_DEVICES
-  #   strategy:
-  #     matrix:
-  #       include:
-  #       - {repository: glotzerlab, config: [clang13_py310, embree], runner: ubuntu-latest, docker_options: '' }
-  #       - {repository: glotzerlab, config: [clang12_py310, embree], runner: ubuntu-latest, docker_options: '' }
-  #       - {repository: glotzerlab, config: [gcc11_py310, embree], runner: ubuntu-latest, docker_options: '' }
-  #       - {repository: glotzerlab, config: [clang11_py39, embree], runner: ubuntu-latest, docker_options: '' }
-  #       - {repository: glotzerlab, config: [gcc10_py39, embree], runner: ubuntu-latest, docker_options: '' }
-  #       - {repository: glotzerlab, config: [gcc9_py38, embree], runner: ubuntu-latest, docker_options: '' }
-  #       - {repository: glotzerlab, config: [gcc8_py37, embree], runner: ubuntu-latest, docker_options: '' }
-  #       - {repository: glotzerlab, config: [clang6_py37, embree], runner: ubuntu-latest, docker_options: '' }
-  #       - {repository: glotzerlab, config: [gcc7_py36, embree], runner: ubuntu-latest, docker_options: '' }
-  #       - {repository: joaander, config: [optix60_cuda11_py38], runner: [self-hosted,GPU], docker_options: '--mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidiactl --gpus=all' }
-  #       - {repository: joaander, config: [optix60_cuda10_py37], runner: [self-hosted,GPU], docker_options: '--mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidiactl --gpus=all' }
-
-  #   steps:
-  #   - name: Clean workspace
-  #     run: rm -rf ./*
-
-  #   - uses: actions/download-artifact@v2.0.10
-  #     with:
-  #       name: install-${{ join(matrix.config, '_') }}-${{ github.sha }}
-  #   - name: Untar install
-  #     run: tar --use-compress-program='zstd -10 -T0' -xvf install.tar
-
-  #   - name: Run tests
-  #     run: python3 -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0 --durations-min=0.1
-  #     env:
-  #       PYTHONPATH: ${{ github.workspace }}/install
-
-  # render_gallery:
-  #   name: Render gallery [${{ join(matrix.config, '_') }}]
-  #   needs: build
-  #   runs-on: ${{ matrix.runner }}
-  #   container:
-  #     image: ${{ matrix.repository }}/ci:2021.11-${{ matrix.config[0] }}
-  #     options: ${{ matrix.docker_options }} -e CUDA_VISIBLE_DEVICES
-  #   strategy:
-  #     matrix:
-  #       include:
-  #       - {repository: glotzerlab, config: [clang13_py310, embree], runner: ubuntu-latest, docker_options: '' }
-
-  #   steps:
-  #   - name: Clean workspace
-  #     run: rm -rf ./*
-
-  #   - uses: actions/checkout@v2.4.0
-  #     with:
-  #       submodules: true
-  #       path: code
-  #   - uses: actions/download-artifact@v2.0.10
-  #     with:
-  #       name: install-${{ join(matrix.config, '_') }}-${{ github.sha }}
-  #   - name: Untar install
-  #     run: tar --use-compress-program='zstd -10 -T0' -xvf install.tar
-
-  #   - name: Render gallery images
-  #     run: for i in *.py; do echo "Rendering $i" && python3 $i || exit 1; done
-  #     working-directory: code/doc/gallery
-  #     env:
-  #       PYTHONPATH: ${{ github.workspace }}/install
-
-  # build_test_windows:
-  #   name: Build and test on ${{ matrix.os }}
-  #   runs-on: ${{ matrix.os }}
-  #   strategy:
-  #     matrix:
-  #       include:
-  #       - {os: windows-2019, cmake_generator: "Visual Studio 16 2019"}
-  #       - {os: windows-2022, cmake_generator: "Visual Studio 17 2022"}
-  #   steps:
-  #   - uses: actions/checkout@v2.4.0
-  #     with:
-  #       path: code
-  #       submodules: true
-  #   - name: Cache conda packages
-  #     uses: actions/cache@v2.1.6
-  #     with:
-  #       path: ~/conda_pkgs_dir
-  #       key:
-  #         ${{ matrix.os }}-${{ hashFiles('code/.github/workflows/environments/conda.yml') }}
-  #   - name: Create conda environment
-  #     uses: conda-incubator/setup-miniconda@v2.1.1
-  #     with:
-  #       environment-file: code/.github/workflows/environments/conda.yml
-  #       activate-environment: ${{ github.workspace }}/env
-  #       python-version: 3.9
-  #       miniforge-variant: Mambaforge
-  #       miniforge-version: "latest"
-  #       use-only-tar-bz2: true
-  #       use-mamba: true
-  #     env:
-  #       CONDA: ${{ github.workspace }}\miniconda
-  #   - name: Add environment to system path
-  #     # these are all needed because miniconda installs libraries to a variety of paths
-  #     run: |
-  #       echo "$env:GITHUB_WORKSPACE\env" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-  #       echo "$env:GITHUB_WORKSPACE\env\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-  #       echo "$env:GITHUB_WORKSPACE\env\Scripts" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-  #       echo "$env:GITHUB_WORKSPACE\env\Library\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-  #   - name: Configure
-  #     run: >
-  #       cmake -S code -B build
-  #       -DENABLE_EMBREE=ON
-  #       -DENABLE_OPTIX=OFF
-  #       -DPYTHON_EXECUTABLE="$env:GITHUB_WORKSPACE"\env\python.exe
-  #       -DCMAKE_INSTALL_PREFIX="$env:GITHUB_WORKSPACE"\install
-  #       -G "${{ matrix.cmake_generator }}"
-  #     env:
-  #       CMAKE_PREFIX_PATH: ${{ github.workspace }}\env
-  #   - name: Build
-  #     run: cmake --build build --config Release -j
-  #   - name: Install
-  #     run: cmake --install build --config Release
-  #   - name: Run tests
-  #     run: python -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0 --durations-min=0.1
-  #     env:
-  #       PYTHONPATH: ${{ github.workspace }}\install
-
-  # # This job is used to provide a single requirement for branch merge conditions.
-  # tests_complete:
-  #   name: Unit test
-  #   # needs: [build_test_windows, test, render_gallery]
-  #   needs: [clang13_py310, clang12_py310]
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #     - run: echo "Done!"
+    steps:
+      - run: echo "Done!"
