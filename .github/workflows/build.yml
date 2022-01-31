@@ -85,7 +85,7 @@ jobs:
 
     - uses: actions/download-artifact@v2.0.10
       with:
-        name: install-${{ join(matrix.config, '_') }}-${{ github.sha }}
+        name: install-${{ inputs.image }}-${{ github.sha }}
     - name: Untar install
       run: tar --use-compress-program='zstd -10 -T0' -xvf install.tar
 
