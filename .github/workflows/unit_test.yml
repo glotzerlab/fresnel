@@ -21,18 +21,30 @@ on:
   workflow_dispatch:
 
 jobs:
-  clang13_py310:
-    uses: ./.github/workflows/build.yml
-    with:
-      image: clang13_py310
-    secrets:
-      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+  # clang13_py310:
+  #   uses: ./.github/workflows/build.yml
+  #   with:
+  #     image: clang13_py310
+  #   secrets:
+  #     DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+  #     DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-  clang12_py310:
+  # clang12_py310:
+  #   uses: ./.github/workflows/build.yml
+  #   with:
+  #     image: clang12_py310
+  #   secrets:
+  #     DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+  #     DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+  optix60_cuda11_py38:
     uses: ./.github/workflows/build.yml
     with:
-      image: clang12_py310
+      image: optix60_cuda11_py38
+      repository: joaander
+      test_runner: self-hosted
+      docker_options: --mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidiactl --gpus=all
+      render_gallery: true
     secrets:
       DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
       DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}

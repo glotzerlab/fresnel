@@ -21,6 +21,10 @@ on:
       docker_options:
         type: string
         required: false
+      render_gallery:
+        type: boolean
+        required: false
+        default: false
 
     secrets:
       DOCKER_HUB_USERNAME:
@@ -95,5 +99,12 @@ jobs:
 
     - name: Run tests
       run: python3 -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0 --durations-min=0.1
+      env:
+        PYTHONPATH: ${{ github.workspace }}/install
+
+    - name: Render gallery images
+      if: ${{ inputs.render_gallery }}
+      run: for i in *.py; do echo "Rendering $i" && python3 $i || exit 1; done
+      working-directory: code/doc/gallery
       env:
         PYTHONPATH: ${{ github.workspace }}/install
