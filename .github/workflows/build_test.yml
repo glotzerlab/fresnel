@@ -102,6 +102,12 @@ jobs:
       env:
         PYTHONPATH: ${{ github.workspace }}/install
 
+    - uses: actions/checkout@v2.4.0
+      if: ${{ inputs.render_gallery }}
+      with:
+        submodules: true
+        path: code
+
     - name: Render gallery images
       if: ${{ inputs.render_gallery }}
       run: for i in *.py; do echo "Rendering $i" && python3 $i || exit 1; done

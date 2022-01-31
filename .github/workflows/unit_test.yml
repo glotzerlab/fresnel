@@ -126,18 +126,18 @@ jobs:
         - {os: windows-2019, cmake_generator: "Visual Studio 16 2019"}
         - {os: windows-2022, cmake_generator: "Visual Studio 17 2022"}
     steps:
-    - uses: actions/checkout@v2_test.4.0
+    - uses: actions/checkout@v2.4.0
       with:
         path: code
         submodules: true
     - name: Cache conda packages
-      uses: actions/cache@v2_test.1.6
+      uses: actions/cache@v2.1.6
       with:
         path: ~/conda_pkgs_dir
         key:
           ${{ matrix.os }}-${{ hashFiles('code/.github/workflows/environments/conda.yml') }}
     - name: Create conda environment
-      uses: conda-incubator/setup-miniconda@v2_test.1.1
+      uses: conda-incubator/setup-miniconda@v2.1.1
       with:
         environment-file: code/.github/workflows/environments/conda.yml
         activate-environment: ${{ github.workspace }}/env
