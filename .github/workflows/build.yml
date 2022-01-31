@@ -10,7 +10,11 @@ on:
       image:
         type: string
         required: true
-      runner:
+      build_runner:
+        type: string
+        required: false
+        default: ubuntu-latest
+      test_runner:
         type: string
         required: false
         default: ubuntu-latest
@@ -26,7 +30,7 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ inputs.runner }}
+    runs-on: ${{ inputs.build_runner }}
     container:
       image: ${{ inputs.repository }}/ci:2021.11-${{ inputs.image }}
       options: ${{ matrix.docker_options }} -e CUDA_VISIBLE_DEVICES
@@ -64,3 +68,28 @@ jobs:
         name: install-${{ inputs.image }}-${{ github.sha }}
         path: install.tar
         retention-days: 7
+
+  test:
+    needs: build
+    runs-on: ${{ inputs.test_runner }}
+    container:
+      image: ${{ inputs.repository }}/ci:2021.11-${{ inputs.image }}
+      options: ${{ matrix.docker_options }} -e CUDA_VISIBLE_DEVICES
+      credentials:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+    steps:
+    - name: Clean workspace
+      run: rm -rf ./*
+
+    - uses: actions/download-artifact@v2.0.10
+      with:
+        name: install-${{ join(matrix.config, '_') }}-${{ github.sha }}
+    - name: Untar install
+      run: tar --use-compress-program='zstd -10 -T0' -xvf install.tar
+
+    - name: Run tests
+      run: python3 -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0 --durations-min=0.1
+      env:
+        PYTHONPATH: ${{ github.workspace }}/install
