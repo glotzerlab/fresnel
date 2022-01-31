@@ -20,10 +20,6 @@ on:
   # Trigger on request.
   workflow_dispatch:
 
-# Use multiple jobs to reduce the amount of time spent on GPU runners. Use GitHub Hosted runners
-# for compiling all tests configurations (GPU and CPU), then upload the installation directory
-# as an artifact. Test jobs depend on the build job, download the install directory, and run the
-# tests. Upload each build configuration to a separate artifact.
 jobs:
   clang13_py310:
     uses: ./.github/workflows/build.yml
@@ -37,6 +33,17 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       image: clang12_py310
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+  optix60_cuda10_py37:
+    uses: ./.github/workflows/build.yml
+    with:
+      image: optix60_cuda10_py37
+      repository: joaander
+      test_runner: self-hosted
+      docker_options: --mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidiactl --gpus=all
     secrets:
       DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
       DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
@@ -180,12 +187,12 @@ jobs:
   #     env:
   #       PYTHONPATH: ${{ github.workspace }}\install
 
-  # This job is used to provide a single requirement for branch merge conditions.
-  tests_complete:
-    name: Unit test
-    # needs: [build_test_windows, test, render_gallery]
-    needs: [clang13_py310, clang12_py310]
-    runs-on: ubuntu-latest
+  # # This job is used to provide a single requirement for branch merge conditions.
+  # tests_complete:
+  #   name: Unit test
+  #   # needs: [build_test_windows, test, render_gallery]
+  #   needs: [clang13_py310, clang12_py310]
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - run: echo "Done!"
+  #   steps:
+  #     - run: echo "Done!"

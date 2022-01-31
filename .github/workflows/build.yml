@@ -28,12 +28,16 @@ on:
       DOCKER_HUB_ACCESS_TOKEN:
         required: false
 
+# Use multiple jobs to reduce the amount of time spent on GPU runners. Use GitHub Hosted runners
+# for compiling all tests configurations (GPU and CPU), then upload the installation directory
+# as an artifact. Test jobs depend on the build job, download the install directory, and run the
+# tests. Upload each build configuration to a separate artifact.
+
 jobs:
   build:
     runs-on: ${{ inputs.build_runner }}
     container:
-      image: ${{ inputs.repository }}/ci:2021.11-${{ inputs.image }}
-      options: ${{ matrix.docker_options }} -e CUDA_VISIBLE_DEVICES
+      image: ${{ inputs.repository }}/ci:2022.01-${{ inputs.image }}
       credentials:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
@@ -57,7 +61,7 @@ jobs:
     - name: Build
       run: ninja install
       working-directory: build
-    # Tar the installation directory to preserve permissions and reduce HTTP requests on upload.
+   # Tar the installation directory to preserve permissions and reduce HTTP requests on upload.
     - name: 'Tar install'
       run: tar --use-compress-program='zstd -10 -T0' -cvf install.tar install
     # Upload the tarball. Retain the file for a limited time in case developers need to download
@@ -73,8 +77,8 @@ jobs:
     needs: build
     runs-on: ${{ inputs.test_runner }}
     container:
-      image: ${{ inputs.repository }}/ci:2021.11-${{ inputs.image }}
-      options: ${{ matrix.docker_options }} -e CUDA_VISIBLE_DEVICES
+      image: ${{ inputs.repository }}/ci:2022.01-${{ inputs.image }}
+      options: ${{ inputs.docker_options }} -e CUDA_VISIBLE_DEVICES
       credentials:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
