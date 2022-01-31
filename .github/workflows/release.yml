@@ -1,5 +1,3 @@
-# Edit `release.yml` in `.github/workflows/templates` and run `make_workflows.py` to update the
-# workflow.
 name: GitHub Release
 
 concurrency:
@@ -30,7 +28,7 @@ jobs:
     name: Build release tarball
     runs-on: ubuntu-latest
     container:
-      image: glotzerlab/ci:2021.11-ubuntu20.04
+      image: glotzerlab/ci:2022.01-ubuntu20.04
 
     steps:
       - uses: actions/checkout@v2.4.0
