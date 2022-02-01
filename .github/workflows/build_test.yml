@@ -18,7 +18,7 @@ on:
         type: string
         required: false
         default: ubuntu-latest
-      docker_options:
+      test_docker_options:
         type: string
         required: false
       render_gallery:
@@ -28,9 +28,9 @@ on:
 
     secrets:
       DOCKER_HUB_USERNAME:
-        required: false
+        required: true
       DOCKER_HUB_ACCESS_TOKEN:
-        required: false
+        required: true
 
 # Use multiple jobs to reduce the amount of time spent on GPU runners. Use GitHub Hosted runners
 # for compiling all tests configurations (GPU and CPU), then upload the installation directory
@@ -82,7 +82,7 @@ jobs:
     runs-on: ${{ inputs.test_runner }}
     container:
       image: ${{ inputs.repository }}/ci:2022.01-${{ inputs.image }}
-      options: ${{ inputs.docker_options }} -e CUDA_VISIBLE_DEVICES
+      options: ${{ inputs.test_docker_options }} -e CUDA_VISIBLE_DEVICES
       credentials:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
