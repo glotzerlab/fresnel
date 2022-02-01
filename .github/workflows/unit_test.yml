@@ -5,14 +5,17 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  # Trigger on pull requests.
-  pull_request:
+  # # Trigger on pull requests.
+  # pull_request:
 
-  # Trigger on pushes to the mainline branches. This prevents building commits twice when the pull
-  # request source branch is in the same repository.
+  # # Trigger on pushes to the mainline branches. This prevents building commits twice when the pull
+  # # request source branch is in the same repository.
+  # push:
+  #   branches:
+  #   - "master"
+
+  # pull request triggers are break reusable workflows: https://github.community/t/ref-head-in-reusable-workflows/203690
   push:
-    branches:
-    - "master"
 
   # Trigger on request.
   workflow_dispatch:
