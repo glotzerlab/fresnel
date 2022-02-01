@@ -59,4 +59,3 @@ out = fresnel.pathtrace(scene, samples=64,
                         w=580, h=580)
 PIL.Image.fromarray(out[:], mode='RGBA').save('sphere.png')
 ```
-
