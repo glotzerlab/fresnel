@@ -2,15 +2,6 @@ ci:
   autoupdate_schedule: quarterly
 
 repos:
-- repo: local
-  hooks:
-  - id: make_workflows
-    name: make_workflows
-    language: python
-    entry: python3 .github/workflows/make_workflows.py
-    pass_filenames: false
-    always_run: true
-    additional_dependencies: [jinja2==2.11.3, pyyaml==5.4.1]
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: 'v4.1.0'
   hooks:
@@ -20,7 +11,6 @@ repos:
     exclude_types: [svg]
   - id: check-json
   - id: check-yaml
-    exclude: (?:^.github/workflows/templates) # templates are not properly formatted yaml
   - id: check-case-conflict
   - id: fix-encoding-pragma
     args:

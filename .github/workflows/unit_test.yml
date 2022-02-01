@@ -1,5 +1,3 @@
-# Edit `unit_test.yml` in `.github/workflows/templates` and run `make_workflows.py` to update the
-# workflow.
 name: Unit test
 
 concurrency:
@@ -19,138 +17,102 @@ on:
   # Trigger on request.
   workflow_dispatch:
 
-
-
-
-# Use multiple jobs to reduce the amount of time spent on GPU runners. Use GitHub Hosted runners
-# for compiling all tests configurations (GPU and CPU), then upload the installation directory
-# as an artifact. Test jobs depend on the build job, download the install directory, and run the
-# tests. Upload each build configuration to a separate artifact.
 jobs:
-  build:
-    name: Build [${{ join(matrix.config, '_') }}]
-    runs-on: ubuntu-latest
-    container:
-      image: ${{ matrix.repository }}/ci:2021.11-${{ matrix.config[0] }}
-      credentials:
-        username: ${{ secrets.DOCKER_HUB_USERNAME }}
-        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-    strategy:
-      matrix:
-        include:
-        - {repository: glotzerlab, config: [clang13_py310, embree], runner: ubuntu-latest, docker_options: '' }
-        - {repository: glotzerlab, config: [clang12_py310, embree], runner: ubuntu-latest, docker_options: '' }
-        - {repository: glotzerlab, config: [gcc11_py310, embree], runner: ubuntu-latest, docker_options: '' }
-        - {repository: glotzerlab, config: [clang11_py39, embree], runner: ubuntu-latest, docker_options: '' }
-        - {repository: glotzerlab, config: [gcc10_py39, embree], runner: ubuntu-latest, docker_options: '' }
-        - {repository: glotzerlab, config: [gcc9_py38, embree], runner: ubuntu-latest, docker_options: '' }
-        - {repository: glotzerlab, config: [gcc8_py37, embree], runner: ubuntu-latest, docker_options: '' }
-        - {repository: glotzerlab, config: [clang6_py37, embree], runner: ubuntu-latest, docker_options: '' }
-        - {repository: glotzerlab, config: [gcc7_py36, embree], runner: ubuntu-latest, docker_options: '' }
-        - {repository: joaander, config: [optix60_cuda11_py38], runner: [self-hosted,GPU], docker_options: '--mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidiactl --gpus=all' }
-        - {repository: joaander, config: [optix60_cuda10_py37], runner: [self-hosted,GPU], docker_options: '--mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidiactl --gpus=all' }
+  clang13_py310:
+    uses: ./.github/workflows/build_test.yml
+    with:
+      image: clang13_py310
+      render_gallery: true
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-    steps:
+  clang12_py310:
+    uses: ./.github/workflows/build_test.yml
+    with:
+      image: clang12_py310
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-    - uses: actions/checkout@v2.4.0
-      with:
-        path: code
-        submodules: true
-    - name: Configure
-      run: |
-        mkdir -p build
-        cd build
-        cmake ../code -GNinja \
-                      -DENABLE_EMBREE=${ENABLE_EMBREE:-"ON"} \
-                      -DENABLE_OPTIX=${ENABLE_OPTIX:-"OFF"} \
-                      -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install
-      env:
-        ENABLE_OPTIX: ${{ contains(matrix.config[0], 'optix') }}
-        ENABLE_EMBREE: ${{ contains(matrix.config, 'embree') }}
-    - name: Build
-      run: ninja install
-      working-directory: build
-    # Tar the installation directory to preserve permissions and reduce HTTP requests on upload.
-    - name: 'Tar install'
-      run: tar --use-compress-program='zstd -10 -T0' -cvf install.tar install
-    # Upload the tarball. Retain the file for a limited time in case developers need to download
-    # and run tests locally for further debugging.
-    - uses: actions/upload-artifact@v2.2.4
-      name: 'Upload install'
-      with:
-        name: install-${{ join(matrix.config, '_') }}-${{ github.sha }}
-        path: install.tar
-        retention-days: 7
+  gcc11_py310:
+    uses: ./.github/workflows/build_test.yml
+    with:
+      image: gcc11_py310
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
+  clang11_py39:
+    uses: ./.github/workflows/build_test.yml
+    with:
+      image: clang11_py39
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-  test:
-    name: Test [${{ join(matrix.config, '_') }}]
-    needs: build
-    runs-on: ${{ matrix.runner }}
-    container:
-      image: ${{ matrix.repository }}/ci:2021.11-${{ matrix.config[0] }}
-      options: ${{ matrix.docker_options }} -e CUDA_VISIBLE_DEVICES
-    strategy:
-      matrix:
-        include:
-        - {repository: glotzerlab, config: [clang13_py310, embree], runner: ubuntu-latest, docker_options: '' }
-        - {repository: glotzerlab, config: [clang12_py310, embree], runner: ubuntu-latest, docker_options: '' }
-        - {repository: glotzerlab, config: [gcc11_py310, embree], runner: ubuntu-latest, docker_options: '' }
-        - {repository: glotzerlab, config: [clang11_py39, embree], runner: ubuntu-latest, docker_options: '' }
-        - {repository: glotzerlab, config: [gcc10_py39, embree], runner: ubuntu-latest, docker_options: '' }
-        - {repository: glotzerlab, config: [gcc9_py38, embree], runner: ubuntu-latest, docker_options: '' }
-        - {repository: glotzerlab, config: [gcc8_py37, embree], runner: ubuntu-latest, docker_options: '' }
-        - {repository: glotzerlab, config: [clang6_py37, embree], runner: ubuntu-latest, docker_options: '' }
-        - {repository: glotzerlab, config: [gcc7_py36, embree], runner: ubuntu-latest, docker_options: '' }
-        - {repository: joaander, config: [optix60_cuda11_py38], runner: [self-hosted,GPU], docker_options: '--mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidiactl --gpus=all' }
-        - {repository: joaander, config: [optix60_cuda10_py37], runner: [self-hosted,GPU], docker_options: '--mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidiactl --gpus=all' }
+  gcc10_py39:
+    uses: ./.github/workflows/build_test.yml
+    with:
+      image: gcc10_py39
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-    steps:
-    - name: Clean workspace
-      run: rm -rf ./*
+  gcc9_py38:
+    uses: ./.github/workflows/build_test.yml
+    with:
+      image: gcc9_py38
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-    - uses: actions/download-artifact@v2.0.10
-      with:
-        name: install-${{ join(matrix.config, '_') }}-${{ github.sha }}
-    - name: Untar install
-      run: tar --use-compress-program='zstd -10 -T0' -xvf install.tar
+  gcc8_py37:
+    uses: ./.github/workflows/build_test.yml
+    with:
+      image: gcc8_py37
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-    - name: Run tests
-      run: python3 -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0 --durations-min=0.1
-      env:
-        PYTHONPATH: ${{ github.workspace }}/install
+  clang6_py37:
+    uses: ./.github/workflows/build_test.yml
+    with:
+      image: clang6_py37
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-  render_gallery:
-    name: Render gallery [${{ join(matrix.config, '_') }}]
-    needs: build
-    runs-on: ${{ matrix.runner }}
-    container:
-      image: ${{ matrix.repository }}/ci:2021.11-${{ matrix.config[0] }}
-      options: ${{ matrix.docker_options }} -e CUDA_VISIBLE_DEVICES
-    strategy:
-      matrix:
-        include:
-        - {repository: glotzerlab, config: [clang13_py310, embree], runner: ubuntu-latest, docker_options: '' }
+  gcc7_py36:
+    uses: ./.github/workflows/build_test.yml
+    with:
+      image: gcc7_py36
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-    steps:
-    - name: Clean workspace
-      run: rm -rf ./*
+  optix60_cuda11_py38:
+    uses: ./.github/workflows/build_test.yml
+    with:
+      image: optix60_cuda11_py38
+      repository: joaander
+      test_runner: self-hosted
+      test_docker_options: --mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidiactl --gpus=all
+      render_gallery: true
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-    - uses: actions/checkout@v2.4.0
-      with:
-        submodules: true
-        path: code
-    - uses: actions/download-artifact@v2.0.10
-      with:
-        name: install-${{ join(matrix.config, '_') }}-${{ github.sha }}
-    - name: Untar install
-      run: tar --use-compress-program='zstd -10 -T0' -xvf install.tar
-
-    - name: Render gallery images
-      run: for i in *.py; do echo "Rendering $i" && python3 $i || exit 1; done
-      working-directory: code/doc/gallery
-      env:
-        PYTHONPATH: ${{ github.workspace }}/install
+  optix60_cuda10_py37:
+    uses: ./.github/workflows/build_test.yml
+    with:
+      image: optix60_cuda10_py37
+      repository: joaander
+      test_runner: self-hosted
+      test_docker_options: --mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidiactl --gpus=all
+    secrets:
+      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
   build_test_windows:
     name: Build and test on ${{ matrix.os }}
@@ -212,7 +174,18 @@ jobs:
   # This job is used to provide a single requirement for branch merge conditions.
   tests_complete:
     name: Unit test
-    needs: [build_test_windows, test, render_gallery]
+    needs: [clang13_py310,
+            clang12_py310,
+            gcc11_py310,
+            clang11_py39,
+            gcc10_py39,
+            gcc9_py38,
+            gcc8_py37,
+            clang6_py37,
+            gcc7_py36,
+            optix60_cuda11_py38,
+            optix60_cuda10_py37,
+            build_test_windows]
     runs-on: ubuntu-latest
 
     steps:
