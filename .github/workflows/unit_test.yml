@@ -148,7 +148,7 @@ jobs:
         path: code
         submodules: true
     - name: Cache conda packages
-      uses: actions/cache@v2.1.6
+      uses: actions/cache@v2.1.7
       with:
         path: ~/conda_pkgs_dir
         key:
