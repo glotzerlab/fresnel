@@ -73,7 +73,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/download-artifact@v2.1.0
+      - uses: actions/download-artifact@v3
         name: Download artifacts
         with:
           name: release
