@@ -60,7 +60,7 @@ jobs:
       - name: Tar source
         run: tar -cvzf ${name}-${tag}.tar.gz ${name}-${tag}
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v3.0.0
         with:
           name: release
           path: |
