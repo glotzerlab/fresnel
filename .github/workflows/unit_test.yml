@@ -108,7 +108,8 @@ jobs:
 
     steps:
     - name: Clean workspace
-      run: rm -rf ./*
+      run: ( shopt -s dotglob nullglob; rm -rf ./* )
+      shell: bash
 
     - uses: actions/download-artifact@v3.0.0
       with:
@@ -133,6 +134,14 @@ jobs:
       working-directory: code/doc/gallery
       env:
         PYTHONPATH: ${{ github.workspace }}/install
+
+    - name: Clean workspace
+      run: ( shopt -s dotglob nullglob; rm -rf ./* )
+      shell: bash
+
+    - name: Clean HOME
+      run: ( shopt -s dotglob nullglob; rm -rf $HOME/* )
+      shell: bash
 
   build_test_windows:
     name: Build and test on ${{ matrix.os }}
