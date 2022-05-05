@@ -31,6 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ${{ matrix.repository }}/ci:2022.01-${{ matrix.image }}
+      options: --user "$(id -u)":"$(id -g)" -v /etc/passwd:/etc/passwd
       credentials:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
@@ -86,7 +87,7 @@ jobs:
     runs-on: ${{ matrix.test_runner }}
     container:
       image: ${{ matrix.repository }}/ci:2022.01-${{ matrix.image }}
-      options: ${{ matrix.test_docker_options }} -e CUDA_VISIBLE_DEVICES --user $(id --user):$(id --group) -v /etc/passwd:/etc/passwd
+      options: ${{ matrix.test_docker_options }} -e CUDA_VISIBLE_DEVICES --user "$(id -u)":"$(id -g)" -v /etc/passwd:/etc/passwd
       credentials:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
