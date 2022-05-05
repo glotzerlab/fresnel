@@ -86,7 +86,7 @@ jobs:
     runs-on: ${{ matrix.test_runner }}
     container:
       image: ${{ matrix.repository }}/ci:2022.01-${{ matrix.image }}
-      options: ${{ matrix.test_docker_options }} -e CUDA_VISIBLE_DEVICES
+      options: ${{ matrix.test_docker_options }} -e CUDA_VISIBLE_DEVICES --user $(id -u):$(id -g) -v /etc/passwd:/etc/passwd
       credentials:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
@@ -107,10 +107,6 @@ jobs:
         - {repository: joaander, image: optix60_cuda10_py37, test_runner: [self-hosted,GPU], test_docker_options: '--mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidiactl --gpus=all', render_gallery: false }
 
     steps:
-    - name: Clean workspace
-      run: ( shopt -s dotglob nullglob; rm -rf ./* )
-      shell: bash
-
     - uses: actions/download-artifact@v3.0.0
       with:
         name: install-${{ matrix.image }}-${{ github.sha }}
@@ -134,14 +130,6 @@ jobs:
       working-directory: code/doc/gallery
       env:
         PYTHONPATH: ${{ github.workspace }}/install
-
-    - name: Clean workspace
-      run: ( shopt -s dotglob nullglob; rm -rf ./* )
-      shell: bash
-
-    - name: Clean HOME
-      run: ( shopt -s dotglob nullglob; rm -rf $HOME/* )
-      shell: bash
 
   build_test_windows:
     name: Build and test on ${{ matrix.os }}
