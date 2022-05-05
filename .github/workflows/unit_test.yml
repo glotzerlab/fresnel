@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ${{ matrix.repository }}/ci:2022.01-${{ matrix.image }}
-      options: --user "$(id -u)":"$(id -g)" -v /etc/passwd:/etc/passwd
+      options: --user `id -u`:`id -g` -v /etc/passwd:/etc/passwd
       credentials:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
