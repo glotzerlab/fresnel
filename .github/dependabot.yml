@@ -7,3 +7,4 @@ updates:
       interval: "monthly"
     pull-request-branch-name:
       separator: "-"
+    open-pull-requests-limit: 10
