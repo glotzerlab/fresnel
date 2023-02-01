@@ -111,7 +111,7 @@ jobs:
       run: ( shopt -s dotglob nullglob; rm -rf ./* )
       shell: bash
 
-    - uses: actions/download-artifact@v3.0.1
+    - uses: actions/download-artifact@v3.0.2
       with:
         name: install-${{ matrix.image }}-${{ github.sha }}
     - name: Untar install
