@@ -31,7 +31,7 @@ jobs:
       image: glotzerlab/ci:2022.01-ubuntu20.04
 
     steps:
-      - uses: actions/checkout@v3.2.0
+      - uses: actions/checkout@v3.3.0
         with:
           fetch-depth: 0
           submodules: true
