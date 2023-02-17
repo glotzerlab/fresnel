@@ -53,7 +53,7 @@ jobs:
         - {repository: glotzerlab, image: gcc9_py39, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
         - {repository: glotzerlab, image: gcc8_py37, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
         - {repository: glotzerlab, image: gcc7_py37, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: joaander, image: optix60_cuda118_py310, test_runner: [self-hosted,GPU], test_docker_options: '-e  NVIDIA_DRIVER_CAPABILITIES=compute,graphics --gpus=all', render_gallery: false }
+        - {repository: joaander, image: optix60_cuda118_py310, test_runner: [self-hosted,GPU,optix], test_docker_options: '-e  NVIDIA_DRIVER_CAPABILITIES=compute,graphics --gpus=all', render_gallery: false }
 
     steps:
     - uses: actions/checkout@v3.3.0
@@ -114,7 +114,7 @@ jobs:
         - {repository: glotzerlab, image: gcc9_py39, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
         - {repository: glotzerlab, image: gcc8_py37, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
         - {repository: glotzerlab, image: gcc7_py37, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: joaander, image: optix60_cuda118_py310, test_runner: [self-hosted,GPU], test_docker_options: '-e  NVIDIA_DRIVER_CAPABILITIES=compute,graphics --gpus=all', render_gallery: false }
+        - {repository: joaander, image: optix60_cuda118_py310, test_runner: [self-hosted,GPU,optix], test_docker_options: '-e  NVIDIA_DRIVER_CAPABILITIES=compute,graphics --gpus=all', render_gallery: false }
 
     steps:
     - name: Clean workspace
