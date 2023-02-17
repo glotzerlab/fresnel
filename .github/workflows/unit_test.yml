@@ -12,7 +12,7 @@ on:
   # request source branch is in the same repository.
   push:
     branches:
-    - "master"
+    - "trunk"
 
   # Trigger on request.
   workflow_dispatch:
@@ -30,7 +30,7 @@ jobs:
     name: Build [${{ matrix.image }}]
     runs-on: ubuntu-latest
     container:
-      image: ${{ matrix.repository }}/ci:2022.01-${{ matrix.image }}
+      image: ${{ matrix.repository }}/ci:2023.02-${{ matrix.image }}
       credentials:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
@@ -38,17 +38,22 @@ jobs:
     strategy:
       matrix:
         include:
-        - {repository: glotzerlab, image: clang13_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: true }
+        - {repository: glotzerlab, image: clang14_py311, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: true }
+        - {repository: glotzerlab, image: clang13_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
         - {repository: glotzerlab, image: clang12_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: gcc11_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: clang11_py39, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: gcc10_py39, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: gcc9_py38, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: gcc8_py37, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+        - {repository: glotzerlab, image: clang11_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+        - {repository: glotzerlab, image: clang10_py38, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+        - {repository: glotzerlab, image: clang9_py38, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+        - {repository: glotzerlab, image: clang8_py38, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+        - {repository: glotzerlab, image: clang7_py38, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
         - {repository: glotzerlab, image: clang6_py37, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: gcc7_py36, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: joaander, image: optix60_cuda11_py38, test_runner: [self-hosted,GPU], test_docker_options: '--mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidiactl --gpus=all', render_gallery: true }
-        - {repository: joaander, image: optix60_cuda10_py37, test_runner: [self-hosted,GPU], test_docker_options: '--mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidiactl --gpus=all', render_gallery: false }
+        - {repository: glotzerlab, image: gcc12_py311, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+        - {repository: glotzerlab, image: gcc11_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+        - {repository: glotzerlab, image: gcc10_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+        - {repository: glotzerlab, image: gcc9_py39, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+        - {repository: glotzerlab, image: gcc8_py37, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+        - {repository: glotzerlab, image: gcc7_py37, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+        - {repository: joaander, image: optix60_cuda118_py310, test_runner: [self-hosted,GPU,optix], test_docker_options: '-e  NVIDIA_DRIVER_CAPABILITIES=compute,graphics --gpus=all', render_gallery: false }
 
     steps:
     - uses: actions/checkout@v3.3.0
@@ -85,7 +90,7 @@ jobs:
     needs: build_linux
     runs-on: ${{ matrix.test_runner }}
     container:
-      image: ${{ matrix.repository }}/ci:2022.01-${{ matrix.image }}
+      image: ${{ matrix.repository }}/ci:2023.02-${{ matrix.image }}
       options: ${{ matrix.test_docker_options }} -e CUDA_VISIBLE_DEVICES
       credentials:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
@@ -94,17 +99,22 @@ jobs:
     strategy:
       matrix:
         include:
-        - {repository: glotzerlab, image: clang13_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: true }
+        - {repository: glotzerlab, image: clang14_py311, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: true }
+        - {repository: glotzerlab, image: clang13_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
         - {repository: glotzerlab, image: clang12_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: gcc11_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: clang11_py39, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: gcc10_py39, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: gcc9_py38, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: gcc8_py37, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+        - {repository: glotzerlab, image: clang11_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+        - {repository: glotzerlab, image: clang10_py38, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+        - {repository: glotzerlab, image: clang9_py38, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+        - {repository: glotzerlab, image: clang8_py38, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+        - {repository: glotzerlab, image: clang7_py38, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
         - {repository: glotzerlab, image: clang6_py37, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: gcc7_py36, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: joaander, image: optix60_cuda11_py38, test_runner: [self-hosted,GPU], test_docker_options: '--mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidiactl --gpus=all', render_gallery: true }
-        - {repository: joaander, image: optix60_cuda10_py37, test_runner: [self-hosted,GPU], test_docker_options: '--mount type=bind,source=/usr/lib/libnvidia-rtcore.so,target=/usr/lib/libnvidia-rtcore.so --mount type=bind,source=/usr/lib/libnvoptix.so,target=/usr/lib/libnvoptix.so --device /dev/nvidia0 --device /dev/nvidia1 --device /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device /dev/nvidiactl --gpus=all', render_gallery: false }
+        - {repository: glotzerlab, image: gcc12_py311, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+        - {repository: glotzerlab, image: gcc11_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+        - {repository: glotzerlab, image: gcc10_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+        - {repository: glotzerlab, image: gcc9_py39, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+        - {repository: glotzerlab, image: gcc8_py37, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+        - {repository: glotzerlab, image: gcc7_py37, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+        - {repository: joaander, image: optix60_cuda118_py310, test_runner: [self-hosted,GPU,optix], test_docker_options: '-e  NVIDIA_DRIVER_CAPABILITIES=compute,graphics --gpus=all', render_gallery: false }
 
     steps:
     - name: Clean workspace
@@ -156,21 +166,21 @@ jobs:
       with:
         path: code
         submodules: true
-    - name: Cache conda packages
-      uses: actions/cache@v3.2.4
-      with:
-        path: ~/conda_pkgs_dir
-        key:
-          ${{ matrix.os }}-${{ hashFiles('code/.github/workflows/environments/conda.yml') }}
+    # setup-miniconda doesn't understand .conda format packages and removes them
+    # - name: Cache conda packages
+    #   uses: actions/cache@v3.2.4
+    #   with:
+    #     path: ~/conda_pkgs_dir
+    #     key:
+    #       ${{ matrix.os }}-${{ hashFiles('code/.github/workflows/environments/conda.yml') }}
     - name: Create conda environment
       uses: conda-incubator/setup-miniconda@v2.2.0
       with:
         environment-file: code/.github/workflows/environments/conda.yml
         activate-environment: ${{ github.workspace }}/env
-        python-version: 3.9
+        python-version: 3.11
         miniforge-variant: Mambaforge
         miniforge-version: "latest"
-        use-only-tar-bz2: true
         use-mamba: true
       env:
         CONDA: ${{ github.workspace }}\miniconda
