@@ -90,7 +90,7 @@ jobs:
     needs: build_linux
     runs-on: ${{ matrix.test_runner }}
     container:
-      image: ${{ matrix.repository }}/ci:2022.01-${{ matrix.image }}
+      image: ${{ matrix.repository }}/ci:2023.02-${{ matrix.image }}
       options: ${{ matrix.test_docker_options }} -e CUDA_VISIBLE_DEVICES
       credentials:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
@@ -180,7 +180,6 @@ jobs:
         python-version: 3.11
         miniforge-variant: Mambaforge
         miniforge-version: "latest"
-        use-only-tar-bz2: true
         use-mamba: true
       env:
         CONDA: ${{ github.workspace }}\miniconda
