@@ -66,7 +66,7 @@ Install prerequisites
 
 **General requirements:**
 
-- C++14 capable compiler (tested with GCC 7-10, Clang 6-13, Visual Studio 2019-2022)
+- C++14 capable compiler (tested with GCC 7-12, Clang 6-14, Visual Studio 2019-2022)
 - CMake >= 3.8
 - pybind11 >= 2.2
 - Python >= 3.6
