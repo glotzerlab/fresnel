@@ -65,7 +65,7 @@ Here are a few samples of what **fresnel** can do:
     examples/02-Advanced-topics/*
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 2
     :caption: Python API Reference
 
     package-fresnel

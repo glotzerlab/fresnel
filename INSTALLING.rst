@@ -30,8 +30,9 @@ The fresnel builds on conda-forge_ support CPU rendering.
 
 .. tip::
 
-    Use miniforge_ or miniconda_ instead of the full Anaconda distribution to avoid package
-    conflicts with conda-forge_ packages.
+    Use mambaforge_, miniforge_ or miniconda_ instead of the full Anaconda distribution to avoid
+    package conflicts with conda-forge_ packages.
 
+.. _mambaforge: https://github.com/conda-forge/miniforge
 .. _miniforge: https://github.com/conda-forge/miniforge
 .. _miniconda: http://conda.pydata.org/miniconda.html

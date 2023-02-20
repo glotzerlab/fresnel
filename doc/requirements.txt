@@ -1,0 +1,7 @@
+furo
+ipykernel
+nbconvert
+nbsphinx
+pandoc
+rowan
+tornado
