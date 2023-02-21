@@ -127,9 +127,13 @@ void TracerPath::renderImplementation(std::shared_ptr<Scene> scene)
                         ray_hit_initial.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
 
                         FresnelRTCIntersectContext context;
-                        rtcInitIntersectContext(&context.context);
+                        rtcInitRayQueryContext(&context.context);
 
-                        rtcIntersect1(scene->getRTCScene(), &context.context, &ray_hit_initial);
+                        RTCIntersectArguments args_initial;
+                        rtcInitIntersectArguments(&args_initial);
+                        args_initial.flags = RTC_RAY_QUERY_FLAG_COHERENT;
+                        args_initial.context = &context.context;
+                        rtcIntersect1(scene->getRTCScene(), &ray_hit_initial, &args_initial);
 
                         FresnelRTCIntersectContext context_initial = context;
 
@@ -170,9 +174,14 @@ void TracerPath::renderImplementation(std::shared_ptr<Scene> scene)
 
                                     // subsequent depth steps need to trace
                                     context = FresnelRTCIntersectContext();
-                                    rtcInitIntersectContext(&context.context);
+                                    rtcInitRayQueryContext(&context.context);
 
-                                    rtcIntersect1(scene->getRTCScene(), &context.context, &ray_hit);
+                                    RTCIntersectArguments args;
+                                    rtcInitIntersectArguments(&args);
+                                    args.flags = RTC_RAY_QUERY_FLAG_INCOHERENT;
+                                    args.context = &context.context;
+
+                                    rtcIntersect1(scene->getRTCScene(), &ray_hit, &args);
                                     }
 
                                 if (ray_hit.hit.geomID != RTC_INVALID_GEOMETRY_ID)

@@ -107,9 +107,14 @@ void TracerDirect::renderImplementation(std::shared_ptr<Scene> scene)
                             ray_hit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
 
                             FresnelRTCIntersectContext context;
-                            rtcInitIntersectContext(&context.context);
+                            rtcInitRayQueryContext(&context.context);
 
-                            rtcIntersect1(scene->getRTCScene(), &context.context, &ray_hit);
+                            RTCIntersectArguments args;
+                            rtcInitIntersectArguments(&args);
+                            args.flags = RTC_RAY_QUERY_FLAG_COHERENT;
+                            args.context = &context.context;
+
+                            rtcIntersect1(scene->getRTCScene(), &ray_hit, &args);
 
                             // determine the output pixel color
                             RGB<float> c = background_color;

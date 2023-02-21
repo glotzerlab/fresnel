@@ -3,7 +3,7 @@ channels:
 dependencies:
 - tbb=2021.7.0
 - tbb-devel=2021.7.0
-- embree3=3.13.5
+- embree=4.0.0
 - pybind11=2.10
 - numpy=1.24
 - pillow=9.4

@@ -6,8 +6,8 @@
 
 #include "embree_platform.h"
 #include "tbb/task_arena.h"
-#include <embree3/rtcore.h>
-#include <embree3/rtcore_ray.h>
+#include <embree4/rtcore.h>
+#include <embree4/rtcore_ray.h>
 #include <pybind11/pybind11.h>
 #include <stdexcept>
 

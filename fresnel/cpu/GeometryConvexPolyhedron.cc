@@ -139,6 +139,8 @@ void GeometryConvexPolyhedron::bounds(const struct RTCBoundsFunctionArguments* a
 */
 void GeometryConvexPolyhedron::intersect(const struct RTCIntersectFunctionNArguments* args)
     {
+    *args->valid = 0;
+
     GeometryConvexPolyhedron* geom = (GeometryConvexPolyhedron*)args->geometryUserPtr;
 
     // adapted from OptiX quick start tutorial and Embree user_geometry tutorial files
@@ -328,6 +330,7 @@ void GeometryConvexPolyhedron::intersect(const struct RTCIntersectFunctionNArgum
                 }
             }
         context.d = min_d;
+        *args->valid = -1;
         }
     }
 

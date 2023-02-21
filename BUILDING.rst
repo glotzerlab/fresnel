@@ -8,7 +8,7 @@ To build the **fresnel** Python package from source:
 
 1. `Install prerequisites`_::
 
-   $ <package-manager> install cmake git python numpy pybind11 qhull embree3
+   $ <package-manager> install cmake git python numpy pybind11 qhull embree
    $ <package-manager> install pillow pytest
 
 2. `Obtain the source`_::
@@ -75,7 +75,7 @@ Install prerequisites
 - For CPU execution (required when ``ENABLE_EMBREE=ON``):
 
   - Intel TBB >= 4.3.20150611
-  - Intel Embree >= 3.0.0
+  - Intel Embree >= 4.0.0
 
 - For GPU execution (required when ``ENABLE_OPTIX=ON``):
 

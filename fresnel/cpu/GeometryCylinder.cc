@@ -75,6 +75,8 @@ void GeometryCylinder::bounds(const struct RTCBoundsFunctionArguments* args)
 */
 void GeometryCylinder::intersect(const struct RTCIntersectFunctionNArguments* args)
     {
+    *args->valid = 0;
+
     GeometryCylinder* geom = (GeometryCylinder*)args->geometryUserPtr;
     const vec3<float> A = geom->m_points->get(args->primID * 2 + 0);
     const vec3<float> B = geom->m_points->get(args->primID * 2 + 1);
@@ -111,6 +113,7 @@ void GeometryCylinder::intersect(const struct RTCIntersectFunctionNArguments* ar
         rayhit.hit.instID[0] = context.context.instID[0];
         context.shading_color = geom->m_color->get(args->primID * 2 + color_index);
         context.d = d;
+        *args->valid = -1;
         }
     }
 

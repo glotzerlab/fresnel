@@ -8,7 +8,7 @@
 #include "common/VectorMath.h"
 #include <limits>
 
-#include <embree3/rtcore.h>
+#include <embree4/rtcore.h>
 
 /*! Per the Embree documentation, this intersection context structure has the same data layout as
    the one in Embree's header, with extra custom bits at the end.
@@ -24,7 +24,7 @@ struct FresnelRTCIntersectContext
     {
     FresnelRTCIntersectContext() : d(std::numeric_limits<float>::max()) { }
 
-    RTCIntersectContext context;
+    RTCRayQueryContext context;
 
     // ray extensions go here
     float d; //!< Distance to the nearest edge
