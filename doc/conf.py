@@ -117,6 +117,7 @@ todo_include_todos = False
 # a list of builtin themes.
 html_theme = 'furo'
 html_theme_options = {
+    "top_of_page_button": None,
     "dark_css_variables": {
         "color-brand-primary": "#5187b2",
         "color-brand-content": "#5187b2",
