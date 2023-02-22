@@ -17,5 +17,4 @@ Release checklist:
   - [Build status](https://readthedocs.org/projects/fresnel/builds/)
   - [Output](https://fresnel.readthedocs.io/en/latest/)
 - [ ] Tag and push.
-- [ ] Build tarball.
 - [ ] Update conda-forge recipe.
