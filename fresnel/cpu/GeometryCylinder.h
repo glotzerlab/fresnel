@@ -5,8 +5,8 @@
 #define GEOMETRY_CYLINDER_H_
 
 #include "embree_platform.h"
-#include <embree3/rtcore.h>
-#include <embree3/rtcore_ray.h>
+#include <embree4/rtcore.h>
+#include <embree4/rtcore_ray.h>
 
 #include <pybind11/pybind11.h>
 

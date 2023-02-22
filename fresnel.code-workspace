@@ -6,7 +6,8 @@
     ],
     "settings": {
         "files.associations": {
-            "**/.azp/**/*.yml": "azure-pipelines"
+            "**/.azp/**/*.yml": "azure-pipelines",
+            "limits": "cpp"
         },
     },
 }

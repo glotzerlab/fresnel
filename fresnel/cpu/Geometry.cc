@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 #include "Geometry.h"
-#include <embree3/rtcore.h>
+#include <embree4/rtcore.h>
 
 namespace fresnel
     {

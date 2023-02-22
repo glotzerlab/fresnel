@@ -114,6 +114,8 @@ void GeometryMesh::bounds(const struct RTCBoundsFunctionArguments* args)
 */
 void GeometryMesh::intersect(const struct RTCIntersectFunctionNArguments* args)
     {
+    *args->valid = 0;
+
     GeometryMesh* geom = (GeometryMesh*)args->geometryUserPtr;
 
     unsigned int item = args->primID;
@@ -185,6 +187,7 @@ void GeometryMesh::intersect(const struct RTCIntersectFunctionNArguments* args)
                                 + geom->m_color->get(i_face * 3 + 2) * w;
 
         context.d = d;
+        *args->valid = -1;
         }
     }
 

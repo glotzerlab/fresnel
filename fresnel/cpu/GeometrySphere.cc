@@ -80,6 +80,8 @@ void GeometrySphere::bounds(const struct RTCBoundsFunctionArguments* args)
 */
 void GeometrySphere::intersect(const struct RTCIntersectFunctionNArguments* args)
     {
+    *args->valid = 0;
+
     GeometrySphere* geom = (GeometrySphere*)args->geometryUserPtr;
     const vec3<float> position = geom->m_position->get(args->primID);
     const float radius = geom->m_radius->get(args->primID);
@@ -110,6 +112,7 @@ void GeometrySphere::intersect(const struct RTCIntersectFunctionNArguments* args
         rayhit.hit.instID[0] = context.context.instID[0];
         context.shading_color = geom->m_color->get(args->primID);
         context.d = d;
+        *args->valid = -1;
         }
     }
 

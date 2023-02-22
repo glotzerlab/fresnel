@@ -149,6 +149,8 @@ inline bool is_inside(float& min_d, const vec2<float>& p, const std::vector<vec2
 */
 void GeometryPolygon::intersect(const struct RTCIntersectFunctionNArguments* args)
     {
+    *args->valid = 0;
+
     GeometryPolygon* geom = (GeometryPolygon*)args->geometryUserPtr;
 
     const vec2<float> p2 = geom->m_position->get(args->primID);
@@ -225,6 +227,7 @@ void GeometryPolygon::intersect(const struct RTCIntersectFunctionNArguments* arg
         rh.hit.Ng_z = Ng.z;
         context.shading_color = geom->m_color->get(args->primID);
         context.d = min_d;
+        *args->valid = -1;
         }
     }
 

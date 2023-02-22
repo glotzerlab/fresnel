@@ -1,10 +1,10 @@
-find_path(EMBREE_INCLUDE_DIR embree3/rtcore.h)
+find_path(EMBREE_INCLUDE_DIR embree4/rtcore.h)
 
-find_library(EMBREE_LIBRARY embree3
+find_library(EMBREE_LIBRARY embree4
              HINTS ${EMBREE_INCLUDE_DIR}/../lib )
 
-if(EMBREE_INCLUDE_DIR AND EXISTS "${EMBREE_INCLUDE_DIR}/embree3/rtcore_version.h")
-    file(STRINGS "${EMBREE_INCLUDE_DIR}/embree3/rtcore_version.h" EMBREE_H REGEX "^#define EMBREE_VERSION_.*$")
+if(EMBREE_INCLUDE_DIR AND EXISTS "${EMBREE_INCLUDE_DIR}/embree4/rtcore_version.h")
+    file(STRINGS "${EMBREE_INCLUDE_DIR}/embree4/rtcore_version.h" EMBREE_H REGEX "^#define EMBREE_VERSION_.*$")
     string(REGEX REPLACE ".*#define EMBREE_VERSION_MAJOR ([0-9]+).*$" "\\1" EMBREE_VERSION_MAJOR "${EMBREE_H}")
     string(REGEX REPLACE "^.*EMBREE_VERSION_MINOR ([0-9]+).*$" "\\1" EMBREE_VERSION_MINOR  "${EMBREE_H}")
     string(REGEX REPLACE "^.*EMBREE_VERSION_PATCH ([0-9]+).*$" "\\1" EMBREE_VERSION_PATCH  "${EMBREE_H}")
