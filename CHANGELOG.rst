@@ -12,6 +12,19 @@ fresnel_ releases follow `semantic versioning`_.
 v0.x
 ----
 
+v0.13.5 (2023-02-22)
+^^^^^^^^^^^^^^^^^^^^
+
+*Added*
+
+* Support Python 3.11.
+* Support for Embree 4.x.
+
+*Removed*
+
+* Support for Embree 3.x.
+
+
 v0.13.4 (2021-11-17)
 ^^^^^^^^^^^^^^^^^^^^
 
