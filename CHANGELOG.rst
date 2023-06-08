@@ -9,11 +9,11 @@ fresnel_ releases follow `semantic versioning`_.
 .. _fresnel:  https://github.com/glotzerlab/fresnel
 .. _semantic versioning: https://semver.org/
 
-v0.x
+0.x
 ----
 
-v0.13.5 (2023-02-22)
-^^^^^^^^^^^^^^^^^^^^
+0.13.5 (2023-02-22)
+^^^^^^^^^^^^^^^^^^^
 
 *Added*
 
