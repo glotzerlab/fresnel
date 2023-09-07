@@ -16,6 +16,3 @@ python:
 submodules:
     include: all
     recursive: true
-
-formats:
-    - htmlzip
