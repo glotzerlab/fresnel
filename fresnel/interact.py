@@ -10,7 +10,7 @@ import numpy
 # https://github.com/jupyter/qtconsole/pull/280
 try:
     import IPython.external.qt_loaders
-    if type(sys.meta_path[0]) == IPython.external.qt_loaders.ImportDenier:
+    if type(sys.meta_path[0]) is IPython.external.qt_loaders.ImportDenier:
         del sys.meta_path[0]
 except:  # noqa
     pass
