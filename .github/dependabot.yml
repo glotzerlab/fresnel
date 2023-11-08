@@ -2,9 +2,11 @@ version: 2
 updates:
   - package-ecosystem: "github-actions"
     directory: "/"
-    target-branch: master
+    target-branch: trunk
     schedule:
-      interval: "monthly"
+      interval: "weekly"
+      time: "07:00"
+      timezone: "EST5EDT"
     pull-request-branch-name:
       separator: "-"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 2
