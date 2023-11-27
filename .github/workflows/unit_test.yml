@@ -174,7 +174,7 @@ jobs:
     #     key:
     #       ${{ matrix.os }}-${{ hashFiles('code/.github/workflows/environments/conda.yml') }}
     - name: Create conda environment
-      uses: conda-incubator/setup-miniconda@v2.2.0
+      uses: conda-incubator/setup-miniconda@v2.3.0
       with:
         environment-file: code/.github/workflows/environments/conda.yml
         activate-environment: ${{ github.workspace }}/env
