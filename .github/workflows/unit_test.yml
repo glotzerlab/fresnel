@@ -43,16 +43,10 @@ jobs:
         - {repository: glotzerlab, image: clang12_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
         - {repository: glotzerlab, image: clang11_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
         - {repository: glotzerlab, image: clang10_py38, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: clang9_py38, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: clang8_py38, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: clang7_py38, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: clang6_py37, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
         - {repository: glotzerlab, image: gcc12_py311, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
         - {repository: glotzerlab, image: gcc11_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
         - {repository: glotzerlab, image: gcc10_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
         - {repository: glotzerlab, image: gcc9_py39, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: gcc8_py37, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: gcc7_py37, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
         - {repository: joaander, image: optix60_cuda118_py310, test_runner: [self-hosted,GPU,optix], test_docker_options: '-e  NVIDIA_DRIVER_CAPABILITIES=compute,graphics --gpus=all', render_gallery: false }
 
     steps:
@@ -104,16 +98,10 @@ jobs:
         - {repository: glotzerlab, image: clang12_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
         - {repository: glotzerlab, image: clang11_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
         - {repository: glotzerlab, image: clang10_py38, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: clang9_py38, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: clang8_py38, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: clang7_py38, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: clang6_py37, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
         - {repository: glotzerlab, image: gcc12_py311, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
         - {repository: glotzerlab, image: gcc11_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
         - {repository: glotzerlab, image: gcc10_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
         - {repository: glotzerlab, image: gcc9_py39, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: gcc8_py37, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
-        - {repository: glotzerlab, image: gcc7_py37, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
         - {repository: joaander, image: optix60_cuda118_py310, test_runner: [self-hosted,GPU,optix], test_docker_options: '-e  NVIDIA_DRIVER_CAPABILITIES=compute,graphics --gpus=all', render_gallery: false }
 
     steps:
@@ -166,13 +154,6 @@ jobs:
       with:
         path: code
         submodules: true
-    # setup-miniconda doesn't understand .conda format packages and removes them
-    # - name: Cache conda packages
-    #   uses: actions/cache@v3.2.4
-    #   with:
-    #     path: ~/conda_pkgs_dir
-    #     key:
-    #       ${{ matrix.os }}-${{ hashFiles('code/.github/workflows/environments/conda.yml') }}
     - name: Create conda environment
       uses: conda-incubator/setup-miniconda@v2.3.0
       with:
