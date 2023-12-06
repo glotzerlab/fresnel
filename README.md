@@ -8,10 +8,11 @@ intuitive parameters (like *roughness*, *specular*, and *metal*).
 
 ## fresnel Community
 
-Subscribe to the [fresnel-users](https://groups.google.com/d/forum/fresnel-users) mailing list to receive release
-announcements, post questions for advice on using the software, and discuss potential new features. File bug reports
-on [fresnel's issue tracker](https://github.com/glotzerlab/fresnel/issues). **fresnel** is an open source project.
-Please review [the contributor's guide](CONTRIBUTING.md) for more information before contributing.
+Use the [fresnel discussion board](https://github.com/glotzerlab/fresnel/discussions)
+to post questions, ask for support, and discuss potential new features.
+File bug reports on [fresnel's issue tracker](https://github.com/glotzerlab/fresnel/issues).
+**fresnel** is an open source project. Please review
+[the contributor's guide](CONTRIBUTING.md) for more information before contributing.
 
 ## Documentation
 
