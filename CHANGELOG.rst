@@ -11,6 +11,12 @@ fresnel_ releases follow `semantic versioning`_.
 
 0.x
 ----
+0.13.6 (not yet released)
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+*Changed:*
+
+* Provide support via GitHub discussions.
 
 0.13.5 (2023-02-22)
 ^^^^^^^^^^^^^^^^^^^

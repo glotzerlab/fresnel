@@ -7,8 +7,8 @@ User community
 fresnel-users mailing list
 --------------------------
 
-Subscribe to the `fresnel-users <https://groups.google.com/d/forum/fresnel-users>`_ mailing list to receive release announcements,
-post questions for advice on using the software, and discuss potential new features.
+Use the `fresnel discussion board <https://github.com/glotzerlab/fresnel/discussions/>`_
+to post questions, ask for support, and discuss potential new features.
 
 Issue tracker
 -------------
