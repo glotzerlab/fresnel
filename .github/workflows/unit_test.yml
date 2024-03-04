@@ -161,7 +161,7 @@ jobs:
         path: code
         submodules: true
     - name: Create conda environment
-      uses: conda-incubator/setup-miniconda@v3.0.2
+      uses: conda-incubator/setup-miniconda@v3.0.3
       with:
         environment-file: code/.github/workflows/environments/conda.yml
         activate-environment: ${{ github.workspace }}/env
