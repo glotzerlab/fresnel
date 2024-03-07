@@ -1,12 +1,23 @@
 version: 2
 updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    target-branch: trunk
-    schedule:
-      interval: "weekly"
-      time: "07:00"
-      timezone: "EST5EDT"
-    pull-request-branch-name:
-      separator: "-"
-    open-pull-requests-limit: 2
+- package-ecosystem: "github-actions"
+  directory: "/"
+  target-branch: trunk
+  schedule:
+    interval: "monthly"
+    time: "07:00"
+    timezone: "EST5EDT"
+  pull-request-branch-name:
+    separator: "-"
+  open-pull-requests-limit: 2
+  reviewers:
+  - joaander
+  groups:
+    actions-version:
+      applies-to: version-updates
+      patterns:
+      - '*'
+    actions-security:
+      applies-to: security-updates
+      patterns:
+      - '*'
