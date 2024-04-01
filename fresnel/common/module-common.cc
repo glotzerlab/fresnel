@@ -59,9 +59,8 @@ PYBIND11_MODULE(_common, m)
              [](const Material& a)
              {
                  ostringstream s;
-                 s << "<fresnel._common.Material:"
-                   << " solid=" << a.solid << " color=(" << a.color.r << ", " << a.color.g << ", "
-                   << a.color.b << ")"
+                 s << "<fresnel._common.Material:" << " solid=" << a.solid << " color=("
+                   << a.color.r << ", " << a.color.g << ", " << a.color.b << ")"
                    << " primitive_color_mix=" << a.primitive_color_mix
                    << " roughness=" << a.roughness << " specular=" << a.specular
                    << " spec_trans=" << a.spec_trans << " metal=" << a.metal << ">";

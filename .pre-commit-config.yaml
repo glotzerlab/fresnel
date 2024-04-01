@@ -17,7 +17,7 @@ repos:
     - --remove
   - id: mixed-line-ending
 - repo: https://github.com/glotzerlab/fix-license-header
-  rev: v0.2.0
+  rev: v0.3.2
   hooks:
   - id: fix-license-header
     name: Fix license headers (Python)
@@ -46,7 +46,7 @@ repos:
   hooks:
   - id: yapf
 - repo: https://github.com/PyCQA/flake8
-  rev: '6.1.0'
+  rev: '7.0.0'
   hooks:
   - id: flake8
     additional_dependencies:
@@ -54,7 +54,7 @@ repos:
     - flake8-docstrings
     - flake8-rst-docstrings
 - repo: https://github.com/pre-commit/mirrors-clang-format
-  rev: v17.0.6
+  rev: v18.1.2
   hooks:
   - id: clang-format
     types_or: [c, c++, cuda, inc]

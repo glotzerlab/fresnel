@@ -96,8 +96,7 @@ static std::string _formatOptiXDeviceList(const std::vector<int>& devices)
         int mib = int(float(total_mem) / (1024.0f * 2014.0f));
 
         s << " [" + to_string(i) + "]: " << setw(22) << optix::ContextObj::getDeviceName(i) << " "
-          << setw(4) << sm << " "
-          << "SM_" << cc.x << "." << cc.y << " ";
+          << setw(4) << sm << " " << "SM_" << cc.x << "." << cc.y << " ";
         s.precision(3);
         s.fill('0');
 
