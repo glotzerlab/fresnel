@@ -53,7 +53,7 @@ jobs:
         - {repository: joaander, image: optix65_cuda118_py310, test_runner: [self-hosted,GPU,optix], test_docker_options: '-e  NVIDIA_DRIVER_CAPABILITIES=compute,graphics --gpus=all', render_gallery: false }
 
     steps:
-    - uses: actions/checkout@v4.1.2
+    - uses: actions/checkout@v4.1.4
       with:
         path: code
         submodules: true
@@ -76,7 +76,7 @@ jobs:
       run: tar --use-compress-program='zstd -10 -T0' -cvf install.tar install
     # Upload the tarball. Retain the file for a limited time in case developers need to download
     # and run tests locally for further debugging.
-    - uses: actions/upload-artifact@v4.3.1
+    - uses: actions/upload-artifact@v4.3.3
       name: 'Upload install'
       with:
         name: install-${{ matrix.image }}-${{ github.sha }}
@@ -115,7 +115,7 @@ jobs:
       run: ( shopt -s dotglob nullglob; rm -rf ./* )
       shell: bash
 
-    - uses: actions/download-artifact@v4.1.4
+    - uses: actions/download-artifact@v4.1.7
       with:
         name: install-${{ matrix.image }}-${{ github.sha }}
     - name: Untar install
@@ -126,7 +126,7 @@ jobs:
       env:
         PYTHONPATH: ${{ github.workspace }}/install
 
-    - uses: actions/checkout@v4.1.2
+    - uses: actions/checkout@v4.1.4
       if: ${{ matrix.render_gallery }}
       with:
         submodules: true
@@ -156,12 +156,12 @@ jobs:
         - {os: windows-2019, cmake_generator: "Visual Studio 16 2019"}
         - {os: windows-2022, cmake_generator: "Visual Studio 17 2022"}
     steps:
-    - uses: actions/checkout@v4.1.2
+    - uses: actions/checkout@v4.1.4
       with:
         path: code
         submodules: true
     - name: Create conda environment
-      uses: conda-incubator/setup-miniconda@v3.0.3
+      uses: conda-incubator/setup-miniconda@v3.0.4
       with:
         environment-file: code/.github/workflows/environments/conda.yml
         activate-environment: ${{ github.workspace }}/env
