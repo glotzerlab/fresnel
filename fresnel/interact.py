@@ -10,6 +10,7 @@ import numpy
 # https://github.com/jupyter/qtconsole/pull/280
 try:
     import IPython.external.qt_loaders
+
     if type(sys.meta_path[0]) is IPython.external.qt_loaders.ImportDenier:
         del sys.meta_path[0]
 except:  # noqa
@@ -25,12 +26,12 @@ from fresnel import tracer, camera
 
 # initialize QApplication
 # but not in sphinx
-if 'sphinx' not in sys.modules:
+if "sphinx" not in sys.modules:
     from PySide2.QtWidgets import QWidget
 
     app = QtCore.QCoreApplication.instance()
     if app is None:
-        app = QtWidgets.QApplication(['fresnel'])
+        app = QtWidgets.QApplication(["fresnel"])
 else:
     # work around bug where sphinx does not find classes that have QWidget
     # as a parent
@@ -123,10 +124,11 @@ class SceneView(QWidget):
     .. code-block:: python
 
         import fresnel, fresnel.interact
+
         # build scene
         view = fresnel.interact.SceneView(scene)
         view.show()
-        fresnel.interact.app.exec_();
+        fresnel.interact.app.exec_()
 
     .. rubric:: Using with Jupyter notebooks
 
@@ -147,6 +149,7 @@ class SceneView(QWidget):
     .. code-block:: python
 
         import fresnel, fresnel.interact
+
         # build Scene
         fresnel.interact.SceneView(scene)
 
@@ -158,6 +161,7 @@ class SceneView(QWidget):
 
         - :doc:`examples/02-Advanced-topics/03-Interactive-scene-view`
     """
+
     """Qt Signal sent when rendering starts at a new camera position."""
     rendering = QtCore.Signal(camera.Camera)
 
@@ -202,7 +206,7 @@ class SceneView(QWidget):
         self._low_res_timer.timeout.connect(self._low_res_done)
 
         self._camera_controller = _CameraController3D(self._scene.camera)
-        self.ipython_display_formatter = 'text'
+        self.ipython_display_formatter = "text"
 
     @property
     def scene(self):
@@ -276,12 +280,17 @@ class SceneView(QWidget):
 
         # display the rendered scene in the widget
         image_array.buf.map()
-        img = QtGui.QImage(image_array.buf, image_array.shape[1],
-                           image_array.shape[0], QtGui.QImage.Format_RGBA8888)
+        img = QtGui.QImage(
+            image_array.buf,
+            image_array.shape[1],
+            image_array.shape[0],
+            QtGui.QImage.Format_RGBA8888,
+        )
         qp = QtGui.QPainter(self)
         target = QtCore.QRectF(0, 0, self.width(), self.height())
-        source = QtCore.QRectF(0.0, 0.0, image_array.shape[1],
-                               image_array.shape[0])
+        source = QtCore.QRectF(
+            0.0, 0.0, image_array.shape[1], image_array.shape[0]
+        )
 
         qp.drawImage(target, img, source)
         qp.end()
@@ -311,26 +320,29 @@ class SceneView(QWidget):
         """
         delta = event.pos() - self._mouse_initial_pos
 
-        if self._camera_update_mode == 'pitch/yaw':
-            self._camera_controller.orbit(yaw=delta.x(),
-                                          pitch=delta.y(),
-                                          slight=event.modifiers()
-                                          & QtCore.Qt.ControlModifier)
+        if self._camera_update_mode == "pitch/yaw":
+            self._camera_controller.orbit(
+                yaw=delta.x(),
+                pitch=delta.y(),
+                slight=event.modifiers() & QtCore.Qt.ControlModifier,
+            )
 
-        elif self._camera_update_mode == 'roll/zoom':
-            self._camera_controller.orbit(roll=delta.x(),
-                                          slight=event.modifiers()
-                                          & QtCore.Qt.ControlModifier)
-            self._camera_controller.zoom(-delta.y(),
-                                         slight=event.modifiers()
-                                         & QtCore.Qt.ControlModifier)
+        elif self._camera_update_mode == "roll/zoom":
+            self._camera_controller.orbit(
+                roll=delta.x(),
+                slight=event.modifiers() & QtCore.Qt.ControlModifier,
+            )
+            self._camera_controller.zoom(
+                -delta.y(), slight=event.modifiers() & QtCore.Qt.ControlModifier
+            )
 
-        elif self._camera_update_mode == 'pan':
+        elif self._camera_update_mode == "pan":
             h = self.height()
-            self._camera_controller.pan(x=-delta.x() / h,
-                                        y=delta.y() / h,
-                                        slight=event.modifiers()
-                                        & QtCore.Qt.ControlModifier)
+            self._camera_controller.pan(
+                x=-delta.x() / h,
+                y=delta.y() / h,
+                slight=event.modifiers() & QtCore.Qt.ControlModifier,
+            )
 
         self._start_rendering()
         self.update()
@@ -346,11 +358,11 @@ class SceneView(QWidget):
         event.accept()
 
         if event.button() == QtCore.Qt.LeftButton:
-            self._camera_update_mode = 'pitch/yaw'
+            self._camera_update_mode = "pitch/yaw"
         elif event.button() == QtCore.Qt.RightButton:
-            self._camera_update_mode = 'roll/zoom'
+            self._camera_update_mode = "roll/zoom"
         elif event.button() == QtCore.Qt.MiddleButton:
-            self._camera_update_mode = 'pan'
+            self._camera_update_mode = "pan"
 
         self._render_high_res = False
         self._start_rendering()
@@ -372,9 +384,10 @@ class SceneView(QWidget):
         :meta private:
         """
         self._camera_controller.start()
-        self._camera_controller.zoom(event.angleDelta().y(),
-                                     slight=event.modifiers()
-                                     & QtCore.Qt.ControlModifier)
+        self._camera_controller.zoom(
+            event.angleDelta().y(),
+            slight=event.modifiers() & QtCore.Qt.ControlModifier,
+        )
 
         self._render_high_res = False
         self._low_res_timer.start(self.TIMEOUT)

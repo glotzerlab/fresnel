@@ -76,7 +76,8 @@ class Geometry(object):
     @property
     def outline_material(self):
         """material.Material: Define how light interacts with the geometry's \
-            outline."""
+        outline.
+        """
         return material._OutlineMaterialProxy(self)
 
     @outline_material.setter
@@ -136,28 +137,30 @@ class Cylinder(Geometry):
         and NumPy will broadcast it to all elements of the array.
     """
 
-    def __init__(self,
-                 scene,
-                 points=((0, 0, 0), (0, 0, 0)),
-                 radius=0.5,
-                 color=(0, 0, 0),
-                 N=None,
-                 material=None,
-                 outline_material=None,
-                 outline_width=0.0):
+    def __init__(
+        self,
+        scene,
+        points=((0, 0, 0), (0, 0, 0)),
+        radius=0.5,
+        color=(0, 0, 0),
+        N=None,
+        material=None,
+        outline_material=None,
+        outline_width=0.0,
+    ):
         if N is None:
             N = len(points)
 
         self._geometry = scene.device.module.GeometryCylinder(scene._scene, N)
         if material is None:
-            self.material = globals()['material'].Material()
+            self.material = globals()["material"].Material()
         else:
             self.material = material
 
         if outline_material is None:
-            self.outline_material = globals()['material'].Material(solid=1,
-                                                                   color=(0, 0,
-                                                                          0))
+            self.outline_material = globals()["material"].Material(
+                solid=1, color=(0, 0, 0)
+            )
         else:
             self.outline_material = outline_material
 
@@ -181,14 +184,16 @@ class Cylinder(Geometry):
         B = self.points[:, 1]
         r = self.radius[:]
         r = r.reshape(len(r), 1)
-        res = numpy.array([
-            numpy.min([numpy.min(A - r, axis=0),
-                       numpy.min(B - r, axis=0)],
-                      axis=0),
-            numpy.max([numpy.max(A + r, axis=0),
-                       numpy.max(B + r, axis=0)],
-                      axis=0)
-        ])
+        res = numpy.array(
+            [
+                numpy.min(
+                    [numpy.min(A - r, axis=0), numpy.min(B - r, axis=0)], axis=0
+                ),
+                numpy.max(
+                    [numpy.max(A + r, axis=0), numpy.max(B + r, axis=0)], axis=0
+                ),
+            ]
+        )
         return res
 
     @property
@@ -244,10 +249,9 @@ class Box(Cylinder):
     """
 
     def __init__(self, scene, box, box_radius=0.5, box_color=[0, 0, 0]):
-
-        super().__init__(scene=scene,
-                         N=12,
-                         material=material.Material(solid=1.0))
+        super().__init__(
+            scene=scene, N=12, material=material.Material(solid=1.0)
+        )
         self._box = self._from_box(box)
         self.points[:] = self._generate_points(self._box)
 
@@ -264,25 +268,26 @@ class Box(Cylinder):
             # Handles freud.box.Box and namedtuple
             Lx = box.Lx
             Ly = box.Ly
-            Lz = getattr(box, 'Lz', 0)
-            xy = getattr(box, 'xy', 0)
-            xz = getattr(box, 'xz', 0)
-            yz = getattr(box, 'yz', 0)
+            Lz = getattr(box, "Lz", 0)
+            xy = getattr(box, "xy", 0)
+            xz = getattr(box, "xz", 0)
+            yz = getattr(box, "yz", 0)
         except AttributeError:
             try:
                 # Handle dictionary-like
-                Lx = box['Lx']
-                Ly = box['Ly']
-                Lz = box.get('Lz', 0)
-                xy = box.get('xy', 0)
-                xz = box.get('xz', 0)
-                yz = box.get('yz', 0)
+                Lx = box["Lx"]
+                Ly = box["Ly"]
+                Lz = box.get("Lz", 0)
+                xy = box.get("xy", 0)
+                xz = box.get("xz", 0)
+                yz = box.get("yz", 0)
             except (IndexError, KeyError, TypeError):
                 try:
-                    if not len(box) in [1, 3, 6]:
+                    if len(box) not in [1, 3, 6]:
                         raise ValueError(
                             "List-like objects must have length 1, 3, or 6 to "
-                            "be converted to a box.")
+                            "be converted to a box."
+                        )
                     # Handle list-like
                     Lx = box[0]
                     Ly = box[0] if len(box) == 1 else box[1]
@@ -311,8 +316,9 @@ class Box(Cylinder):
         yz = box[5]
 
         # Follow hoomd convention
-        box_matrix = numpy.array([[Lx, xy * Ly, xz * Lz], [0, Ly, yz * Lz],
-                                  [0, 0, Lz]])
+        box_matrix = numpy.array(
+            [[Lx, xy * Ly, xz * Lz], [0, Ly, yz * Lz], [0, 0, Lz]]
+        )
         a_1, a_2, a_3 = box_matrix.T
         #           F--------------H
         #          /|             /|
@@ -335,20 +341,22 @@ class Box(Cylinder):
         G = A + a_1 + a_2
         H = A + a_1 + a_2 + a_3
         # Define all edges
-        box_points = numpy.asarray([
-            [A, B],
-            [A, C],
-            [A, D],
-            [B, E],
-            [B, G],
-            [C, G],
-            [C, F],
-            [D, E],
-            [D, F],
-            [E, H],
-            [F, H],
-            [G, H],
-        ])
+        box_points = numpy.asarray(
+            [
+                [A, B],
+                [A, C],
+                [A, D],
+                [B, E],
+                [B, G],
+                [C, G],
+                [C, F],
+                [D, E],
+                [D, F],
+                [E, H],
+                [F, H],
+                [G, H],
+            ]
+        )
         return box_points
 
     @property
@@ -431,31 +439,34 @@ class Polygon(Geometry):
         primitive properties in the appropriate array type.
     """
 
-    def __init__(self,
-                 scene,
-                 vertices,
-                 position=(0, 0),
-                 angle=0,
-                 color=(0, 0, 0),
-                 rounding_radius=0,
-                 N=None,
-                 material=None,
-                 outline_material=None,
-                 outline_width=0.0):
+    def __init__(
+        self,
+        scene,
+        vertices,
+        position=(0, 0),
+        angle=0,
+        color=(0, 0, 0),
+        rounding_radius=0,
+        N=None,
+        material=None,
+        outline_material=None,
+        outline_width=0.0,
+    ):
         if N is None:
             N = len(position)
 
         self._geometry = scene.device.module.GeometryPolygon(
-            scene._scene, vertices, rounding_radius, N)
+            scene._scene, vertices, rounding_radius, N
+        )
         if material is None:
-            self.material = globals()['material'].Material()
+            self.material = globals()["material"].Material()
         else:
             self.material = material
 
         if outline_material is None:
-            self.outline_material = globals()['material'].Material(solid=1,
-                                                                   color=(0, 0,
-                                                                          0))
+            self.outline_material = globals()["material"].Material(
+                solid=1, color=(0, 0, 0)
+            )
         else:
             self.outline_material = outline_material
 
@@ -493,10 +504,14 @@ class Polygon(Geometry):
         pos = self.position[:]
         r = self._geometry.getRadius()
         res2d = numpy.array(
-            [numpy.min(pos - r, axis=0),
-             numpy.max(pos + r, axis=0)])
-        res = numpy.array([[res2d[0][0], res2d[0][1], -1e-5],
-                           [res2d[1][0], res2d[1][1], 1e-5]])
+            [numpy.min(pos - r, axis=0), numpy.max(pos + r, axis=0)]
+        )
+        res = numpy.array(
+            [
+                [res2d[0][0], res2d[0][1], -1e-5],
+                [res2d[1][0], res2d[1][1], 1e-5],
+            ]
+        )
 
         return res
 
@@ -544,29 +559,31 @@ class Sphere(Geometry):
         numpy will broadcast it to all elements of the array.
     """
 
-    def __init__(self,
-                 scene,
-                 position=(0, 0, 0),
-                 radius=0.5,
-                 color=(0, 0, 0),
-                 N=None,
-                 material=None,
-                 outline_material=None,
-                 outline_width=0.0):
+    def __init__(
+        self,
+        scene,
+        position=(0, 0, 0),
+        radius=0.5,
+        color=(0, 0, 0),
+        N=None,
+        material=None,
+        outline_material=None,
+        outline_width=0.0,
+    ):
         if N is None:
             N = len(position)
 
         self._geometry = scene.device.module.GeometrySphere(scene._scene, N)
 
         if material is None:
-            self.material = globals()['material'].Material()
+            self.material = globals()["material"].Material()
         else:
             self.material = material
 
         if outline_material is None:
-            self.outline_material = globals()['material'].Material(solid=1,
-                                                                   color=(0, 0,
-                                                                          0))
+            self.outline_material = globals()["material"].Material(
+                solid=1, color=(0, 0, 0)
+            )
         else:
             self.outline_material = outline_material
 
@@ -590,8 +607,8 @@ class Sphere(Geometry):
         r = self.radius[:]
         r = r.reshape(len(r), 1)
         res = numpy.array(
-            [numpy.min(pos - r, axis=0),
-             numpy.max(pos + r, axis=0)])
+            [numpy.min(pos - r, axis=0), numpy.max(pos + r, axis=0)]
+        )
         return res
 
     @property
@@ -654,31 +671,34 @@ class Mesh(Geometry):
         primitive properties in the appropriate array type.
     """
 
-    def __init__(self,
-                 scene,
-                 vertices,
-                 position=(0, 0, 0),
-                 orientation=(1, 0, 0, 0),
-                 color=(0, 0, 0),
-                 N=None,
-                 material=None,
-                 outline_material=None,
-                 outline_width=0.0):
+    def __init__(
+        self,
+        scene,
+        vertices,
+        position=(0, 0, 0),
+        orientation=(1, 0, 0, 0),
+        color=(0, 0, 0),
+        N=None,
+        material=None,
+        outline_material=None,
+        outline_width=0.0,
+    ):
         if N is None:
             N = len(position)
 
         self.vertices = numpy.asarray(vertices, dtype=numpy.float32)
         self._geometry = scene.device.module.GeometryMesh(
-            scene._scene, self.vertices, N)
+            scene._scene, self.vertices, N
+        )
         if material is None:
-            self.material = globals()['material'].Material()
+            self.material = globals()["material"].Material()
         else:
             self.material = material
 
         if outline_material is None:
-            self.outline_material = globals()['material'].Material(solid=1,
-                                                                   color=(0, 0,
-                                                                          0))
+            self.outline_material = globals()["material"].Material(
+                solid=1, color=(0, 0, 0)
+            )
         else:
             self.outline_material = outline_material
 
@@ -716,25 +736,31 @@ class Mesh(Geometry):
         a = self.vertices[:, 0]
         b = self.vertices[:, 1]
         c = self.vertices[:, 2]
-        r = numpy.array([
-            numpy.min([
-                numpy.min(a, axis=0),
-                numpy.min(b, axis=0),
-                numpy.min(c, axis=0)
-            ],
-                      axis=0),
-            numpy.max([
-                numpy.max(a, axis=0),
-                numpy.max(b, axis=0),
-                numpy.max(c, axis=0)
-            ],
-                      axis=0)
-        ])
+        r = numpy.array(
+            [
+                numpy.min(
+                    [
+                        numpy.min(a, axis=0),
+                        numpy.min(b, axis=0),
+                        numpy.min(c, axis=0),
+                    ],
+                    axis=0,
+                ),
+                numpy.max(
+                    [
+                        numpy.max(a, axis=0),
+                        numpy.max(b, axis=0),
+                        numpy.max(c, axis=0),
+                    ],
+                    axis=0,
+                ),
+            ]
+        )
 
         pos = self.position[:]
         res = numpy.array(
-            [numpy.min(pos + r[0], axis=0),
-             numpy.max(pos + r[1], axis=0)])
+            [numpy.min(pos + r[0], axis=0), numpy.max(pos + r[1], axis=0)]
+        )
         return res
 
 
@@ -787,35 +813,38 @@ class ConvexPolyhedron(Geometry):
         primitive properties in the appropriate array type.
     """
 
-    def __init__(self,
-                 scene,
-                 polyhedron_info,
-                 position=(0, 0, 0),
-                 orientation=(1, 0, 0, 0),
-                 color=(0, 0, 0),
-                 N=None,
-                 material=None,
-                 outline_material=None,
-                 outline_width=0.0):
+    def __init__(
+        self,
+        scene,
+        polyhedron_info,
+        position=(0, 0, 0),
+        orientation=(1, 0, 0, 0),
+        color=(0, 0, 0),
+        N=None,
+        material=None,
+        outline_material=None,
+        outline_width=0.0,
+    ):
         if N is None:
             N = len(position)
 
-        origins = polyhedron_info['face_origin']
-        normals = polyhedron_info['face_normal']
-        face_colors = polyhedron_info['face_color']
-        r = polyhedron_info['radius']
+        origins = polyhedron_info["face_origin"]
+        normals = polyhedron_info["face_normal"]
+        face_colors = polyhedron_info["face_color"]
+        r = polyhedron_info["radius"]
         self._geometry = scene.device.module.GeometryConvexPolyhedron(
-            scene._scene, origins, normals, face_colors, N, r)
+            scene._scene, origins, normals, face_colors, N, r
+        )
 
         if material is None:
-            self.material = globals()['material'].Material()
+            self.material = globals()["material"].Material()
         else:
             self.material = material
 
         if outline_material is None:
-            self.outline_material = globals()['material'].Material(solid=1,
-                                                                   color=(0, 0,
-                                                                          0))
+            self.outline_material = globals()["material"].Material(
+                solid=1, color=(0, 0, 0)
+            )
         else:
             self.outline_material = outline_material
 
@@ -839,8 +868,8 @@ class ConvexPolyhedron(Geometry):
         pos = self.position[:]
         r = self._radius
         res = numpy.array(
-            [numpy.min(pos - r, axis=0),
-             numpy.max(pos + r, axis=0)])
+            [numpy.min(pos - r, axis=0), numpy.max(pos + r, axis=0)]
+        )
         return res
 
     @property

@@ -51,11 +51,11 @@ class Light(object):
     def __str__(self):
         """Human readable representation of Light."""
         return "<Light object with direction {0} and color {1}>".format(
-            self.direction, self.color)
+            self.direction, self.color
+        )
 
 
 class _LightProxy(object):
-
     def __init__(self, light_list, idx):
         self._light_list = light_list
         self._idx = idx
@@ -90,11 +90,11 @@ class _LightProxy(object):
 
     def __str__(self):
         return "<Light proxy object with direction {0} and color {1}>".format(
-            self.direction, self.color)
+            self.direction, self.color
+        )
 
 
 class _LightListProxy(object):
-
     def __init__(self, _lights=None):
         if _lights is None:
             self._lights = _common.Lights()
@@ -138,18 +138,24 @@ def butterfly():
     res = []
     theta1 = 50 * math.pi / 180
     res.append(
-        Light(direction=(0, math.sin(theta1), math.cos(theta1)),
-              color=(1.0, 1.0, 1.0),
-              theta=math.pi / 4))
+        Light(
+            direction=(0, math.sin(theta1), math.cos(theta1)),
+            color=(1.0, 1.0, 1.0),
+            theta=math.pi / 4,
+        )
+    )
     theta2 = -30 * math.pi / 180
     res.append(
-        Light(direction=(0, math.sin(theta2), math.cos(theta2)),
-              color=(0.1, 0.1, 0.1),
-              theta=math.pi / 2))
+        Light(
+            direction=(0, math.sin(theta2), math.cos(theta2)),
+            color=(0.1, 0.1, 0.1),
+            theta=math.pi / 2,
+        )
+    )
     return res
 
 
-def loop(side='right'):
+def loop(side="right"):
     """Create a loop lighting setup.
 
     The loop portrait lighting setup places the key light slightly to one side
@@ -163,27 +169,39 @@ def loop(side='right'):
     Returns:
         list[Light]: The lights.
     """
-    sign = {'right': 1, 'left': -1}
+    sign = {"right": 1, "left": -1}
 
     res = []
     phi1 = sign[side] * 25 * math.pi / 180
     theta1 = (90 - 20) * math.pi / 180
     res.append(
-        Light(direction=(math.sin(theta1) * math.sin(phi1), math.cos(theta1),
-                         math.sin(theta1) * math.cos(phi1)),
-              color=(1.0, 1.0, 1.0),
-              theta=math.pi / 4))
+        Light(
+            direction=(
+                math.sin(theta1) * math.sin(phi1),
+                math.cos(theta1),
+                math.sin(theta1) * math.cos(phi1),
+            ),
+            color=(1.0, 1.0, 1.0),
+            theta=math.pi / 4,
+        )
+    )
     phi1 = -sign[side] * 40 * math.pi / 180
     theta1 = (90) * math.pi / 180
     res.append(
-        Light(direction=(math.sin(theta1) * math.sin(phi1), math.cos(theta1),
-                         math.sin(theta1) * math.cos(phi1)),
-              color=(0.1, 0.1, 0.1),
-              theta=math.pi / 2))
+        Light(
+            direction=(
+                math.sin(theta1) * math.sin(phi1),
+                math.cos(theta1),
+                math.sin(theta1) * math.cos(phi1),
+            ),
+            color=(0.1, 0.1, 0.1),
+            theta=math.pi / 2,
+        )
+    )
     return res
 
 
-def rembrandt(side='right'):
+def rembrandt(side="right"):
     """Create a Rembrandt lighting setup.
 
     The Rembrandt portrait lighting setup places the key light  45 degrees to
@@ -197,23 +215,35 @@ def rembrandt(side='right'):
     Returns:
         list[Light]: The lights.
     """
-    sign = {'right': 1, 'left': -1}
+    sign = {"right": 1, "left": -1}
 
     res = []
     phi1 = sign[side] * 45 * math.pi / 180
     theta1 = (90 - 20) * math.pi / 180
     res.append(
-        Light(direction=(math.sin(theta1) * math.sin(phi1), math.cos(theta1),
-                         math.sin(theta1) * math.cos(phi1)),
-              color=(1.0, 1.0, 1.0),
-              theta=math.pi / 4))
+        Light(
+            direction=(
+                math.sin(theta1) * math.sin(phi1),
+                math.cos(theta1),
+                math.sin(theta1) * math.cos(phi1),
+            ),
+            color=(1.0, 1.0, 1.0),
+            theta=math.pi / 4,
+        )
+    )
     phi1 = -sign[side] * 45 * math.pi / 180
     theta1 = (90) * math.pi / 180
     res.append(
-        Light(direction=(math.sin(theta1) * math.sin(phi1), math.cos(theta1),
-                         math.sin(theta1) * math.cos(phi1)),
-              color=(0.1, 0.1, 0.1),
-              theta=math.pi / 2))
+        Light(
+            direction=(
+                math.sin(theta1) * math.sin(phi1),
+                math.cos(theta1),
+                math.sin(theta1) * math.cos(phi1),
+            ),
+            color=(0.1, 0.1, 0.1),
+            theta=math.pi / 2,
+        )
+    )
     return res
 
 
@@ -245,9 +275,11 @@ def cloudy():
     """
     res = []
     res.append(
-        Light(direction=(0, 1, 0), color=(0.9, 0.9, 0.9), theta=math.pi / 2))
+        Light(direction=(0, 1, 0), color=(0.9, 0.9, 0.9), theta=math.pi / 2)
+    )
     res.append(
-        Light(direction=(0, -1, 0), color=(0.1, 0.1, 0.1), theta=math.pi / 2))
+        Light(direction=(0, -1, 0), color=(0.1, 0.1, 0.1), theta=math.pi / 2)
+    )
     return res
 
 
@@ -263,5 +295,6 @@ def ring():
     """
     res = []
     res.append(
-        Light(direction=(0, 0, 1), color=(0.9, 0.9, 0.9), theta=math.pi / 4))
+        Light(direction=(0, 0, 1), color=(0.9, 0.9, 0.9), theta=math.pi / 4)
+    )
     return res

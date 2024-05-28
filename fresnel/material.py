@@ -43,14 +43,16 @@ class Material(object):
         convert standard sRGB colors into this space.
     """
 
-    def __init__(self,
-                 solid=0,
-                 color=(0.9, 0.9, 0.9),
-                 primitive_color_mix=0,
-                 roughness=0.3,
-                 specular=0.5,
-                 spec_trans=0,
-                 metal=0):
+    def __init__(
+        self,
+        solid=0,
+        color=(0.9, 0.9, 0.9),
+        primitive_color_mix=0,
+        roughness=0.3,
+        specular=0.5,
+        spec_trans=0,
+        metal=0,
+    ):
         self._material = _common.Material()
 
         self.solid = solid
@@ -91,8 +93,11 @@ class Material(object):
     @property
     def color(self):
         """((3, ) `numpy.ndarray` of ``float32``)): - Linear material color."""
-        return (self._material.color.r, self._material.color.g,
-                self._material.color.b)
+        return (
+            self._material.color.r,
+            self._material.color.g,
+            self._material.color.b,
+        )
 
     @color.setter
     def color(self, value):

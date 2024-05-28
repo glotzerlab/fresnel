@@ -3,34 +3,38 @@
 
 """Gumballs example scene."""
 
-import fresnel
-import numpy as np
-from matplotlib.colors import LinearSegmentedColormap
-import PIL
-import sys
 import os
+import sys
+
+import numpy as np
+import PIL
+from matplotlib.colors import LinearSegmentedColormap
+
+import fresnel
 
 # First, we create a color map for gumballs.
 colors = [
-    '#e56d60',
-    '#ee9944',
-    '#716e80',
-    '#eadecd',
-    '#cec746',
-    '#c0443f',
-    '#734d56',
-    '#5d5f7b',
-    '#ecb642',
-    '#8a9441',
+    "#e56d60",
+    "#ee9944",
+    "#716e80",
+    "#eadecd",
+    "#cec746",
+    "#c0443f",
+    "#734d56",
+    "#5d5f7b",
+    "#ecb642",
+    "#8a9441",
 ]
-cmap = LinearSegmentedColormap.from_list(name='gumball',
-                                         colors=colors,
-                                         N=len(colors))
+cmap = LinearSegmentedColormap.from_list(
+    name="gumball", colors=colors, N=len(colors)
+)
+
+rng = np.random.default_rng(123)
+
 
 # Next, we gather information needed for the geometry.
-position = np.load('gumballs.npz')['position']
-np.random.seed(123)
-color = fresnel.color.linear(cmap(np.random.rand(len(position))))
+position = np.load("gumballs.npz")["position"]
+color = fresnel.color.linear(cmap(rng.random(len(position))))
 material = fresnel.material.Material(
     primitive_color_mix=1.0,
     roughness=0.2,
@@ -49,31 +53,32 @@ geometry = fresnel.geometry.Sphere(
 )
 
 # Configure camera and lighting.
-scene.camera = fresnel.camera.Perspective(position=(0, 0, 25),
-                                          look_at=(0, 0, 0),
-                                          up=(0, 1, 0),
-                                          focal_length=0.5,
-                                          f_stop=0.25)
+scene.camera = fresnel.camera.Perspective(
+    position=(0, 0, 25),
+    look_at=(0, 0, 0),
+    up=(0, 1, 0),
+    focal_length=0.5,
+    f_stop=0.25,
+)
 scene.camera.focus_on = (0, 0, 5.6)
 scene.lights = fresnel.light.lightbox()
 scene.lights.append(
-    fresnel.light.Light(direction=(0.3, -0.3, 1),
-                        color=(0.5, 0.5, 0.5),
-                        theta=np.pi))
+    fresnel.light.Light(
+        direction=(0.3, -0.3, 1), color=(0.5, 0.5, 0.5), theta=np.pi
+    )
+)
 
-if 'CI' in os.environ:
+if "CI" in os.environ:
     samples = 1
 else:
     samples = 128
 
 # Execute rendering.
 out = fresnel.pathtrace(scene, w=600, h=600, samples=samples, light_samples=64)
-PIL.Image.fromarray(out[:], mode='RGBA').save('gumballs.png')
+PIL.Image.fromarray(out[:], mode="RGBA").save("gumballs.png")
 
-if len(sys.argv) > 1 and sys.argv[1] == 'hires':
-    out = fresnel.pathtrace(scene,
-                            w=1500,
-                            h=1500,
-                            samples=256,
-                            light_samples=64)
-    PIL.Image.fromarray(out[:], mode='RGBA').save('gumballs-hires.png')
+if len(sys.argv) > 1 and sys.argv[1] == "hires":
+    out = fresnel.pathtrace(
+        scene, w=1500, h=1500, samples=256, light_samples=64
+    )
+    PIL.Image.fromarray(out[:], mode="RGBA").save("gumballs-hires.png")

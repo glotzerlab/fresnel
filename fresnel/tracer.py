@@ -95,13 +95,13 @@ class Tracer(object):
         g = img[:, 1]
         b = img[:, 2]
         l = 0.21 * r + 0.72 * g + 0.07 * b  # noqa: E741 - allow l as a name
-        gamma_l = l**(1 / 2.2)
+        gamma_l = l ** (1 / 2.2)
 
         n = 512
         l_hist, bins = numpy.histogram(gamma_l, bins=n, range=[0, 1])
-        r_hist, bins = numpy.histogram(r**(1 / 2.2), bins=n, range=[0, 1])
-        g_hist, bins = numpy.histogram(g**(1 / 2.2), bins=n, range=[0, 1])
-        b_hist, bins = numpy.histogram(b**(1 / 2.2), bins=n, range=[0, 1])
+        r_hist, bins = numpy.histogram(r ** (1 / 2.2), bins=n, range=[0, 1])
+        g_hist, bins = numpy.histogram(g ** (1 / 2.2), bins=n, range=[0, 1])
+        b_hist, bins = numpy.histogram(b ** (1 / 2.2), bins=n, range=[0, 1])
 
         out = numpy.stack((l_hist, r_hist, g_hist, b_hist), axis=1)
 

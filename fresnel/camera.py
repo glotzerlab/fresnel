@@ -54,11 +54,14 @@ class Camera(object):
     @property
     def position(self):
         """((3, ) `numpy.ndarray` of ``numpy.float32``): Camera position."""
-        return numpy.array([
-            self._camera.position.x, self._camera.position.y,
-            self._camera.position.z
-        ],
-                           dtype=numpy.float32)
+        return numpy.array(
+            [
+                self._camera.position.x,
+                self._camera.position.y,
+                self._camera.position.z,
+            ],
+            dtype=numpy.float32,
+        )
 
     @position.setter
     def position(self, value):
@@ -73,11 +76,14 @@ class Camera(object):
 
         ``position - look_at`` defines the *+z* direction in camera space.
         """
-        return numpy.array([
-            self._camera.look_at.x, self._camera.look_at.y,
-            self._camera.look_at.z
-        ],
-                           dtype=numpy.float32)
+        return numpy.array(
+            [
+                self._camera.look_at.x,
+                self._camera.look_at.y,
+                self._camera.look_at.z,
+            ],
+            dtype=numpy.float32,
+        )
 
     @look_at.setter
     def look_at(self, value):
@@ -95,7 +101,8 @@ class Camera(object):
         """
         return numpy.array(
             [self._camera.up.x, self._camera.up.y, self._camera.up.z],
-            dtype=numpy.float32)
+            dtype=numpy.float32,
+        )
 
     @up.setter
     def up(self, value):
@@ -122,9 +129,14 @@ class Camera(object):
         space directions in scene space.
         """
         b = _common.CameraBasis(self._camera)
-        return numpy.array([(b.u.x, b.u.y, b.u.z), (b.v.x, b.v.y, b.v.z),
-                            (b.w.x, b.w.y, b.w.z)],
-                           dtype=numpy.float32)
+        return numpy.array(
+            [
+                (b.u.x, b.u.y, b.u.z),
+                (b.v.x, b.v.y, b.v.z),
+                (b.w.x, b.w.y, b.w.z),
+            ],
+            dtype=numpy.float32,
+        )
 
 
 class Orthographic(Camera):
@@ -194,7 +206,7 @@ class Orthographic(Camera):
         return s
 
     @classmethod
-    def fit(cls, scene, view='auto', margin=0.05):
+    def fit(cls, scene, view="auto", margin=0.05):
         """Fit a camera to a `Scene`.
 
         Create an orthographic camera that fits the entire height of the scene
@@ -217,48 +229,56 @@ class Orthographic(Camera):
         selects 'isometric' for 3D scenes and 'front' for 2D scenes.
         """
         vectors = {
-            'front':
-                dict(v=numpy.array([0, 0, 1]),
-                     up=numpy.array([0, 1, 0]),
-                     right=numpy.array([1, 0, 0])),
-            'isometric':
-                dict(v=numpy.array([1, 1, 1]) / math.sqrt(3),
-                     up=numpy.array([-1, 2, -1]) / math.sqrt(6),
-                     right=numpy.array([1, 0, -1]) / math.sqrt(2))
+            "front": dict(
+                v=numpy.array([0, 0, 1]),
+                up=numpy.array([0, 1, 0]),
+                right=numpy.array([1, 0, 0]),
+            ),
+            "isometric": dict(
+                v=numpy.array([1, 1, 1]) / math.sqrt(3),
+                up=numpy.array([-1, 2, -1]) / math.sqrt(6),
+                right=numpy.array([1, 0, -1]) / math.sqrt(2),
+            ),
         }
 
         # raise error if the scene is empty
         if len(scene.geometry) == 0:
-            raise ValueError('The camera cannot be fit because the scene has no'
-                             ' geometries. Add geometries to the scene before'
-                             ' calling fit.')
+            raise ValueError(
+                "The camera cannot be fit because the scene has no"
+                " geometries. Add geometries to the scene before"
+                " calling fit."
+            )
 
         # find the center of the scene
         extents = scene.get_extents()
 
         # choose an appropriate view automatically
-        if view == 'auto':
+        if view == "auto":
             xw = extents[1, 0] - extents[0, 0]
             yw = extents[1, 1] - extents[0, 1]
             zw = extents[1, 2] - extents[0, 2]
 
             if zw < 0.51 * max(xw, yw):
-                view = 'front'
+                view = "front"
             else:
-                view = 'isometric'
+                view = "isometric"
 
-        v = vectors[view]['v']
-        up = vectors[view]['up']
+        v = vectors[view]["v"]
+        up = vectors[view]["up"]
 
         # make a list of points of the cube surrounding the scene
-        points = numpy.array([[extents[0, 0], extents[0, 1], extents[0, 2]],
-                              [extents[0, 0], extents[0, 1], extents[1, 2]],
-                              [extents[0, 0], extents[1, 1], extents[0, 2]],
-                              [extents[0, 0], extents[1, 1], extents[1, 2]],
-                              [extents[1, 0], extents[0, 1], extents[0, 2]],
-                              [extents[1, 0], extents[0, 1], extents[1, 2]],
-                              [extents[1, 0], extents[1, 1], extents[0, 2]],
-                              [extents[1, 0], extents[1, 1], extents[1, 2]]])
+        points = numpy.array(
+            [
+                [extents[0, 0], extents[0, 1], extents[0, 2]],
+                [extents[0, 0], extents[0, 1], extents[1, 2]],
+                [extents[0, 0], extents[1, 1], extents[0, 2]],
+                [extents[0, 0], extents[1, 1], extents[1, 2]],
+                [extents[1, 0], extents[0, 1], extents[0, 2]],
+                [extents[1, 0], extents[0, 1], extents[1, 2]],
+                [extents[1, 0], extents[1, 1], extents[0, 2]],
+                [extents[1, 0], extents[1, 1], extents[1, 2]],
+            ]
+        )
 
         # find the center of the box
         center = (extents[0, :] + extents[1, :]) / 2
@@ -273,10 +293,12 @@ class Orthographic(Camera):
         view_distance = numpy.max(view_projection) * 1.10
 
         # build the camera
-        return cls(position=center + view_distance * v,
-                   look_at=center,
-                   up=up,
-                   height=height)
+        return cls(
+            position=center + view_distance * v,
+            look_at=center,
+            up=up,
+            height=height,
+        )
 
 
 class Perspective(Camera):
@@ -370,14 +392,16 @@ class Perspective(Camera):
 
     """
 
-    def __init__(self,
-                 position,
-                 look_at,
-                 up,
-                 focal_length=.5,
-                 focus_distance=10,
-                 f_stop=math.inf,
-                 height=0.24):
+    def __init__(
+        self,
+        position,
+        look_at,
+        up,
+        focal_length=0.5,
+        focus_distance=10,
+        f_stop=math.inf,
+        height=0.24,
+    ):
         cam = _common.UserCamera()
         cam.model = _common.CameraModel.perspective
 
@@ -506,10 +530,10 @@ class Perspective(Camera):
         # => c = h/800
         c = self.height / 800
 
-        a = math.sqrt(c**2 * f**4 * (d**2 + s**2) * (f - s)**2)
+        a = math.sqrt(c**2 * f**4 * (d**2 + s**2) * (f - s) ** 2)
         b = c * f**2 * s * (f - s)
         numerator = a + b
-        denominator = c**2 * d * (f - s)**2
+        denominator = c**2 * d * (f - s) ** 2
         self.f_stop = numerator / denominator
 
     @property
@@ -567,16 +591,17 @@ def _from_cpp(cam):
     we expose them as separate classes at the Python level.
     """
     if cam.model == _common.CameraModel.orthographic:
-        result = Orthographic(position=(0, 0, 0),
-                              look_at=(0, 0, 1),
-                              up=(0, 1, 0),
-                              height=1)
+        result = Orthographic(
+            position=(0, 0, 0), look_at=(0, 0, 1), up=(0, 1, 0), height=1
+        )
         result._camera = cam
     elif cam.model == _common.CameraModel.perspective:
-        result = Perspective(position=(0, 0, 0),
-                             look_at=(0, 0, 1),
-                             up=(0, 1, 0),
-                             focus_distance=1)
+        result = Perspective(
+            position=(0, 0, 0),
+            look_at=(0, 0, 1),
+            up=(0, 1, 0),
+            focus_distance=1,
+        )
         result._camera = cam
     else:
         raise RuntimeError("Invalid camera model")
