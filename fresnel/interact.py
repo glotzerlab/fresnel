@@ -13,7 +13,7 @@ try:
 
     if type(sys.meta_path[0]) is IPython.external.qt_loaders.ImportDenier:
         del sys.meta_path[0]
-except:  # noqa
+except:  # noqa: E722
     pass
 
 from PySide2 import QtGui
