@@ -10,11 +10,11 @@ import numpy
 from . import (
     _common,
     camera,
-    color,  # noqa: F401 - ignore unused import (users will use)
-    geometry,  # noqa: F401 - ignore unused import
+    color,
+    geometry,
     light,
     tracer,
-    version,  # noqa: F401 - ignore unused import (users will use)
+    version,
 )
 
 if _common.cpu_built():
