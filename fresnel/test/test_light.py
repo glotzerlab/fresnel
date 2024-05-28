@@ -13,24 +13,14 @@ def test_lightlist(device_):
     l = scene.lights  # noqa: E741 - allow l as a name
     assert len(l) == 0
     l.append(
-        fresnel.light.Light(
-            direction=(1, 2, 3), color=(0.5, 0.125, 0.75), theta=2
-        )
+        fresnel.light.Light(direction=(1, 2, 3), color=(0.5, 0.125, 0.75), theta=2)
     )
     assert len(l) == 1
-    l.append(
-        fresnel.light.Light(direction=(5, 10, 2), color=(10, 18, 6), theta=1)
-    )
+    l.append(fresnel.light.Light(direction=(5, 10, 2), color=(10, 18, 6), theta=1))
     assert len(l) == 2
-    l.append(
-        fresnel.light.Light(
-            direction=(4, 8, 16), color=(100, 1200, 7), theta=0.5
-        )
-    )
+    l.append(fresnel.light.Light(direction=(4, 8, 16), color=(100, 1200, 7), theta=0.5))
     assert len(l) == 3
-    l.append(
-        fresnel.light.Light(direction=(5, 1, 2), color=(16, 32, 64), theta=0.75)
-    )
+    l.append(fresnel.light.Light(direction=(5, 1, 2), color=(16, 32, 64), theta=0.75))
     assert len(l) == 4
 
     with pytest.raises(Exception):
@@ -76,9 +66,7 @@ def test_lightlist(device_):
 
     scene.lights = [
         fresnel.light.Light(direction=(1, 2, 3)),
-        fresnel.light.Light(
-            direction=(10, 20, 30), color=(1, 0, 0), theta=1.125
-        ),
+        fresnel.light.Light(direction=(10, 20, 30), color=(1, 0, 0), theta=1.125),
     ]
     assert l[0].direction == (1, 2, 3)
     assert l[0].color == (1, 1, 1)

@@ -25,9 +25,7 @@ colors = [
     "#ecb642",
     "#8a9441",
 ]
-cmap = LinearSegmentedColormap.from_list(
-    name="gumball", colors=colors, N=len(colors)
-)
+cmap = LinearSegmentedColormap.from_list(name="gumball", colors=colors, N=len(colors))
 
 rng = np.random.default_rng(123)
 
@@ -63,9 +61,7 @@ scene.camera = fresnel.camera.Perspective(
 scene.camera.focus_on = (0, 0, 5.6)
 scene.lights = fresnel.light.lightbox()
 scene.lights.append(
-    fresnel.light.Light(
-        direction=(0.3, -0.3, 1), color=(0.5, 0.5, 0.5), theta=np.pi
-    )
+    fresnel.light.Light(direction=(0.3, -0.3, 1), color=(0.5, 0.5, 0.5), theta=np.pi)
 )
 
 if "CI" in os.environ:
@@ -78,7 +74,5 @@ out = fresnel.pathtrace(scene, w=600, h=600, samples=samples, light_samples=64)
 PIL.Image.fromarray(out[:], mode="RGBA").save("gumballs.png")
 
 if len(sys.argv) > 1 and sys.argv[1] == "hires":
-    out = fresnel.pathtrace(
-        scene, w=1500, h=1500, samples=256, light_samples=64
-    )
+    out = fresnel.pathtrace(scene, w=1500, h=1500, samples=256, light_samples=64)
     PIL.Image.fromarray(out[:], mode="RGBA").save("gumballs-hires.png")

@@ -186,12 +186,8 @@ class Cylinder(Geometry):
         r = r.reshape(len(r), 1)
         res = numpy.array(
             [
-                numpy.min(
-                    [numpy.min(A - r, axis=0), numpy.min(B - r, axis=0)], axis=0
-                ),
-                numpy.max(
-                    [numpy.max(A + r, axis=0), numpy.max(B + r, axis=0)], axis=0
-                ),
+                numpy.min([numpy.min(A - r, axis=0), numpy.min(B - r, axis=0)], axis=0),
+                numpy.max([numpy.max(A + r, axis=0), numpy.max(B + r, axis=0)], axis=0),
             ]
         )
         return res
@@ -249,9 +245,7 @@ class Box(Cylinder):
     """
 
     def __init__(self, scene, box, box_radius=0.5, box_color=[0, 0, 0]):
-        super().__init__(
-            scene=scene, N=12, material=material.Material(solid=1.0)
-        )
+        super().__init__(scene=scene, N=12, material=material.Material(solid=1.0))
         self._box = self._from_box(box)
         self.points[:] = self._generate_points(self._box)
 
@@ -316,9 +310,7 @@ class Box(Cylinder):
         yz = box[5]
 
         # Follow hoomd convention
-        box_matrix = numpy.array(
-            [[Lx, xy * Ly, xz * Lz], [0, Ly, yz * Lz], [0, 0, Lz]]
-        )
+        box_matrix = numpy.array([[Lx, xy * Ly, xz * Lz], [0, Ly, yz * Lz], [0, 0, Lz]])
         a_1, a_2, a_3 = box_matrix.T
         #           F--------------H
         #          /|             /|
@@ -503,9 +495,7 @@ class Polygon(Geometry):
         """
         pos = self.position[:]
         r = self._geometry.getRadius()
-        res2d = numpy.array(
-            [numpy.min(pos - r, axis=0), numpy.max(pos + r, axis=0)]
-        )
+        res2d = numpy.array([numpy.min(pos - r, axis=0), numpy.max(pos + r, axis=0)])
         res = numpy.array(
             [
                 [res2d[0][0], res2d[0][1], -1e-5],
@@ -606,9 +596,7 @@ class Sphere(Geometry):
         pos = self.position[:]
         r = self.radius[:]
         r = r.reshape(len(r), 1)
-        res = numpy.array(
-            [numpy.min(pos - r, axis=0), numpy.max(pos + r, axis=0)]
-        )
+        res = numpy.array([numpy.min(pos - r, axis=0), numpy.max(pos + r, axis=0)])
         return res
 
     @property
@@ -867,9 +855,7 @@ class ConvexPolyhedron(Geometry):
         """
         pos = self.position[:]
         r = self._radius
-        res = numpy.array(
-            [numpy.min(pos - r, axis=0), numpy.max(pos + r, axis=0)]
-        )
+        res = numpy.array([numpy.min(pos - r, axis=0), numpy.max(pos + r, axis=0)])
         return res
 
     @property

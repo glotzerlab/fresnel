@@ -274,12 +274,8 @@ def cloudy():
         list[Light]: The lights.
     """
     res = []
-    res.append(
-        Light(direction=(0, 1, 0), color=(0.9, 0.9, 0.9), theta=math.pi / 2)
-    )
-    res.append(
-        Light(direction=(0, -1, 0), color=(0.1, 0.1, 0.1), theta=math.pi / 2)
-    )
+    res.append(Light(direction=(0, 1, 0), color=(0.9, 0.9, 0.9), theta=math.pi / 2))
+    res.append(Light(direction=(0, -1, 0), color=(0.1, 0.1, 0.1), theta=math.pi / 2))
     return res
 
 
@@ -294,7 +290,5 @@ def ring():
         list[Light]: The lights.
     """
     res = []
-    res.append(
-        Light(direction=(0, 0, 1), color=(0.9, 0.9, 0.9), theta=math.pi / 4)
-    )
+    res.append(Light(direction=(0, 0, 1), color=(0.9, 0.9, 0.9), theta=math.pi / 4))
     return res

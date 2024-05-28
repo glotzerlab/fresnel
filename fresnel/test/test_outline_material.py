@@ -23,14 +23,10 @@ def test_set_material(scene_hex_sphere_, generate=False):
         primitive_color_mix=0.0,
     )
     assert geometry.outline_material.solid == 0.0
-    assert geometry.outline_material.color == tuple(
-        fresnel.color.linear([1, 0, 0])
-    )
+    assert geometry.outline_material.color == tuple(fresnel.color.linear([1, 0, 0]))
     assert geometry.outline_material.primitive_color_mix == 0.0
 
-    buf_proxy = fresnel.preview(
-        scene_hex_sphere_, w=100, h=100, anti_alias=False
-    )
+    buf_proxy = fresnel.preview(scene_hex_sphere_, w=100, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode="RGBA").save(
@@ -40,9 +36,7 @@ def test_set_material(scene_hex_sphere_, generate=False):
     else:
         conftest.assert_image_approx_equal(
             buf_proxy[:],
-            dir_path
-            / "reference"
-            / "test_outline_material.test_set_material.png",
+            dir_path / "reference" / "test_outline_material.test_set_material.png",
         )
 
 
@@ -53,9 +47,7 @@ def test_solid(scene_hex_sphere_, generate=False):
     geometry.outline_material.solid = 1.0
     assert geometry.outline_material.solid == 1.0
 
-    buf_proxy = fresnel.preview(
-        scene_hex_sphere_, w=100, h=100, anti_alias=False
-    )
+    buf_proxy = fresnel.preview(scene_hex_sphere_, w=100, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode="RGBA").save(
@@ -73,13 +65,9 @@ def test_color(scene_hex_sphere_, generate=False):
     geometry = scene_hex_sphere_.geometry[0]
     geometry.outline_width = 0.3
     geometry.outline_material.color = fresnel.color.linear([0, 0, 1])
-    assert geometry.outline_material.color == tuple(
-        fresnel.color.linear([0, 0, 1])
-    )
+    assert geometry.outline_material.color == tuple(fresnel.color.linear([0, 0, 1]))
 
-    buf_proxy = fresnel.preview(
-        scene_hex_sphere_, w=100, h=100, anti_alias=False
-    )
+    buf_proxy = fresnel.preview(scene_hex_sphere_, w=100, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode="RGBA").save(
@@ -109,9 +97,7 @@ def test_primitive_color_mix(scene_hex_sphere_, generate=False):
     geometry.color[4] = fresnel.color.linear([0, 1, 1])
     geometry.color[5] = fresnel.color.linear([0, 0, 0])
 
-    buf_proxy = fresnel.preview(
-        scene_hex_sphere_, w=100, h=100, anti_alias=False
-    )
+    buf_proxy = fresnel.preview(scene_hex_sphere_, w=100, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode="RGBA").save(

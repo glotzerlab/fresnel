@@ -19,9 +19,7 @@ def scene(device):
         for j in range(-8, 8):
             position.append([i, 0, j])
 
-    mat = fresnel.material.Material(
-        color=fresnel.color.linear([0.42, 0.267, 0.9])
-    )
+    mat = fresnel.material.Material(color=fresnel.color.linear([0.42, 0.267, 0.9]))
     fresnel.geometry.Sphere(
         scene,
         position=position,
@@ -80,9 +78,7 @@ def test_perspective_attributes():
     numpy.testing.assert_allclose(cam.focus_on, [0, 0, 5])
     numpy.testing.assert_allclose(cam.focus_distance, 15)
 
-    numpy.testing.assert_allclose(
-        cam.vertical_field_of_view, 0.19933730498232408
-    )
+    numpy.testing.assert_allclose(cam.vertical_field_of_view, 0.19933730498232408)
     cam.vertical_field_of_view = 0.4
     numpy.testing.assert_allclose(cam.focal_length, 0.6166443824768066)
 

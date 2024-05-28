@@ -99,9 +99,7 @@ def test_rounded(scene_rounded_polygons_, generate=False):
     geometry = scene_rounded_polygons_.geometry[0]
     geometry.outline_width = 0.1
 
-    buf_proxy = fresnel.preview(
-        scene_rounded_polygons_, w=150, h=100, anti_alias=False
-    )
+    buf_proxy = fresnel.preview(scene_rounded_polygons_, w=150, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode="RGBA").save(

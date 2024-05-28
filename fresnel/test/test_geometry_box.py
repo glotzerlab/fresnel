@@ -164,9 +164,7 @@ def test_box_update(scene_box_, generate=False):
 
         if generate:
             PIL.Image.fromarray(buf_proxy[:], mode="RGBA").save(
-                open(
-                    f"output/test_geometry_box.test_render{box_index}.png", "wb"
-                ),
+                open(f"output/test_geometry_box.test_render{box_index}.png", "wb"),
                 "png",
             )
         else:

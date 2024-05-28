@@ -49,18 +49,12 @@ def test_camera(scene_hex_sphere_, generate=False):
         position=(1, 0, 10), look_at=(1, 0, 0), up=(0, 1, 0), height=6
     )
 
-    numpy.testing.assert_array_equal(
-        scene_hex_sphere_.camera.position, (1, 0, 10)
-    )
-    numpy.testing.assert_array_equal(
-        scene_hex_sphere_.camera.look_at, (1, 0, 0)
-    )
+    numpy.testing.assert_array_equal(scene_hex_sphere_.camera.position, (1, 0, 10))
+    numpy.testing.assert_array_equal(scene_hex_sphere_.camera.look_at, (1, 0, 0))
     numpy.testing.assert_array_equal(scene_hex_sphere_.camera.up, (0, 1, 0))
     assert scene_hex_sphere_.camera.height == 6
 
-    buf_proxy = fresnel.preview(
-        scene_hex_sphere_, w=100, h=100, anti_alias=False
-    )
+    buf_proxy = fresnel.preview(scene_hex_sphere_, w=100, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode="RGBA").save(
@@ -79,9 +73,7 @@ def test_light_dir(scene_hex_sphere_, generate=False):
     assert scene_hex_sphere_.lights[0].direction == (1, 0, 0)
     assert scene_hex_sphere_.lights[0].color == (0.5, 0.5, 0.5)
 
-    buf_proxy = fresnel.preview(
-        scene_hex_sphere_, w=100, h=100, anti_alias=False
-    )
+    buf_proxy = fresnel.preview(scene_hex_sphere_, w=100, h=100, anti_alias=False)
 
     if generate:
         PIL.Image.fromarray(buf_proxy[:], mode="RGBA").save(

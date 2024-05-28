@@ -88,8 +88,7 @@ class Device(object):
                 selected_mode = "cpu"
                 if not _common.cpu_built():
                     raise RuntimeError(
-                        "No GPUs available AND CPU "
-                        "implementation is not compiled"
+                        "No GPUs available AND CPU " "implementation is not compiled"
                     )
 
         if mode == "gpu":

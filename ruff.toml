@@ -1,6 +1,6 @@
 include = ["*.py", "*.ipynb"]
 exclude = [".git","__pycache__","doc/conf.py","run-clang-format.py","build"]
-line-length = 80
+line-length = 88
 indent-width = 4
 
 [lint]

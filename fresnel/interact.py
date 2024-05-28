@@ -4,6 +4,7 @@
 """Interactive Qt widgets."""
 
 import sys
+
 import numpy
 
 # workaround bug in ipython that prevents pyside2 importing
@@ -16,13 +17,12 @@ try:
 except:  # noqa: E722
     pass
 
-from PySide2 import QtGui
-from PySide2 import QtCore
-from PySide2 import QtWidgets
-import rowan
 import copy
 
-from fresnel import tracer, camera
+import rowan
+from PySide2 import QtCore, QtGui, QtWidgets
+
+from fresnel import camera, tracer
 
 # initialize QApplication
 # but not in sphinx
@@ -288,9 +288,7 @@ class SceneView(QWidget):
         )
         qp = QtGui.QPainter(self)
         target = QtCore.QRectF(0, 0, self.width(), self.height())
-        source = QtCore.QRectF(
-            0.0, 0.0, image_array.shape[1], image_array.shape[0]
-        )
+        source = QtCore.QRectF(0.0, 0.0, image_array.shape[1], image_array.shape[0])
 
         qp.drawImage(target, img, source)
         qp.end()
