@@ -1,0 +1,34 @@
+include = ["*.py", "*.ipynb"]
+exclude = [".git","__pycache__","doc/conf.py","run-clang-format.py","build"]
+line-length = 80
+indent-width = 4
+
+[lint]
+select = [
+    "E",
+    "F",
+    "N",
+    "W",
+    "D",  # pydocstyle
+    "NPY",# check for use of deprecated numpy functions
+    "RUF200", # check pyproject.toml can be parsed
+]
+ignore = [
+  "D105", # Magic methods don't require documentation
+  "D107", # do not document __init__ separately from the class
+  "D205", # Required for backwards compatibility wioth yapf
+  "N806","N803", # allow occasional use of uppercase variable and argument names
+]
+
+[lint.pydocstyle]
+convention = "google"
+
+[lint.per-file-ignores]
+"*/test/*" = ["D", "F811"]
+"__init__.py" = ["F401"] # Do not remove "unused" imports in __init__.py files
+
+[format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+docstring-code-format = true
