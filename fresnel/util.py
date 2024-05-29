@@ -89,7 +89,7 @@ class ImageArray(Array):
 
         f = io.BytesIO()
         a = numpy.array(self.buf, copy=False)
-        PIL_Image.fromarray(a, mode='RGBA').save(f, 'png')
+        PIL_Image.fromarray(a, mode="RGBA").save(f, "png")
         self.buf.unmap()
 
         return f.getvalue()
@@ -122,5 +122,6 @@ def convex_polyhedron_from_vertices(vertices):
 
     """
     from fresnel._common import find_polyhedron_faces
+
     # sanity checks on the shape of things here?
     return find_polyhedron_faces(vertices)

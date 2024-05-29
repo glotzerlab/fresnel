@@ -20,26 +20,28 @@ Python
 ------
 
 Python code in GSD should follow `PEP8`_ with the formatting performed by
-`yapf`_ (configuration in ``setup.cfg``). Code should pass all **flake8** tests
-and formatted by **yapf**.
+`ruff`_ (configuration in ``ruff.toml``). Code should pass all **ruff** linter checks.
 
 .. _PEP8: https://www.python.org/dev/peps/pep-0008
-.. _yapf: https://github.com/google/yapf
+.. _ruff: https://github.com/astral-sh/ruff
 
 Tools
 ^^^^^
 
-* Linter: `flake8 <http://flake8.pycqa.org/en/latest/>`_
+* Linter: `ruff`_
 
-  * With these plugins:
+  * With these extensions:
 
-    * `pep8-naming <https://github.com/PyCQA/pep8-naming>`_
-    * `flake8-docstrings <https://gitlab.com/pycqa/flake8-docstrings>`_
-    * `flake8-rst-docstrings <https://github.com/peterjc/flake8-rst-docstrings>`_
+    * `D <https://docs.astral.sh/ruff/rules/#pydocstyle-d>`_
+    * `E, W <https://docs.astral.sh/ruff/rules/#pycodestyle-e-w>`_
+    * `F <https://docs.astral.sh/ruff/rules/#pyflakes-f>`_
+    * `N <https://docs.astral.sh/ruff/rules/#pep8-naming-n>`_
+    * `NPY <https://docs.astral.sh/ruff/rules/#numpy-specific-rules-npy>`_
+    * `RUF200 <https://docs.astral.sh/ruff/rules/invalid-pyproject-toml>`_
 
-  * Configure flake8 in your editor to see violations on save.
+  * The ``ruff.toml`` included with the package automatically configures these rules.
 
-* Autoformatter: `yapf <https://github.com/google/yapf>`_
+* Autoformatter: `ruff <https://github.com/astral-sh/ruff>`_
 
   * Run: ``pre-commit run --all-files`` to apply style changes to the whole
     repository.
@@ -67,14 +69,14 @@ C++/CUDA
 
 * Naming conventions:
 
-    * Namespaces: All lowercase ``somenamespace``
-    * Class names: ``UpperCamelCase``
-    * Methods: ``lowerCamelCase``
-    * Member variables: ``m_`` prefix followed by lowercase with words
-      separated by underscores ``m_member_variable``
-    * Constants: all upper-case with words separated by underscores
-      ``SOME_CONSTANT``
-    * Functions: ``lowerCamelCase``
+  * Namespaces: All lowercase ``somenamespace``
+  * Class names: ``UpperCamelCase``
+  * Methods: ``lowerCamelCase``
+  * Member variables: ``m_`` prefix followed by lowercase with words
+    separated by underscores ``m_member_variable``
+  * Constants: all upper-case with words separated by underscores
+    ``SOME_CONSTANT``
+  * Functions: ``lowerCamelCase``
 
 Tools
 ^^^^^

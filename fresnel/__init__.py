@@ -4,16 +4,19 @@
 """The fresnel ray tracing package."""
 
 import os
+
 import numpy
 
-from . import geometry  # noqa: F401 - ignore unused import
-from . import tracer
-from . import camera
-from . import color  # noqa: F401 - ignore unused import (users will use)
-from . import light
-from . import version  # noqa: F401 - ignore unused import (users will use)
+from . import (
+    _common,
+    camera,
+    color,
+    geometry,
+    light,
+    tracer,
+    version,
+)
 
-from . import _common
 if _common.cpu_built():
     from . import _cpu
 if _common.gpu_built():
@@ -69,35 +72,36 @@ class Device(object):
     available_gpus = []
     """list[str]: Available GPUS."""
 
-    def __init__(self, mode='auto', n=None):
+    def __init__(self, mode="auto", n=None):
         # determine the number of available GPUs
         num_gpus = 0
         if _common.gpu_built():
             num_gpus = _gpu.get_num_available_devices()
 
         # determine the selected mode
-        selected_mode = ''
+        selected_mode = ""
 
-        if mode == 'auto':
+        if mode == "auto":
             if num_gpus > 0:
-                selected_mode = 'gpu'
+                selected_mode = "gpu"
             else:
-                selected_mode = 'cpu'
+                selected_mode = "cpu"
                 if not _common.cpu_built():
-                    raise RuntimeError("No GPUs available AND CPU "
-                                       "implementation is not compiled")
+                    raise RuntimeError(
+                        "No GPUs available AND CPU " "implementation is not compiled"
+                    )
 
-        if mode == 'gpu':
+        if mode == "gpu":
             if not _common.gpu_built():
                 raise RuntimeError("GPU implementation is not compiled")
             if num_gpus == 0:
                 raise RuntimeError("No GPUs are available")
-            selected_mode = 'gpu'
+            selected_mode = "gpu"
 
-        if mode == 'cpu':
+        if mode == "cpu":
             if not _common.cpu_built():
                 raise RuntimeError("CPU implementation is not compiled")
-            selected_mode = 'cpu'
+            selected_mode = "cpu"
 
         if n is None:
             thread_limit = -1
@@ -105,15 +109,16 @@ class Device(object):
             thread_limit = int(n)
 
         # initialize the device
-        if selected_mode == 'gpu':
+        if selected_mode == "gpu":
             self.module = _gpu
             self._device = _gpu.Device(
-                os.path.dirname(os.path.realpath(__file__)), thread_limit)
-            self._mode = 'gpu'
-        elif selected_mode == 'cpu':
+                os.path.dirname(os.path.realpath(__file__)), thread_limit
+            )
+            self._mode = "gpu"
+        elif selected_mode == "cpu":
             self.module = _cpu
             self._device = _cpu.Device(thread_limit)
-            self._mode = 'cpu'
+            self._mode = "cpu"
         else:
             raise ValueError("Invalid mode")
 
@@ -124,24 +129,24 @@ class Device(object):
 
     def __str__(self):
         """Human readable `Device` summary."""
-        return '<fresnel.Device: ' + self._device.describe() + '>'
+        return "<fresnel.Device: " + self._device.describe() + ">"
 
 
 # determine available Device modes
 if _common.gpu_built():
     if _gpu.get_num_available_devices() > 0:
-        Device.available_modes.append('gpu')
+        Device.available_modes.append("gpu")
 
 if _common.cpu_built():
-    Device.available_modes.append('cpu')
+    Device.available_modes.append("cpu")
 
 if len(Device.available_modes) > 0:
-    Device.available_modes.append('auto')
+    Device.available_modes.append("auto")
 
 # determine available Device GPUs
 if _common.gpu_built():
     gpus_str = _gpu.Device.getAllGPUs()
-    gpus_list = gpus_str.split('\n')
+    gpus_list = gpus_str.split("\n")
     if len(gpus_list) >= 2:
         Device.available_gpus = gpus_list[:-1]
 
@@ -155,10 +160,12 @@ class Scene(object):
         camera (camera.Camera): Camera to view the scene. When `None`,
           defaults to::
 
-            camera.Orthographic(position=(0, 0, 100),
-                                look_at=(0, 0, 0),
-                                up=(0, 1, 0),
-                                height=100)
+            camera.Orthographic(
+                position=(0, 0, 100),
+                look_at=(0, 0, 0),
+                up=(0, 1, 0),
+                height=100,
+            )
 
         lights (list[Light]): Lights to light the scene. When `None`, defaults
           to: ``light.rembrandt()``
@@ -187,10 +194,12 @@ class Scene(object):
         self._scene = self.device.module.Scene(self.device._device)
         self.geometry = []
         if camera is None:
-            self.camera = globals()['camera'].Orthographic(position=(0, 0, 100),
-                                                           look_at=(0, 0, 0),
-                                                           up=(0, 1, 0),
-                                                           height=100)
+            self.camera = globals()["camera"].Orthographic(
+                position=(0, 0, 100),
+                look_at=(0, 0, 0),
+                up=(0, 1, 0),
+                height=100,
+            )
         else:
             self.camera = camera
 
@@ -215,9 +224,11 @@ class Scene(object):
         for geom in self.geometry[1:]:
             extents = geom.get_extents()
             scene_extents[0, :] = numpy.min(
-                [scene_extents[0, :], extents[0, :]], axis=0)
+                [scene_extents[0, :], extents[0, :]], axis=0
+            )
             scene_extents[1, :] = numpy.max(
-                [scene_extents[1, :], extents[1, :]], axis=0)
+                [scene_extents[1, :], extents[1, :]], axis=0
+            )
 
         return scene_extents
 
