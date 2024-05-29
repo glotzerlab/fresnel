@@ -7,6 +7,7 @@ Credits
 The following people contributed to **fresnel**.
 
 * Joshua A. Anderson, University of Michigan
+* Jen Bradley, University of Michigan
 * Bradley Dice, University of Michigan
 * Jens Glaser, University of Michigan
 * Tim Moore, University of Michigan
