@@ -5,41 +5,37 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  # Trigger on pull requests.
   pull_request:
 
-  # Trigger on pushes to the mainline branches. This prevents building commits twice when the pull
-  # request source branch is in the same repository.
   push:
     branches:
-    - "master"
-    # Trigger on tags. Tag builds create GitHub releases with the change log and source tarball.
+    - "trunk"
     tags:
       - "v*"
 
-  # Trigger on request.
   workflow_dispatch:
+
+env:
+  name: fresnel
 
 defaults:
   run:
     shell: bash
 
-env:
-  name: fresnel
-
 jobs:
   release:
     name: Build release tarball
     runs-on: ubuntu-latest
-    container:
-      image: glotzerlab/ci:2023.11.27-ubuntu22.04
 
     steps:
-      - uses: actions/checkout@v4.1.4
+      - uses: actions/checkout@v4.1.6
         with:
           fetch-depth: 0
           submodules: true
           path: code
+
+      - name: Install tools
+        run: sudo apt-get install pcregrep pandoc
 
       - name: Determine last tag via git describe
         if: ${{ ! startsWith(github.ref, 'refs/tags/v') }}
@@ -64,11 +60,14 @@ jobs:
       - name: Tar source
         run: tar -cvzf ${name}-${tag:1}.tar.gz ${name}-${tag:1}
 
+      - name: Tar source
+        run: tar -cvJf "${name}-${tag:1}.tar.xz" "${name}-${tag:1}"
+
       - uses: actions/upload-artifact@v4.3.3
         with:
           name: release
           path: |
-            *.tar.gz
+            *.tar.*
             changelog.md
 
   publish:
@@ -86,7 +85,7 @@ jobs:
         name: Create release
         if: startsWith(github.ref, 'refs/tags/v')
         with:
-          files: "*.tar.gz"
+          files: "*.tar.*"
           body_path: changelog.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

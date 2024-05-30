@@ -1,0 +1,216 @@
+name: Unit test
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+
+  push:
+    branches:
+    - "trunk"
+
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash -leo pipefail {0}
+# Use multiple jobs to reduce the amount of time spent on GPU runners. Use GitHub Hosted runners
+# for compiling all tests configurations (GPU and CPU), then upload the installation directory
+# as an artifact. Test jobs depend on the build job, download the install directory, and run the
+# tests. Upload each build configuration to a separate artifact.
+
+# Copy and paste the matrix from `build_linux` to `test_linux`. The list in `test_linux` must be a
+# subset of the list in `build_linux`.
+
+jobs:
+#   build_linux:
+#     name: Build [${{ matrix.image }}]
+#     runs-on: ubuntu-latest
+#     container:
+#       image: ${{ matrix.repository }}/ci:2023.11.27-${{ matrix.image }}
+#       credentials:
+#         username: ${{ secrets.DOCKER_HUB_USERNAME }}
+#         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+#     strategy:
+#       matrix:
+#         include:
+#         - {repository: glotzerlab, image: clang16_py311, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: true }
+#         - {repository: glotzerlab, image: clang15_py311, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: true }
+#         - {repository: glotzerlab, image: clang14_py311, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: true }
+#         - {repository: glotzerlab, image: clang13_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+#         - {repository: glotzerlab, image: clang12_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+#         - {repository: glotzerlab, image: clang11_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+#         - {repository: glotzerlab, image: clang10_py38, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+#         - {repository: glotzerlab, image: gcc13_py312, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+#         - {repository: glotzerlab, image: gcc12_py311, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+#         - {repository: glotzerlab, image: gcc11_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+#         - {repository: glotzerlab, image: gcc10_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+#         - {repository: glotzerlab, image: gcc9_py39, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+#         - {repository: joaander, image: optix65_cuda118_py310, test_runner: [self-hosted,GPU,optix], test_docker_options: '-e  NVIDIA_DRIVER_CAPABILITIES=compute,graphics --gpus=all', render_gallery: false }
+
+#     steps:
+#     - uses: actions/checkout@v4.1.4
+#       with:
+#         path: code
+#         submodules: true
+#     - name: Configure
+#       run: |
+#         mkdir -p build
+#         cd build
+#         cmake ../code -GNinja \
+#                       -DENABLE_EMBREE=${ENABLE_EMBREE:-"ON"} \
+#                       -DENABLE_OPTIX=${ENABLE_OPTIX:-"OFF"} \
+#                       -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install
+#       env:
+#         ENABLE_OPTIX: ${{ contains(matrix.image, 'optix') }}
+#         ENABLE_EMBREE: ${{ !contains(matrix.image, 'optix') }}
+#     - name: Build
+#       run: ninja install
+#       working-directory: build
+#    # Tar the installation directory to preserve permissions and reduce HTTP requests on upload.
+#     - name: 'Tar install'
+#       run: tar --use-compress-program='zstd -10 -T0' -cvf install.tar install
+#     # Upload the tarball. Retain the file for a limited time in case developers need to download
+#     # and run tests locally for further debugging.
+#     - uses: actions/upload-artifact@v4.3.3
+#       name: 'Upload install'
+#       with:
+#         name: install-${{ matrix.image }}-${{ github.sha }}
+#         path: install.tar
+#         retention-days: 7
+
+#   test_linux:
+#     needs: build_linux
+#     runs-on: ${{ matrix.test_runner }}
+#     container:
+#       image: ${{ matrix.repository }}/ci:2023.11.27-${{ matrix.image }}
+#       options: ${{ matrix.test_docker_options }} -e CUDA_VISIBLE_DEVICES
+#       credentials:
+#         username: ${{ secrets.DOCKER_HUB_USERNAME }}
+#         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+#     strategy:
+#       matrix:
+#         include:
+#         - {repository: glotzerlab, image: clang16_py311, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: true }
+#         - {repository: glotzerlab, image: clang15_py311, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: true }
+#         - {repository: glotzerlab, image: clang14_py311, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: true }
+#         - {repository: glotzerlab, image: clang13_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+#         - {repository: glotzerlab, image: clang12_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+#         - {repository: glotzerlab, image: clang11_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+#         - {repository: glotzerlab, image: clang10_py38, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+#         - {repository: glotzerlab, image: gcc13_py312, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+#         - {repository: glotzerlab, image: gcc12_py311, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+#         - {repository: glotzerlab, image: gcc11_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+#         - {repository: glotzerlab, image: gcc10_py310, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+#         - {repository: glotzerlab, image: gcc9_py39, test_runner: ubuntu-latest, test_docker_options: '', render_gallery: false }
+#         - {repository: joaander, image: optix65_cuda118_py310, test_runner: [self-hosted,GPU,optix], test_docker_options: '-e  NVIDIA_DRIVER_CAPABILITIES=compute,graphics --gpus=all', render_gallery: false }
+
+#     steps:
+#     - name: Clean workspace
+#       run: ( shopt -s dotglob nullglob; rm -rf ./* )
+#       shell: bash
+
+#     - uses: actions/download-artifact@v4.1.7
+#       with:
+#         name: install-${{ matrix.image }}-${{ github.sha }}
+#     - name: Untar install
+#       run: tar --use-compress-program='zstd -10 -T0' -xvf install.tar
+
+#     - name: Run tests
+#       run: python3 -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0 --durations-min=0.1
+#       env:
+#         PYTHONPATH: ${{ github.workspace }}/install
+
+#     - uses: actions/checkout@v4.1.4
+#       if: ${{ matrix.render_gallery }}
+#       with:
+#         submodules: true
+#         path: code
+
+#     - name: Render gallery images
+#       if: ${{ matrix.render_gallery }}
+#       run: for i in *.py; do echo "Rendering $i" && python3 $i || exit 1; done
+#       working-directory: code/doc/gallery
+#       env:
+#         PYTHONPATH: ${{ github.workspace }}/install
+
+#     - name: Clean workspace
+#       run: ( shopt -s dotglob nullglob; rm -rf ./* )
+#       shell: bash
+
+#     - name: Clean HOME
+#       run: ( shopt -s dotglob nullglob; rm -rf $HOME/* )
+#       shell: bash
+
+  build_test:
+    name: Unit test [py${{ matrix.python }} ${{ matrix.os }}]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04]
+        python: ['39', '310', '311', '312']
+        include:
+        # Render gallery images in one configuration
+        - os: 'ubuntu-24.04'
+          python: '312'
+          render_gallery: true
+        # Test macOS and windows on oldest and latest versions.
+        - os: 'macos-14'
+          python: '312'
+        - os: 'windows-2022'
+          python: '312'
+          cmake_generator: "Visual Studio 17 2022"
+        - os: 'windows-2022'
+          python: '39'
+          cmake_generator: "Visual Studio 17 2022"
+        - os: 'windows-2019'
+          python: '39'
+          cmake_generator: "Visual Studio 16 2019"
+        - os: 'macos-14'
+          python: '39'
+    steps:
+    - uses: actions/checkout@v4.1.6
+      with:
+        path: code
+        submodules: true
+    - name: Create Python Environment
+      uses: mamba-org/setup-micromamba@v1.8.1
+      with:
+        micromamba-version: '1.5.8-0'
+        environment-name: test
+        environment-file: code/.github/workflows/environments/py${{ matrix.python }}-conda-lock.yml
+    - name: Configure
+      run: >
+        cmake -S code -B build
+        -DENABLE_EMBREE=ON
+        -DENABLE_OPTIX=OFF
+        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON
+      env:
+        CMAKE_PREFIX_PATH: ${{ github.workspace }}\env
+    - name: Build
+      run: cmake --build build --config Release -j
+    - name: Install
+      run: cmake --install build --config Release
+    - name: Run tests
+      run: python -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0 --durations-min=0.1
+    - name: Render gallery images
+      if: ${{ matrix.render_gallery }}
+      run: for i in *.py; do echo "Rendering $i" && python3 $i || exit 1; done
+      working-directory: code/doc/gallery
+
+  # This job is used to provide a single requirement for branch merge conditions.
+  # tests_complete:
+  #   name: Unit test
+  #   if: always()
+  #   needs: [build_linux, test_linux, build_test]
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #   - run: jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
+  #   - name: Done
+  #     run: echo "Done."

@@ -1,0 +1,12 @@
+channels:
+- conda-forge
+dependencies:
+- cmake
+- embree
+- matplotlib
+- numpy
+- pillow
+- pybind11
+- pytest
+- tbb
+- tbb-devel
