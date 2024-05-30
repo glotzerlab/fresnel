@@ -17,6 +17,9 @@ fresnel_ releases follow `semantic versioning`_.
 *Changed:*
 
 * Provide support via GitHub discussions.
+* Revise installation documentation.
+* Add copy button to documentation code examples.
+* Enable arrow key navigation in documentation.
 
 0.13.5 (2023-02-22)
 ^^^^^^^^^^^^^^^^^^^
