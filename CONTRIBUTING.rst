@@ -83,7 +83,7 @@ ____________________________
 Update the credits documentation to list the name and affiliation of each individual that has
 contributed to the code.
 
-Propose a change log entry
+Prepare a change log entry
 __________________________
 
-Propose a short concise entry describing the change in the pull request description.
+Prepare a concise entry describing the change in ``CHANGELOG.rst``.
