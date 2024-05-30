@@ -13,11 +13,13 @@
 version: 1
 metadata:
   content_hash:
-    osx-arm64: 00418b3dcab95c2391d46a187e3f9611d3690db3d1c258c5a13290dbcfeafc27
-    osx-64: 9e1d0c3a9e63bb2c396dcdfb0ef3d7ca66078cf524ab4521397bfb9a6de865c5
-    linux-64: d13c108223babb032e85b996c906e1cd118276ca75412ae059dd10157b26bfe0
-    win-64: d5990c5cfba60ce31c40ad86550f04b701358319883a6c5e0cb6d78245e8b033
+    osx-arm64: 4a2297d79c969a06ef56f589a3d44789305375a98d5a90674285b473752236c7
+    osx-64: 1d5b2575303313149ee9c4a00e4afaaac74a0e45eaa4ea3747d2e74c63e47410
+    linux-64: e21fbe76677548da53cdb1f20bbef9a2e19345b24cdfdf394399b036dabed0b5
+    win-64: 461928200ff4eb51ab8d377240ce18490b4f89445cdb6816461d9fba4635435b
   channels:
+  - url: conda-forge/label/numpy_rc
+    used_env_vars: []
   - url: conda-forge
     used_env_vars: []
   platforms:
@@ -37,6 +39,50 @@ package:
   hash:
     md5: d7c89558ba9fa0495403155b64376d81
     sha256: fe51de6107f9edc7aa4f786a70f4a883943bc9d39b3bb7307c04c41410990726
+  category: main
+  optional: false
+- name: _numpy_rc
+  version: '1'
+  manager: conda
+  platform: linux-64
+  dependencies: {}
+  url: https://conda.anaconda.org/conda-forge/label/numpy_rc/noarch/_numpy_rc-1-h23db71c_0.conda
+  hash:
+    md5: bae28112659035db62d85b6f5aace6fd
+    sha256: aa98fb184805b48c46889547b5927b3fe4812a6bb76bc34f9a1dcbbdda90d5b6
+  category: main
+  optional: false
+- name: _numpy_rc
+  version: '1'
+  manager: conda
+  platform: osx-64
+  dependencies: {}
+  url: https://conda.anaconda.org/conda-forge/label/numpy_rc/noarch/_numpy_rc-1-h23db71c_0.conda
+  hash:
+    md5: bae28112659035db62d85b6f5aace6fd
+    sha256: aa98fb184805b48c46889547b5927b3fe4812a6bb76bc34f9a1dcbbdda90d5b6
+  category: main
+  optional: false
+- name: _numpy_rc
+  version: '1'
+  manager: conda
+  platform: osx-arm64
+  dependencies: {}
+  url: https://conda.anaconda.org/conda-forge/label/numpy_rc/noarch/_numpy_rc-1-h23db71c_0.conda
+  hash:
+    md5: bae28112659035db62d85b6f5aace6fd
+    sha256: aa98fb184805b48c46889547b5927b3fe4812a6bb76bc34f9a1dcbbdda90d5b6
+  category: main
+  optional: false
+- name: _numpy_rc
+  version: '1'
+  manager: conda
+  platform: win-64
+  dependencies: {}
+  url: https://conda.anaconda.org/conda-forge/label/numpy_rc/noarch/_numpy_rc-1-h23db71c_0.conda
+  hash:
+    md5: bae28112659035db62d85b6f5aace6fd
+    sha256: aa98fb184805b48c46889547b5927b3fe4812a6bb76bc34f9a1dcbbdda90d5b6
   category: main
   optional: false
 - name: _openmp_mutex
@@ -3909,10 +3955,11 @@ package:
   category: main
   optional: false
 - name: numpy
-  version: 1.26.4
+  version: 2.0.0rc2
   manager: conda
   platform: linux-64
   dependencies:
+    _numpy_rc: ''
     libblas: '>=3.9.0,<4.0a0'
     libcblas: '>=3.9.0,<4.0a0'
     libgcc-ng: '>=12'
@@ -3920,51 +3967,56 @@ package:
     libstdcxx-ng: '>=12'
     python: '>=3.12,<3.13.0a0'
     python_abi: 3.12.*
-  url: https://conda.anaconda.org/conda-forge/linux-64/numpy-1.26.4-py312heda63a1_0.conda
+  url: https://conda.anaconda.org/conda-forge/linux-64/numpy-2.0.0rc2-py312h22e1c76_0.conda
   hash:
-    md5: d8285bea2a350f63fab23bf460221f3f
-    sha256: fe3459c75cf84dcef6ef14efcc4adb0ade66038ddd27cadb894f34f4797687d8
+    md5: e23dbbe1cf4c172c3226f2a6fc49a7d6
+    sha256: 4aad383ccd252f04505213e1daf62208454b7555980840f0ddae422cea08c766
   category: main
   optional: false
 - name: numpy
-  version: 1.26.4
+  version: 2.0.0rc2
   manager: conda
   platform: osx-64
   dependencies:
+    __osx: '>=10.9'
+    _numpy_rc: ''
     libblas: '>=3.9.0,<4.0a0'
     libcblas: '>=3.9.0,<4.0a0'
     libcxx: '>=16'
     liblapack: '>=3.9.0,<4.0a0'
     python: '>=3.12,<3.13.0a0'
     python_abi: 3.12.*
-  url: https://conda.anaconda.org/conda-forge/osx-64/numpy-1.26.4-py312he3a82b2_0.conda
+  url: https://conda.anaconda.org/conda-forge/osx-64/numpy-2.0.0rc2-py312h338bfcc_0.conda
   hash:
-    md5: 96c61a21c4276613748dba069554846b
-    sha256: 6152b73fba3e227afa4952df8753128fc9669bbaf142ee8f9972bf9df3bf8856
+    md5: 9c272aa3f1e81579c8135f8ee3694417
+    sha256: 452ddecefe63e65a1d18d969f2295fe563d62496dd28cf0e7191f86db6dbd583
   category: main
   optional: false
 - name: numpy
-  version: 1.26.4
+  version: 2.0.0rc2
   manager: conda
   platform: osx-arm64
   dependencies:
+    __osx: '>=11.0'
+    _numpy_rc: ''
     libblas: '>=3.9.0,<4.0a0'
     libcblas: '>=3.9.0,<4.0a0'
     libcxx: '>=16'
     liblapack: '>=3.9.0,<4.0a0'
     python: '>=3.12,<3.13.0a0'
     python_abi: 3.12.*
-  url: https://conda.anaconda.org/conda-forge/osx-arm64/numpy-1.26.4-py312h8442bc7_0.conda
+  url: https://conda.anaconda.org/conda-forge/osx-arm64/numpy-2.0.0rc2-py312hb84bddb_0.conda
   hash:
-    md5: d83fc83d589e2625a3451c9a7e21047c
-    sha256: c8841d6d6f61fd70ca80682efbab6bdb8606dc77c68d8acabfbd7c222054f518
+    md5: f2b29217b2471bd2358d851838964046
+    sha256: b86cbe4ea92b49fa95b4ce46548d0d851797e3fee6d8f328b221c31de84101d6
   category: main
   optional: false
 - name: numpy
-  version: 1.26.4
+  version: 2.0.0rc2
   manager: conda
   platform: win-64
   dependencies:
+    _numpy_rc: ''
     libblas: '>=3.9.0,<4.0a0'
     libcblas: '>=3.9.0,<4.0a0'
     liblapack: '>=3.9.0,<4.0a0'
@@ -3973,10 +4025,10 @@ package:
     ucrt: '>=10.0.20348.0'
     vc: '>=14.2,<15'
     vc14_runtime: '>=14.29.30139'
-  url: https://conda.anaconda.org/conda-forge/win-64/numpy-1.26.4-py312h8753938_0.conda
+  url: https://conda.anaconda.org/conda-forge/win-64/numpy-2.0.0rc2-py312h49bc9c5_0.conda
   hash:
-    md5: f9ac74c3b07c396014434aca1e58d362
-    sha256: 73570817a5109d396b4ebbe5124a89525959269fd33fa33fd413700289fbe0ef
+    md5: b33594b17c5d9f81b16bff3920ca86ca
+    sha256: a5a59af28f3c5ea4034d4f4d78446bc00d275f046f1a9393962fbd3f9fd545f6
   category: main
   optional: false
 - name: openjpeg

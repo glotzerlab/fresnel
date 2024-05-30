@@ -59,6 +59,7 @@ def test_perspective_attributes():
     assert cam.focus_distance == 20
     assert cam.f_stop == 1.5
 
+    print(repr(cam))
     cam2 = eval(repr(cam))
     numpy.testing.assert_array_equal(cam2.position, (0, 0, -10))
     numpy.testing.assert_array_equal(cam2.look_at, (0, 0, 0))

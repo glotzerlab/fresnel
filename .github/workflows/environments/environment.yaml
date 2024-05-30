@@ -1,10 +1,11 @@
 channels:
+- conda-forge/label/numpy_rc
 - conda-forge
 dependencies:
 - cmake
 - embree
 - matplotlib
-- numpy
+- numpy>=2.0.0rc1
 - pillow
 - pybind11
 - pytest
