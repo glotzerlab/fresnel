@@ -1,0 +1,88 @@
+name: Unit test
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+
+  push:
+    branches:
+    - "trunk"
+
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash -leo pipefail {0}
+
+jobs:
+  build_test:
+    name: Unit test [py${{ matrix.python }} ${{ matrix.os }}]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04]
+        python: ['39', '310', '311', '312']
+        include:
+        # Render gallery images in one configuration
+        - os: 'ubuntu-24.04'
+          python: '312'
+          render_gallery: true
+        # Test macOS and windows on oldest and latest versions.
+        - os: 'macos-14'
+          python: '312'
+        - os: 'windows-2022'
+          python: '312'
+          cmake_generator: "Visual Studio 17 2022"
+        - os: 'windows-2022'
+          python: '39'
+          cmake_generator: "Visual Studio 17 2022"
+        - os: 'windows-2019'
+          python: '39'
+          cmake_generator: "Visual Studio 16 2019"
+        - os: 'macos-14'
+          python: '39'
+    steps:
+    - uses: actions/checkout@v4.1.6
+      with:
+        path: code
+        submodules: true
+    - name: Create Python Environment
+      uses: mamba-org/setup-micromamba@v1.8.1
+      with:
+        micromamba-version: '1.5.8-0'
+        environment-name: test
+        environment-file: code/.github/workflows/environments/py${{ matrix.python }}-conda-lock.yml
+    - name: Configure
+      run: >
+        cmake -S code -B build
+        -DENABLE_EMBREE=ON
+        -DENABLE_OPTIX=OFF
+        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON
+      env:
+        CMAKE_PREFIX_PATH: ${{ github.workspace }}\env
+    - name: Build
+      run: cmake --build build --config Release -j
+    - name: Install
+      run: cmake --install build --config Release
+    - name: Run tests
+      run: python -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0 --durations-min=0.1
+    - name: Render gallery images
+      if: ${{ matrix.render_gallery }}
+      run: for i in *.py; do echo "Rendering $i" && python3 $i || exit 1; done
+      working-directory: code/doc/gallery
+
+  # This job is used to provide a single requirement for branch merge conditions.
+  tests_complete:
+    name: Unit test
+    if: always()
+    needs: [build_test]
+    runs-on: ubuntu-latest
+
+    steps:
+    - run: jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
+    - name: Done
+      run: echo "Done."

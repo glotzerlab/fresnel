@@ -26,8 +26,13 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.intersphinx',
     'sphinx.ext.mathjax',
-    'IPython.sphinxext.ipython_console_highlighting'
+    'IPython.sphinxext.ipython_console_highlighting',
+    'sphinx_copybutton',
 ]
+
+if os.getenv('READTHEDOCS'):
+    extensions.append('sphinxcontrib.googleanalytics')
+    googleanalytics_id = 'G-QRCMY90457'
 
 intersphinx_mapping = {'python': ('https://docs.python.org/3', None), 'numpy': ('https://docs.scipy.org/doc/numpy', None)}
 autodoc_docstring_signature = True
@@ -117,7 +122,8 @@ todo_include_todos = False
 # a list of builtin themes.
 html_theme = 'furo'
 html_theme_options = {
-    "top_of_page_button": None,
+    'navigation_with_keys': True,
+    "top_of_page_buttons": [],
     "dark_css_variables": {
         "color-brand-primary": "#5187b2",
         "color-brand-content": "#5187b2",
@@ -127,6 +133,11 @@ html_theme_options = {
         "color-brand-content": "#406a8c",
     },
 }
+
+copybutton_prompt_text = r'>>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: '
+copybutton_prompt_is_regexp = True
+copybutton_remove_prompts = True
+copybutton_line_continuation_character = '\\'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

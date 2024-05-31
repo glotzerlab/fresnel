@@ -11,12 +11,24 @@ fresnel_ releases follow `semantic versioning`_.
 
 0.x
 ----
+
 0.13.6 (not yet released)
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-*Changed:*
+*Added*
+
+* Support Numpy 2.0.
+
+*Changed*
 
 * Provide support via GitHub discussions.
+* Revise installation documentation.
+* Add copy button to documentation code examples.
+* Enable arrow key navigation in documentation.
+
+*Removed*
+
+* Support for Python 3.8.
 
 0.13.5 (2023-02-22)
 ^^^^^^^^^^^^^^^^^^^

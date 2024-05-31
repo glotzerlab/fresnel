@@ -199,9 +199,9 @@ class Orthographic(Camera):
     def __repr__(self):
         """str: Representation of the camera."""
         s = "fresnel.camera.Orthographic("
-        s += f"position={tuple(self.position)}, "
-        s += f"look_at={tuple(self.look_at)}, "
-        s += f"up={tuple(self.up)}, "
+        s += f"position={tuple([float(x) for x in self.position])}, "
+        s += f"look_at={tuple([float(x) for x in self.look_at])}, "
+        s += f"up={tuple([float(x) for x in self.up])}, "
         s += f"height={self.height})"
         return s
 
@@ -418,13 +418,13 @@ class Perspective(Camera):
     def __repr__(self):
         """str: Representation of the camera."""
         s = "fresnel.camera.Perspective("
-        s += f"position={tuple(self.position)}, "
-        s += f"look_at={tuple(self.look_at)}, "
-        s += f"up={tuple(self.up)}, "
-        s += f"focus_distance={self.focus_distance}, "
-        s += f"focal_length={self.focal_length}, "
-        s += f"f_stop={self.f_stop}, "
-        s += f"height={self.height})"
+        s += f"position={tuple([float(x) for x in self.position])}, "
+        s += f"look_at={tuple([float(x) for x in self.look_at])}, "
+        s += f"up={tuple([float(x) for x in self.up])}, "
+        s += f"focus_distance={float(self.focus_distance)}, "
+        s += f"focal_length={float(self.focal_length)}, "
+        s += f"f_stop={float(self.f_stop)}, "
+        s += f"height={float(self.height)})"
         return s
 
     @property
