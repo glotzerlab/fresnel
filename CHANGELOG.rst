@@ -12,8 +12,8 @@ fresnel_ releases follow `semantic versioning`_.
 0.x
 ----
 
-0.13.6 (not yet released)
-^^^^^^^^^^^^^^^^^^^^^^^^^
+0.13.6 (2024-05-31)
+^^^^^^^^^^^^^^^^^^^
 
 *Added*
 
