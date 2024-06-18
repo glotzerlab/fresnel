@@ -2,6 +2,7 @@ channels:
 - conda-forge/label/numpy_rc
 - conda-forge
 dependencies:
+- python==3.12
 - cmake
 - embree
 - matplotlib
