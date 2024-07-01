@@ -46,7 +46,7 @@ jobs:
         - os: 'macos-14'
           python: '39'
     steps:
-    - uses: actions/checkout@v4.1.6
+    - uses: actions/checkout@v4.1.7
       with:
         path: code
         submodules: true
