@@ -16,6 +16,9 @@ The following people contributed to **fresnel**.
 * Mike Henry, Boise State University
 * Jenny Fothergill, Boise State University
 * Corwin Kerr, University of Michigan
+* Domagoj Fijan, University of Michigan
+* Charlotte Zhao, University of Michigan
+* Philipp Schönhöfer, University of Michigan
 
 Libraries
 ---------
