@@ -12,6 +12,10 @@ fresnel_ releases follow `semantic versioning`_.
 0.x
 ----
 
+*Changed*
+
+* Fixed a bug in the intersect function for an edge case.
+
 0.13.6 (2024-05-31)
 ^^^^^^^^^^^^^^^^^^^
 
