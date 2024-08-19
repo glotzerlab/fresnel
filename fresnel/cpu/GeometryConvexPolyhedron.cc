@@ -163,7 +163,7 @@ void GeometryConvexPolyhedron::intersect(const struct RTCIntersectFunctionNArgum
     vec3<float> t0_n_local(0, 0, 0), t0_p_local(0, 0, 0);
     vec3<float> t1_n_local(0, 0, 0), t1_p_local(0, 0, 0);
     int t0_plane_hit = 0, t1_plane_hit = 0;
-    for (int i = 0; i < n_planes && t0 < t1; ++i)
+    for (int i = 0; i < n_planes && t0 <= t1; ++i)
         {
         vec3<float> n = geom->m_plane_normal[i];
         vec3<float> p = geom->m_plane_origin[i];
