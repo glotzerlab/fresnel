@@ -36,7 +36,7 @@ executing==2.0.1
     # via stack-data
 fastjsonschema==2.19.1
     # via nbformat
-furo==2024.7.18
+furo==2024.8.6
     # via -r requirements.in
 idna==3.7
     # via requests
@@ -91,7 +91,7 @@ nbformat==5.10.4
     #   nbclient
     #   nbconvert
     #   nbsphinx
-nbsphinx==0.9.4
+nbsphinx==0.9.5
     # via -r requirements.in
 nest-asyncio==1.6.0
     # via ipykernel
@@ -102,7 +102,7 @@ packaging==24.0
     #   ipykernel
     #   nbconvert
     #   sphinx
-pandoc==2.3
+pandoc==2.4
     # via -r requirements.in
 pandocfilters==1.5.1
     # via nbconvert
