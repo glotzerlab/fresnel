@@ -2,6 +2,10 @@
 __pycache__
 devdoc
 build
-.cache
 *.pyc
 .pytest_cache
+
+# clangd
+.clangd
+.cache
+compile_commands.json

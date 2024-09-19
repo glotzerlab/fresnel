@@ -135,3 +135,13 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extern/random123/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extern/random123/examples)
 
 add_subdirectory(fresnel)
+
+# enable compile_commands.json
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+if (NOT WIN32)
+  file(CREATE_LINK
+    "${CMAKE_BINARY_DIR}/compile_commands.json"
+    "${CMAKE_SOURCE_DIR}/compile_commands.json"
+    SYMBOLIC
+  )
+endif()
