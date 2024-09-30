@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 project(fresnel LANGUAGES C CXX)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_subdirectory(CMake)
 include(fresnel-macros)
@@ -137,7 +138,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/extern/random123/examples)
 add_subdirectory(fresnel)
 
 # enable compile_commands.json
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 if (NOT WIN32)
   file(CREATE_LINK
     "${CMAKE_BINARY_DIR}/compile_commands.json"
