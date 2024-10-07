@@ -4,6 +4,7 @@ devdoc
 build
 *.pyc
 .pytest_cache
+html
 
 # clangd
 .clangd
