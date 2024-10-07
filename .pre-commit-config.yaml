@@ -3,7 +3,7 @@ ci:
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: 'v4.6.0'
+  rev: 'v5.0.0'
   hooks:
   - id: end-of-file-fixer
     exclude_types: [svg]
@@ -17,7 +17,7 @@ repos:
     - --remove
   - id: mixed-line-ending
 - repo: https://github.com/glotzerlab/fix-license-header
-  rev: v0.3.2
+  rev: v0.4.1
   hooks:
   - id: fix-license-header
     name: Fix license headers (Python)
@@ -42,7 +42,7 @@ repos:
     - --keep-after=.. include
     - --comment-prefix=..
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.5.0
+  rev: v0.6.9
   hooks:
     - id: ruff
       types_or: [ python ]
@@ -50,7 +50,7 @@ repos:
     - id: ruff-format
       types_or: [ python ]
 - repo: https://github.com/pre-commit/mirrors-clang-format
-  rev: v18.1.8
+  rev: v19.1.1
   hooks:
   - id: clang-format
     types_or: [c, c++, cuda, inc]
