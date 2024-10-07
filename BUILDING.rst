@@ -79,7 +79,7 @@ The sections below provide details on each of these steps.
 Install prerequisites
 ---------------------
 
-You will need to install a a number of tools and libraries to build **fresnel**. The options
+You will need to install a number of tools and libraries to build **fresnel**. The options
 ``ENABLE_EMBREE`` and ``ENABLE_OPTIX`` each require additional libraries when enabled.
 
 **General requirements:**

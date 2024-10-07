@@ -9,12 +9,16 @@ fresnel_ releases follow `semantic versioning`_.
 .. _fresnel:  https://github.com/glotzerlab/fresnel
 .. _semantic versioning: https://semver.org/
 
-0.x
-----
+0.13.7
+------
+
+*Fixed*
+
+* Edge case in ray-convex polyhedron intersection test.
 
 *Changed*
 
-* Fixed a bug in the intersect function for an edge case.
+* Improve the build instructions.
 
 0.13.6 (2024-05-31)
 ^^^^^^^^^^^^^^^^^^^
