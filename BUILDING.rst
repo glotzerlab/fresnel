@@ -258,7 +258,7 @@ Execute ``ninja`` again any time you modify the code, test scripts, or CMake scr
 .. _Run tests:
 
 Run tests
-^^^^^^^^^
+---------
 
 Use `pytest`_ to execute unit tests:
 
