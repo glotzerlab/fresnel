@@ -86,9 +86,9 @@ You will need to install a number of tools and libraries to build **fresnel**. T
 
 - **C++17** capable compiler
 - **CMake**
+- **NumPy**
 - **pybind11**
 - **Python**
-- **numpy**
 - **Qhull**
 - For CPU execution (required when ``ENABLE_EMBREE=ON``):
 
