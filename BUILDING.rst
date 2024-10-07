@@ -4,38 +4,73 @@
 Building from source
 ====================
 
-To build the **fresnel** Python package from source:
+To build **fresnel** from source:
 
-1. `Install prerequisites`_::
+1. `Install prerequisites`_:
 
-   $ <package-manager> install cmake git python numpy pybind11 qhull embree
-   $ <package-manager> install pillow pytest
+   .. code-block:: bash
 
-2. `Obtain the source`_::
+       micromamba install cmake embree git ninja numpy pybind11 python qhull
 
-   $ git clone --recursive https://github.com/glotzerlab/fresnel
+   Install additional packages needed to run the unit tests:
 
-3. `Configure`_::
+   .. code-block:: bash
 
-   $ cmake -B build/fresnel -S fresnel
+       micromamba install pillow pytest
 
-4. `Build the package`_::
+2. `Obtain the source`_:
 
-   $ cmake --build build/fresnel
+   .. code-block:: bash
 
-5. `Install the package`_ (optional)::
+       git clone --recursive git@github.com:glotzerlab/fresnel.git
 
-   $ cmake --install build/fresnel
+3. Change to the repository directory:
+
+   .. code-block:: bash
+
+       cd fresnel
+
+4. `Configure`_:
+
+   .. code-block:: bash
+
+       cmake -B build -S . -GNinja
+
+5. `Build the package`_:
+
+   .. code-block:: bash
+
+       cd build
+
+   .. code-block:: bash
+
+       ninja
+
+6. `Run tests`_:
+
+   .. code-block:: bash
+
+       python3 -m pytest fresnel
+
+6. `Install the package`_ (optional):
+
+   .. code-block:: bash
+
+       ninja install
 
 To build the documentation from source (optional):
 
-1. `Install prerequisites`_::
+1. `Install prerequisites`_:
 
-   $ <package-manager> install sphinx sphinx_rtd_theme nbsphinx ipython
+   .. code-block:: bash
 
-2. `Build the documentation`_::
+       micromamba install furo nbsphinx ipython sphinx-copybutton
 
-   $ sphinx-build -b html fresnel/doc build/fresnel-documentation
+2. `Build the documentation`_:
+
+   .. code-block:: bash
+
+       sphinx-build -b html doc html
 
 The sections below provide details on each of these steps.
 
@@ -44,85 +79,100 @@ The sections below provide details on each of these steps.
 Install prerequisites
 ---------------------
 
-**fresnel** requires a number of tools and libraries to build. The options ``ENABLE_EMBREE`` and
-``ENABLE_OPTIX`` each require additional libraries when enabled.
+You will need to install a number of tools and libraries to build **fresnel**. The options
+``ENABLE_EMBREE`` and ``ENABLE_OPTIX`` each require additional libraries when enabled.
+
+Install the required dependencies:
+
+.. code-block:: bash
+
+   micromamba install cmake embree git ninja numpy pybind11 python qhull
+
+Install additional packages needed to run the unit tests:
+
+.. code-block:: bash
+
+   micromamba install pillow pytest
+
+Install additional packages needed to build the documentation:
+
+.. code-block:: bash
+
+   micromamba install furo nbsphinx ipython sphinx-copybutton
 
 .. note::
 
-    This documentation is generic. Replace ``<package-manager>`` with your package or module
-    manager. You may need to adjust package names and/or install additional packages, such as
-    ``-dev`` packages that provide headers needed to build **fresnel**.
+    This guide assumes that you use the micromamba_ package manager. Adjust the commands
+    appropriately for the package manager of your choice.
 
-.. tip::
+.. warning::
 
-    Create a `virtual environment`_, one place where you can install dependencies and
-    **fresnel**::
+    When using a ``conda-forge`` environment for development, make sure that the environment does
+    not contain ``clang``, ``gcc``, or any other compiler or linker. These interfere with the native
+    compilers on your system and will result in compiler errors when building, linker errors when
+    running, or segmentation faults.
 
-        $ python3 -m venv fresnel-venv
-
-    You will need to activate your environment before configuring **fresnel**::
-
-        $ source fresnel-venv/bin/activate
+.. _micromamba: https://mamba.readthedocs.io/en/latest/user_guide/micromamba.html
 
 **General requirements:**
 
-- C++14 capable compiler (tested with GCC 7-12, Clang 6-14, Visual Studio 2019-2022)
-- CMake >= 3.8
-- pybind11 >= 2.2
-- Python >= 3.6
-- numpy
-- Qhull >= 2015.2
+- **C++17** capable compiler
+- **CMake**
+- **NumPy**
+- **pybind11**
+- **Python**
+- **Qhull**
 - For CPU execution (required when ``ENABLE_EMBREE=ON``):
 
-  - Intel TBB >= 4.3.20150611
-  - Intel Embree >= 4.0.0
+  - **Intel TBB**
+  - **Intel Embree**
 
 - For GPU execution (required when ``ENABLE_OPTIX=ON``):
 
-  - OptiX >= 6.0, < 7.0
-  - CUDA >= 10
+  - **OptiX** >= 6.0, < 7.0
+  - **CUDA**
 
 **Optional runtime dependencies:**
 
-- pyside2
+- **pyside2**
 
 **To run tests:**
 
-- pillow
-- pytest
+- **pillow**
+- **pytest**
 
 **To build the documentation:**
 
-- sphinx
-- sphinx_rtd_theme
-- nbsphinx
-- ipython
-
-.. _virtual environment: https://docs.python.org/3/library/venv.html
+- **sphinx**
+- **sphinx_rtd_theme**
+- **nbsphinx**
+- **ipython**
 
 .. _Obtain the source:
 
 Obtain the source
 -----------------
 
-Clone using Git_::
+Clone using Git_:
 
-   $ git clone --recursive https://github.com/glotzerlab/fresnel
+.. code-block:: bash
 
-Release tarballs are also available on the `downloads page`_.
+    git clone --recursive git@github.com:glotzerlab/fresnel.git
+
+Release tarballs are also available on the `GitHub release pages`_.
 
 .. seealso::
 
     See the `git book`_ to learn how to work with Git repositories.
 
-.. warning::
+.. important::
 
     **fresnel** uses Git submodules. Clone with the ``--recursive`` to clone the submodules.
 
     Execute ``git submodule update --init`` to fetch the submodules each time you switch branches
     and the submodules show as modified.
 
-.. _downloads page: https://glotzerlab.engin.umich.edu/Downloads/fresnel
+.. _GitHub release pages: https://github.com/glotzerlab/fresnel/releases
 .. _git book: https://git-scm.com/book
 .. _Git: https://git-scm.com/
 
@@ -131,34 +181,19 @@ Release tarballs are also available on the `downloads page`_.
 Configure
 ---------
 
-Use CMake_ to configure a **fresnel** build in the given directory. Pass ``-D<option-name>=<value>``
-to ``cmake`` to set options on the command line. When modifying code, you only need to repeat the
-build step to update your build - it will automatically reconfigure as needed.
+Use CMake_ to configure the **fresnel** build directory:
 
-.. tip::
+.. code-block:: bash
 
-    Use Ninja_ to perform incremental builds in less time::
+    cd {{ path/to/fresnel/repository }}
 
-        $ cmake -B build/fresnel -S fresnel -GNinja
+.. code-block:: bash
 
-.. tip::
+    cmake -B build -S . -GNinja
 
-    Place your build directory in ``/tmp`` or ``/scratch`` for faster builds. CMake_ performs
-    out-of-source builds, so the build directory can be anywhere on the filesystem.
+Pass ``-D<option-name>=<value>`` to ``cmake`` to set options on the command line.
 
-.. tip::
-
-    Pass the following options to CMake_ to optimize the build for your processor:
-    ``-DCMAKE_CXX_FLAGS=-march=native -DCMAKE_C_FLAGS=-march=native``
-
-.. important::
-
-    When using a virtual environment, activate the environment and set the cmake prefix path
-    before running CMake_: ``$ export CMAKE_PREFIX_PATH=<path-to-environment>``
-
-**fresnel**'s cmake configuration accepts a number of options.
-
-Options that find libraries and executables only take effect on a clean invocation of CMake. To set
+Options that find libraries and executables take effect only on a clean invocation of CMake. To set
 these options, first remove ``CMakeCache.txt`` from the build directory and then run ``cmake`` with
 these options on the command line.
 
@@ -189,6 +224,11 @@ Other option changes take effect at any time:
   ``CMAKE_INSTALL_PREFIX``. Defaults to the ``site-packages`` directory used by the found Python
   executable.
 
+.. tip::
+
+    Pass the following options to CMake_ to optimize the build for your processor:
+    ``-DCMAKE_CXX_FLAGS=-march=native -DCMAKE_C_FLAGS=-march=native``
+
 .. _CMake: https://cmake.org/
 .. _Ninja: https://ninja-build.org/
 
@@ -197,52 +237,74 @@ Other option changes take effect at any time:
 Build the package
 -----------------
 
-The command ``cmake --build build/fresnel`` will build the **fresnel** Python package in the given
-build directory. After the build completes, the build directory will contain a functioning Python
-package.
+After configuring, build **fresnel** with:
 
-.. note::
+.. code-block:: bash
 
-    Pass ``--config <CONFIG>`` to build a specific configuration when using a multi-configuration
-    generator such as Visual Studio::
+    cd build
 
-        cmake --build build/fresnel --config Release
+.. code-block:: bash
 
-.. note::
+    ninja
 
-    When using a multi-configuration generator, the Python package is built in
-    ``build/fresnel/<CONFIG>``.
+The ``build`` directory now contains a fully functional **fresnel** package.
+Execute ``ninja`` again any time you modify the code, test scripts, or CMake scripts.
+
+.. tip::
+
+    ``ninja`` will automatically execute ``cmake`` as needed. You do **NOT** need to execute
+    ``cmake`` yourself every time you build **fresnel**.
+
+.. _Run tests:
+
+Run tests
+---------
+
+Use `pytest`_ to execute unit tests:
+
+.. code-block:: bash
+
+   python3 -m pytest fresnel
+
+.. _pytest: https://docs.pytest.org/
 
 .. _Install the package:
 
 Install the package
 -------------------
 
-The command ``cmake --install build/fresnel`` installs the given **fresnel** build to
-``${CMAKE_INSTALL_PREFIX}/${PYTHON_SITE_INSTALL_DIR}``. CMake autodetects these paths, but you can
-set them manually in CMake.
+Execute:
 
-.. note::
+.. code-block:: bash
 
-    Pass ``--config <CONFIG>`` to install a specific configuration when using a multi-configuration
-    generator such as Visual Studio.
+    ninja install
+
+to install **fresnel** into your Python environment.
+
+.. warning::
+
+    This will *overwrite* any **fresnel** that you may have installed by other means.
+
+To use the compiled **fresnel** without modifying your environment, set ``PYTHONPATH``::
+
+    export PYTHONPATH={{ path/to/fresnel/repository/build }}
 
 .. _Build the documentation:
 
 Build the documentation
 -----------------------
 
-Run `Sphinx`_ to build the documentation with the command
-``sphinx-build -b html fresnel/sphinx-doc build/fresnel-documentation``. Open the file
-:file:`build/fresnel-documentation/index.html` in your web browser to view the documentation.
+Run `Sphinx`_ to build HTML documentation:
+
+.. code-block:: bash
+
+    sphinx-build -b html doc html
+
+Open the file :file:`html/index.html` in your web browser to view the documentation.
 
 .. tip::
 
-    When iteratively modifying the documentation, the sphinx options ``-a -n -W -T --keep-going``
-    are helpful to produce docs with consistent links in the side panel and to see more useful error
-    messages::
-
-        $ sphinx-build -a -n -W -T --keep-going -b html \
-            fresnel/sphinx-doc build/fresnel-documentation
+    Add the sphinx options ``-a -n -W -T --keep-going`` to produce docs with consistent links in
+    the side panel and provide more useful error messages.
 
 .. _Sphinx: https://www.sphinx-doc.org/

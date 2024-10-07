@@ -9,7 +9,7 @@ architectures. Install with:
 
 .. code-block:: bash
 
-    $ mamba install fresnel
+    micromamba install fresnel
 
 The fresnel builds on conda-forge_ support CPU rendering.
 
