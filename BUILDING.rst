@@ -82,6 +82,38 @@ Install prerequisites
 You will need to install a number of tools and libraries to build **fresnel**. The options
 ``ENABLE_EMBREE`` and ``ENABLE_OPTIX`` each require additional libraries when enabled.
 
+Install the required dependencies:
+
+.. code-block:: bash
+
+   micromamba install cmake embree git ninja numpy pybind11 python qhull
+
+Install additional packages needed to run the unit tests:
+
+.. code-block:: bash
+
+   micromamba install pillow pytest
+
+Install additional packages needed to build the documentation:
+
+.. code-block:: bash
+
+   micromamba install furo nbsphinx ipython sphinx-copybutton
+
+.. note::
+
+    This guide assumes that you use the micromamba_ package manager. Adjust the commands
+    appropriately for the package manager of your choice.
+
+.. warning::
+
+    When using a ``conda-forge`` environment for development, make sure that the environment does
+    not contain ``clang``, ``gcc``, or any other compiler or linker. These interfere with the native
+    compilers on your system and will result in compiler errors when building, linker errors when
+    running, or segmentation faults.
+
+.. _micromamba: https://mamba.readthedocs.io/en/latest/user_guide/micromamba.html
+
 **General requirements:**
 
 - **C++17** capable compiler
@@ -197,13 +229,6 @@ Other option changes take effect at any time:
     Pass the following options to CMake_ to optimize the build for your processor:
     ``-DCMAKE_CXX_FLAGS=-march=native -DCMAKE_C_FLAGS=-march=native``
 
-.. warning::
-
-    When using a ``conda-forge`` environment for development, make sure that the environment does
-    not contain ``clang``, ``gcc``, or any other compiler or linker. These interfere with the native
-    compilers on your system and will result in compiler errors when building, linker errors when
-    running, or segmentation faults.
-
 .. _CMake: https://cmake.org/
 .. _Ninja: https://ninja-build.org/
 
@@ -228,7 +253,7 @@ Execute ``ninja`` again any time you modify the code, test scripts, or CMake scr
 .. tip::
 
     ``ninja`` will automatically execute ``cmake`` as needed. You do **NOT** need to execute
-    ``cmake`` yourself every time you build fresnel.
+    ``cmake`` yourself every time you build **fresnel**.
 
 .. _Run tests:
 
@@ -269,7 +294,9 @@ To use the compiled **fresnel** without modifying your environment, set ``PYTHON
 Build the documentation
 -----------------------
 
-Run `Sphinx`_ to build HTML documentation::
+Run `Sphinx`_ to build HTML documentation:
+
+.. code-block:: bash
 
     sphinx-build -b html doc html
 
