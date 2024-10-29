@@ -25,17 +25,17 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-24.04]
-        python: ['39', '310', '311', '312']
+        python: ['39', '310', '311', '312', '313']
         include:
         # Render gallery images in one configuration
         - os: 'ubuntu-24.04'
-          python: '312'
+          python: '313'
           render_gallery: true
         # Test macOS and windows on oldest and latest versions.
         - os: 'macos-14'
-          python: '312'
+          python: '313'
         - os: 'windows-2022'
-          python: '312'
+          python: '313'
           cmake_generator: "Visual Studio 17 2022"
         - os: 'windows-2022'
           python: '39'
