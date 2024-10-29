@@ -9,8 +9,12 @@ fresnel_ releases follow `semantic versioning`_.
 .. _fresnel:  https://github.com/glotzerlab/fresnel
 .. _semantic versioning: https://semver.org/
 
-0.13.7
-------
+0.13.7 (2024-10-29)
+^^^^^^^^^^^^^^^^^^^
+
+*Added*
+
+* Support Python 3.13.
 
 *Fixed*
 
