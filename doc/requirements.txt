@@ -142,7 +142,7 @@ referencing==0.35.1
     #   jsonschema-specifications
 requests==2.32.3
     # via sphinx
-rowan==1.3.0.post1
+rowan==1.3.2
     # via -r requirements.in
 rpds-py==0.18.1
     # via
