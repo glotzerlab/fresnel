@@ -13,13 +13,11 @@
 version: 1
 metadata:
   content_hash:
-    osx-arm64: 09ea0b95d7d9b2805b4522125e797b1e83e3d33eb47583af19a3e807276d1f81
-    osx-64: 0a1996f8f5f94cbb92a2cc70dd40d99cf41cd24c8f54b35803e50a538c133e4d
-    linux-64: 47e54562e307097ba676ac5e7fd3f1400a5ccaccda6b3c3c1f1dd86ae16fffd4
-    win-64: c6c4f956965486b04a8ead12f628d0b7a6ef8cab3f1b7836692a5a5c9f0cd664
+    osx-arm64: 99709391fa237c6ec13b41d512dcbde2fd610fba3217306c63621969a29707de
+    osx-64: d2243204caeb0f00d32ac72c9257f2765dde73b01b230ec0459fc68cc1ee511a
+    linux-64: ca6165c365f0fe75dc8aa904958338375a0b525d835ba4564960d74ed88648e1
+    win-64: 2dd17b6459478da2e47b98a9239370eb90a1e88f794a840496e708f39aec505c
   channels:
-  - url: conda-forge/label/numpy_rc
-    used_env_vars: []
   - url: conda-forge
     used_env_vars: []
   platforms:
@@ -39,50 +37,6 @@ package:
   hash:
     md5: d7c89558ba9fa0495403155b64376d81
     sha256: fe51de6107f9edc7aa4f786a70f4a883943bc9d39b3bb7307c04c41410990726
-  category: main
-  optional: false
-- name: _numpy_rc
-  version: '1'
-  manager: conda
-  platform: linux-64
-  dependencies: {}
-  url: https://conda.anaconda.org/conda-forge/label/numpy_rc/noarch/_numpy_rc-1-h23db71c_0.conda
-  hash:
-    md5: bae28112659035db62d85b6f5aace6fd
-    sha256: aa98fb184805b48c46889547b5927b3fe4812a6bb76bc34f9a1dcbbdda90d5b6
-  category: main
-  optional: false
-- name: _numpy_rc
-  version: '1'
-  manager: conda
-  platform: osx-64
-  dependencies: {}
-  url: https://conda.anaconda.org/conda-forge/label/numpy_rc/noarch/_numpy_rc-1-h23db71c_0.conda
-  hash:
-    md5: bae28112659035db62d85b6f5aace6fd
-    sha256: aa98fb184805b48c46889547b5927b3fe4812a6bb76bc34f9a1dcbbdda90d5b6
-  category: main
-  optional: false
-- name: _numpy_rc
-  version: '1'
-  manager: conda
-  platform: osx-arm64
-  dependencies: {}
-  url: https://conda.anaconda.org/conda-forge/label/numpy_rc/noarch/_numpy_rc-1-h23db71c_0.conda
-  hash:
-    md5: bae28112659035db62d85b6f5aace6fd
-    sha256: aa98fb184805b48c46889547b5927b3fe4812a6bb76bc34f9a1dcbbdda90d5b6
-  category: main
-  optional: false
-- name: _numpy_rc
-  version: '1'
-  manager: conda
-  platform: win-64
-  dependencies: {}
-  url: https://conda.anaconda.org/conda-forge/label/numpy_rc/noarch/_numpy_rc-1-h23db71c_0.conda
-  hash:
-    md5: bae28112659035db62d85b6f5aace6fd
-    sha256: aa98fb184805b48c46889547b5927b3fe4812a6bb76bc34f9a1dcbbdda90d5b6
   category: main
   optional: false
 - name: _openmp_mutex
@@ -3849,12 +3803,11 @@ package:
   category: main
   optional: false
 - name: numpy
-  version: 2.2.0rc1
+  version: 2.1.3
   manager: conda
   platform: linux-64
   dependencies:
     __glibc: '>=2.17,<3.0.a0'
-    _numpy_rc: ''
     libblas: '>=3.9.0,<4.0a0'
     libcblas: '>=3.9.0,<4.0a0'
     libgcc: '>=13'
@@ -3862,56 +3815,53 @@ package:
     libstdcxx: '>=13'
     python: '>=3.11,<3.12.0a0'
     python_abi: 3.11.*
-  url: https://conda.anaconda.org/conda-forge/linux-64/numpy-2.2.0rc1-py311hf916aec_0.conda
+  url: https://conda.anaconda.org/conda-forge/linux-64/numpy-2.1.3-py311h71ddf71_0.conda
   hash:
-    md5: 0fc4b97e089a47be7f955a0f308835b6
-    sha256: cafb46db44eb3b7c32959ae05ae1108e395b0992bee746f1583af90ed991b27d
+    md5: 1b3c543b0cc96310bcf0b825d5a68cb1
+    sha256: d2fdae6b0e80c23248f0f6bf7b5e3b6e0f56f69f420e9f5da5a6aae2c95b1493
   category: main
   optional: false
 - name: numpy
-  version: 2.2.0rc1
+  version: 2.1.3
   manager: conda
   platform: osx-64
   dependencies:
     __osx: '>=10.13'
-    _numpy_rc: ''
     libblas: '>=3.9.0,<4.0a0'
     libcblas: '>=3.9.0,<4.0a0'
     libcxx: '>=18'
     liblapack: '>=3.9.0,<4.0a0'
     python: '>=3.11,<3.12.0a0'
     python_abi: 3.11.*
-  url: https://conda.anaconda.org/conda-forge/osx-64/numpy-2.2.0rc1-py311h4632d39_0.conda
+  url: https://conda.anaconda.org/conda-forge/osx-64/numpy-2.1.3-py311h14ed71f_0.conda
   hash:
-    md5: a2511f3274f94674c843c47606082f4a
-    sha256: 32680b364b84c555c4309440fa2c00858ce1a37302de07e645a4d50a35ef0bb0
+    md5: 220e4e917b6133e0cbb879c48c058adc
+    sha256: 2ddc0acaf8602eda5e555435a37641439aa7876425fe7b40214f15dab182e5e3
   category: main
   optional: false
 - name: numpy
-  version: 2.2.0rc1
+  version: 2.1.3
   manager: conda
   platform: osx-arm64
   dependencies:
     __osx: '>=11.0'
-    _numpy_rc: ''
     libblas: '>=3.9.0,<4.0a0'
     libcblas: '>=3.9.0,<4.0a0'
     libcxx: '>=18'
     liblapack: '>=3.9.0,<4.0a0'
     python: '>=3.11,<3.12.0a0'
     python_abi: 3.11.*
-  url: https://conda.anaconda.org/conda-forge/osx-arm64/numpy-2.2.0rc1-py311h4b914e2_0.conda
+  url: https://conda.anaconda.org/conda-forge/osx-arm64/numpy-2.1.3-py311h649a571_0.conda
   hash:
-    md5: 7c9bb9d3a63f403bffa25149e3aafa95
-    sha256: 6f4d646943e312e6965b05fab5bae0b3d9636e3ce5184231c6db0db17b9e10ba
+    md5: 3205b87adf34406ae1a83e8bf46cd987
+    sha256: 5a95da4a8de64fb44b0045c92f579d3529b2cccbd5a38ec7901e03ee10f707d5
   category: main
   optional: false
 - name: numpy
-  version: 2.2.0rc1
+  version: 2.1.3
   manager: conda
   platform: win-64
   dependencies:
-    _numpy_rc: ''
     libblas: '>=3.9.0,<4.0a0'
     libcblas: '>=3.9.0,<4.0a0'
     liblapack: '>=3.9.0,<4.0a0'
@@ -3920,10 +3870,10 @@ package:
     ucrt: '>=10.0.20348.0'
     vc: '>=14.2,<15'
     vc14_runtime: '>=14.29.30139'
-  url: https://conda.anaconda.org/conda-forge/win-64/numpy-2.2.0rc1-py311hc213d13_0.conda
+  url: https://conda.anaconda.org/conda-forge/win-64/numpy-2.1.3-py311h35ffc71_0.conda
   hash:
-    md5: 5d9ad851baf876318604f218fb428d67
-    sha256: c80793380d023bf6d2215ab75e4c0ba582f2a9ee7bf92a4b8fad72dd0ead878f
+    md5: aa627d29d5d1ed4192e70cd5a6cb1f4f
+    sha256: 09b0b580e5c4e2eb5dd1b5c44487a274a444d7cc44caced61324a65a8cfa2741
   category: main
   optional: false
 - name: openjpeg
@@ -4557,7 +4507,7 @@ package:
   category: main
   optional: false
 - name: pytest
-  version: 8.3.3
+  version: 8.3.4
   manager: conda
   platform: linux-64
   dependencies:
@@ -4568,14 +4518,14 @@ package:
     pluggy: <2,>=1.5
     python: '>=3.8'
     tomli: '>=1'
-  url: https://conda.anaconda.org/conda-forge/noarch/pytest-8.3.3-pyhd8ed1ab_0.conda
+  url: https://conda.anaconda.org/conda-forge/noarch/pytest-8.3.4-pyhd8ed1ab_0.conda
   hash:
-    md5: c03d61f31f38fdb9facf70c29958bf7a
-    sha256: e99376d0068455712109d233f5790458ff861aeceb458bfda74e353338e4d815
+    md5: ff8f2ef7f2636906b3781d0cf92388d0
+    sha256: 254256beab3dcf29907fbdccee6fbbb3371e9ac3782d2b1b5864596a0317818e
   category: main
   optional: false
 - name: pytest
-  version: 8.3.3
+  version: 8.3.4
   manager: conda
   platform: osx-64
   dependencies:
@@ -4586,14 +4536,14 @@ package:
     exceptiongroup: '>=1.0.0rc8'
     tomli: '>=1'
     pluggy: <2,>=1.5
-  url: https://conda.anaconda.org/conda-forge/noarch/pytest-8.3.3-pyhd8ed1ab_0.conda
+  url: https://conda.anaconda.org/conda-forge/noarch/pytest-8.3.4-pyhd8ed1ab_0.conda
   hash:
-    md5: c03d61f31f38fdb9facf70c29958bf7a
-    sha256: e99376d0068455712109d233f5790458ff861aeceb458bfda74e353338e4d815
+    md5: ff8f2ef7f2636906b3781d0cf92388d0
+    sha256: 254256beab3dcf29907fbdccee6fbbb3371e9ac3782d2b1b5864596a0317818e
   category: main
   optional: false
 - name: pytest
-  version: 8.3.3
+  version: 8.3.4
   manager: conda
   platform: osx-arm64
   dependencies:
@@ -4604,14 +4554,14 @@ package:
     exceptiongroup: '>=1.0.0rc8'
     tomli: '>=1'
     pluggy: <2,>=1.5
-  url: https://conda.anaconda.org/conda-forge/noarch/pytest-8.3.3-pyhd8ed1ab_0.conda
+  url: https://conda.anaconda.org/conda-forge/noarch/pytest-8.3.4-pyhd8ed1ab_0.conda
   hash:
-    md5: c03d61f31f38fdb9facf70c29958bf7a
-    sha256: e99376d0068455712109d233f5790458ff861aeceb458bfda74e353338e4d815
+    md5: ff8f2ef7f2636906b3781d0cf92388d0
+    sha256: 254256beab3dcf29907fbdccee6fbbb3371e9ac3782d2b1b5864596a0317818e
   category: main
   optional: false
 - name: pytest
-  version: 8.3.3
+  version: 8.3.4
   manager: conda
   platform: win-64
   dependencies:
@@ -4622,10 +4572,10 @@ package:
     exceptiongroup: '>=1.0.0rc8'
     tomli: '>=1'
     pluggy: <2,>=1.5
-  url: https://conda.anaconda.org/conda-forge/noarch/pytest-8.3.3-pyhd8ed1ab_0.conda
+  url: https://conda.anaconda.org/conda-forge/noarch/pytest-8.3.4-pyhd8ed1ab_0.conda
   hash:
-    md5: c03d61f31f38fdb9facf70c29958bf7a
-    sha256: e99376d0068455712109d233f5790458ff861aeceb458bfda74e353338e4d815
+    md5: ff8f2ef7f2636906b3781d0cf92388d0
+    sha256: 254256beab3dcf29907fbdccee6fbbb3371e9ac3782d2b1b5864596a0317818e
   category: main
   optional: false
 - name: python
