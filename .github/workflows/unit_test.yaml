@@ -51,7 +51,7 @@ jobs:
         path: code
         submodules: true
     - name: Create Python Environment
-      uses: mamba-org/setup-micromamba@617811f69075e3fd3ae68ca64220ad065877f246 # v2.0.0
+      uses: mamba-org/setup-micromamba@06375d89d211a1232ef63355742e9e2e564bc7f7 # v2.0.2
       with:
         micromamba-version: '2.0.2-2'
         environment-name: test
