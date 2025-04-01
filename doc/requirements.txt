@@ -32,6 +32,8 @@ docutils==0.21.2
     # via
     #   nbsphinx
     #   sphinx
+exceptiongroup==1.2.2
+    # via ipython
 executing==2.0.1
     # via stack-data
 fastjsonschema==2.19.1
@@ -42,9 +44,14 @@ idna==3.7
     # via requests
 imagesize==1.4.1
     # via sphinx
+importlib-metadata==8.6.1
+    # via
+    #   jupyter-client
+    #   nbconvert
+    #   sphinx
 ipykernel==6.29.5
     # via -r requirements.in
-ipython==8.24.0
+ipython==8.18.1
     # via ipykernel
 jedi==0.19.1
     # via ipython
@@ -91,7 +98,7 @@ nbformat==5.10.4
     #   nbclient
     #   nbconvert
     #   nbsphinx
-nbsphinx==0.9.6
+nbsphinx==0.9.7
     # via -r requirements.in
 nest-asyncio==1.6.0
     # via ipykernel
@@ -186,6 +193,8 @@ stack-data==0.6.3
     # via ipython
 tinycss2==1.2.1
     # via bleach
+tomli==2.2.1
+    # via sphinx
 tornado==6.4.2
     # via
     #   -r requirements.in
@@ -203,6 +212,8 @@ traitlets==5.14.3
     #   nbconvert
     #   nbformat
     #   nbsphinx
+typing-extensions==4.13.0
+    # via ipython
 urllib3==2.2.2
     # via requests
 wcwidth==0.2.13
@@ -211,3 +222,5 @@ webencodings==0.5.1
     # via
     #   bleach
     #   tinycss2
+zipp==3.21.0
+    # via importlib-metadata
