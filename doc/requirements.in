@@ -4,6 +4,6 @@ nbconvert==7.16.6
 nbsphinx==0.9.7
 pandoc==2.4
 rowan==1.3.2
-tornado==6.5
-sphinxcontrib-googleanalytics==0.4
+tornado==6.5.1
+sphinxcontrib-googleanalytics==0.5
 sphinx-copybutton==0.5.2
