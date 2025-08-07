@@ -1,5 +1,5 @@
 furo==2024.8.6
-ipykernel==6.29.5
+ipykernel==6.30.1
 nbconvert==7.16.6
 nbsphinx==0.9.7
 pandoc==2.4
