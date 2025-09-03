@@ -10,3 +10,6 @@ html
 .clangd
 .cache
 compile_commands.json
+# pixi environments
+.pixi/*
+!.pixi/config.toml

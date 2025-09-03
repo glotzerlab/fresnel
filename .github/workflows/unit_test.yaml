@@ -34,7 +34,7 @@ jobs:
         # Test macOS and windows on oldest and latest versions.
         - os: 'macos-14'
           python: '313'
-        - os: 'windows-2022'
+        - os: 'windows-2025'
           python: '313'
           cmake_generator: "Visual Studio 17 2022"
         - os: 'windows-2022'

@@ -10,10 +10,6 @@
 #include "common/ColorMath.h"
 #include "common/VectorMath.h"
 
-#if (PYBIND11_VERSION_MAJOR) != 2 || (PYBIND11_VERSION_MINOR) < 2
-#error Fresnel requires pybind11 >= 2.2
-#endif
-
 namespace fresnel
     {
 namespace gpu
