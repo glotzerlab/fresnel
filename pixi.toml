@@ -1,0 +1,13 @@
+[workspace]
+authors = ["Joshua A. Anderson <joaander@umich.edu>"]
+channels = ["conda-forge"]
+name = "fresnel"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+conda = ">=25.7.0,<26"
+conda-lock = ">=3.0.4,<4"
+bump2version = ">=1.0.1,<2"
