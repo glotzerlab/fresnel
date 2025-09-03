@@ -5,7 +5,7 @@
     "helpers:pinGitHubActionDigests"
   ],
   "pip-compile": {
-    "managerFilePatterns": ["/(^|/)requirements.*\\.txt$/"]
+    "managerFilePatterns": ["/(^|/)[\\w-]*requirements([-.]\\w+)?\\.(txt|pip)$/"]
   },
   "pip_requirements": {
     "enabled": false
