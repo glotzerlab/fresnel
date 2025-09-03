@@ -9,6 +9,13 @@ fresnel_ releases follow `semantic versioning`_.
 .. _fresnel:  https://github.com/glotzerlab/fresnel
 .. _semantic versioning: https://semver.org/
 
+0.13.8 (2025-09-03)
+^^^^^^^^^^^^^^^^^^^
+
+*Added*
+
+* Support pybind11 3.0.
+
 0.13.7 (2024-10-29)
 ^^^^^^^^^^^^^^^^^^^
 
