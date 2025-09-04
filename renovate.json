@@ -4,6 +4,9 @@
     "config:recommended",
     "helpers:pinGitHubActionDigests"
   ],
+  "github-actions": {
+    "groupName": "github-actions"
+  },
   "pip-compile": {
     "managerFilePatterns": ["/(^|/)[\\w-]*requirements([-.]\\w+)?\\.(txt|pip)$/"]
   },
