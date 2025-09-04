@@ -4,7 +4,7 @@
     "config:recommended",
     "helpers:pinGitHubActionDigests"
   ],
-  "timezone": "America/Detroit"
+  "timezone": "America/Detroit",
   "github-actions": {
     "groupName": "github-actions"
   },
@@ -18,7 +18,7 @@
     "enabled": false
   },
   "lockFileMaintenance": {
-    "enabled": true
-    "schedule": ["* 0-4 */100,1-7 * 4"],
+    "enabled": true,
+    "schedule": ["* 0-4 */100,1-7 * 4"]
     }
 }
