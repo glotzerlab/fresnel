@@ -3,7 +3,7 @@
   "extends": [
     "config:best-practices",
     ":semanticCommitsDisabled",
-    "label(dependencies)"
+    ":label(dependencies)"
   ],
   "timezone": "America/Detroit",
   "github-actions": {
