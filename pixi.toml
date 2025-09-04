@@ -20,7 +20,7 @@ tbb = "*"
 tbb-devel = "*"
 
 [feature.py310.dependencies]
-python = "3.11.*"
+python = "3.10.*"
 [feature.py311.dependencies]
 python = "3.11.*"
 [feature.py312.dependencies]

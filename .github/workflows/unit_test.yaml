@@ -51,24 +51,23 @@ jobs:
       uses: prefix-dev/setup-pixi@v0.9.0
       with:
         pixi-version: v0.54.1
-        cache: true
+        cache: false
         environments: py${{ matrix.python }}
         activate-environment: true
         manifest-path: code/pixi.toml
     - name: Configure
       run: >
+        CMAKE_PREFIX_PATH=${CONDA_PREFIX}
         cmake -S code -B build
         -DENABLE_EMBREE=ON
         -DENABLE_OPTIX=OFF
         -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON
-      env:
-        CMAKE_PREFIX_PATH: ${{ github.workspace }}\env
     - name: Build
       run: cmake --build build --config Release -j
     - name: Install
       run: cmake --install build --config Release
     - name: Run tests
-      run: python -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0 --durations-min=0.1
+      run: ${CONDA_PREFIX}/bin/python -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0 --durations-min=0.1
     - name: Render gallery images
       if: ${{ matrix.render_gallery }}
       run: for i in *.py; do echo "Rendering $i" && python3 $i || exit 1; done
