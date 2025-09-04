@@ -67,6 +67,7 @@ jobs:
     - name: Install
       run: cmake --install build --config Release
     - run: ls ${CONDA_PREFIX}/lib
+    - run: readelf -d ${CONDA_PREFIX}/lib/python3.13/site-packages/fresnel/_cpu.* | grep 'R.*PATH'
     - run: ldd ${CONDA_PREFIX}/lib/python3.13/site-packages/fresnel/_cpu.*
     - name: Run tests
       run: >
