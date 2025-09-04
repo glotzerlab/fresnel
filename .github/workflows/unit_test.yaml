@@ -67,7 +67,7 @@ jobs:
     - name: Install
       run: cmake --install build --config Release
     - name: Run tests
-      run: ${CONDA_PREFIX}/bin/python -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0 --durations-min=0.1
+      run: pixi run python -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0 --durations-min=0.1
     - name: Render gallery images
       if: ${{ matrix.render_gallery }}
       run: for i in *.py; do echo "Rendering $i" && python3 $i || exit 1; done
