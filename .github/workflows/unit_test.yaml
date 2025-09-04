@@ -61,7 +61,6 @@ jobs:
         cmake -S code -B build
         -DENABLE_EMBREE=ON
         -DENABLE_OPTIX=OFF
-        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON
     - name: Build
       run: cmake --build build --config Release -j
     - name: Install
