@@ -1,13 +1,21 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended",
-    "helpers:pinGitHubActionDigests"
+    "config:best-practices",
+    ":semanticCommitsDisabled",
+    "label(dependencies)"
   ],
   "timezone": "America/Detroit",
   "github-actions": {
-    "groupName": "github-actions"
+    "groupName": "github-actions",
+    "automerge": true,
+    "schedule": ["* 0-6 12 * *"]
   },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true,
+    "schedule": ["* 0-6 5 * *"]
+    },
   "pip-compile": {
     "managerFilePatterns": ["/(^|/)[\\w-]*requirements([-.]\\w+)?\\.(txt|pip)$/"]
   },
@@ -17,8 +25,10 @@
   "pip_setup": {
     "enabled": false
   },
-  "lockFileMaintenance": {
-    "enabled": true,
-    "schedule": ["* 0-4 5 * *"]
+  "packageRules": [
+    {
+      "matchFileNames": ["//[\\w-]*docs?/.*/?requirements([-.]\\w+)?\\.(txt|pip)$/$/"],
+      "schedule": ["* 0-6 5 3,6,9,12 *"]
     }
+  ]
 }
