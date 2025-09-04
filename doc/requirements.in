@@ -3,6 +3,7 @@ ipykernel
 nbconvert
 nbsphinx
 pandoc
+sphinx
 rowan
 tornado
 sphinxcontrib-googleanalytics
