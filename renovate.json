@@ -12,5 +12,6 @@
   },
   "pip_setup": {
     "enabled": false
-  }
+  },
+  "lockFileMaintenance": { "enabled": true }
 }
