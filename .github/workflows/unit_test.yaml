@@ -61,14 +61,13 @@ jobs:
         cmake -S code -B build
         -DENABLE_EMBREE=ON
         -DENABLE_OPTIX=OFF
-        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON
+        -DCMAKE_INSTALL_RPATH=${CONDA_PREFIX}/lib
     - name: Build
       run: cmake --build build --config Release -j
     - name: Install
       run: cmake --install build --config Release
     - name: Run tests
       run: >
-        LD_LIBRARY_PATH=${CONDA_PREFIX}/lib
         pixi run python -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0 --durations-min=0.1
     - name: Render gallery images
       if: ${{ matrix.render_gallery }}
