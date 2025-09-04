@@ -2,7 +2,7 @@
 #    uv pip compile --python-version=3.13 requirements.in --output-file=requirements.txt
 accessible-pygments==0.0.5
     # via furo
-alabaster==0.7.16
+alabaster==1.0.0
     # via sphinx
 asttokens==3.0.0
     # via stack-data
@@ -12,19 +12,19 @@ attrs==25.3.0
     #   referencing
 babel==2.17.0
     # via sphinx
-beautifulsoup4==4.13.4
+beautifulsoup4==4.13.5
     # via
     #   furo
     #   nbconvert
-bleach[css]==6.2.0
+bleach==6.2.0
     # via nbconvert
-certifi==2025.6.15
+certifi==2025.8.3
     # via requests
-charset-normalizer==3.4.2
+charset-normalizer==3.4.3
     # via requests
-comm==0.2.2
+comm==0.2.3
     # via ipykernel
-debugpy==1.8.14
+debugpy==1.8.16
     # via ipykernel
 decorator==5.2.1
     # via ipython
@@ -34,11 +34,9 @@ docutils==0.21.2
     # via
     #   nbsphinx
     #   sphinx
-exceptiongroup==1.3.0
-    # via ipython
-executing==2.2.0
+executing==2.2.1
     # via stack-data
-fastjsonschema==2.21.1
+fastjsonschema==2.21.2
     # via nbformat
 furo==2025.7.19
     # via -r requirements.in
@@ -46,15 +44,12 @@ idna==3.10
     # via requests
 imagesize==1.4.1
     # via sphinx
-importlib-metadata==8.7.0
-    # via
-    #   jupyter-client
-    #   nbconvert
-    #   sphinx
 ipykernel==6.30.1
     # via -r requirements.in
-ipython==8.18.1
+ipython==9.5.0
     # via ipykernel
+ipython-pygments-lexers==1.1.1
+    # via ipython
 jedi==0.19.2
     # via ipython
 jinja2==3.1.6
@@ -62,7 +57,7 @@ jinja2==3.1.6
     #   nbconvert
     #   nbsphinx
     #   sphinx
-jsonschema==4.24.0
+jsonschema==4.25.1
     # via nbformat
 jsonschema-specifications==2025.4.1
     # via jsonschema
@@ -87,7 +82,7 @@ matplotlib-inline==0.1.7
     # via
     #   ipykernel
     #   ipython
-mistune==3.1.3
+mistune==3.1.4
     # via nbconvert
 nbclient==0.10.2
     # via nbconvert
@@ -104,7 +99,7 @@ nbsphinx==0.9.7
     # via -r requirements.in
 nest-asyncio==1.6.0
     # via ipykernel
-numpy==2.0.2
+numpy==2.3.2
     # via rowan
 packaging==25.0
     # via
@@ -115,17 +110,17 @@ pandoc==2.4
     # via -r requirements.in
 pandocfilters==1.5.1
     # via nbconvert
-parso==0.8.4
+parso==0.8.5
     # via jedi
 pexpect==4.9.0
     # via ipython
-platformdirs==4.3.8
+platformdirs==4.4.0
     # via jupyter-core
 plumbum==1.9.0
     # via pandoc
 ply==3.11
     # via pandoc
-prompt-toolkit==3.0.51
+prompt-toolkit==3.0.52
     # via ipython
 psutil==7.0.0
     # via ipykernel
@@ -138,11 +133,12 @@ pygments==2.19.2
     #   accessible-pygments
     #   furo
     #   ipython
+    #   ipython-pygments-lexers
     #   nbconvert
     #   sphinx
 python-dateutil==2.9.0.post0
     # via jupyter-client
-pyzmq==27.0.0
+pyzmq==27.0.2
     # via
     #   ipykernel
     #   jupyter-client
@@ -150,11 +146,11 @@ referencing==0.36.2
     # via
     #   jsonschema
     #   jsonschema-specifications
-requests==2.32.4
+requests==2.32.5
     # via sphinx
 rowan==1.3.2
     # via -r requirements.in
-rpds-py==0.25.1
+rpds-py==0.27.1
     # via
     #   jsonschema
     #   referencing
@@ -162,10 +158,11 @@ six==1.17.0
     # via python-dateutil
 snowballstemmer==3.0.1
     # via sphinx
-soupsieve==2.7
+soupsieve==2.8
     # via beautifulsoup4
-sphinx==7.4.7
+sphinx==8.1.3
     # via
+    #   -r requirements.in
     #   furo
     #   nbsphinx
     #   sphinx-basic-ng
@@ -193,16 +190,13 @@ stack-data==0.6.3
     # via ipython
 tinycss2==1.4.0
     # via bleach
-tomli==2.2.1
-    # via sphinx
-tornado==6.5.1
+tornado==6.5.2
     # via
     #   -r requirements.in
     #   ipykernel
     #   jupyter-client
 traitlets==5.14.3
     # via
-    #   comm
     #   ipykernel
     #   ipython
     #   jupyter-client
@@ -212,13 +206,8 @@ traitlets==5.14.3
     #   nbconvert
     #   nbformat
     #   nbsphinx
-typing-extensions==4.14.0
-    # via
-    #   beautifulsoup4
-    #   exceptiongroup
-    #   ipython
-    #   mistune
-    #   referencing
+typing-extensions==4.15.0
+    # via beautifulsoup4
 urllib3==2.5.0
     # via requests
 wcwidth==0.2.13
@@ -227,5 +216,3 @@ webencodings==0.5.1
     # via
     #   bleach
     #   tinycss2
-zipp==3.23.0
-    # via importlib-metadata
