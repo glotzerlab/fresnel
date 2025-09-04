@@ -19,6 +19,6 @@
   },
   "lockFileMaintenance": {
     "enabled": true,
-    "schedule": ["* 0-4 */100,1-7 * 4"]
+    "schedule": ["* 0-4 5 * *"]
     }
 }
