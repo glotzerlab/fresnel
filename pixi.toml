@@ -2,12 +2,34 @@
 authors = ["Joshua A. Anderson <joaander@umich.edu>"]
 channels = ["conda-forge"]
 name = "fresnel"
-platforms = ["osx-arm64"]
+platforms = ["linux-64", "osx-arm64", "win-64"]
 version = "0.1.0"
 
 [tasks]
 
 [dependencies]
-conda = ">=25.7.0,<26"
-conda-lock = ">=3.0.4,<4"
-bump2version = ">=1.0.1,<2"
+bump2version = "*"
+cmake = "*"
+embree = "*"
+matplotlib = "*"
+numpy = ">=2.0.0"
+pillow = "*"
+pybind11 = "*"
+pytest = "*"
+tbb = "*"
+tbb-devel = "*"
+
+[feature.py310.dependencies]
+python = "3.10.*"
+[feature.py311.dependencies]
+python = "3.11.*"
+[feature.py312.dependencies]
+python = "3.12.*"
+[feature.py313.dependencies]
+python = "3.13.*"
+
+[environments]
+py310 = ["py310"]
+py311 = ["py311"]
+py312 = ["py312"]
+py313 = ["py313"]

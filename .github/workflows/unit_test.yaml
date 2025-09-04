@@ -25,7 +25,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-24.04]
-        python: ['39', '310', '311', '312', '313']
+        python: ['310', '311', '312', '313']
         include:
         # Render gallery images in one configuration
         - os: 'ubuntu-24.04'
@@ -38,35 +38,36 @@ jobs:
           python: '313'
           cmake_generator: "Visual Studio 17 2022"
         - os: 'windows-2022'
-          python: '39'
+          python: '310'
           cmake_generator: "Visual Studio 17 2022"
         - os: 'macos-14'
-          python: '39'
+          python: '310'
     steps:
     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       with:
         path: code
         submodules: true
     - name: Create Python Environment
-      uses: mamba-org/setup-micromamba@b09ef9b599704322748535812ca03efb2625677b # v2.0.5
+      uses: prefix-dev/setup-pixi@fef5c9568ca6c4ff7707bf840ab0692ba3f08293 # v0.9.0
       with:
-        micromamba-version: '2.0.2-2'
-        environment-name: test
-        environment-file: code/.github/workflows/environments/py${{ matrix.python }}-conda-lock.yml
+        pixi-version: v0.54.1
+        cache: false
+        environments: py${{ matrix.python }}
+        activate-environment: true
+        manifest-path: code/pixi.toml
     - name: Configure
       run: >
+        CMAKE_PREFIX_PATH=${CONDA_PREFIX}
         cmake -S code -B build
         -DENABLE_EMBREE=ON
         -DENABLE_OPTIX=OFF
-        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON
-      env:
-        CMAKE_PREFIX_PATH: ${{ github.workspace }}\env
     - name: Build
       run: cmake --build build --config Release -j
     - name: Install
       run: cmake --install build --config Release
     - name: Run tests
-      run: python -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0 --durations-min=0.1
+      run: >
+        pixi run python -m pytest --pyargs fresnel -v --log-level=DEBUG --durations=0 --durations-min=0.1
     - name: Render gallery images
       if: ${{ matrix.render_gallery }}
       run: for i in *.py; do echo "Rendering $i" && python3 $i || exit 1; done
