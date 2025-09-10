@@ -9,7 +9,7 @@ assignees: 'joaander'
 
 Release checklist:
 
-- [ ] Run `update-lockfiles.sh`.
+- [ ] Run `prek autoupdate`.
 - [ ] Run *bumpversion*.
 - [ ] Check readthedocs build, especially change log formatting.
 - [ ] Tag and push.
