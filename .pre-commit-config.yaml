@@ -1,9 +1,6 @@
-ci:
-  autoupdate_schedule: quarterly
-
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: 'v5.0.0'
+  rev: 'v6.0.0'
   hooks:
   - id: end-of-file-fixer
     exclude_types: [svg]
@@ -11,6 +8,7 @@ repos:
     exclude_types: [svg]
   - id: check-json
   - id: check-yaml
+    exclude: "\\.clang-format"
   - id: check-case-conflict
   - id: mixed-line-ending
 - repo: https://github.com/glotzerlab/fix-license-header
@@ -39,15 +37,15 @@ repos:
     - --keep-after=.. include
     - --comment-prefix=..
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.12.2
+  rev: v0.13.0
   hooks:
-    - id: ruff
+    - id: ruff-check
       types_or: [ python ]
       args: [ --fix ]
     - id: ruff-format
       types_or: [ python ]
 - repo: https://github.com/pre-commit/mirrors-clang-format
-  rev: v20.1.7
+  rev: v21.1.0
   hooks:
   - id: clang-format
     types_or: [c, c++, cuda, inc]

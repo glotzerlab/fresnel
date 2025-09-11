@@ -8,13 +8,12 @@ All code in fresnel must follow a consistent style to ensure readability. We
 provide configuration files for linters and autoformatters (specified below) so
 that developers can automatically validate and format files.
 
-These tools are configured for use with `pre-commit`_ in
-``.pre-commit-config.yaml``. You can install pre-commit hooks to validate your
-code. Checks will run on pull requests. Run checks manually with::
+These tools are configured for use with `prek`_ and checks will run on pull requests.
+Run checks manually with::
 
-    pre-commit run --all-files
+    prek run --all-files
 
-.. _pre-commit: https://pre-commit.com/
+.. _prek: https://prek.j178.dev/
 
 Python
 ------
@@ -42,9 +41,6 @@ Tools
   * The ``ruff.toml`` included with the package automatically configures these rules.
 
 * Autoformatter: `ruff <https://github.com/astral-sh/ruff>`_
-
-  * Run: ``pre-commit run --all-files`` to apply style changes to the whole
-    repository.
 
 Documentation
 ^^^^^^^^^^^^^
