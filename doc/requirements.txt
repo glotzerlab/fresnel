@@ -99,7 +99,7 @@ nbsphinx==0.9.7
     # via -r requirements.in
 nest-asyncio==1.6.0
     # via ipykernel
-numpy==2.3.2
+numpy==2.3.3
     # via rowan
 packaging==25.0
     # via
@@ -138,7 +138,7 @@ pygments==2.19.2
     #   sphinx
 python-dateutil==2.9.0.post0
     # via jupyter-client
-pyzmq==27.0.2
+pyzmq==27.1.0
     # via
     #   ipykernel
     #   jupyter-client
