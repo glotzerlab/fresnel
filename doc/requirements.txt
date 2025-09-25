@@ -210,7 +210,7 @@ typing-extensions==4.15.0
     # via beautifulsoup4
 urllib3==2.5.0
     # via requests
-wcwidth==0.2.13
+wcwidth==0.2.14
     # via prompt-toolkit
 webencodings==0.5.1
     # via
