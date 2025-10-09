@@ -6,7 +6,7 @@ alabaster==1.0.0
     # via sphinx
 asttokens==3.0.0
     # via stack-data
-attrs==25.3.0
+attrs==25.4.0
     # via
     #   jsonschema
     #   referencing
@@ -18,7 +18,7 @@ beautifulsoup4==4.14.2
     #   nbconvert
 bleach==6.2.0
     # via nbconvert
-certifi==2025.8.3
+certifi==2025.10.5
     # via requests
 charset-normalizer==3.4.3
     # via requests
@@ -114,7 +114,7 @@ parso==0.8.5
     # via jedi
 pexpect==4.9.0
     # via ipython
-platformdirs==4.4.0
+platformdirs==4.5.0
     # via jupyter-core
 plumbum==1.9.0
     # via pandoc
