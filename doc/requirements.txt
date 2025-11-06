@@ -46,7 +46,7 @@ imagesize==1.4.1
     # via sphinx
 ipykernel==7.1.0
     # via -r requirements.in
-ipython==9.6.0
+ipython==9.7.0
     # via ipykernel
 ipython-pygments-lexers==1.1.1
     # via ipython
@@ -116,13 +116,13 @@ pexpect==4.9.0
     # via ipython
 platformdirs==4.5.0
     # via jupyter-core
-plumbum==1.9.0
+plumbum==1.10.0
     # via pandoc
 ply==3.11
     # via pandoc
 prompt-toolkit==3.0.52
     # via ipython
-psutil==7.1.2
+psutil==7.1.3
     # via ipykernel
 ptyprocess==0.7.0
     # via pexpect
