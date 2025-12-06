@@ -16,7 +16,7 @@ beautifulsoup4==4.14.3
     # via
     #   furo
     #   nbconvert
-bleach==6.3.0
+bleach[css]==6.3.0
     # via nbconvert
 certifi==2025.11.12
     # via requests
@@ -210,7 +210,7 @@ traitlets==5.14.3
     #   nbsphinx
 typing-extensions==4.15.0
     # via beautifulsoup4
-urllib3==2.5.0
+urllib3==2.6.0
     # via requests
 wcwidth==0.2.14
     # via prompt-toolkit
