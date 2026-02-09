@@ -16,7 +16,7 @@ beautifulsoup4==4.14.3
     # via
     #   furo
     #   nbconvert
-bleach==6.3.0
+bleach[css]==6.3.0
     # via nbconvert
 certifi==2026.1.4
     # via requests
@@ -86,7 +86,7 @@ mistune==3.2.0
     # via nbconvert
 nbclient==0.10.4
     # via nbconvert
-nbconvert==7.16.6
+nbconvert==7.17.0
     # via
     #   -r requirements.in
     #   nbsphinx
