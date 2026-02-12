@@ -10,7 +10,7 @@ attrs==25.4.0
     # via
     #   jsonschema
     #   referencing
-babel==2.17.0
+babel==2.18.0
     # via sphinx
 beautifulsoup4==4.14.3
     # via
@@ -24,7 +24,7 @@ charset-normalizer==3.4.4
     # via requests
 comm==0.2.3
     # via ipykernel
-debugpy==1.8.19
+debugpy==1.8.20
     # via ipykernel
 decorator==5.2.1
     # via ipython
@@ -44,9 +44,9 @@ idna==3.11
     # via requests
 imagesize==1.4.1
     # via sphinx
-ipykernel==7.1.0
+ipykernel==7.2.0
     # via -r requirements.in
-ipython==9.9.0
+ipython==9.10.0
     # via ipykernel
 ipython-pygments-lexers==1.1.1
     # via ipython
@@ -99,7 +99,7 @@ nbsphinx==0.9.8
     # via -r requirements.in
 nest-asyncio==1.6.0
     # via ipykernel
-numpy==2.4.1
+numpy==2.4.2
     # via rowan
 packaging==26.0
     # via
@@ -110,7 +110,7 @@ pandoc==2.4
     # via -r requirements.in
 pandocfilters==1.5.1
     # via nbconvert
-parso==0.8.5
+parso==0.8.6
     # via jedi
 pexpect==4.9.0
     # via ipython
@@ -122,7 +122,7 @@ ply==3.11
     # via pandoc
 prompt-toolkit==3.0.52
     # via ipython
-psutil==7.2.1
+psutil==7.2.2
     # via ipykernel
 ptyprocess==0.7.0
     # via pexpect
@@ -212,7 +212,7 @@ typing-extensions==4.15.0
     # via beautifulsoup4
 urllib3==2.6.3
     # via requests
-wcwidth==0.3.0
+wcwidth==0.6.0
     # via prompt-toolkit
 webencodings==0.5.1
     # via
