@@ -4003,6 +4003,7 @@ packages:
   - libgcc >=14
   - __glibc >=2.17,<3.0.a0
   license: MIT
+  license_family: MIT
   run_exports:
     weak:
     - pixman >=0.46.4,<1.0a0
@@ -4581,6 +4582,7 @@ packages:
   - libgcc >=14
   - libstdcxx >=14
   license: MIT
+  license_family: MIT
   run_exports:
     weak:
     - wayland >=1.26.0,<2.0a0
@@ -6806,6 +6808,7 @@ packages:
   - libcxx >=19
   - __osx >=11.0
   license: MIT
+  license_family: MIT
   run_exports:
     weak:
     - pixman >=0.46.4,<1.0a0
@@ -8870,6 +8873,7 @@ packages:
   - vc14_runtime >=14.44.35208
   - ucrt >=10.0.20348.0
   license: MIT
+  license_family: MIT
   run_exports:
     weak:
     - pixman >=0.46.4,<1.0a0
