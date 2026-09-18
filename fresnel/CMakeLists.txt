@@ -166,7 +166,6 @@ endif()
 ### Python only modules
 
 set(files __init__.py
-          conftest.py
           geometry.py
           tracer.py
           material.py
