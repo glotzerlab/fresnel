@@ -154,7 +154,7 @@ rpds-py==2026.9.1
     # via
     #   jsonschema
     #   referencing
-setuptools==80.10.2
+setuptools==83.0.0
     # via -r doc/requirements.in
 six==1.17.0
     # via python-dateutil
