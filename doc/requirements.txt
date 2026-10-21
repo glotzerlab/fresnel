@@ -4,8 +4,6 @@ accessible-pygments==0.0.5
     # via furo
 alabaster==1.0.0
     # via sphinx
-appnope==1.0.0
-    # via ipykernel
 asttokens==3.0.2
     # via stack-data
 attrs==26.1.0
