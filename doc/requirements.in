@@ -6,6 +6,6 @@ sphinx
 pandoc
 rowan
 tornado
-setuptools<=80.10.2  # sphinx or some transitive dep still uses pkg_resources
+setuptools<=84.2.1  # sphinx or some transitive dep still uses pkg_resources
 sphinxcontrib-googleanalytics
 sphinx-copybutton
