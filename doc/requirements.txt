@@ -178,7 +178,7 @@ sphinxcontrib-applehelp==2.0.0
     # via sphinx
 sphinxcontrib-devhelp==2.0.0
     # via sphinx
-sphinxcontrib-googleanalytics==0.5
+sphinxcontrib-googleanalytics==0.6
     # via -r doc/requirements.in
 sphinxcontrib-htmlhelp==2.1.0
     # via sphinx
@@ -192,7 +192,7 @@ stack-data==0.6.3
     # via ipython
 tinycss2==1.5.1
     # via bleach
-tornado==6.5.10
+tornado==6.6
     # via
     #   -r doc/requirements.in
     #   ipykernel
