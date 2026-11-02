@@ -24,24 +24,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04]
-        python: ['310', '311', '312', '313']
+        os: [ubuntu-26.04]
+        python: ['311', '312', '313', '314', '315']
         include:
         # Render gallery images in one configuration
-        - os: 'ubuntu-24.04'
-          python: '313'
+        - os: 'ubuntu-26.04'
+          python: '315'
           render_gallery: true
         # Test macOS and windows on oldest and latest versions.
-        - os: 'macos-14'
-          python: '313'
+        - os: 'macos-26'
+          python: '315'
         - os: 'windows-2025'
-          python: '313'
+          python: '315'
           cmake_generator: "Visual Studio 17 2022"
-        - os: 'windows-2022'
-          python: '310'
-          cmake_generator: "Visual Studio 17 2022"
-        - os: 'macos-14'
-          python: '310'
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
